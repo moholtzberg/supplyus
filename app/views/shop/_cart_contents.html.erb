@@ -1,0 +1,39 @@
+<%= form_for @cart, url: update_cart_path, :remote => true do |f| %>
+
+<table class="table table-bordered">
+	
+	<tr>
+		<th width="5%" class="text-center"></th>
+		<th>Item Name/Description</th>
+		<th width="10%" class="text-center">Quantity</th>
+		<th width="10%" class="text-center">Price</th>
+		<th width="10%" class="text-center">Subtotal</th>
+	</tr>
+	
+	<% @cart.contents.active.each_with_index do |li, idx| %>
+	<tr>
+		<td class="text-center"><%= li.order_line_number %></td>
+		<td><%= li.item.name %></td>
+		<td class="text-center">
+			<%= hidden_field_tag "lines[#{idx}][id]", li.id %>
+			<%= text_field_tag "lines[#{idx}][quantity]", li.quantity.to_i, :class => "form-control" %>
+		</td>
+		<td class="text-center"><%= number_to_currency(li.price) %></td>
+		<td class="text-center"><%= number_to_currency(li.sub_total) %></td>
+	<tr>
+	<% end %>
+	
+	<tr>
+		<td colspan="3">Total</td>
+		<td colspan="2" class="text-center"><strong><%= number_to_currency(@cart.sub_total) %></strong></td>
+	</tr>
+	<tr>
+		<td colspan="5">
+			<%= f.submit "Update Cart", :class => "btn btn-default" %>
+			<%= link_to "Checkout", checkout_address_path, :class => "btn btn-primary pull-right" %>
+		</td>
+	</tr>
+	
+</table>
+
+<% end %>

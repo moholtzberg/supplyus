@@ -1,0 +1,19 @@
+<div class="col-md-6">
+	<div class="panel widget">
+		<div class="panel-heading">
+			
+		</div>
+		<div class="panel-body">
+			<% PaymentPlan.bill_date_passed.each do |p| %>
+				Next Bill Date: <%= p.next_bill_date %><br/>
+			<% end %>
+		</div>
+	</div>
+</div>
+<div class="col-md-6">
+	<div class="panel widget">
+		<% CreditCard.expiring_soon.each do |cc| %>
+			<%= cc.inspect%><br/>
+		<% end %>
+	</div>
+</div>

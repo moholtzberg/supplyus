@@ -1,0 +1,110 @@
+<%= form_for @order, :method => :patch, :remote => true, :html => {:class => "form-horizontal"} do |f| %>
+
+	<fieldset>
+	
+		<div class="col-md-6">
+			<%= f.label :account %>
+			<%= f.select :account_id, @accounts.collect {|p| [p.name, p.id, 
+				:address_1 => p.address_1, :address_2 => p.address_2, :city => p.city, :state => p.state, :zip => p.zip, :phone => p.phone
+				]}, {:include_blank => "Select Account"}, {:class => "form-control"} %>
+		</div>
+	
+		<script>
+			$("select#order_account_id").change(function(e){
+				var address_1 = $(this).find("option:selected").attr("address_1")
+				var address_2 = $(this).find("option:selected").attr("address_2")
+				var city = $(this).find("option:selected").attr("city")
+				var state = $(this).find("option:selected").attr("state")
+				var zip = $(this).find("option:selected").attr("zip")
+				var phone = $(this).find("option:selected").attr("phone")
+				$("input#order_bill_to_address_1").val(address_1)
+				$("input#order_bill_to_address_2").val(address_2)
+				$("input#order_bill_to_city").val(city)
+				$("input#order_bill_to_state").val(state)
+				$("input#order_bill_to_zip").val(zip)
+				$("input#order_bill_to_phone").val(phone)
+				$("input#order_ship_to_address_1").val(address_1)
+				$("input#order_ship_to_address_2").val(address_2)
+				$("input#order_ship_to_city").val(city)
+				$("input#order_ship_to_state").val(state)
+				$("input#order_ship_to_zip").val(zip)
+				$("input#order_ship_to_phone").val(phone)
+			})
+		</script>
+	
+		<div class="col-md-3">
+			<%= f.label :number %>
+			<%= f.text_field(:number, :class => "form-control") %>
+		</div>
+	
+		<div class="col-md-3">
+			<%= f.label "PO Number" %>
+			<%= f.text_field(:po_number, :class => "form-control") %>
+		</div>
+		
+		<div class="col-md-6 address">
+			<div class="col-md-12">
+				<%= f.text_field(:bill_to_attention, :class => " form-control col-md-12 input-sm")%>
+			</div>
+			<div class="col-md-12">
+				<%= f.text_field(:bill_to_address_1, :class => "form-control col-md-12 input-sm")%>
+			</div>
+			<div class="col-md-12">
+				<%= f.text_field(:bill_to_address_2, :class => "form-control col-md-12 input-sm")%>
+			</div>
+			<div class="col-md-6">
+				<%= f.text_field(:bill_to_city, :class => "form-control col-md-12 input-sm")%>
+			</div>
+			<div class="col-md-3">
+				<%= f.text_field(:bill_to_state, :class => "form-control col-md-12 input-sm")%>
+			</div>
+			<div class="col-md-3">
+				<%= f.text_field(:bill_to_zip, :class => "form-control col-md-12 input-sm")%>
+			</div>
+			
+		</div>
+		
+		<div class="col-md-6 address">
+			<div class="col-md-12">
+				<%= f.text_field(:ship_to_attention, :class => " form-control col-md-12 input-sm")%>
+			</div>
+			<div class="col-md-12">
+				<%= f.text_field(:ship_to_address_1, :class => "form-control col-md-12 input-sm")%>
+			</div>
+			<div class="col-md-12">
+				<%= f.text_field(:ship_to_address_2, :class => "form-control col-md-12 input-sm")%>
+			</div>
+			<div class="col-md-6">
+				<%= f.text_field(:ship_to_city, :class => "form-control col-md-12 input-sm")%>
+			</div>
+			<div class="col-md-3">
+				<%= f.text_field(:ship_to_state, :class => "form-control col-md-12 input-sm")%>
+			</div>
+			<div class="col-md-3">
+				<%= f.text_field(:ship_to_zip, :class => "form-control col-md-12 input-sm")%>
+			</div>
+			
+		</div>
+	
+	</fieldset>
+	
+<% end %>
+
+<hr/>
+
+<fieldset>
+	
+	<div id="line_items">
+		<%= render "order_line_items/line_items" %>
+	</div>
+	
+	<%= form_for @order_line_item, :remote => true do |form| %>
+	
+	<table class="table table-bordered table-condensed">
+	
+		<%= render "order_line_items/form", f: form %>
+		
+	</table>
+	<% end %>
+	
+</fieldset>

@@ -1,0 +1,52 @@
+html, body {
+  height: 100%;
+}
+body {
+  padding: 50px 0 0 0;
+}
+
+body > .navmenu {
+	width: 250px;
+}
+
+.navmenu {
+	padding-top: 50px;
+	background-color: #fff;
+	border-color: #e7e7e7;
+}
+
+.navmenu > .nav-pills > li > a {
+	border-radius: 0;
+}
+
+.navmenu > ul.nav.nav-pills.nav-stacked > li > a {
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
+
+.navbar {
+  text-align: center;
+}
+.navbar-brand {
+  display: inline-block;
+  float: none;
+}
+.navbar-toggle {
+  float: left;
+  margin-left: 15px;
+  position: absolute;
+}
+
+@media (min-width: 1200px) {
+  body {
+    padding: 0 0 0 250px;
+  }
+	.navbar-fixed-bottom {
+		margin-top: 20px;
+		padding: 0 0 0 250px;
+	}
+}
+
+.navbar-fixed-bottom {
+	z-index: 1 !important;
+}

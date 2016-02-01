@@ -1,0 +1,4 @@
+<% unless flash[:error] %>
+	$('#myModal').modal("hide")
+	$("#contacts").html("<%= j render :partial => 'home/contacts.html', :format => 'html' %>")
+<% end %>

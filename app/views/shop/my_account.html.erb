@@ -1,0 +1,24 @@
+<table class="table table-bordered">
+	<tr>
+		<th>Number</th>
+		<th>Date</th>
+		<th>Total</th>
+	</tr>
+<% current_user.orders.each do |order|%>
+	<tr>
+		<td><%= order.number %></td>
+		<td><%= order.completed_at %></td>
+		<td><%= number_to_currency(order.sub_total) %></td>
+	</tr>
+<% end %>
+<table>
+
+<hr/>
+<p>My Account <%= link_to "Edit", "/edit_account" %></p>
+<address>
+<%= current_user.account.name %><br/>
+<%= current_user.account.address_1 %><br/>
+<%= current_user.account.address_2 %><br/>
+<%= current_user.account.city %>, <%= current_user.account.state %> <%= current_user.account.zip %><br/>
+<%= current_user.account.phone %>
+</address>

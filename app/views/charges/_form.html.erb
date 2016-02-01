@@ -1,0 +1,17 @@
+<tr class="line-item container">
+	
+	<td width="53%">
+		<%= f.hidden_field :account_id, :value => @invoice.account_id %>
+		<input class="form-control" type="text" name="charge[description]" id="invoice_charge_description">
+	</td>
+	<td width="10%">
+		<input class="form-control" type="text" name="charge[quantity]" id="invoice_charge_quantity">
+	</td>
+	<td width="10%">
+		<input class="form-control" type="text" name="charge[amount]" id="invoice_charge_amount">
+	</td>
+	<td width="27%">
+		<button type="submit" name="commit"  form="new_charge" class="btn btn-info">Submit</button>
+	</td>
+
+</tr>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+	
+	<head>
+		<title><%= yield :title %></title>
+		<%= stylesheet_link_tag    'shop', media: 'all', 'data-turbolinks-track' => true %>
+		<%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+		<%= csrf_meta_tags %>
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/css/jasny-bootstrap.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/js/jasny-bootstrap.min.js"></script>
+		<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css" rel="stylesheet" />
+		<script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js"></script>
+	</head>
+	
+	<body class="florida">
+
+		<div id="main" class="container" >
+
+			<header id="header" data-hook>
+				
+				<div id="nav_bar" class="row hidden-xs hidden-sm">
+					
+					
+					<div class="header-top-left">
+						
+						<ul class="list-inline">
+						
+							<li>&nbsp;</li>
+							
+						</ul>
+
+						<!--
+						<ul class="list-inline">
+							<li class="phone"><i class="fa fa-phone"></i> (888) 247-SUPPLY</li>
+						</ul>
+						-->
+					</div>
+
+					<div class="header-top-right">
+						<ul class="list-inline">
+							
+						</ul>
+
+					</div>
+
+				</div>
+				
+				<!--
+
+				<div id="nav_bar_mobile" class="row hidden-md hidden-lg hidden-xl">
+
+					<nav class="navbar navbar-default navbar-fixed-top">
+						<div class="container">
+							<ul class="list-inline text-center phone">
+								<li class="phone"><a class="text-center"><i class="fa fa-phone"></i> (888) 247-SUPPLY</a></li>
+							</ul>
+						</div>
+					</nav>
+
+				</div>
+				
+				-->
+				
+				<div id="main_nav_bar" class="row">
+
+					<div id="header_banner" class="container">
+
+						<div id="MainLogo" class="col-xs-12 col-sm-4 col-md-3">
+
+							<a href="/"><h4><strong>24/7 Office Supply</strong></h4><%# image_tag("copiersflorida_logo.png", width: "300", class: "logo") %></a>
+
+						</div>
+
+						<div id="MainSearchBox" class="hidden-xs col-sm-5 col-md-6">
+
+							<div class="input-group input-group-lg">
+								<form id="searchBox" accept-charset="UTF-8" action="/shop/search" method="get" role="search">
+									<input type="text" class="form-control input-group" id="keywords" name="keywords" placeholder="Search Over 5,000 Products" value="">
+									<div class="input-group-btn">
+										<button type="submit" class="btn btn-default"><i class="icon-shopping-search"></i> Go</button>
+									</div>
+								</form>
+							</div>
+
+						</div>
+
+						<div id="MainPhoneNumber" class="hidden-xs col-xs-12 col-sm-3 col-md-3 text-right">
+							<phone>(888) 247-SUPPLY</phone>
+						</div>
+
+					</div>
+					<nav id="main_nav" class="navbar navbar-default" role="navigation">
+
+						<div class="navbar-header">
+
+							<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+								<span class="sr-only">Toggle navigation</span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+							</button>
+				    	</div>
+
+						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+
+							<ul class="nav navbar-nav">
+
+								<%# @categories.each do |cat| %>
+									<li><%# link_to cat.name, "/shop/#{cat.slug}" %></li>
+								<%# end %>
+
+								<span class="hidden-md hidden-lg hidden-xl">
+
+									<li class="nav-divider"></li>
+
+								</span>
+
+							</ul>
+
+						</div>
+
+					</nav>
+
+				</div>
+				
+				
+			</header>
+
+			<div id="content" class="row" data-hook>
+
+				<div id="center-panel" class="col-md-<%= !content_for?(:sidebar) ? "12" : "10" %>" data-hook>
+
+					<%# flash_messages %>
+
+					<%= yield %>
+
+				</div>
+
+			</div>
+
+			<%# render :partial => 'spree/shared/footer' %>
+
+		</div>
+
+	</body>
+	
+</html>

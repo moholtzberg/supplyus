@@ -1,0 +1,4 @@
+<% unless flash[:error] %>
+	$("div.cart").html("<%= j render :partial => 'shop/cart', :format => 'html' %>")
+	$("#cart_contents").html("<%= j render :partial => 'shop/cart_contents', :format => 'html' %>")
+<% end %>

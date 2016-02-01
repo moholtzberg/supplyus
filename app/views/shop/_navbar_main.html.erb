@@ -1,0 +1,81 @@
+<div id="main_nav_bar" class="row">
+
+	<div id="header_banner" class="container">
+
+		<div id="MainLogo" class="col-xs-12 col-sm-4 col-md-3">
+
+			<a href="/"><h4><strong>24/7 Office Supply</strong></h4><%# image_tag("copiersflorida_logo.png", width: "300", class: "logo") %></a>
+
+		</div>
+
+		<div id="MainSearchBox" class="hidden-xs col-sm-5 col-md-6">
+
+			<div class="input-group input-group-lg">
+				<form id="searchBox" accept-charset="UTF-8" action="/search" method="get" role="search">
+					<input type="text" class="form-control input-group" id="keywords" name="keywords" placeholder="Search Over 5,000 Products" value="">
+					<div class="input-group-btn">
+						<button type="submit" class="btn btn-default"><i class="icon-shopping-search"></i> Go</button>
+					</div>
+				</form>
+			</div>
+
+		</div>
+
+		<div id="MainPhoneNumber" class="hidden-xs col-xs-12 col-sm-3 col-md-3 text-right">
+			<phone>(888) 247-SUPPLY</phone>
+		</div>
+
+	</div>
+	<nav id="main_nav" class="navbar navbar-default" role="navigation">
+
+		<div class="navbar-header">
+
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+    	</div>
+
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+			<ul id="account_links" class="nav navbar-nav list-inline hidden-md hidden-lg hidden-xl">
+				<% if current_user %>
+					<li><%= link_to I18n.t(:my_account), "/account" %></li>
+					<li><%= link_to I18n.t(:logout), destroy_user_session_path, :method => "delete" %></li>
+				<% else %>
+					<li><%= link_to I18n.t(:login), new_user_session_path %> or <%= link_to I18n.t(:create_a_new_account), new_user_registration_path %></li>
+				<% end %>
+			</ul>
+
+			<ul class="nav navbar-nav">
+
+				<% @categories.each do |cat| %>
+					<li><%= link_to cat.name, "/#{cat.slug}" %></li>
+					
+					<li class="<%# 'current' if (request.fullpath.gsub('//','/') == page_uri) %>"></li>
+				<% end %>
+
+				<span class="hidden-md hidden-lg hidden-xl">
+
+					<li class="nav-divider"></li>
+
+					<%# Spree::Page.by_store(current_store).visible.sidebar_links.each do |page| %>
+						<%# if page.foreign_link.present? %>
+						<li><%# link_to page.title, page.foreign_link, target: '_blank', ref: 'nofollow' %></li>
+						<%# else %>
+						<%# page_uri = Rails.application.routes.named_routes[:spree].path.spec.to_s == '/' ? page.slug : Rails.application.routes.named_routes[:spree].path.spec.to_s + page.slug %>
+						<li class="<%# 'current' if (request.fullpath.gsub('//','/') == page_uri) %>"><%# link_to page.title, page_uri, ref: 'nofollow' %></li>
+						<%# end %>
+					<%# end %>
+
+				</span>
+
+			</ul>
+
+		</div>
+
+	</nav>
+
+</div>

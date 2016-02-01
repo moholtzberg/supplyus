@@ -1,0 +1,43 @@
+<div class="widget panel">
+	
+	<div class="panel-body">
+		
+		<div class="table-responsive">
+			
+			<table class="table table-condensed">
+				
+				<thead>
+					
+					<tr>
+						<th span="20" class="text-left"><strong>Name</strong></th>
+						<th span="10" class="text-left"><strong>Amount</strong></th>
+						<th span="15" class="text-left"><strong>Next Bill Date</strong></th>
+						<th span="15" class="text-left"><strong>Active</strong></th>
+						<th span="5" class="text-right"><strong>&nbsp;</strong></th>
+					</tr>
+					
+				</thead>
+				
+				<tbody>
+						<% account.payment_plans.active.each  do |pp| %>
+						<tr>
+							<td class="text-left"><%= pp.name %></td>
+							<td class="text-left"><%= number_to_currency(pp.amount) %></td>
+							<td class="text-left"><%= pp.next_bill_date.strftime("%m/%d/%Y") unless pp.next_bill_date.nil? %></td>
+							<td class="text-left"><%= pp.active? ? "Yes" : "No" %></td>
+							<td class="text-right"><%= link_to payment_plan_path(pp.id) do %><i class="fa fa-search"></i><% end %></td>
+						</tr>
+						<% end %>
+					</tbody>
+					
+			</table>
+			
+		</div>
+		
+	</div>
+	
+	<div class="panel-footer">
+		<%= link_to "New Payment Plan", new_account_payment_plan_path(account_id: account.id), class: "btn btn-warning"%>
+	</div>
+	
+</div>

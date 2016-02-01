@@ -1,0 +1,10 @@
+<fieldset>	
+			
+	<div id="meter_type" class="col-md-12">
+		<%= f.label :meter_type, :class => "control-label" %>
+		<%= f.select(:meter_type, [["B&W", 1], ["Color", 2]], {}, {:class => "form-control"}) %>
+	</div>
+	
+	<%= f.hidden_field :equipment_id, :value => @equipment_id %>
+	
+</fieldset>

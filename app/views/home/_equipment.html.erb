@@ -1,0 +1,58 @@
+<div class="widget panel">
+	
+	<div class="panel-body">
+		
+		<div id="contacts" class="panel-collapse collapse in">
+			
+			<table class="table">
+				<thead>
+					<tr>
+						<th span="20" class="text-left"><strong>Number</strong></th>
+						<th span="20" class="text-left"><strong>Serial</strong></th>
+						<th span="20" class="text-left"><strong>Type</strong></th>
+						<th span="30" class="text-left"><strong>Meter</strong></th>
+						<th span="10" class="text-right"><strong>&nbsp;</strong></th>
+					</tr>
+				</thead>
+				<tbody>
+					<% @account.equipment.each do |equip| %>
+					<tr>
+						<td class="text-left"><%= equip.number %></td>
+						<td class="text-left"><%= equip.serial %></td>
+						<td class="text-left"><%= equip.make %>/<%= equip.model %></td>
+						<td class="text-left">
+						<%= number_with_delimiter(equip.meters.by_meter_type("BW").first.last_valid_meter.to_i) %>
+						</td>
+						<td class="text-right">
+						
+							<div class="dropdown">
+								<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+									<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+									<li><%= link_to("View", equipment_path(equip.id))  %></li>
+									<li><%= link_to("Edit", edit_equipment_path(equip.id))  %></li>
+									<% if equip.meters.count > 0 %>
+									<li><%= link_to("Update Meter", new_meter_meter_reading_path(equip.meters.first.id), :remote => true)%></li>
+									<% else %>
+									<li><%= link_to("Add Meter", new_equipment_meter_path(equip.id), :remote => true)%></li>
+									<% end %>
+									<li><%= link_to("Delete", {:controller => :equipment, :action => :delete, :id => equip.id}, :remote => true)  %></li>
+								</ul>
+							</div>
+						
+						</td>
+					</tr>
+					<% end %>
+				</tbody>
+			</table>
+			
+		</div>
+		
+	</div>
+
+	<div class="panel-footer">
+		<%= link_to "New Equipment", new_account_equipment_path(account_id: @account.id), class: "btn btn-warning", remote: true %>
+	</div>
+
+</div>

@@ -1,0 +1,9 @@
+<div class="modal-body">
+	Are you sure you want to delete Equipment #<%= @equipment.number %>?
+</div>
+<div class="modal-footer">
+	<%= form_for(@equipment, :method => :delete, :remote => true) do |f| %>
+	<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+	<%= f.submit "Delete", :class=> "btn btn-danger" %>
+	<% end %>
+</div>

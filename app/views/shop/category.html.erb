@@ -1,0 +1,11 @@
+<% content_for :title do %><%= @category.name %><% end %>
+
+<h1><%= @category.name %></h1>
+
+<% @category.children.each do |cat| %>
+	<li><%= link_to "#{cat.name}", "#{cat.slug}" %></li>
+<% end %>
+
+<% @category.items.each do |i| %>
+	<%= link_to "#{i.name}", "#{@category.slug}/#{i.slug}" %><br/>
+<% end %>

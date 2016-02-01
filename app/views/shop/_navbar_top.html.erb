@@ -1,0 +1,49 @@
+<div id="nav_bar" class="row hidden-xs hidden-sm">
+
+	<div class="header-top-left">
+		<ul class="list-inline">
+			<li>&nbsp;</li>
+		</ul>
+		
+		<!--
+		<ul class="list-inline">
+			<li class="phone"><i class="fa fa-phone"></i> (888) 247-SUPPLY</li>
+		</ul>
+		-->
+	</div>
+
+	<div class="header-top-right">
+		<ul class="list-inline">
+			<li></li>
+			<% if current_user %>
+			<li><%= "Hello #{current_user.email}" %> <%= link_to I18n.t(:my_account), "/my_account" %></li>
+			<li><%= link_to I18n.t(:logout), destroy_user_session_path, :method => "delete" %></li>
+			<% else %>
+			<li><%= link_to I18n.t(:login), new_user_session_path %> or <%= link_to I18n.t(:create_a_new_account), new_user_registration_path %></li>
+			<% end %>
+			
+			<li>
+				<div class="cart">
+				<%= render :partial => "shop/cart" %>
+				<div>
+			</li>
+				
+		</ul>
+		
+	</div>
+
+</div>
+
+<!--
+<div id="nav_bar_mobile" class="row hidden-md hidden-lg hidden-xl">
+
+	<nav class="navbar navbar-default navbar-fixed-top">
+		<div class="container">
+			<ul class="list-inline text-center phone">
+				<li class="phone"><a class="text-center"><i class="fa fa-phone"></i> (855) 436-2877</a></li>
+			</ul>
+		</div>
+	</nav>
+
+</div>
+-->

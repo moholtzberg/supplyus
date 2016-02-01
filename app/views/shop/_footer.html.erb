@@ -1,0 +1,61 @@
+<footer id="footer" class="row" data-hook>
+	
+	<div class="footer-spacer">
+		
+
+		<!-- 
+		<div class="col-md-4 hidden">
+
+		</div>
+
+		<div class="col-md-4 hidden" data-hook>
+
+		</div>
+		-->
+
+
+	</div>
+	
+	<div id="badges" class="col-md-12 no-padding-left no-padding-right text-center" data-hook>
+
+
+		<div class="col-md-4 text-left no-padding-left no-padding-right">
+			<a href="https://www.instantssl.com/ssl.html"  style="text-decoration:none; "><img alt="SSL" src="https://www.instantssl.com/ssl-certificate-images/support/comodo_secure_100x85_transp.png" style="border: 0px;" /></a>
+		</div>
+
+		<div class="col-md-4 text-center no-padding-left no-padding-right">
+			<%= image_tag "dark_color/visa.png", :class => "pay_logo" %>
+			<%= image_tag "dark_color/master_card.png", :class => "pay_logo" %>
+			<%= image_tag "dark_color/american_express.png", :class => "pay_logo" %>
+			<%= image_tag "dark_color/discover.png", :class => "pay_logo" %>
+		</div>
+
+		<div class="col-md-4 text-right no-padding-left no-padding-right">
+			<a href="https://www.paypal.com/us/verified/pal=moshe%40copiersflorida%2ecom" target="_blank"><img src="https://www.paypal.com/en_US/i/icon/verification_seal.gif" alt="Official PayPal Seal" height="75" border="0" width="75"></a>
+		</div>
+
+	</div>
+	
+	<div class="footer-spacer">
+	</div>
+	
+	<div id="address" class="address text-center">
+		<p>
+			&copy; <%= Time.new.strftime("%Y") %> <%= link_to '247OfficeSupply.com', 'http://www.247officesupply.com/' %> • 2957 NW 27th Street, Building 12 Fort Lauderdale, FL 33311
+			<br/>
+			(888) 247-8775 • M-F 9:00am - 6:00pm EST
+		</p>
+	</div>
+
+	
+	<div id="disclaimer" class="col-md-12 hidden-xs hidden-sm inline " data-hook>
+		
+		<div class="col-md-12 no-padding-left no-padding-right">
+			<%= render :partial => "shop/footer_brands_disclaimer" %> 
+		</div>
+		
+	</div>
+	
+	<%# render :partial => "shop/google_trusted_stores" %>
+	
+</footer>

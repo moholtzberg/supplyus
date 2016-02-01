@@ -1,0 +1,52 @@
+<div class="col-md-12">
+	
+	<div class="panel widget">
+		
+		<table class="table">
+			<tr>
+				<th>ID</th>
+				<th>Name</th>
+				<th>Account</th>
+				<th>Amount</th>
+				<th>Billed Through</th>
+				<th>Next Bill Date</th>
+			</tr>
+			
+			<tr>
+				<td><%= @plan.id %></td>
+				<td><%= @plan.name %></td>
+				<td><%= link_to @plan.account.name, account_path(@plan.account) %></td>
+				<td><%= number_to_currency(@plan.amount) %></td>
+				<td><%= @plan.billed_through.strftime("%m/%d/%Y") %></td>
+				<td><%= @plan.next_bill_date.strftime("%m/%d/%Y") %></td>
+			</tr>
+			
+			<tr>
+				<th>Billing Period</th>
+				<th>Amount</th>
+				<th>Description</th>
+				<th>Invoice Number</th>
+				<th>Invoice Date</th>
+				<th>Invoice Paid</th>
+			</tr>
+			
+			<% @plan.charges.each do |cg| %>
+			<tr>
+				<td><%= cg.from_date.strftime("%m/%d/%Y") %> - <%= cg.to_date.strftime("%m/%d/%Y") %></td>
+				<td><%= number_to_currency(cg.amount) %></td>
+				<td><%= cg.description %></td>
+				<% unless cg.invoice.nil? %>
+				<td><%= cg.invoice.number %></td>
+				<td><%= cg.invoice.date.strftime("%m/%d/%Y")  %></td>
+				<td><%= cg.invoice.paid %></td>
+				<% else %>
+				<td colspan="3" class="text-center">-------- Not yet billed! --------</td>
+				<% end %>
+			</tr>
+			<% end %>
+			
+		</table>
+		
+	</div>
+	
+</div>

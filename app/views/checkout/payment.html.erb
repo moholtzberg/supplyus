@@ -1,0 +1,46 @@
+<ul>
+	<li>Cart Items
+		<ul>
+			<% @cart.contents.each do |stuff| %>
+			<li><%= stuff.item.name %> <%= stuff.quantity %> <%= stuff.price %> <%= stuff.sub_total %></li>
+			<% end %>
+		</ul>
+	</li>
+	<li>Shipping Address
+		<ul>
+			<li><%= @cart.ship_to_account_name %></li>
+			<% unless @cart.ship_to_attention.blank? %><li><%= @cart.ship_to_attention %></li><% end %>
+			<li><%= @cart.ship_to_address_1 %></li>
+			<% unless @cart.ship_to_address_2.blank? %><li><%= @cart.ship_to_address_2 %></li><% end %>
+			<li><%= @cart.ship_to_city %>, <%= @cart.ship_to_state %> <%= @cart.ship_to_zip %></li>
+			<li><%= @cart.ship_to_phone %></li>
+		</ul>
+	</li>
+	<li>Billing Address
+		<ul>
+			<li><%= @cart.bill_to_account_name %></li>
+			<% unless @cart.bill_to_attention.blank? %><li><%= @cart.bill_to_attention %></li><% end %>
+			<li><%= @cart.bill_to_address_1 %></li>
+			<% unless @cart.bill_to_address_2.blank? %><li><%= @cart.bill_to_address_2 %></li><% end %>
+			<li><%= @cart.bill_to_city %>, <%= @cart.bill_to_state %> <%= @cart.bill_to_zip %></li>
+			<li><%= @cart.bill_to_phone %></li>
+		</ul>
+	</li>
+	
+	<li>Shipping
+		<ul>
+			<li><%= @checkout.order_shipping_method.name %> <%= number_to_currency(@checkout.order_shipping_method.amount) %>
+		</ul>
+	</li>
+	
+	<li>
+		<ul>
+			<% if current_user.has_account %>
+				Net 30
+			<% else %>
+				Credit Card
+			<% end %>
+		</ul>
+	</li>
+	
+</ul>

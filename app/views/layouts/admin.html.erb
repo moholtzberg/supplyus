@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+	
+	<head>
+		<title>Recurring</title>
+		<%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+		<%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+		<%= csrf_meta_tags %>
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/css/jasny-bootstrap.min.css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/js/jasny-bootstrap.min.js"></script>
+		<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css" rel="stylesheet" />
+		<script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js"></script>
+	</head>
+
+	<body>
+		
+		<div class="navmenu navmenu-fixed-left offcanvas-xs offcanvas-sm offcanvas-md">
+			<%= render :partial => "layouts/nav" unless current_user %>
+		</div>
+		
+		<div class="navbar navbar-default navbar-fixed-top">
+			
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+					
+				<a class="navbar-brand" href="/"><i class="fa fa-circle-o text-danger"></i> Recurring Billing</a> <span class="navbar-brand"><%= yield :app_location %></span>
+			</div>
+
+			<a href="/logout" id="logout" class="btn btn-warning pull-right hidden-xs hidden-sm">
+				<i class="fa fa-fw fa-sign-out"></i>Sign Out
+			</a>
+			
+		</div>
+		
+		<div id="clearTop" class="clearfix hidden-xs hidden-sm hidden-md"></div>
+		
+		<div id="main-panel">
+			<%= yield %>
+		</div>
+		
+		<div class="navmenu navmenu-fixed-left offcanvas-xs offcanvas-sm offcanvas-md offcanvas-clone"></div>
+		
+	</body>
+	
+</html>

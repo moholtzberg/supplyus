@@ -1,0 +1,35 @@
+<table class="table">
+	
+	<thead>
+		<tr>
+			<td>ID</td>
+			<td>Amount</td>
+			<td>Description</td>
+			<td>Invoice ID</td>
+			<td>Account ID</td>
+			<td>Payment Plan ID</td>
+			<td>From Date</td>
+			<td>To Date</td>
+			<td>&nbsp;</td>
+		</tr>
+	</thead>
+	
+	<tbody>
+	<% @charges.each do |a| %>
+		<tr>
+			<td><%= a.id %></td>
+			<td><%= a.amount %></td>
+			<td><%= a.description %></td>
+			<td><%= a.invoice_id %></td>
+			<td><%= a.account_id %></td>
+			<td><%= a.payment_plan_id %></td>
+			<td><%= a.from_date %></td>
+			<td><%= a.to_date %></td>
+			<td><%= link_to("View Account", charge_path(a.id))  %></td>
+		</tr>
+	<% end %>
+	</tbody>
+	
+</table>
+
+<%= link_to "Create an Charge", new_charge_path %>

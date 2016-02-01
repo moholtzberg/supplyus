@@ -1,0 +1,6 @@
+<%= form_for @charge do |f| %>
+	<%= f.select :account_id, options_from_collection_for_select(@accounts, "id", "name") %>
+	<%= f.text_field :description %>
+	<%= f.text_field :amount, :type => "number" %>
+	<%= f.submit %>
+<% end %>

@@ -1,0 +1,8 @@
+<% content_for :title do %><%= @category.name %> <%= @item.name %><% end %>
+<%= @item.name %>
+
+<%= form_for @cart, url: add_to_cart_path, :remote => true do |f| %>
+	<%= f.hidden_field :item_id, :value => @item.id %>
+	<%= f.text_field :quantity, :value => 1 %>
+	<%= f.submit %>
+<% end %>

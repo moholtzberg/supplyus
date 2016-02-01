@@ -1,0 +1,31 @@
+<tr>
+	<th width="3%" class="text-center">#</th>
+	<th width="50%">Description</th>
+	<th width="10%" class="text-center">Quantity</th>
+	<th width="10%" class="text-right">Amount</th>
+	<th width="10%" class="text-right">Total</th>
+	<th width="17%">&nbsp;</th>
+<tr>
+<% total = 0 %>
+<% unbilled.each_with_index do |cg, idx| %>
+		<tr>
+			<td class="text-center"><%= cg.line_number ||= idx + 1 %></td>
+			<td><%= cg.description %></td>
+			<td class="text-center"><%= cg.quantity %></td>
+			<td class="text-right"><%= number_to_currency(cg.amount) %></td>
+			<td class="text-right"><%= number_to_currency(cg.sub_total) %><% total = total + cg.sub_total %></td>
+			<td>
+			<%= link_to "Delete", cg, :method => :delete, :remote => true %>
+			<!-- 
+			<input type="hidden" name="invoice[charges_attributes][<%= idx %>][line_number]" id="invoice_charges_attributes_0_line_number" value="<%= cg.line_number ||= idx + 1 %>">
+			-->
+			<input type="hidden" name="invoice[charges][<%= idx %>][id]" value="<%= cg.id %>">
+			</td>
+		</tr>
+<% end %>
+
+<tr>
+	<td colspan="4"></td>
+	<td><%= number_to_currency(total) %></td>
+	<td>&nbsp;</td>
+</tr>

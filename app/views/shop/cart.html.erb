@@ -1,0 +1,7 @@
+<div id="cart_contents">
+	<% if @cart.item_count == 0 %>
+	<h4>You're cart is empty! continue shopping</h4>
+	<% else %>
+	<%= render :partial => "shop/cart_contents" %>
+	<% end %>
+</div>

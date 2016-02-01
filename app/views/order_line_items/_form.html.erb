@@ -1,0 +1,31 @@
+
+
+	<tr id="add_lines_form">
+		
+		<%= f.hidden_field :order_id, :value => @order.id %>
+
+		<td colspan="2">
+			<%= f.select :item_id, @items.collect {|m| ["#{m.number} - #{m.description}", m.id, :price => m.price]}, {:include_blank => "Select Item"},:class => "form-control" %>
+		</td>
+		
+		<td>
+			<%= f.text_field :quantity, :class => "form-control", :value => 1 %>
+		</td>
+	
+		<td>
+			<%= f.text_field :price, :class => "form-control" %>
+		</td>
+		
+		<td colspan="2">
+			<%= f.button :class => "btn btn-primary btn-sm", :type => :submit do %>Lorem<% end %>
+		</td>
+	
+		<script>
+		$("select#order_line_item_item_id").change(function(e){
+			var price = $(this).find("option:selected").attr("price")
+			console.log(price)
+			$("input#order_line_item_price").val(parseFloat(price).toFixed(2))
+		})
+		</script>
+		
+	</tr>

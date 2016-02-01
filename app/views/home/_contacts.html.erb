@@ -1,0 +1,47 @@
+<div class="widget panel">
+	
+	<div class="panel-body">
+		
+		<div id="contacts" class="panel-collapse collapse in">
+			
+			<table class="table">
+				<thead>
+					<tr>
+						<th span="40" class="text-left"><strong>Name</strong></th>
+						<th span="40" class="text-left"><strong>Email</strong></th>
+						<th span="20" class="text-right"><strong>&nbsp;</strong></th>
+					</tr>
+				</thead>
+				<tbody>
+					<% @account.contacts.each do |cont| %>
+					<tr>
+						<td class="text-left"><%= cont.first_name %> <%= cont.last_name %></td>
+						<td class="text-left"><%= cont.email %></td>
+						<td class="text-right">
+						
+							<div class="dropdown">
+								<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+									<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+									<li><%= link_to("View", contact_path(cont.id))  %></li>
+									<li><%= link_to("Edit", edit_contact_path(cont.id))  %></li>
+									<li><%= link_to("Delete", contact_path(cont.id), :method => "delete")  %></li>
+								</ul>
+							</div>
+						
+						</td>
+					</tr>
+					<% end %>
+				</tbody>
+			</table>
+			
+		</div>
+		
+	</div>
+
+	<div class="panel-footer">
+		<%= link_to "New Contact", new_account_contact_path(account_id: @account.id), class: "btn btn-warning", remote: true %>
+	</div>
+
+</div>

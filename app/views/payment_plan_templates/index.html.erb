@@ -1,0 +1,27 @@
+<h1>Payment Plan Templates</h1>
+
+<table class="table">
+	
+	<thead>
+		<th>
+			<td>ID</td>
+			<td>Name</td>
+			<td>Amount</td>
+			<td>&nbsp;</td>
+		</th>
+	</thead>
+	
+	<tbody>
+	<% @plans.each do |a| %>
+		<tr>
+			<td><%= a.id %></td>
+			<td><%= a.name %></td>
+			<td><%= a.amount %></td>
+			<td><%= link_to("Choose Payment Plan Template" , new_account_payment_plan_template_payment_plan_path(:account_id => params[:account_id], :payment_plan_template_id => a.id))  %></td>
+		</tr>
+	<% end %>
+	</tbody>
+	
+</table>
+
+<%= link_to "Create an Payment Plan Template", new_admin_payment_plan_template_path %>

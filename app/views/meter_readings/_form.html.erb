@@ -1,0 +1,31 @@
+<fieldset>	
+			
+	<div id="source" class="col-md-3">
+		<%= f.label :source, :class => "control-label" %>
+		<%= f.select(:source, [["Email", 1], ["Fax", 2], ["Service", 3], ["Phone", 4], ["Estimate", 5]], {}, {:class => "form-control"}) %>
+	</div>
+	
+	<div id="display" class="col-md-3">
+		<%= f.label :display, :class => "control-label" %>
+		<%= f.text_field :display, :class => "form-control", :type => "number", :value => @last_reading %>
+	</div>
+	
+	<div id="is_estimate" class="col-md-2">
+		<div class="checkbox-inline">
+			<%= f.label :is_estimate do %>Estimate?
+			<%= f.check_box :is_estimate, :type => "checkbox" %>
+			<% end %>
+		</div>
+	</div>
+	
+	<div id="is_valid" class="col-md-2">
+		<div class="checkbox-inline">
+			<%= f.label :is_valid do %>Valid?
+			<%= f.check_box :is_valid, :type => "checkbox", :checked => true %>
+			<% end %>
+		</div>
+	</div>
+	
+	<%= f.hidden_field :meter_id, :value => @meter_id %>
+	
+</fieldset>

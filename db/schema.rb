@@ -1,0 +1,305 @@
+# encoding: UTF-8
+# This file is auto-generated from the current state of the database. Instead
+# of editing this file, please use the migrations feature of Active Record to
+# incrementally modify your database, and then regenerate this schema definition.
+#
+# Note that this schema.rb definition is the authoritative source for your
+# database schema. If you need to create the application database on another
+# system, you should be using db:schema:load, not running all the migrations
+# from scratch. The latter is a flawed and unsustainable approach (the more migrations
+# you'll amass, the slower it'll run and the greater likelihood for issues).
+#
+# It's strongly recommended that you check this file into your version control system.
+
+ActiveRecord::Schema.define(version: 20160131061838) do
+
+  create_table "account_item_prices", force: :cascade do |t|
+    t.integer  "account_id"
+    t.integer  "item_id"
+    t.float    "price"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "accounts", force: :cascade do |t|
+    t.integer "user_id"
+    t.string  "account_type"
+    t.string  "name"
+    t.string  "stripe_customer_id"
+    t.string  "number"
+    t.string  "email"
+    t.string  "ship_to_address_1"
+    t.string  "ship_to_address_2"
+    t.string  "ship_to_city"
+    t.string  "ship_to_state"
+    t.string  "ship_to_zip"
+    t.string  "ship_to_phone"
+    t.string  "ship_to_fax"
+    t.string  "bill_to_address_1"
+    t.string  "bill_to_address_2"
+    t.string  "bill_to_city"
+    t.string  "bill_to_state"
+    t.string  "bill_to_zip"
+    t.string  "bill_to_phone"
+    t.string  "bill_to_fax"
+    t.boolean "active"
+  end
+
+  create_table "assets", force: :cascade do |t|
+    t.integer  "item_id"
+    t.string   "type"
+    t.integer  "attachment_width"
+    t.integer  "attachment_height"
+    t.integer  "attachment_file_size"
+    t.integer  "position"
+    t.string   "attachment_content_type"
+    t.string   "attachment_file_name"
+    t.datetime "attachment_updated_at"
+    t.text     "alt"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "categories", force: :cascade do |t|
+    t.integer "parent_id"
+    t.integer "menu_id"
+    t.string  "name"
+    t.string  "slug"
+    t.text    "description"
+    t.boolean "show_in_menu"
+    t.boolean "active"
+  end
+
+  create_table "charges", force: :cascade do |t|
+    t.integer "account_id"
+    t.integer "payment_plan_id"
+    t.integer "invoice_id"
+    t.float   "line_number"
+    t.float   "amount"
+    t.float   "quantity"
+    t.date    "from_date"
+    t.date    "to_date"
+    t.text    "description"
+  end
+
+  create_table "contacts", force: :cascade do |t|
+    t.integer "account_id"
+    t.integer "user_id"
+    t.string  "number"
+    t.string  "first_name"
+    t.string  "last_name"
+    t.string  "email"
+    t.string  "phone"
+  end
+
+  create_table "credit_cards", force: :cascade do |t|
+    t.integer "account_id"
+    t.string  "stripe_customer_id"
+    t.string  "stripe_card_id"
+    t.string  "expiration"
+  end
+
+  create_table "equipment", force: :cascade do |t|
+    t.integer "account_id"
+    t.integer "contact_id"
+    t.integer "payment_plan_id"
+    t.string  "number"
+    t.string  "serial"
+    t.string  "make"
+    t.string  "model"
+  end
+
+  create_table "invoice_payment_applications", force: :cascade do |t|
+    t.integer "payment_id"
+    t.integer "invoice_id"
+  end
+
+  add_index "invoice_payment_applications", ["invoice_id"], name: "index_invoice_payment_applications_on_invoice_id"
+  add_index "invoice_payment_applications", ["payment_id"], name: "index_invoice_payment_applications_on_payment_id"
+
+  create_table "invoices", force: :cascade do |t|
+    t.integer "account_id"
+    t.text    "number"
+    t.date    "date"
+    t.float   "total"
+  end
+
+  create_table "item_types", force: :cascade do |t|
+    t.string "name"
+    t.text   "description"
+  end
+
+  create_table "item_vendor_prices", force: :cascade do |t|
+    t.integer  "item_id"
+    t.integer  "vendor_id"
+    t.float    "price"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "items", force: :cascade do |t|
+    t.integer  "item_type_id"
+    t.integer  "category_id"
+    t.integer  "model_id"
+    t.boolean  "is_serialized"
+    t.string   "number",        null: false
+    t.string   "name"
+    t.string   "slug"
+    t.text     "description"
+    t.float    "price"
+    t.float    "sale_price"
+    t.float    "cost_price"
+    t.float    "weight"
+    t.float    "height"
+    t.float    "width"
+    t.float    "length"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
+
+  create_table "meter_groups", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "meter_readings", force: :cascade do |t|
+    t.integer "meter_id"
+    t.float   "display"
+    t.string  "source"
+    t.boolean "is_valid"
+    t.boolean "is_estimate"
+  end
+
+  create_table "meters", force: :cascade do |t|
+    t.integer "equipment_id"
+    t.string  "meter_type"
+  end
+
+  create_table "order_line_items", force: :cascade do |t|
+    t.integer  "order_id"
+    t.integer  "order_line_number"
+    t.integer  "item_id"
+    t.float    "quantity"
+    t.float    "price"
+    t.float    "discount"
+    t.text     "description"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+  end
+
+  create_table "order_shipping_methods", force: :cascade do |t|
+    t.integer  "order_id"
+    t.integer  "shipping_method_id"
+    t.float    "amount"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "orders", force: :cascade do |t|
+    t.string   "number"
+    t.integer  "account_id"
+    t.integer  "contact_id"
+    t.integer  "sales_rep_id"
+    t.datetime "date"
+    t.datetime "due_date"
+    t.datetime "completed_at"
+    t.boolean  "canceled"
+    t.boolean  "locked"
+    t.string   "po_number"
+    t.string   "ship_to_account_name"
+    t.string   "ship_to_address_1"
+    t.string   "ship_to_address_2"
+    t.string   "ship_to_attention"
+    t.string   "ship_to_city"
+    t.string   "ship_to_state"
+    t.string   "ship_to_zip"
+    t.string   "ship_to_phone"
+    t.string   "bill_to_account_name"
+    t.string   "bill_to_address_1"
+    t.string   "bill_to_address_2"
+    t.string   "bill_to_attention"
+    t.string   "bill_to_city"
+    t.string   "bill_to_state"
+    t.string   "bill_to_zip"
+    t.string   "bill_to_phone"
+    t.text     "notes"
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+  end
+
+  create_table "payment_methods", force: :cascade do |t|
+    t.string  "name"
+    t.boolean "active"
+  end
+
+  create_table "payment_plan_templates", force: :cascade do |t|
+    t.text  "name"
+    t.float "amount"
+  end
+
+  create_table "payment_plans", force: :cascade do |t|
+    t.text    "name"
+    t.integer "account_id"
+    t.integer "payment_plan_template_id"
+    t.date    "billing_start"
+    t.date    "billing_end"
+    t.date    "last_billing_date"
+    t.float   "amount"
+  end
+
+  create_table "payments", force: :cascade do |t|
+    t.integer "account_id"
+    t.integer "payment_method_id"
+    t.integer "credit_card_id"
+    t.float   "amount"
+    t.string  "stripe_charge_id"
+  end
+
+  create_table "reciepts", force: :cascade do |t|
+    t.integer "payment_plan_id"
+    t.date    "from_date"
+    t.text    "to_date"
+    t.float   "amount"
+  end
+
+  create_table "shipping_calculators", force: :cascade do |t|
+    t.string "name"
+    t.text   "description"
+    t.string "calculation_method"
+    t.string "calculation_amount"
+  end
+
+  create_table "shipping_methods", force: :cascade do |t|
+    t.integer "shipping_calculator_id"
+    t.string  "name"
+    t.float   "rate"
+    t.text    "description"
+    t.boolean "active"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string   "email",                  default: "", null: false
+    t.string   "encrypted_password",     default: "", null: false
+    t.string   "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer  "sign_in_count",          default: 0,  null: false
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string   "current_sign_in_ip"
+    t.string   "last_sign_in_ip"
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+  end
+
+  add_index "users", ["email"], name: "index_users_on_email", unique: true
+  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+
+  create_table "vendors", force: :cascade do |t|
+    t.string   "number"
+    t.integer  "account_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+end

@@ -1,0 +1,32 @@
+<div class="widget panel">
+	
+	<div class="panel-body">
+		
+		<table class="table">
+			<thead>
+				<tr>
+					<th span="20" class="text-left"><strong>Number</strong></th>
+					<th span="20" class="text-left"><strong>Date</strong></th>
+					<th span="10" class="text-left"><strong>Amount</strong></th>
+					<th span="5" class="text-right"><strong>&nbsp;</strong></th>
+				</tr>
+			</thead>
+			<tbody>
+				<% @account.invoices.each do |inv| %>
+				<tr>
+					<td class="text-left"><%= inv.number %></td>
+					<td class="text-left"><%= number_to_currency(inv.sum) %></td>
+					<td class="text-left"><%= inv.date.strftime("%m/%d/%Y") %></td>
+					<td class="text-right"><%= link_to invoice_path(inv.id) do %><i class="fa fa-search"></i><% end %></td>
+				</tr>
+				<% end %>
+			</tbody>
+		</table>
+		
+	</div>
+	
+	<div class="panel-footer">
+		<%= link_to "New Invoice", new_account_invoice_path(account_id: @account.id), class: "btn btn-warning"%>
+	</div>
+	
+</div>

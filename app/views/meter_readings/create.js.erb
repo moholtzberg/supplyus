@@ -1,0 +1,6 @@
+<% unless @meter_reading.errors.any? %>
+	$("#equipment").html("<%= j render :partial => 'home/equipment.html', :format => 'html' %>")
+	$('#myModal').modal("hide")
+<% else %>
+	$(".modal-content").html("<%= j render :template => 'meter_readings/new.html', :format => 'html' %>")
+<% end %>

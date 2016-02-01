@@ -1,0 +1,60 @@
+<table class="table table-bordered table-condensed table-striped table-hover table-responsive">
+	
+	
+	<thead>
+		
+		<th>
+			
+			<td>Item</td>
+			<td>Qty.</td>
+			<td>Price</td>
+			<td>Subtotal</td>
+			<td>&nbsp;</td>
+			
+		</th>
+		
+	</thead>
+	
+	<tbody id="line_items">
+		
+		<% @order.order_line_items.each do |ol| %>
+		
+		<tr class="line_item">
+			
+			<td>
+				<%= ol.order_line_number %>
+			</td>
+			
+			<td>
+				<%= ol.item.number %>
+			</td>
+			<td>
+				<%= ol.quantity.round %>
+			</td>
+			
+			<td>
+				<%= number_to_currency(ol.price) %>
+			</td>
+			
+			<td>
+				<%= number_to_currency(ol.sub_total) %>
+			</td>
+			
+			<td span="10%" class="text-right">
+				<%= link_to order_line_item_path(ol.id), :method => :delete, :remote => true do %><i class="fa fa-trash"></i><% end %>
+			</td>
+			
+		</tr>
+		
+		<% end %>
+		
+	</tbody>
+	
+	<tfooter>
+		<tr>
+			<td colspan="4">Subtotal</td>
+			<td colspan="2"><%= number_to_currency(@order.sub_total) %></td>
+		</tr>
+	</tfooter>
+		
+</table>

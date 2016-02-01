@@ -1,0 +1,6 @@
+<% content_for :title do %>Search results: <%= params[:keywords] %><% end %>
+<% @items.each do |i| %>
+	
+	<%= render :partial => "item_listing", :locals => {:item => i} %>
+	
+<% end %>

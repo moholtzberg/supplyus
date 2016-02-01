@@ -1,0 +1,62 @@
+<div class="col-md-5">
+	
+	<div class="col-md-12">
+
+		<div class="widget panel">
+			
+			<div class="panel-body">
+				<% if !@account.name.nil? %><%= @account.name %><% end %>
+				<% if !@account.address_1.nil? %><br/><%= @account.address_1 %><% end %>
+				<% if !@account.address_2.nil? %><br/><%= @account.address_2 %><% end %>
+				<%= @account.city %>, <%= @account.state %> <%= @account.zip %><br/>
+				<% if !@account.phone.nil? %><br/><%= number_to_phone(@account.phone) %><% end %>
+				<% if !@account.fax.nil? %><br/><%= number_to_phone(@account.fax) %><% end %>
+				<hr/>
+				<% if !@account.stripe_customer_id.nil? %><%= @account.stripe_customer_id %><% end %>
+			</div>
+		</div>
+	</div>
+	
+	<div id="contacts" class="col-md-12">
+		<%= render :partial => "home/contacts", :locals => {:account => @account} %>
+	</div>
+	
+	<div id="credit_cards" class="col-md-12">
+		<%= render :partial => "home/credit_cards", :locals => {:account => @account} %>
+	</div>
+	
+</div>
+
+<div class="col-md-7">
+	
+	<div id="payment_plans" class="col-md-12">
+		<%= render :partial => "home/payment_plans", :locals => {:account => @account} %>
+	</div>
+	
+	<div id="equipment" class="col-md-12">
+		<%= render :partial => "home/equipment", :locals => {:account => @account} %>
+	</div>
+	
+	<div id="invoices" class="col-md-12">
+		<%= render :partial => "home/invoices", :locals => {:account => @account} %>
+	</div>
+	
+</div>
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div>
+
+<div id="confirmModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+		
+		</div>
+	</div>
+</div>		
+
+<%= javascript_include_tag "https://js.stripe.com/v2/" %>
