@@ -7,13 +7,13 @@ class Item < ActiveRecord::Base
   scope :search, -> (keywords) { where("number like ? or name like ? or description like ?", "%#{keywords}%", "%#{keywords}%", "%#{keywords}%")}
   
   def actual_price(account_id={})
-    if account_id
-      unless AccountItemPrice.by_account(account_id).by_item(id).blank?      
-        AccountItemPrice.by_account(account_id).by_item(id).last.price
+    unless account_id.blank?
+      unless self.account_item_prices.by_account(account_id).blank? 
+        return self.account_item_prices.by_account(account_id).last.price
       else
-        price
+        return price
       end
-      price
+      return price
     end
   end
   

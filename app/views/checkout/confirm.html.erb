@@ -1,49 +1,68 @@
-<ul>
-	<li>Cart Items
-		<ul>
-			<% @cart.contents.each do |stuff| %>
-			<li><%= stuff.item.name %> <%= stuff.quantity %> <%= stuff.price %> <%= stuff.sub_total %></li>
-			<% end %>
-		</ul>
-	</li>
-	<li>Shipping Address
-		<ul>
-			<li><%= @cart.ship_to_account_name %></li>
-			<% unless @cart.ship_to_attention.blank? %><li><%= @cart.ship_to_attention %></li><% end %>
-			<li><%= @cart.ship_to_address_1 %></li>
-			<% unless @cart.ship_to_address_2.blank? %><li><%= @cart.ship_to_address_2 %></li><% end %>
-			<li><%= @cart.ship_to_city %>, <%= @cart.ship_to_state %> <%= @cart.ship_to_zip %></li>
-			<li><%= @cart.ship_to_phone %></li>
-		</ul>
-	</li>
-	<li>Billing Address
-		<ul>
-			<li><%= @cart.bill_to_account_name %></li>
-			<% unless @cart.bill_to_attention.blank? %><li><%= @cart.bill_to_attention %></li><% end %>
-			<li><%= @cart.bill_to_address_1 %></li>
-			<% unless @cart.bill_to_address_2.blank? %><li><%= @cart.bill_to_address_2 %></li><% end %>
-			<li><%= @cart.bill_to_city %>, <%= @cart.bill_to_state %> <%= @cart.bill_to_zip %></li>
-			<li><%= @cart.bill_to_phone %></li>
-		</ul>
-	</li>
+<table class="table table-bordered">
 	
-	<li>Shipping
-		<ul>
-			<li><%= @checkout.order_shipping_method.name %> <%= number_to_currency(@checkout.order_shipping_method.amount) %>
-		</ul>
-	</li>
+	<tr>
+		<th width="5%" class="text-center"></th>
+		<th>Item Name/Description</th>
+		<th width="10%" class="text-center">Quantity</th>
+		<th width="10%" class="text-center">Price</th>
+		<th width="10%" class="text-center">Subtotal</th>
+	</tr>
 	
-	<li>
-		<ul>
-			<% if current_user.has_account %>
-				Net 30
-			<% else %>
-				Credit Card
-			<% end %>
-		</ul>
-	</li>
-	<%= form_for @checkout, :url => checkout_complete_path, :method => :patch do |f| %>
-		<%= f.submit "Place Order", :class => "btn btn-primary"%>
+	<% @cart.contents.active.each_with_index do |li, idx| %>
+	<tr>
+		<td class="text-center"><%= li.order_line_number %></td>
+		<td><%= li.item.name %></td>
+		<td class="text-center">
+			<%= li.quantity.to_i %>
+		</td>
+		<td class="text-center"><%= number_to_currency(li.price) %></td>
+		<td class="text-center"><%= number_to_currency(li.sub_total) %></td>
+	<tr>
 	<% end %>
 	
-</ul>
+	<tr>
+		<td colspan="3">Sub Total</td>
+		<td colspan="2" class="text-center"><strong><%= number_to_currency(@cart.sub_total) %></strong></td>
+	</tr>
+	<tr>
+		<td colspan="3"><%= @checkout.order_shipping_method.name %> - Shipping</td>
+		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@checkout.order_shipping_method.amount) %></strong></td>
+	</tr>
+	<tr>
+		<td colspan="3">Order Total</td>
+		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@checkout.order_shipping_method.amount + @checkout.sub_total) %></strong></td>
+	</tr>
+</table>
+
+<table class="table table-bordered">
+	<tr>
+		<th width="50%">Shipping Address</th>
+		<th width="50%">Billing Address</th>
+	</tr>
+	<tr>
+		<td>
+			<%= @cart.ship_to_account_name %><br/>
+			<% unless @cart.ship_to_attention.blank? %><%= @cart.ship_to_attention %><br/><% end %>
+			<%= @cart.ship_to_address_1 %><br/>
+			<% unless @cart.ship_to_address_2.blank? %><%= @cart.ship_to_address_2 %><br/><% end %>
+			<%= @cart.ship_to_city %>, <%= @cart.ship_to_state %> <%= @cart.ship_to_zip %><br/>
+			<%= @cart.ship_to_phone %>
+		</td>
+		<td>
+			<%= @cart.bill_to_account_name %><br/>
+			<% unless @cart.bill_to_attention.blank? %><%= @cart.bill_to_attention %><br/><% end %>
+			<%= @cart.bill_to_address_1 %><br/>
+			<% unless @cart.bill_to_address_2.blank? %><%= @cart.bill_to_address_2 %><br/><% end %>
+			<%= @cart.bill_to_city %>, <%= @cart.bill_to_state %> <%= @cart.bill_to_zip %><br/>
+			<%= @cart.bill_to_phone %>
+		</td>
+	</tr>
+</table>
+	
+<table class="table table-bordered">
+	<tr>
+		<%= form_for @checkout, :url => checkout_complete_path, :method => :patch do |f| %>
+		<td colspan="2"><%= f.submit "Place Order", :class => "btn btn-primary pull-right"%></td>
+		<% end %>
+	</tr>
+</table>

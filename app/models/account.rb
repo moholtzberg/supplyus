@@ -9,7 +9,7 @@ class Account < ActiveRecord::Base
   #   %w(Customer Vendor)
   # end
   
-  has_many :users
+  belongs_to :users
   has_many :contacts
   has_many :equipment, :class_name => "Equipment"
   has_many :charges
@@ -20,10 +20,10 @@ class Account < ActiveRecord::Base
   has_many :orders
   
   validates :name, :presence => true
-  validates :address_1, :presence => true
-  validates :city, :presence => true
-  validates :state, :presence => true
-  validates :zip, :presence => true
+  validates :ship_to_address_1, :presence => true
+  validates :ship_to_city, :presence => true
+  validates :ship_to_state, :presence => true
+  validates :ship_to_zip, :presence => true
   # before_create :set_billing_start_and_day
   # after_create  :set_up_payment_plans
   

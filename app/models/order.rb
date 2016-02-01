@@ -3,6 +3,7 @@ class Order < ActiveRecord::Base
   include ApplicationHelper
   
   has_many :order_line_items
+  has_many :order_shipping_methods
   belongs_to :account
   has_many :items, :through => :order_line_items
   
@@ -15,6 +16,16 @@ class Order < ActiveRecord::Base
     total = 0
     order_line_items.each {|ol| total += ol.sub_total}
     total
+  end
+  
+  def shipping_total
+    total = 0
+    order_shipping_methods.each {|os| total += os.amount}
+    total
+  end
+  
+  def total
+    sub_total + shipping_total
   end
   
   # def make_subtotal
