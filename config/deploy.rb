@@ -1,6 +1,6 @@
 set :user, "rails"
 set :use_sudo, false
-set :application, "copiersflorida"
+# set :application, "twenty-four-seven"
 set :repo_url, 'git@github.com:moholtzberg/recurring.git'
 set :branch, "master"
 set :deploy_to, "/home/rails/twenty_four_seven"
