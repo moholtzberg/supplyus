@@ -33,6 +33,7 @@ class ItemImport
 
   def load_imported_products
     spreadsheet = open_spreadsheet
+    # spreadsheet.encode!("utf-8", "utf-8", :invalid => :replace)
     header = spreadsheet.row(1)
     (2..spreadsheet.last_row).map do |i|
       row = Hash[[header, spreadsheet.row(i)].transpose]
@@ -44,7 +45,7 @@ class ItemImport
 
   def open_spreadsheet
     case File.extname(file.original_filename)
-    when ".csv" then Roo::Spreadsheet.open(file.path)
+    when ".csv" then Roo::Spreadsheet.open(file.path, csv_options: {encoding: Encoding::ISO_8859_1})
     when ".xls" then Roo::Excel.new(file.path, nil, :ignore)
     when ".xlsx" then Roo::Excelx.new(file.path, nil, :ignore)
     else raise "Unknown file type: #{file.original_filename}"
