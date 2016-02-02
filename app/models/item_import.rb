@@ -13,6 +13,7 @@ class ItemImport
   end
 
   def save
+    imported_products.each {|im| puts "--MM #{im.inspect}"}
     if imported_products.map(&:valid?).all?
       imported_products.each(&:save!)
       true
@@ -31,19 +32,19 @@ class ItemImport
   end
 
   def load_imported_products
-    # spreadsheet = open_spreadsheet
+    spreadsheet = open_spreadsheet
     header = spreadsheet.row(1)
     (2..spreadsheet.last_row).map do |i|
       row = Hash[[header, spreadsheet.row(i)].transpose]
       product = Item.find_by_id(row["id"]) || Item.new
-      product.attributes = row.to_hash.slice(*Item.accessible_attributes)
+      product.attributes = row.to_hash.slice(*Item.attribute_names())
       product
     end
   end
 
   def open_spreadsheet
     case File.extname(file.original_filename)
-    when ".csv" then Roo::Csv.new(file.path, nil, :ignore)
+    when ".csv" then Roo::Spreadsheet.open(file.path)
     when ".xls" then Roo::Excel.new(file.path, nil, :ignore)
     when ".xlsx" then Roo::Excelx.new(file.path, nil, :ignore)
     else raise "Unknown file type: #{file.original_filename}"

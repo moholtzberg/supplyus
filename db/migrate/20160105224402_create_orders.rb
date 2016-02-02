@@ -11,6 +11,7 @@ class CreateOrders < ActiveRecord::Migration
       t.boolean :canceled
       t.boolean :locked
       t.string :po_number
+      t.string :ip_address
       t.string :ship_to_account_name
       t.string :ship_to_address_1
       t.string :ship_to_address_2

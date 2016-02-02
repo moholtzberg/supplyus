@@ -27,6 +27,8 @@ class ShopController < ApplicationController
   def add_to_cart
     i = Item.find_by(:id => params[:cart][:item_id])
     c = Cart.find_or_create_by(:id => session[:cart_id])
+    c.ip_address = request.remote_ip
+    c.save
     line = c.contents.by_item(i.id)
     unless line.blank?
       qty = line.first.quantity.to_f + params[:cart][:quantity].to_f

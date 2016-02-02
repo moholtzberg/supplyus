@@ -31,7 +31,7 @@ class ItemsController < ApplicationController
     end
     @items = Item.all
   end
-
+  
   private
 
   def registration_params
