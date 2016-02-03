@@ -37,3 +37,5 @@ en:
   forgot_password: "Forgot Password"
   reset_password: "Reset Password"
   instructions_to_reset_password: "Passworld reset instructions"
+  active: "Active"
+  preferred: "Preferred"

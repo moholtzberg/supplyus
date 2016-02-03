@@ -1,4 +1,3 @@
-<hr/>
 <div id=item_"<%= i.id %>" class="media item_listing">
 	<div class="col-md-9">
 		<div class="media-left">
@@ -7,8 +6,12 @@
 			</a>
 		</div>
 		<div class="media-body">
-			<h4 class="media-heading"><%= link_to "#{i.number} - #{i.name}", "#{i.category.slug}/#{i.slug}" %></h4>
-			<%= i.description %>
+			<h4 class="media-heading"><%= "#{i.number} - #{i.name}" %></h4>
+			<p><%= i.description %></p>
+			<p>
+				<% unless i.category.nil? %><span class="label label-info"><%= i.category.name %></span><% end %>
+				<% unless i.brand.nil? %><span class="label label-warning"><%= i.brand.name %></span><% end %>
+			</p>
 		</div>
 	</div>
 	

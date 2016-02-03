@@ -35,6 +35,7 @@ Rails.application.routes.draw do
       resources :payments
       resources :charges
       resources :invoices
+      resources :brands
       resources :credit_cards
       resources :vendors
       get "equipment/delete/:id" => "equipment#delete"

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160131061838) do
+ActiveRecord::Schema.define(version: 20160203161627) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -56,6 +56,14 @@ ActiveRecord::Schema.define(version: 20160131061838) do
     t.string   "attachment_file_name"
     t.datetime "attachment_updated_at"
     t.text     "alt"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "brands", force: :cascade do |t|
+    t.string   "name"
+    t.boolean  "active"
+    t.boolean  "preferred"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -155,6 +163,7 @@ ActiveRecord::Schema.define(version: 20160131061838) do
     t.float    "length"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
+    t.integer  "brand_id"
   end
 
   create_table "meter_groups", force: :cascade do |t|

@@ -3,6 +3,7 @@ class Item < ActiveRecord::Base
   has_many :account_item_prices
   has_many :images
   belongs_to :category
+  belongs_to :brand
   
   validates_uniqueness_of :number
   # validates_uniqueness_of :slug

@@ -1,0 +1,22 @@
+<fieldset>	
+			
+	<div id="name" class="col-md-12">
+		<%= f.label :name, :class => "control-label" %>
+		<%= f.text_field :name, :class => "form-control" %>
+	</div>
+	
+	<div class="checkbox col-md-12">
+		<label>
+			<%= f.check_box :active %>
+			<%= f.label :active, I18n.t(:active) %>
+		</label>
+	</div>
+	
+	<div class="checkbox col-md-12">
+		<label>
+			<%= f.check_box :preferred %>
+			<%= f.label :preferred, I18n.t(:preferred) %>
+		</label>
+	</div>
+	
+</fieldset>

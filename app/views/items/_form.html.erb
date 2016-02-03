@@ -10,6 +10,14 @@
 		<%= f.text_field :description, :class => "form-control" %>
 	</div>
 	
+	<div id="brand" class="col-md-12">
+		<%= f.select :brand_id, @brands.collect {|p| [p.name, p.id]}, {:include_blank => "Select Brand"}, {:class => "form-control"} %>
+	</div>
+	
+	<div id="category" class="col-md-12">
+		<%= f.select :category_id, @categories.collect {|p| [p.name, p.id]}, {:include_blank => "Select Category"}, {:class => "form-control"} %>
+	</div>
+	
 	<div id="price" class="col-md-4">
 		<%= f.label :price, :class => "control-label" %>
 		<%= f.text_field :price, :class => "form-control" %>
