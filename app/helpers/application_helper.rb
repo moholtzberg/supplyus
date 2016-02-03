@@ -13,7 +13,7 @@ module ApplicationHelper
   end
   
   def make_record_number
-    puts "WE MAKING A NUMBER"
+    puts "WE MAKING A NUMBER #{self.class}"
     if number.blank?
       puts "NUMBER IS NIL"
       last_record = self.class.last

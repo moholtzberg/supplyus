@@ -12,6 +12,7 @@
 				<th>Sub Total</th>
 				<th>Shipped</th>
 				<th>Fulfilled</th>
+				<th>IP Address</th>
 				<th>&nbsp;</th>
 			</tr>
 			
@@ -23,6 +24,7 @@
 				<td><%= number_to_currency(a.sub_total) %><%# number_to_currency(a.sum) unless a.sum.nil? %></td>
 				<td><%# a.paid ? "Yes" : "No" %></td>
 				<td><%# number_to_currency(a.balance_due) %></td>
+				<td><%= a.ip_address %></td>
 				<td class="text-right">
 				
 					<div class="dropdown">

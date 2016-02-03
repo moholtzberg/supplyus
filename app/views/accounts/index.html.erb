@@ -12,30 +12,24 @@
 
 			<tr>
 				<td>ID</td>
-				<td>Stripe Customer ID</td>
 				<td>Name</td>
 				<td>Address 1</td>
-				<td>Address 2</td>
 				<td>City</td>
 				<td>State</td>
 				<td>Zip</td>
 				<td>Phone</td>
-				<td>Fax</td>
 				<td>&nbsp;</td>
 			</tr>
 
 			<% @accounts.each do |a| %>
 			<tr>
 				<td><%= a.id %></td>
-				<td><%= a.stripe_customer_id%></td>
 				<td><%= a.name %></td>
-				<td><%= a.address_1 %></td>
-				<td><%= a.address_2 %></td>
-				<td><%= a.city %></td>
-				<td><%= a.state %></td>
-				<td><%= a.zip %></td>
-				<td><%= number_to_phone(a.phone) %></td>
-				<td><%= number_to_phone(a.fax) %></td>
+				<td><%= a.ship_to_address_1 %></td>
+				<td><%= a.ship_to_city %></td>
+				<td><%= a.ship_to_state %></td>
+				<td><%= a.ship_to_zip %></td>
+				<td><%= number_to_phone(a.ship_to_phone) %></td>
 				<td><%= link_to(account_path(a.id), :class => "btn btn-info btn-xs") do %><span class="glyphicon glyphicon-search"></span><% end %></td>
 			</tr>
 			<% end %>

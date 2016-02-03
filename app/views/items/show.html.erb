@@ -1,0 +1,25 @@
+<div id="accounts" class="col-md-12">
+	
+	<div class="widget panel">
+		
+		<table class="table">
+	
+			<tr>
+				<th>Account</th>
+				<th>Item</th>
+				<th>Price</th>
+			</tr>
+			
+			<% @item.account_item_prices.each do |it| %>
+			<tr>
+				<td><%= it.account.number %> / <%= it.account.name %></td>
+				<td><%= it.item.number %> - <%= link_to it.item.name, it.item.slug %></td>
+				<td><%= (it.price == it.item.actual_price(it.account_id)) ? it.item.actual_price(it.account_id) : 'NULL' %></td>
+			</tr>
+			<% end %>
+			
+		</table>
+			
+	</div>
+	
+</div>
