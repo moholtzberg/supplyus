@@ -5,11 +5,11 @@ class Item < ActiveRecord::Base
   belongs_to :category
   
   validates_uniqueness_of :number
-  validates_uniqueness_of :slug
+  # validates_uniqueness_of :slug
   
   before_validation :slugger
   
-  scope :search, -> (keywords) { where("number like ? or name like ? or description like ?", "%#{keywords}%", "%#{keywords}%", "%#{keywords}%")}
+  scope :search, -> (word) { where("lower(number) like ? or lower(name) like ? or lower(description) like ?", "%#{word.downcase}%", "%#{word.downcase}%", "%#{word.downcase}%")}
   
   def actual_price(account_id={})
     unless account_id.blank?
@@ -32,8 +32,6 @@ class Item < ActiveRecord::Base
     puts "we slugging it out"
     if self.slug.nil?
       puts "NO SLUG"
-      puts "---> #{self.slug}"
-      puts "---> #{self.name}"
       self.slug = name.downcase.tr(" ", "-") unless self.name.nil?
       puts "---> #{self.inspect}"
     else
