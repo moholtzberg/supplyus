@@ -10,4 +10,6 @@ class AccountItemPrice < ActiveRecord::Base
   scope :by_account, -> (account_id) { where(account_id: account_id)}
   scope :by_item, -> (item_id) { where(item_id: item_id)}
   
+  scope :order_by_item, -> () { order(:item_id => :asc)}
+  
 end

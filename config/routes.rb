@@ -25,6 +25,7 @@ Rails.application.routes.draw do
       resources :order_line_items
       resources :items
       resources :item_imports
+      resources :account_item_price_imports
       resources :meters
       resources :meter_readings
       resources :contacts

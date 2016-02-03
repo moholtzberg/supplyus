@@ -1,4 +1,4 @@
-class ItemImport
+class AccountItemPriceImport
   # switch to ActiveModel::Model in Rails 4
   include ActiveModel::Model
 
@@ -13,6 +13,7 @@ class ItemImport
   end
 
   def save
+    imported_products.each {|im| puts "--MM #{im.inspect}"}
     if imported_products.map(&:valid?).all?
       imported_products.each(&:save!)
       true
@@ -33,23 +34,28 @@ class ItemImport
   def load_imported_products
     spreadsheet = open_spreadsheet
     header = spreadsheet.row(1)
-    (2..spreadsheet.last_row).map do |i|
+    (2..spreadsheet.last_row).each_row do |i|
       row = Hash[[header, spreadsheet.row(i)].transpose]
-      unless Item.find_by(:number => row["number"])
-        product = Item.new
-        product.attributes = row.to_hash.slice(*Item.attribute_names())
-        puts "#{i}----> #{product.valid?}"
-      else
-        product = Item.find_by(:number => row["number"])
+      # product = AccountItemPrice.find_by_id(row["id"])
+      if Item.find_by(:number => row["item_number"])
+        item = Item.find_by(:number => row["item_number"])
+        product = AccountItemPrice.by_item(item.id).by_account(row["account_id"]).first
+        if product.nil?
+          product = AccountItemPrice.new
+        end
         id = product.id
-        product.attributes = row.to_hash.slice(*Item.attribute_names())
-        product.id = id
-        puts "#{i}----> #{product.valid?}"
-        puts "y----> #{product.inspect}"
-        # product.slug = product.number
-        #puts "#{i}----> #{product.inspect}"
+        attributes = row.to_hash.slice(*AccountItemPrice.attribute_names())
+        product.id = id unless id.nil?
+        product.account_id = attributes["account_id"]
+        product.item_id = item.id
+        product.price = attributes["price"]
+        product
+      else
+        product = AccountItemPrice.new(:account_id => row["account_id"], :price => row["price"])
+        errors.add(:item, "#{row["item_number"]} cannot be not be found")
+        product
       end
-      product
+      
     end
   end
 
