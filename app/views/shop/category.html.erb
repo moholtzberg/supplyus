@@ -10,7 +10,9 @@
 </ul>
 <% end %>
 
-<% @category.items.each do |i| %>
+<% @items.each do |i| %>
 	<%= render :partial => "shop/item", :locals => {:i => i} %>
 	<%# link_to "#{i.name}", "#{@category.slug}/#{i.slug}" %><br/>
 <% end %>
+
+<%= will_paginate @items, renderer: BootstrapPagination::Rails %>

@@ -11,6 +11,9 @@ class Item < ActiveRecord::Base
   
   scope :search, -> (word) { where("lower(number) like ? or lower(name) like ? or lower(description) like ?", "%#{word.downcase}%", "%#{word.downcase}%", "%#{word.downcase}%")}
   
+  
+  self.per_page = 10
+  
   def actual_price(account_id={})
     unless account_id.blank?
       unless self.account_item_prices.by_account(account_id).blank? 

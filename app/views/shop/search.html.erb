@@ -4,3 +4,5 @@
 	<%= render :partial => "item", :locals => {:i => i} %>
 	
 <% end %>
+
+<%= will_paginate @items, renderer: BootstrapPagination::Rails %>

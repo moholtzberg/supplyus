@@ -40,6 +40,7 @@ gem 'font-awesome-sass'
 
 gem 'devise'
 gem 'roo'
+gem 'will_paginate-bootstrap'
 
 gem 'sidekiq'
 gem 'shrimp'

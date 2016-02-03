@@ -12,6 +12,7 @@ class ShopController < ApplicationController
   
   def category
     @category = Category.find_by(:slug => params[:category])
+    @items = Item.where(:category_id => @category.id).paginate(:page => params[:page])
   end
   
   def item
@@ -22,6 +23,7 @@ class ShopController < ApplicationController
   def search
     @items = Item.where(nil)
     @items = @items.search(params[:keywords]) if params[:keywords].present?
+    @items = @items.paginate(:page => params[:page])
   end
   
   def add_to_cart
