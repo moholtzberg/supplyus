@@ -62,6 +62,10 @@ class ShopController < ApplicationController
     
   end
   
+  def view_order
+    @order = Order.find_by(:number => params[:order_number])
+  end
+  
   def edit_account
     @account = current_user.account
   end

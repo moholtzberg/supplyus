@@ -58,6 +58,7 @@ Rails.application.routes.draw do
   patch "/add_to_cart" => "shop#add_to_cart"
   post  "/update_cart" => "shop#update_cart"
   patch "/update_cart" => "shop#update_cart"
+  get "/my_account/:order_number" => "shop#view_order"
   get "/my_account" => "shop#my_account"
   get "/edit_account" => "shop#edit_account"
   get "/cart" => "shop#cart"

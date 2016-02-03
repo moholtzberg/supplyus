@@ -71,7 +71,7 @@ class CheckoutController < ApplicationController
     if c.save
       if c.complete
         session[:cart_id] = nil
-        redirect_to "/"
+        redirect_to my_account_path
       end
       
     end
