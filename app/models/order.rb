@@ -2,8 +2,12 @@ class Order < ActiveRecord::Base
   
   include ApplicationHelper
   
+  #default_scope { self.open }
+  
+  scope :locked, -> () { where(:locked => true) }
+  scope :has_account, -> () { where(:account_id => !nil) }
   has_many :order_line_items
-  has_many :order_shipping_methods
+  has_many :order_shipping_methods, :foreign_key => :order_id
   belongs_to :account
   has_many :items, :through => :order_line_items
   
@@ -12,15 +16,23 @@ class Order < ActiveRecord::Base
   before_save :make_record_number
   # before_save :make_total
   
+  def self.open
+    Order.all.select { |o| o.has_line_items }
+  end
+  
+  def has_line_items
+    order_line_items.count >= 1
+  end
+  
   def sub_total
     total = 0
-    order_line_items.each {|ol| total += ol.sub_total}
+    order_line_items.find_each {|ol| total += ol.sub_total}
     total
   end
   
   def shipping_total
     total = 0
-    order_shipping_methods.each {|os| total += os.amount}
+    order_shipping_methods.find_each {|os| total += os.amount}
     total
   end
   

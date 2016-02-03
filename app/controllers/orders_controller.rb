@@ -2,7 +2,7 @@ class OrdersController < ApplicationController
   layout "admin"
   
   def index
-    @orders = Order.all
+    @orders = Order.open
   end
   
   def new
