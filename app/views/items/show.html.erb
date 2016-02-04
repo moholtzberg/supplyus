@@ -12,8 +12,8 @@
 			
 			<% @item.account_item_prices.each do |it| %>
 			<tr>
-				<td><%= it.account.number %> / <%= it.account.name %></td>
-				<td><%= it.item.number %> - <%= link_to it.item.name, it.item.slug %></td>
+				<td><%= it.account.name %></td>
+				<td><%= it.item.number %> - <%= link_to it.item.name, item_path(it) %></td>
 				<td><%= (it.price == it.item.actual_price(it.account_id)) ? it.item.actual_price(it.account_id) : 'NULL' %></td>
 			</tr>
 			<% end %>

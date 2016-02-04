@@ -9,7 +9,7 @@ class Order < ActiveRecord::Base
   scope :has_account, -> () { where(:account_id => !nil) }
   scope :no_account, -> () { where(:account_id => !nil) }
   has_many :order_line_items
-  has_many :order_shipping_methods, :foreign_key => :order_id
+  has_one :order_shipping_method
   belongs_to :account
   has_many :items, :through => :order_line_items
   
@@ -41,9 +41,7 @@ class Order < ActiveRecord::Base
   end
   
   def shipping_total
-    total = 0
-    order_shipping_methods.find_each {|os| total += os.amount}
-    total
+    order_shipping_method.amount unless order_shipping_method.nil?
   end
   
   def total
