@@ -5,7 +5,7 @@
 		<%= f.hidden_field :order_id, :value => @order.id %>
 
 		<td colspan="2">
-			<%= f.select :item_id, @items.collect {|m| ["#{m.number} - #{m.description}", m.id, :price => m.price]}, {:include_blank => "Select Item"},:class => "form-control" %>
+			<%= f.select :item_id, @items.collect {|m| ["#{m.number} - #{m.description}", m.id, :price => m.actual_price(@order.account_id)]}, {:include_blank => "Select Item"},:class => "form-control" %>
 		</td>
 		
 		<td>

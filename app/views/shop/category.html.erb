@@ -1,6 +1,8 @@
 <% content_for :title do %><%= @category.name %><% end %>
 
-<h1><%= @category.name %></h1>
+<div class="page-header">
+	<h1><%= @category.name %></h1>
+</div>
 
 <% if @category.children.count > 0 %>
 <ul class="nav nav-pills">
@@ -12,7 +14,6 @@
 
 <% @items.each do |i| %>
 	<%= render :partial => "shop/item", :locals => {:i => i} %>
-	<%# link_to "#{i.name}", "#{@category.slug}/#{i.slug}" %><br/>
 <% end %>
 
 <%= will_paginate @items, renderer: BootstrapPagination::Rails %>

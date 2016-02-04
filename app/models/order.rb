@@ -2,10 +2,12 @@ class Order < ActiveRecord::Base
   
   include ApplicationHelper
   
+  default_scope { order(:id) }
   #default_scope { self.open }
   
   scope :locked, -> () { where(:locked => true) }
   scope :has_account, -> () { where(:account_id => !nil) }
+  scope :no_account, -> () { where(:account_id => !nil) }
   has_many :order_line_items
   has_many :order_shipping_methods, :foreign_key => :order_id
   belongs_to :account
@@ -20,8 +22,16 @@ class Order < ActiveRecord::Base
     Order.all.select { |o| o.has_line_items }
   end
   
+  def self.empty
+    Order.all.select { |o| o.has_no_line_items }
+  end
+  
   def has_line_items
     order_line_items.count >= 1
+  end
+  
+  def has_no_line_items
+    order_line_items.count == 0
   end
   
   def sub_total

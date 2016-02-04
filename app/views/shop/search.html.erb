@@ -1,8 +1,16 @@
-<% content_for :title do %>Search results: <%= params[:keywords] %><% end %>
-<% @items.each do |i| %>
-	
-	<%= render :partial => "item", :locals => {:i => i} %>
-	
+<% content_for :title do %>Search Results: <%= params[:keywords] %><% end %>
+
+<div class="page-header">
+	<h1>Search Results: <%= params[:keywords] %></h1>
+</div>
+
+<% unless @items.nil? %>
+	<% @items.each do |i| %>
+		<%= render :partial => "item", :locals => {:i => i} %>
+	<% end %>
+<% else %>
+<p>Sorry, No items were found!</p>
 <% end %>
+	  
 
 <%= will_paginate @items, renderer: BootstrapPagination::Rails %>
