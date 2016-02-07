@@ -39,6 +39,9 @@ class ShopController < ApplicationController
       line.save
     else
       if current_user and !current_user.account.nil?
+        if current_user.has_account
+          cart.account_id = current_user.account.id
+        end
         c.contents.create(:item_id => params[:cart][:item_id], :quantity => params[:cart][:quantity], :price => i.actual_price(current_user.account.id))
       else
         c.contents.create(:item_id => params[:cart][:item_id], :quantity => params[:cart][:quantity], :price => i.price)
@@ -58,6 +61,14 @@ class ShopController < ApplicationController
   
   def cart
     @cart = Cart.find_by(:id => session[:cart_id])
+    if current_user && current_user.has_account
+      puts "PUT?z"
+      @cart.account_id = current_user.account.id
+      @cart.order_line_items.each do |c| 
+        c.price = c.item.actual_price(@cart.account_id)
+        c.save!
+      end
+    end
   end
   
   def my_account

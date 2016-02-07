@@ -19,7 +19,8 @@ class Order < ActiveRecord::Base
   # before_save :make_total
   
   def self.open
-    Order.all.select { |o| o.has_line_items }
+    Order.joins(:order_line_items).distinct(:order_id)
+    # Order.all.select { |o| o.has_line_items }
   end
   
   def self.empty
