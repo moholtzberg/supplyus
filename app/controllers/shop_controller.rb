@@ -40,7 +40,7 @@ class ShopController < ApplicationController
     else
       if current_user and !current_user.account.nil?
         if current_user.has_account
-          cart.account_id = current_user.account.id
+          c.account_id = current_user.account.id
         end
         c.contents.create(:item_id => params[:cart][:item_id], :quantity => params[:cart][:quantity], :price => i.actual_price(current_user.account.id))
       else
