@@ -46,7 +46,7 @@ class Order < ActiveRecord::Base
   end
   
   def total
-    sub_total + shipping_total
+    sub_total.to_f + shipping_total.to_f
   end
   
   # def make_subtotal

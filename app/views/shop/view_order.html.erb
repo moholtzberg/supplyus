@@ -55,6 +55,6 @@
 	</tr>
 	<tr>
 		<td colspan="3">Order Total</td>
-		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@order.shipping_total + @order.sub_total) %></strong></td>
+		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@order.shipping_total.to_f + @order.sub_total.to_f) %></strong></td>
 	</tr>
 </table>
