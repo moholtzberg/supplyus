@@ -22,6 +22,7 @@ class OrdersController < ApplicationController
   
   def show
     @order = Order.find(params[:id])
+    @shipments = Shipment.where(:order_id => @order.id)
   end
   
   def edit

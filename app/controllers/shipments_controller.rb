@@ -1,0 +1,27 @@
+class ShipmentsController < ApplicationController
+  layout "admin"
+  
+  def new
+    @shipment = Shipment.new(:order_id => params[:order_id])
+    @line_items = OrderLineItem.where(:order_id => params[:order_id])
+  end
+  
+  def create
+    shipment = Shipment.new(:date => Time.now, :order_id => params[:order_id])
+    
+    params[:lines].each do |line|
+      shipment.line_item_shipments.new(:order_line_item_id => line[1]["order_line_item_id"], :quantity_shipped => line[1]["quantity_ship_now"])
+    end
+    
+    params[:tracking_numbers].each do |tracking|
+      unless tracking[1]["number"].blank?
+        shipment.tracking_numbers.new(:number => tracking[1]["number"])
+      end
+    end
+    
+    if shipment.save
+      redirect_to order_path(params[:order_id])
+    end
+  end
+  
+end

@@ -21,7 +21,9 @@ Rails.application.routes.draw do
           resources :invoices
         end
       end
-      resources :orders
+      resources :orders do 
+        resources :shipments, :only => [:new, :create]
+      end
       resources :order_line_items
       resources :items
       resources :item_imports

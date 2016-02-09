@@ -9,7 +9,7 @@ class Account < ActiveRecord::Base
   #   %w(Customer Vendor)
   # end
   
-  belongs_to :users
+  belongs_to :user
   has_many :contacts
   has_many :equipment, :class_name => "Equipment"
   has_many :charges

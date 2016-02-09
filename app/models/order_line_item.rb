@@ -3,7 +3,7 @@ class OrderLineItem < ActiveRecord::Base
   belongs_to :order
   belongs_to :item
   belongs_to :cart, :class_name => :order, :foreign_key => :order_id
-  # before_save :make_subtotal
+  has_many :line_item_shipments
   
   scope :by_item, -> (item) { where(:item_id => item) }
   scope :active,  -> () { where(:quantity => 1..Float::INFINITY) }
@@ -30,9 +30,23 @@ class OrderLineItem < ActiveRecord::Base
   def sub_total
     quantity * price
   end
-
-  # def make_subtotal
-  #   self.sub_total = (self.price.to_f * self.quantity.to_f)
-  # end
+  
+  def shipped
+    if self.line_item_shipments
+      total = 0
+      self.line_item_shipments.each {|i| total = i.quantity_shipped }
+      total == quantity
+    else
+      false
+    end
+  end
+  
+  def quantity_shipped
+    if self.line_item_shipments
+      total = 0
+      self.line_item_shipments.each {|i| total = i.quantity_shipped }
+      total
+    end
+  end
   
 end

@@ -12,6 +12,7 @@
 				<th>Price</th>
 				<th>Cost Price</th>
 				<th>Serialized</th>
+				<th>Times Purchased</th>
 				<th>&nbsp;</th>
 			</tr>
 			
@@ -23,6 +24,7 @@
 				<td><%= number_to_currency(a.price) %></td>
 				<td><%= number_to_currency(a.cost_price) %></td>
 				<td><%= a.is_serialized ? "Yes" : "No" %></td>
+				<td><%= a.times_purchased %></td>
 				<td class="text-right">
 				
 					<div class="dropdown">
@@ -38,10 +40,14 @@
 				</td>
 			</tr>
 			<% end %>
+			
+			<%# will_paginate @items, renderer: BootstrapPagination::Rails %>
 	
 		</table>
 
 	</div>
+	
+	
 	
 	<%= link_to new_item_path, :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
 	

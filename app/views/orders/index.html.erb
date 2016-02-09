@@ -3,27 +3,29 @@
 	
 	<div class="widget panel">
 
-		<table class="table">
+		<table class="table table-bordered">
 	
 			<tr>
-				<th>ID</th>
-				<th>Number</th>
-				<th>Account</th>
-				<th>Sub Total</th>
-				<th>Shipped</th>
-				<th>Fulfilled</th>
-				<th>IP Address</th>
-				<th>&nbsp;</th>
+				<th width="2%">ID</th>
+				<th witdh="5%">Number</th>
+				<th width="46%">Account</th>
+				<th width="7%">Sub Total</th>
+				<th width="7%">Shipped</th>
+				<th width="7%">Fulfilled</th>
+				<th width="16%">Completed At</th>
+				<th width="8%">IP Address</th>
+				<th width="2%">&nbsp;</th>
 			</tr>
 			
 			<% @orders.each do |a| %>
 			<tr>
 				<td><%= a.id %></td>
 				<td><%= a.number %></td>
-				<td><%= a.account.name unless a.account.blank? %><%# a.date.strftime("%m/%d/%Y") unless a.date.nil? %></td>
+				<td><%= a.account.name unless a.account.blank? %></td>
 				<td><%= number_to_currency(a.sub_total) %><%# number_to_currency(a.sum) unless a.sum.nil? %></td>
-				<td><%# a.paid ? "Yes" : "No" %></td>
+				<td><%= number_to_currency(a.amount_shipped) %></td>
 				<td><%# number_to_currency(a.balance_due) %></td>
+				<td><%= a.completed_at.strftime("%m/%d/%Y %I:%M %p") unless a.completed_at.nil? %></td>
 				<td><%= a.ip_address %></td>
 				<td class="text-right">
 				
@@ -34,6 +36,7 @@
 						<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
 							<li><%= link_to("Edit", edit_order_path(a.id), :remote => true) %></li>
 							<li><%= link_to("View", order_path(a.id))  %></li>
+							<li><%= link_to("Ship", new_order_shipment_path(a.id))  %></li>
 						</ul>
 					</div>
 				

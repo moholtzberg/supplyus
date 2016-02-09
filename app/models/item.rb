@@ -2,8 +2,10 @@ class Item < ActiveRecord::Base
   
   has_many :account_item_prices
   has_many :images
+  has_many :order_line_items
   belongs_to :category
   belongs_to :brand
+  belongs_to :model
   
   validates_uniqueness_of :number
   # validates_uniqueness_of :slug
@@ -41,6 +43,20 @@ class Item < ActiveRecord::Base
     else
       puts "---> #{self.slug}"
     end
+  end
+  
+  def times_purchased
+    total = 0.0
+    OrderLineItem.joins(:item).where(:item_id => id).each {|o| total += o.quantity}
+    total
+  end
+  
+  def self.times_ordered
+    Item.joins(:order_line_items).group(:item_id).sort_by(&:times_purchased).reverse!
+    # Item.select("items.*, count(order_line_items.quantity) AS times_purchased")
+    # .joins("INNER JOIN order_line_items ON order_line_items.quantiy = docs.sourceid")
+    #  .group("docs.id")
+    # .order("denotations_count DESC")
   end
   
 end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160203161627) do
+ActiveRecord::Schema.define(version: 20160208223507) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -166,6 +166,19 @@ ActiveRecord::Schema.define(version: 20160203161627) do
     t.integer  "brand_id"
   end
 
+  create_table "line_item_shipments", force: :cascade do |t|
+    t.integer  "order_line_item_id"
+    t.integer  "shipment_id"
+    t.integer  "quantity_shipped"
+    t.datetime "date"
+  end
+
+  create_table "makes", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "meter_groups", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -182,6 +195,14 @@ ActiveRecord::Schema.define(version: 20160203161627) do
   create_table "meters", force: :cascade do |t|
     t.integer "equipment_id"
     t.string  "meter_type"
+  end
+
+  create_table "models", force: :cascade do |t|
+    t.integer  "make_id"
+    t.string   "number"
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "order_line_items", force: :cascade do |t|
@@ -272,6 +293,12 @@ ActiveRecord::Schema.define(version: 20160203161627) do
     t.float   "amount"
   end
 
+  create_table "shipments", force: :cascade do |t|
+    t.integer  "order_id"
+    t.string   "number"
+    t.datetime "date"
+  end
+
   create_table "shipping_calculators", force: :cascade do |t|
     t.string "name"
     t.text   "description"
@@ -285,6 +312,14 @@ ActiveRecord::Schema.define(version: 20160203161627) do
     t.float   "rate"
     t.text    "description"
     t.boolean "active"
+  end
+
+  create_table "tracking_numbers", force: :cascade do |t|
+    t.integer "shipment_id"
+    t.integer "carrier_id"
+    t.string  "number"
+    t.boolean "delivered"
+    t.string  "signed_by"
   end
 
   create_table "users", force: :cascade do |t|
