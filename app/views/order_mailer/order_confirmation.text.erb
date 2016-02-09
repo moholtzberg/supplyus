@@ -28,6 +28,6 @@ SHIP TO ADDRESS:
 ORDER LINE ITEMS:
 ================
 <% @order.order_line_items.each do |o| %>
-<%= o.order_line_number %>.	<%= o.quantity %> x <%= "#{o.item.number} / #{o.item.name}" %> @ <%= o.price %>/Each. = <%= o.sub_total %>
+<%= o.order_line_number %>.	<%= o.quantity %> x <%= "#{o.item.number} / #{o.item.name}" %> @ <%= number_to_currency(o.price) %>/Each. = <%= number_to_currency(o.sub_total) %>
 <% end %>
 
