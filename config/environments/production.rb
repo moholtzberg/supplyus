@@ -65,11 +65,11 @@ Rails.application.configure do
   config.action_mailer.raise_delivery_errors = false
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    address:              "#{SECRET[MAILGUN_SMTP_ADDRESS]}",
+    address:              "#{SECRET['MAILGUN_SMTP_ADDRESS']}",
     port:                 587,
-    domain:               "#{SECRET[MAILGUN_SMTP_DOMAIN]}",
-    user_name:            "#{SECRET[MAILGUN_SMTP_UN]}",
-    password:             "#{SECRET[MAILGUN_SMTP_PW]}",
+    domain:               "#{SECRET['MAILGUN_SMTP_DOMAIN']}",
+    user_name:            "#{SECRET['MAILGUN_SMTP_UN']}",
+    password:             "#{SECRET['MAILGUN_SMTP_PW']}",
     authentication:       'plain',
     enable_starttls_auto: true
   }
