@@ -49,6 +49,22 @@ class Order < ActiveRecord::Base
     sub_total.to_f + shipping_total.to_f
   end
   
+  def quantity_shipped
+    if self.order_line_items
+      total = 0
+      self.order_line_items.each {|i| total = i.quantity_shipped }
+      total
+    end
+  end
+  
+  def amount_shipped
+    if self.order_line_items
+      total = 0
+      self.order_line_items.each {|i| total = (i.quantity_shipped * i.price) }
+      total
+    end
+  end
+  
   # def make_subtotal
   #   self.sub_total = 0.0
   #   self.order_line_items.each {|q| self.sub_total = (self.sub_total.to_f + q.sub_total.to_f) }

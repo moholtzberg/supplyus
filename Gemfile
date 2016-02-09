@@ -47,7 +47,8 @@ gem 'shrimp'
 gem 'stripe'
 # gem 'whenever'
 gem 'rufus-scheduler'
-gem 'mailgun-ruby', '~>1.0.3', require: 'mailgun'
+# gem 'mailgun-ruby', '~>1.0.3', require: 'mailgun'
+gem 'mailgun_rails'
 
 group :development, :test do
   gem 'capistrano-rails', '~> 1.1.3'

@@ -26,6 +26,7 @@ class CheckoutController < ApplicationController
     cart = Checkout.find_by(:id => session[:cart_id])
     if current_user.has_account
       cart.account_id = current_user.account.id
+      cart.order_line_items.each {|c| c.price = c.item.actual_price(cart.account_id)}
     end
     cart.update_attributes(checkout_params)
     if cart.save
@@ -71,6 +72,8 @@ class CheckoutController < ApplicationController
     if c.save
       if c.complete
         session[:cart_id] = nil
+        puts "GOING INTO THE MAILER"
+        OrderMailer.order_confirmation(c.id).deliver_later
         redirect_to my_account_path
       end
       
