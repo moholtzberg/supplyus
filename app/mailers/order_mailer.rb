@@ -7,12 +7,8 @@ class OrderMailer < ApplicationMailer
     
     mail(
          :to => @order.account.user.email,
+         :bcc => "sales@247officesupply.com",
          :subject => "24/7 Office Supply - Order Confirmation #{@order.number}", 
-         :text => render_to_string("order_mailer/order_confirmation").to_str
-    )
-    mail(
-         :to => "admin@247officesupply.com",
-         :subject => "[COPY] 24/7 Office Supply - Order Confirmation #{@order.number}", 
          :text => render_to_string("order_mailer/order_confirmation").to_str
     )
   end
