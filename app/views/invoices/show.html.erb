@@ -1,97 +1,94 @@
 <div class="col-md-12">
 	
-    <div class="widget panel">
+	<div class="invoice-title">
+		<h3>INVOICE<span class="pull-right">#<%= @invoice.number %></span></h3>
+	</div>
 	
-		<div class="invoice-title">
-			<h3>INVOICE<span class="pull-right">#<%= @invoice.number %></span></h3>
-		</div>
-		
-		<div class="clearfix"></div>
-		
-		<div class="col-xs-6">
-			<address>
-				<strong>Billed To:</strong><br>
-				John Smith<br>
-				1234 Main<br>
-				Apt. 4B<br>
-				Springfield, ST 54321
-			</address>
-		</div>
-		
-		<div class="col-xs-6 text-right">
-			<address>
-				<strong>Shipped To:</strong><br>
-				Jane Smith<br>
-				1234 Main<br>
-				Apt. 4B<br>
-				Springfield, ST 54321
-			</address>
-		</div>
+	<div class="clearfix"></div>
 	
-		<div class="col-xs-6">
-			<address>
-				<strong>Payment Method:</strong><br>
-				Visa ending **** 4242<br>
-				jsmith@email.com
-			</address>
-		</div>
-		
-		<div class="col-xs-6 text-right">
-			<address>
-				<strong>Invoice Date:</strong><br>
-				<%= @invoice.date.strftime("%m/%d/%Y") %><br><br>
-			</address>
-		</div>
-		
-		<div class="clearfix"></div>
-		
-		<!-- <div class="panel-heading">
-			<h3 class="panel-title"><strong>Invoice summary</strong></h3>
-		</div> -->
-		
-		<div class="table-responsive">
-			<table class="table table-bordered">
+	<div class="col-xs-6">
+		<address>
+			<strong>Billed To:</strong><br>
+			John Smith<br>
+			1234 Main<br>
+			Apt. 4B<br>
+			Springfield, ST 54321
+		</address>
+	</div>
+	
+	<div class="col-xs-6 text-right">
+		<address>
+			<strong>Shipped To:</strong><br>
+			Jane Smith<br>
+			1234 Main<br>
+			Apt. 4B<br>
+			Springfield, ST 54321
+		</address>
+	</div>
+
+	<div class="col-xs-6">
+		<address>
+			<strong>Payment Method:</strong><br>
+			Visa ending **** 4242<br>
+			jsmith@email.com
+		</address>
+	</div>
+	
+	<div class="col-xs-6 text-right">
+		<address>
+			<strong>Invoice Date:</strong><br>
+			<%= @invoice.date.strftime("%m/%d/%Y") %><br><br>
+		</address>
+	</div>
+	
+	<div class="clearfix"></div>
+	
+	<!-- <div class="panel-heading">
+		<h3 class="panel-title"><strong>Invoice summary</strong></h3>
+	</div> -->
+	
+	<div class="table-responsive">
+		<table class="table table-bordered">
+			
+				<tr>
+					<td span="70"><strong>Description</strong></td>
+					<td span="10" class="text-center"><strong>From Date</strong></td>
+					<td span="10" class="text-center"><strong>To Date</strong></td>
+					<td span="10" class="text-right"><strong>Amount</strong></td>
+				</tr>
+			
+			
+				<% @invoice.charges.each do |chg| %>
+				<tr>
+					<td><%= chg.description %></td>
+					<td class="text-center"><%= chg.from_date %></td>
+					<td class="text-center"><%= chg.to_date %></td>
+					<td class="text-right"><%= number_to_currency(chg.amount) %></td>
+				</tr>
+				<% end %>
 				
-					<tr>
-						<td span="70"><strong>Description</strong></td>
-						<td span="10" class="text-center"><strong>From Date</strong></td>
-						<td span="10" class="text-center"><strong>To Date</strong></td>
-						<td span="10" class="text-right"><strong>Amount</strong></td>
-					</tr>
+				<% @invoice.line_item_fulfillments.each do |chg| %>
+				<tr>
+					<td><%= chg.order_line_item.item.number %></td>
+					<td class="text-center"><%= chg.order_line_item.quantity.to_i %></td>
+					<td class="text-center"><%= number_to_currency(chg.order_line_item.price) %></td>
+					<td class="text-right"><%= number_to_currency(chg.order_line_item.sub_total) %></td>
+				</tr>
+				<% end %>
 				
-				
-					<% @invoice.charges.each do |chg| %>
-					<tr>
-						<td><%= chg.description %></td>
-						<td class="text-center"><%= chg.from_date %></td>
-						<td class="text-center"><%= chg.to_date %></td>
-						<td class="text-right"><%= number_to_currency(chg.amount) %></td>
-					</tr>
-					<% end %>
-					
-					<% @invoice.line_item_fulfillments.each do |chg| %>
-					<tr>
-						<td><%= chg.order_line_item.item.number %></td>
-						<td class="text-center"><%= chg.order_line_item.quantity.to_i %></td>
-						<td class="text-center"><%= number_to_currency(chg.order_line_item.price) %></td>
-						<td class="text-right"><%= number_to_currency(chg.order_line_item.sub_total) %></td>
-					</tr>
-					<% end %>
-					
-					<tr>
-						<th colspan="3">Total</th>
-						<th class="text-right"><%= number_to_currency(@invoice.sub_total) %></th>
-					</tr>
-					<tr>
-						<th colspan="3">Payments</th>
-						<th class="text-right"><%= @invoice.payments.blank? ? number_to_currency(0) : number_to_currency(@invoice.payments.amount) %></th>
-					</tr>
-					<tr>
-						<th colspan="3">Balance Due</th>
-						<th class="text-right"><%=  number_to_currency(@invoice.balance_due) %></th>
-					</tr>
-				
-			</table>
-		</div>
+				<tr>
+					<th colspan="3">Total</th>
+					<th class="text-right"><%= number_to_currency(@invoice.sub_total) %></th>
+				</tr>
+				<tr>
+					<th colspan="3">Payments</th>
+					<th class="text-right"><%= @invoice.payments.blank? ? number_to_currency(0) : number_to_currency(@invoice.payments.amount) %></th>
+				</tr>
+				<tr>
+					<th colspan="3">Balance Due</th>
+					<th class="text-right"><%=  number_to_currency(@invoice.balance_due) %></th>
+				</tr>
+			
+		</table>
 	</div>
 </div>

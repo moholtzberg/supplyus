@@ -1,48 +1,45 @@
 <div id="vendors" class="col-md-12">
-	
-	<div class="widget panel">
 		
-		<% if flash[:notice] %>
-		<div id="flash_messages" class="aelrt alert-success" role="alert">
-			<strong><%= flash[:notice] %></strong>
-		</div>
-		<% end %>
-		
-		<table class="table">
-
-			<tr>
-				<td>ID</td>
-				<td>Number</td>
-				<td>Name</td>
-				<td>Address 1</td>
-				<td>Address 2</td>
-				<td>City</td>
-				<td>State</td>
-				<td>Zip</td>
-				<td>Phone</td>
-				<td>Fax</td>
-				<td>&nbsp;</td>
-			</tr>
-
-			<% @vendors.each do |a| %>
-			<tr>
-				<td><%= a.id %></td>
-				<td><%= a.number %></td>
-				<td><%= a.name %></td>
-				<td><%= a.address_1 %></td>
-				<td><%= a.address_2 %></td>
-				<td><%= a.city %></td>
-				<td><%= a.state %></td>
-				<td><%= a.zip %></td>
-				<td><%= number_to_phone(a.phone) %></td>
-				<td><%= number_to_phone(a.fax) %></td>
-				<td><%= link_to(vendor_path(a.id), :class => "btn btn-info btn-xs") do %><span class="glyphicon glyphicon-search"></span><% end %></td>
-			</tr>
-			<% end %>
-
-		</table>
-		
+	<% if flash[:notice] %>
+	<div id="flash_messages" class="aelrt alert-success" role="alert">
+		<strong><%= flash[:notice] %></strong>
 	</div>
+	<% end %>
+	
+	<table class="table table-bordered">
+
+		<tr>
+			<th>ID</th>
+			<th>Number</th>
+			<th>Name</th>
+			<th>Address 1</th>
+			<th>Address 2</th>
+			<th>City</th>
+			<th>State</th>
+			<th>Zip</th>
+			<th>Phone</th>
+			<th>Fax</th>
+			<th>&nbsp;</th>
+		</tr>
+
+		<% @vendors.each do |a| %>
+		<tr>
+			<td><%= a.id %></td>
+			<td><%= a.number %></td>
+			<td><%= a.name %></td>
+			<td><%= a.address_1 %></td>
+			<td><%= a.address_2 %></td>
+			<td><%= a.city %></td>
+			<td><%= a.state %></td>
+			<td><%= a.zip %></td>
+			<td><%= number_to_phone(a.phone) %></td>
+			<td><%= number_to_phone(a.fax) %></td>
+			<td><%= link_to(vendor_path(a.id), :class => "btn btn-info btn-xs") do %><span class="glyphicon glyphicon-search"></span><% end %></td>
+		</tr>
+		<% end %>
+
+	</table>
+		
 	
 	<%= link_to new_vendor_path, :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
 	

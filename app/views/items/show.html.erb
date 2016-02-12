@@ -1,49 +1,44 @@
 <div id="accounts" class="col-md-12">
-	
-	<div class="widget panel">
 		
-		<table class="table">
-	
-			<tr>
-				<th>Number</th>
-				<th>Name</th>
-				<th>Price</th>
-				<th>Cost</th>
-			</tr>
-			<tr>
-				<th colspan="4">Description</th>
-			<tr>
-			
-			<tr>
-				<td><%= @item.number %></td>
-				<td><%= @item.name %></td>
-				<td><%= @item.price %></td>
-				<td><%= @item.cost_price %></td>
-			</tr>
-			<tr>
-				<td colspan="4"><%= @item.description %></td>
-			<tr>
-			
-		</table>
+	<table class="table table-bordered table-striped">
+
+		<tr>
+			<th>Number</th>
+			<th>Name</th>
+			<th>Price</th>
+			<th>Cost</th>
+		</tr>
 		
-		<table class="table">
-	
-			<tr>
-				<th>Account</th>
-				<th>Item</th>
-				<th>Price</th>
-			</tr>
-			
-			<% @item.account_item_prices.each do |it| %>
-			<tr>
-				<td><%= it.account.name %></td>
-				<td><%= it.item.number %> - <%= link_to it.item.name, item_path(it) %></td>
-				<td><%= (it.price == it.item.actual_price(it.account_id)) ? it.item.actual_price(it.account_id) : 'NULL' %></td>
-			</tr>
-			<% end %>
-			
-		</table>
+		<tr>
+			<td><%= @item.number %></td>
+			<td><%= @item.name %></td>
+			<td><%= number_to_currency(@item.price) %></td>
+			<td><%= number_to_currency(@item.cost_price) %></td>
+		</tr>
+		<tr>
+			<td colspan="4"><%= @item.description %></td>
+		<tr>
 		
-	</div>
+	</table>
+	
+	<br/>
+	
+	<table class="table">
+		
+		<tr>
+			<th>Account</th>
+			<th>Item</th>
+			<th>Price</th>
+		</tr>
+		
+		<% @item.account_item_prices.each do |it| %>
+		<tr>
+			<td><%= it.account.name %></td>
+			<td><%= it.item.number %> - <%= link_to it.item.name, item_path(it) %></td>
+			<td><%= (it.price == it.item.actual_price(it.account_id)) ? it.item.actual_price(it.account_id) : 'NULL' %></td>
+		</tr>
+		<% end %>
+		
+	</table>
 	
 </div>

@@ -22,17 +22,17 @@ body {
 }
 #main-panel {
   height: 100%;
-  background-color: #e0e0e0;
+/*  background-color: #e0e0e0;*/
 }
 @media only screen and (min-width: 1200px) {
   #main-panel {
-    margin-top: -1px;
+    margin-top: 10px;
     padding: 11px 0px 0px 0px;
   }
 }
 @media only screen and (max-width: 1200px) {
   #main-panel {
-    margin-top: -1px;
+    margin-top: 5px;
     padding: 1px 0px 0px 0px;
   }
 }
