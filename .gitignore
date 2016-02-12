@@ -15,3 +15,8 @@
 /log/*
 !/log/.keep
 /tmp
+/public/assets/*
+# config/environments/development.rb
+# /app/assets/images/400
+/app/assets/images/ecdb.individual_items
+/app/assets/images/ecdb.individual_catalogs
