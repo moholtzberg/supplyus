@@ -27,7 +27,9 @@ SHIP TO ADDRESS:
 
 ORDER LINE ITEMS:
 ================
-<% @order.order_line_items.each do |o| %>
+<% @order.order_line_items.order(:order_line_number).each do |o| %>
+	<% if o.quantity > 0 %>
 <%= o.order_line_number %>.	<%= o.quantity %> x <%= "#{o.item.number} / #{o.item.name}" %> @ <%= number_to_currency(o.price) %>/Each. = <%= number_to_currency(o.sub_total) %>
+	<% end %>
 <% end %>
 

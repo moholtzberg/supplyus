@@ -1,7 +1,8 @@
 class Invoice < ActiveRecord::Base
   include ApplicationHelper
   
-  
+  has_many :line_item_fulfillments
+  has_many :order_line_items, :through => :line_item_fulfillments
   has_many :charges
   has_many :invoice_payment_applications
   has_many :payments, :through => :invoice_payment_applications
@@ -44,6 +45,13 @@ class Invoice < ActiveRecord::Base
       charge.save!
     end
   end
+  
+  def sub_total
+    total = 0
+    order_line_items.find_each {|ol| total += ol.sub_total}
+    total
+  end
+  
   
   def sum
     puts "---------> getting sum of all charges.inspect"

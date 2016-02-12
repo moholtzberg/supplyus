@@ -1,39 +1,41 @@
-<div class="col-md-12">
+<% content_for :app_location do %>Invoices/New<% end %>
+<div id="orders" class="col-md-12">
 	
 	<div class="widget panel">
-
-		<%= form_for @invoice do |f| %>
-
-			<%= f.hidden_field :account_id, :value => @invoice.account_id %>
-	
-			<%= f.text_field :date, :type => "date", :value => Date.today %>
-	
-			<%= f.submit %>
-
-			<table class="table table-bordered table-condensed table-striped table-hover table-responsive">
-	
-				<tbody id="unbilled_charges">
-	
-				<%= render :partial => "charges/charges", :locals => {:unbilled => @unbilled_charges, :f => f} %>
-	
-				</tbody>
-	
-			</table>
-		
-		<% end %>
-
-		<%= form_for @charge, :remote => true do |f| %>
-
-			<table class="table table-bordered table-condensed table-striped table-hover table-responsive">
-		
-				<tfooter>
+		<%= form_for @invoice, url: order_invoices_path, :remote => false do |f| %>
+		<table class="table">
 			
-					<%= render :partial => "charges/form", :locals => {:f => f} %>
+			<tr>
+				<th>ID</th>
+				<th>Item Name/Description</th>
+				<th>Quantity Ordered</th>
+				<th>Quantity Fulfilled</th>
+				<th>Quantity To Fulfill Now</th>
+			<tr>
+			
+			<%= hidden_field_tag :order_id, params[:order_id].to_i %>
+			
+			<% @line_items.each_with_index do |li, idx| %>
+				<% unless li.fulfilled %>
+				<%= hidden_field_tag "lines[#{idx}][order_line_item_id]", li.id.to_i %>
+				<tr>
+					<td><%= li.id %></td>
+					<td><%= "#{li.item.number} / #{li.item.name}" %></td>
+					<td><%= li.quantity %></td>
+					<td><%= li.quantity_fulfilled %></td>
+					<td><%= text_field_tag "lines[#{idx}][quantity_fulfill_now]", (li.quantity.to_i - li.quantity_fulfilled.to_i), :class => "form-control" %></td>
+				<tr>
+				<% end %>
+			<% end %>
+
+			<tr>
+				<td colspan="5"><%= f.submit "Create Invoice", :class => "btn btn-primary pull-right" %></td>
+			</tr>
+			
+		</table>
 		
-				</tfooter>
-	
 		<% end %>
-
+		
 	</div>
-
+	
 </div>

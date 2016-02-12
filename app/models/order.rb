@@ -5,10 +5,10 @@ class Order < ActiveRecord::Base
   default_scope { order(:id) }
   #default_scope { self.open }
   
-  scope :locked, -> () { where(:locked => true) }
+  scope :is_locked, -> () { where(:locked => true) }
   scope :has_account, -> () { where(:account_id => !nil) }
   scope :no_account, -> () { where(:account_id => !nil) }
-  has_many :order_line_items
+  has_many :order_line_items, :dependent => :destroy, :inverse_of => :order
   has_one :order_shipping_method
   belongs_to :account
   has_many :items, :through => :order_line_items
@@ -16,7 +16,11 @@ class Order < ActiveRecord::Base
   accepts_nested_attributes_for :order_line_items, :allow_destroy => true
   
   before_save :make_record_number
-  # before_save :make_total
+  
+  def destroy
+    raise "Cannot delete order a locked order" unless locked != true
+    raise "Cannot delete an order with shipments" unless quantity_shipped == 0
+  end
   
   def self.open
     Order.joins(:order_line_items).distinct(:order_id)
@@ -49,10 +53,28 @@ class Order < ActiveRecord::Base
     sub_total.to_f + shipping_total.to_f
   end
   
+  def quantity
+    if self.order_line_items
+      total = 0
+      self.order_line_items.each {|i| total += i.quantity }
+      total
+    end
+  end
+  
+  def shipped
+    if self.order_line_items
+      total = 0
+      self.order_line_items.each {|i| total += i.quantity_shipped }
+      total == quantity
+    else
+      false
+    end
+  end
+  
   def quantity_shipped
     if self.order_line_items
       total = 0
-      self.order_line_items.each {|i| total = i.quantity_shipped }
+      self.order_line_items.each {|i| total += i.quantity_shipped }
       total
     end
   end
@@ -60,19 +82,35 @@ class Order < ActiveRecord::Base
   def amount_shipped
     if self.order_line_items
       total = 0
-      self.order_line_items.each {|i| total = (i.quantity_shipped * i.price) }
+      self.order_line_items.each {|i| total += (i.quantity_shipped * i.price) }
       total
     end
   end
   
-  # def make_subtotal
-  #   self.sub_total = 0.0
-  #   self.order_line_items.each {|q| self.sub_total = (self.sub_total.to_f + q.sub_total.to_f) }
-  # end
+  def fulfilled
+    if self.order_line_items
+      total = 0
+      self.order_line_items.each {|i| total += i.quantity_fulfilled }
+      total == quantity
+    else
+      false
+    end
+  end
   
-  # def make_total
-  #   make_subtotal
-  #   self.total = (self.sub_total.to_f - self.discount.to_f + self.freight.to_f + self.tax.to_f)
-  # end
+  def quantity_fulfilled
+    if self.order_line_items
+      total = 0
+      self.order_line_items.each {|i| total += i.quantity_fulfilled }
+      total
+    end
+  end
+  
+  def amount_fulfilled
+    if self.order_line_items
+      total = 0
+      self.order_line_items.each {|i| total += (i.quantity_fulfilled * i.price) }
+      total
+    end
+  end
   
 end

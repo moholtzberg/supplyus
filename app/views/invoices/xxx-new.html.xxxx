@@ -1,0 +1,39 @@
+<div class="col-md-12">
+	
+	<div class="widget panel">
+
+		<%= form_for @invoice do |f| %>
+
+			<%= f.hidden_field :account_id, :value => @invoice.account_id %>
+	
+			<%= f.text_field :date, :type => "date", :value => Date.today %>
+	
+			<%= f.submit %>
+
+			<table class="table table-bordered table-condensed table-striped table-hover table-responsive">
+	
+				<tbody id="unbilled_charges">
+	
+				<%= render :partial => "charges/charges", :locals => {:unbilled => @unbilled_charges, :f => f} %>
+	
+				</tbody>
+	
+			</table>
+		
+		<% end %>
+
+		<%= form_for @charge, :remote => true do |f| %>
+
+			<table class="table table-bordered table-condensed table-striped table-hover table-responsive">
+		
+				<tfooter>
+			
+					<%= render :partial => "charges/form", :locals => {:f => f} %>
+		
+				</tfooter>
+	
+		<% end %>
+
+	</div>
+
+</div>
