@@ -3,6 +3,7 @@ class ItemsController < ApplicationController
   
   def index
     @items = Item.all
+    @items = @items.paginate(:page => params[:page], :per_page => 25)
   end
   
   def new

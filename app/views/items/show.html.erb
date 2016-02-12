@@ -5,6 +5,30 @@
 		<table class="table">
 	
 			<tr>
+				<th>Number</th>
+				<th>Name</th>
+				<th>Price</th>
+				<th>Cost</th>
+			</tr>
+			<tr>
+				<th colspan="4">Description</th>
+			<tr>
+			
+			<tr>
+				<td><%= @item.number %></td>
+				<td><%= @item.name %></td>
+				<td><%= @item.price %></td>
+				<td><%= @item.cost_price %></td>
+			</tr>
+			<tr>
+				<td colspan="4"><%= @item.description %></td>
+			<tr>
+			
+		</table>
+		
+		<table class="table">
+	
+			<tr>
 				<th>Account</th>
 				<th>Item</th>
 				<th>Price</th>
@@ -19,7 +43,7 @@
 			<% end %>
 			
 		</table>
-			
+		
 	</div>
 	
 </div>
