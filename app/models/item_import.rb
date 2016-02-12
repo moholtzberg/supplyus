@@ -1,7 +1,6 @@
 class ItemImport
   # switch to ActiveModel::Model in Rails 4
   include ActiveModel::Model
-
   attr_accessor :file
 
   def initialize(attributes = {})
@@ -13,6 +12,7 @@ class ItemImport
   end
 
   def save
+    puts "---->>>>> #{imported_products.inspect}"
     if imported_products.map(&:valid?).all?
       imported_products.each(&:save!)
       true
@@ -31,25 +31,21 @@ class ItemImport
   end
 
   def load_imported_products
-    spreadsheet = open_spreadsheet
-    header = spreadsheet.row(1)
-    (2..spreadsheet.last_row).map do |i|
-      row = Hash[[header, spreadsheet.row(i)].transpose]
+    spreadsheet = CSV.read(file.path, :headers => true, :encoding => 'ISO-8859-1')
+    # header = spreadsheet[0]
+    spreadsheet.map do |row|
+      
       unless Item.find_by(:number => row["number"])
-        product = Item.new
-        product.attributes = row.to_hash.slice(*Item.attribute_names())
-        puts "#{i}----> #{product.valid?}"
+        item = Item.new
+        item.attributes = row.to_hash.slice(*Item.attribute_names())
       else
-        product = Item.find_by(:number => row["number"])
-        id = product.id
-        product.attributes = row.to_hash.slice(*Item.attribute_names())
-        product.id = id
-        puts "#{i}----> #{product.valid?}"
-        puts "y----> #{product.inspect}"
-        # product.slug = product.number
-        #puts "#{i}----> #{product.inspect}"
+        item = Item.find_by(:number => row["number"])
+        id = item.id
+        item.attributes = row.to_hash.slice(*Item.attribute_names())
+        item.id = id
       end
-      product
+      puts "----> #{item.inspect}"
+      item
     end
   end
 
@@ -61,4 +57,5 @@ class ItemImport
     else raise "Unknown file type: #{file.original_filename}"
     end
   end
+
 end
