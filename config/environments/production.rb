@@ -11,7 +11,7 @@ Rails.application.configure do
   config.eager_load = true
 
   # Full error reports are disabled and caching is turned on.
-  config.consider_all_requests_local       = false
+  config.consider_all_requests_local       = true
   config.action_controller.perform_caching = true
 
   # Enable Rack::Cache to put a simple HTTP cache in front of your application
@@ -73,6 +73,15 @@ Rails.application.configure do
     authentication:       'plain',
     enable_starttls_auto: true
   }
+  
+  # config.paperclip_defaults = {
+  #     :storage => :s3,
+  #     :s3_credentials => {
+  #       :bucket => "247officesuppy",
+  #       :access_key_id => "#{SECRET['AWS']['ACCESS_KEY_ID']}",
+  #       :secret_access_key => "#{SECRET['AWS']['SECRET_ACCESS_KEY']}"
+  #     }
+  #   }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
