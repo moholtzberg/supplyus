@@ -21,7 +21,7 @@
 			<td class="text-center"><%= a.id %></td>
 			<td><%= a.number %></td>
 			<td><%= a.account.name unless a.account.blank? %></td>
-			<td><% number_to_currency(a.sub_total) %><%# number_to_currency(a.sum) unless a.sum.nil? %></td>
+			<td><%= number_to_currency(a.sub_total) %><%# number_to_currency(a.sum) unless a.sum.nil? %></td>
 			<td><%= number_to_currency(a.amount_shipped) %></td>
 			<td><%= number_to_currency(a.amount_fulfilled) %></td>
 			<td class="text-center"><%= a.completed_at.strftime("%m/%d/%y %I:%M %p") unless a.completed_at.nil? %></td>

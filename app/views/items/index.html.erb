@@ -14,7 +14,7 @@
 		<tr>
 			<th>ID</th>
 			<th>Number</th>
-			<th>Description</th>
+			<th>Name/Description</th>
 			<th>Price</th>
 			<th>Cost Price</th>
 			<th>Times Purchased</th>
@@ -25,11 +25,11 @@
 		<tr>
 			<td><%= a.id %></td>
 			<td><%= a.number %></td>
-			<td><%= a.description %></td>
+			<td><%= a.name %></td>
 			<td><%= number_to_currency(a.price) %></td>
 			<td><%= number_to_currency(a.cost_price) %></td>
 			<td><%= a.times_purchased.to_i %></td>
-			<td class="text-right">
+			<td class="text-center">
 			
 				<div class="dropdown">
 					<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
