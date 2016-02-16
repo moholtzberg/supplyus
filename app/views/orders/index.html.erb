@@ -1,5 +1,11 @@
 <% content_for :app_location do %>Orders/Index<% end %>
 <div id="orders" class="col-md-12">
+	
+	<ul class="nav nav-pills">
+		<li><%= link_to "Completed Orders", orders_url %></li>
+		<li><%= link_to "Incomplete Orders", incomplete_orders_url %></li>
+		<li><%= link_to "Locked Orders", locked_orders_url %></li>
+	</ul>
 
 	<table class="table table-bordered">
 
@@ -16,37 +22,10 @@
 			<th width="2%">&nbsp;</th>
 		</tr>
 		
-		<% @orders.each do |a| %>
-		<tr id="order_<%= a.id %>">
-			<td class="text-center"><%= a.id %></td>
-			<td><%= a.number %></td>
-			<td><%= a.account.name unless a.account.blank? %></td>
-			<td><%= number_to_currency(a.sub_total) %><%# number_to_currency(a.sum) unless a.sum.nil? %></td>
-			<td><%= number_to_currency(a.amount_shipped) %></td>
-			<td><%= number_to_currency(a.amount_fulfilled) %></td>
-			<td class="text-center"><%= a.completed_at.strftime("%m/%d/%y %I:%M %p") unless a.completed_at.nil? %></td>
-			<td class="locked"><%= a.locked ? "Yes" : "No" %></td>
-			<td><%= a.ip_address %></td>
-			<td>
-			
-				<div class="dropdown">
-					<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-						<span class="caret"></span>
-					</button>
-					<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-						<li><%= link_to("View", order_path(a.id))  %></li>
-						<% unless a.locked %>
-						<li><%= link_to("Edit", edit_order_path(a.id), :remote => true) %></li>
-						<li><%= link_to("Lock", lock_order_path(a.id), :remote => true, :method => "put") %></li>
-						<% else %>
-						<li><%= link_to("Ship", new_order_shipment_path(a.id))  %></li>
-						<li><%= link_to("Fulfill", new_order_invoice_path(a.id))  %></li>
-						<% end %>
-					</ul>
-				</div>
-			
-			</td>
-		</tr>
+		<% @orders.each do |order| %>
+		<tr id="order_<%= order.id %>">
+			<%= render :partial => "orders/order", :locals => {:order => order}%>
+		<tr>
 		<% end %>
 
 	</table>

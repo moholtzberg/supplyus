@@ -6,9 +6,10 @@ class Order < ActiveRecord::Base
   #default_scope { self.open }
   
   scope :is_locked, -> () { where(:locked => true) }
-  scope :is_complete, -> () { where("completed_at <= ?", Date.today)}
-  scope :has_account, -> () { where(:account_id => !nil) }
-  scope :no_account, -> () { where(:account_id => !nil) }
+  scope :is_complete, -> () { where.not(:completed_at => nil)}
+  scope :is_incomplete, -> () { where(:completed_at => nil)}
+  scope :has_account, -> () { where.not(:account_id => nil) }
+  scope :no_account, -> () { where(:account_id => nil) }
   has_many :order_line_items, :dependent => :destroy, :inverse_of => :order
   has_one :order_shipping_method
   belongs_to :account
@@ -24,7 +25,7 @@ class Order < ActiveRecord::Base
   end
   
   def self.open
-    Order.joins(:order_line_items).distinct(:order_id).is_complete
+    Order.joins(:order_line_items).distinct(:order_id)
     # Order.all.select { |o| o.has_line_items }
   end
   
@@ -58,7 +59,7 @@ class Order < ActiveRecord::Base
   def quantity
     if self.order_line_items
       total = 0
-      self.order_line_items.each {|i| total += i.quantity }
+      self.order_line_items.each {|i| total += i.actual_quantity }
       total
     end
   end

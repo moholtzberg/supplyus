@@ -21,7 +21,11 @@ Rails.application.routes.draw do
           resources :invoices
         end
       end
-      resources :orders do 
+      resources :orders do
+        collection do
+          get :incomplete
+          get :locked
+        end
         member do
           put :lock
         end

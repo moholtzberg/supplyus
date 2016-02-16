@@ -2,8 +2,20 @@ class OrdersController < ApplicationController
   layout "admin"
   
   def index
-    @orders = Order.open.reorder(:completed_at => :desc)
+    @orders = Order.open.is_complete.reorder(:completed_at => :desc)
     @orders = @orders.paginate(:page => params[:page], :per_page => 10)
+  end
+  
+  def locked
+    @orders = Order.is_locked
+    @orders = @orders.paginate(:page => params[:page], :per_page => 10)
+    render "index"
+  end
+  
+  def incomplete
+    @orders = Order.open.is_incomplete
+    @orders = @orders.paginate(:page => params[:page], :per_page => 10)
+    render "index"
   end
   
   def new
@@ -14,8 +26,6 @@ class OrdersController < ApplicationController
       @accounts = Account.all
       @order = Order.create()
     end
-    
-    
     @items = Item.all
     @order.order_line_items.build
     @order_line_item = OrderLineItem.new
@@ -51,6 +61,9 @@ class OrdersController < ApplicationController
   
   def lock
     @order_id = params[:id]
+    @order = Order.find_by(:id => @order_id)
+    @order.locked = true
+    @order.save
   end
 
   private

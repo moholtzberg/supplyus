@@ -18,7 +18,7 @@
 			<td><%= a.id %></td>
 			<td><%= a.number %></td>
 			<td><%= a.date.strftime("%m/%d/%Y") %></td>
-			<td><%= number_to_currency(a.sum) %></td>
+			<td><%= number_to_currency(a.sub_total) %></td>
 			<td><%= a.paid ? "Yes" : "No" %></td>
 			<td><%= number_to_currency(a.balance_due) %></td>
 			<td class="text-right">

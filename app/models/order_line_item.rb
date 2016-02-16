@@ -28,8 +28,12 @@ class OrderLineItem < ActiveRecord::Base
     end
   end
   
+  def actual_quantity
+    quantity.to_f - quantity_canceled.to_f
+  end
+  
   def sub_total
-    quantity.to_i * price.to_i
+    actual_quantity.to_f * price.to_f
   end
   
   def shipped

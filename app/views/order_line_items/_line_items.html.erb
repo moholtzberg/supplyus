@@ -5,11 +5,13 @@
 		
 		<th>
 			
-			<td>Item</td>
-			<td>Qty.</td>
-			<td>Price</td>
-			<td>Subtotal</td>
-			<td>&nbsp;</td>
+			<td width="43%">Item</td>
+			<td width="12%">Qty.</td>
+			<td width="12%">Quantity Canceled</td>
+			<td width="12%">Actual Quantity</td>
+			<td width="10%">Price</td>
+			<td width="10%">Subtotal</td>
+			<td width="1%">&nbsp;</td>
 			
 		</th>
 		
@@ -33,6 +35,14 @@
 			</td>
 			
 			<td>
+				<%= ol.quantity_canceled.to_i %>
+			</td>
+			
+			<td>
+				<%= ol.actual_quantity.to_i %>
+			</td>
+			
+			<td>
 				<%= number_to_currency(ol.price) %>
 			</td>
 			
@@ -40,7 +50,7 @@
 				<%= number_to_currency(ol.sub_total) %>
 			</td>
 			
-			<td span="10%" class="text-right">
+			<td span="10%" class="text-center">
 				<%= link_to order_line_item_path(ol.id), :method => :delete, :remote => true do %><i class="fa fa-trash"></i><% end %>
 			</td>
 			
@@ -52,7 +62,7 @@
 	
 	<tfooter>
 		<tr>
-			<td colspan="4">Subtotal</td>
+			<td colspan="7">Subtotal</td>
 			<td colspan="2"><%= number_to_currency(@order.sub_total) %></td>
 		</tr>
 	</tfooter>
