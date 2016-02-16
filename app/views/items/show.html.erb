@@ -1,7 +1,11 @@
 <div id="accounts" class="col-md-12">
 		
 	<table class="table table-bordered table-striped">
-
+		
+		<tr>
+			<td><%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/#{@item.default_image_path}", :class => "media-object", :height => "400", :width => "400" %></td>
+		</tr>
+		
 		<tr>
 			<th>Number</th>
 			<th>Name</th>

@@ -2,7 +2,8 @@ class OrdersController < ApplicationController
   layout "admin"
   
   def index
-    @orders = Order.open
+    @orders = Order.open.reorder(:completed_at => :desc)
+    @orders = @orders.paginate(:page => params[:page], :per_page => 10)
   end
   
   def new
@@ -46,6 +47,10 @@ class OrdersController < ApplicationController
   
   def create
     
+  end
+  
+  def lock
+    @order_id = params[:id]
   end
 
   private

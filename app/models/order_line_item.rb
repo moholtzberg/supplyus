@@ -29,7 +29,7 @@ class OrderLineItem < ActiveRecord::Base
   end
   
   def sub_total
-    quantity * price
+    quantity.to_i * price.to_i
   end
   
   def shipped

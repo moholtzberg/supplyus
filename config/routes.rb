@@ -22,11 +22,18 @@ Rails.application.routes.draw do
         end
       end
       resources :orders do 
+        member do
+          put :lock
+        end
         resources :shipments, :only => [:new, :create]
         resources :invoices
       end
       resources :order_line_items
-      resources :items
+      resources :items do
+        collection do
+          get :search
+        end
+      end
       resources :item_imports
       resources :account_item_price_imports
       resources :meters

@@ -6,6 +6,7 @@ class Order < ActiveRecord::Base
   #default_scope { self.open }
   
   scope :is_locked, -> () { where(:locked => true) }
+  scope :is_complete, -> () { where("completed_at <= ?", Date.today)}
   scope :has_account, -> () { where(:account_id => !nil) }
   scope :no_account, -> () { where(:account_id => !nil) }
   has_many :order_line_items, :dependent => :destroy, :inverse_of => :order
@@ -23,7 +24,7 @@ class Order < ActiveRecord::Base
   end
   
   def self.open
-    Order.joins(:order_line_items).distinct(:order_id)
+    Order.joins(:order_line_items).distinct(:order_id).is_complete
     # Order.all.select { |o| o.has_line_items }
   end
   
@@ -32,7 +33,8 @@ class Order < ActiveRecord::Base
   end
   
   def has_line_items
-    order_line_items.count >= 1
+    Order.joins(:order_line_items).distinct(:order_id)
+    # order_line_items.count >= 1
   end
   
   def has_no_line_items
@@ -82,7 +84,7 @@ class Order < ActiveRecord::Base
   def amount_shipped
     if self.order_line_items
       total = 0
-      self.order_line_items.each {|i| total += (i.quantity_shipped * i.price) }
+      self.order_line_items.each {|i| total += (i.quantity_shipped.to_f * i.price.to_f) }
       total
     end
   end
@@ -108,7 +110,7 @@ class Order < ActiveRecord::Base
   def amount_fulfilled
     if self.order_line_items
       total = 0
-      self.order_line_items.each {|i| total += (i.quantity_fulfilled * i.price) }
+      self.order_line_items.each {|i| total += (i.quantity_fulfilled.to_f * i.price.to_f) }
       total
     end
   end

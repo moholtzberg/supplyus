@@ -2,14 +2,21 @@
 <div id="items" class="col-md-12">
 
 	<table class="table table-bordered">
-
+		
+		<tr>
+			<td colspan="8">
+				<form id="searchBox" accept-charset="UTF-8" action="/admin/items" method="get" role="search">
+					<input type="text" class="form-control" id="keywords" name="keywords" placeholder="Search Over 5,000 Products" value="">
+				</form>
+			</td>
+		</tr>
+		
 		<tr>
 			<th>ID</th>
 			<th>Number</th>
 			<th>Description</th>
 			<th>Price</th>
 			<th>Cost Price</th>
-			<th>Serialized</th>
 			<th>Times Purchased</th>
 			<th>&nbsp;</th>
 		</tr>
@@ -21,8 +28,7 @@
 			<td><%= a.description %></td>
 			<td><%= number_to_currency(a.price) %></td>
 			<td><%= number_to_currency(a.cost_price) %></td>
-			<td><%= a.is_serialized ? "Yes" : "No" %></td>
-			<td><%# a.times_purchased %></td>
+			<td><%= a.times_purchased.to_i %></td>
 			<td class="text-right">
 			
 				<div class="dropdown">

@@ -5,7 +5,8 @@
 		<%= f.hidden_field :order_id, :value => @order.id %>
 
 		<td colspan="2">
-			<%= f.select :item_id, @items.collect {|m| ["#{m.number} - #{m.description}", m.id, :price => m.actual_price(@order.account_id)]}, {:include_blank => "Select Item"},:class => "form-control" %>
+			<%# f.select :item_id, @items.collect {|m| ["#{m.number} - #{m.description}", m.id, :price => m.actual_price(@order.account_id)]}, {:include_blank => "Select Item"},:class => "form-control" %>
+			<%= f.text_field :item_id, :class => "form-control" %>
 		</td>
 		
 		<td>
@@ -17,8 +18,39 @@
 		</td>
 		
 		<td colspan="2">
-			<%= f.button :class => "btn btn-primary btn-sm", :type => :submit do %>Lorem<% end %>
+			<%= f.button :class => "btn btn-primary btn-sm", :type => :submit do %>Add<% end %>
 		</td>
+		<script>
+		$(function() {	
+			$( "#order_line_item_item_id" ).autocomplete({
+	      source: function( request, response ) {
+	        $.ajax({
+	          url: "<%= search_items_url %>",
+	          dataType: "jsonp",
+	          data: {
+	            keywords: request.term
+	          },
+	          success: function( data ) {
+	            console.log(data)
+	          }
+	        });
+	      },
+	      minLength: 3,
+	      select: function( event, ui ) {
+	        log( ui.item ?
+	          "Selected: " + ui.item.label :
+	          "Nothing selected, input was " + this.value);
+	      },
+	      open: function() {
+	        $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+	      },
+	      close: function() {
+	        $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+	      }
+	    });
+	  });
+	  </script>
+
 	
 		<script>
 		$("select#order_line_item_item_id").change(function(e){

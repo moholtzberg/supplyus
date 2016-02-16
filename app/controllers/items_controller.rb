@@ -3,6 +3,9 @@ class ItemsController < ApplicationController
   
   def index
     @items = Item.all
+    unless params[:keywords].blank?
+      @items = @items.search(params[:keywords]) if params[:keywords].present?
+    end
     @items = @items.paginate(:page => params[:page], :per_page => 25)
   end
   
@@ -14,6 +17,14 @@ class ItemsController < ApplicationController
   
   def show
     @item = Item.find_by(:id => params[:id])
+  end
+  
+  def search
+    @results = Item.where(nil)
+    @results = @results.search(params[:keywords]) if params[:keywords].present?
+    respond_to do |format|
+      format.json { render json: @results }
+    end
   end
   
   def create
