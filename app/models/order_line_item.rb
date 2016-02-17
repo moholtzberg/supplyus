@@ -1,5 +1,7 @@
 class OrderLineItem < ActiveRecord::Base
-
+  
+  default_scope { order(:order_line_number) }
+  
   belongs_to :order
   belongs_to :item
   belongs_to :cart, :class_name => :order, :foreign_key => :order_id
