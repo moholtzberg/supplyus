@@ -30,22 +30,22 @@ class Order < ActiveRecord::Base
   end
   
   def self.empty
-    Order.all.select { |o| o.has_no_line_items }
+    Order.includes(:order_line_items).where(:order_line_items => {:order_id => nil}).count
+    # Order.all.select { |o| o.has_no_line_items }
   end
   
-  def has_line_items
-    Order.joins(:order_line_items).distinct(:order_id)
-    # order_line_items.count >= 1
-  end
+  # def has_line_items
+  #     Order.joins(:order_line_items).distinct(:order_id)
+  #     # order_line_items.count >= 1
+  #   end
   
-  def has_no_line_items
-    order_line_items.count == 0
-  end
+  # def has_no_line_items
+  #   order_line_items.count == 0
+  # end
   
   def sub_total
-    total = 0
-    order_line_items.find_each {|ol| total += ol.sub_total}
-    total
+    OrderLineItem.where(order_id: id).group(:order_line_number, :price, :quantity).sum(:price, :quantity).inject(0) {|sum, k| sum + (k[0][1].to_f * k[0][2].to_f)}
+    
   end
   
   def shipping_total
@@ -57,11 +57,12 @@ class Order < ActiveRecord::Base
   end
   
   def quantity
-    if self.order_line_items
-      total = 0
-      self.order_line_items.each {|i| total += i.actual_quantity }
-      total
-    end
+    # if self.order_line_items
+    #   total = 0
+    #   self.order_line_items.each {|i| total += i.actual_quantity }
+    #   total
+    # end
+    OrderLineItem.where(order_id: id).group(:order_line_number, :quantity).sum(:quantity).inject(0) {|sum, k| sum + (k[0][1].to_f)}
   end
   
   def shipped

@@ -39,39 +39,43 @@ class OrderLineItem < ActiveRecord::Base
   end
   
   def shipped
-    if self.line_item_shipments
-      total = 0
-      self.line_item_shipments.each {|i| total += i.quantity_shipped }
-      total == quantity
-    else
-      false
-    end
+    # if self.line_item_shipments
+    #   total = 0
+    #   self.line_item_shipments.each {|i| total += i.quantity_shipped }
+    #   total == quantity
+    # else
+    #   false
+    # end
+    LineItemShipment.where(:order_line_item_id => 4).group(:order_line_item_id).sum(:quantity_shipped).inject(0) {|k, v| (k + v[1]) != 0 ? true : false }
   end
   
   def quantity_shipped
-    if self.line_item_shipments
-      total = 0
-      self.line_item_shipments.each {|i| total += i.quantity_shipped }
-      total
-    end
+    # if self.line_item_shipments
+    #   total = 0
+    #   self.line_item_shipments.each {|i| total += i.quantity_shipped }
+    #   total
+    # end
+    LineItemShipment.where(:order_line_item_id => 1).group(:order_line_item_id).sum(:quantity_shipped).inject(0) {|sum, k| sum + k[1] }
   end
   
   def fulfilled
-    if self.line_item_fulfillments
-      total = 0
-      self.line_item_fulfillments.each {|i| total += i.quantity_fulfilled }
-      total == quantity
-    else
-      false
-    end
+    # if self.line_item_fulfillments
+    #   total = 0
+    #   self.line_item_fulfillments.each {|i| total += i.quantity_fulfilled }
+    #   total == quantity
+    # else
+    #   false
+    # end
+     LineItemFulfillment.where(:order_line_item_id => 4).group(:order_line_item_id).sum(:quantity_shipped).inject(0) {|k, v| (k + v[1]) != 0 ? true : false }
   end
   
   def quantity_fulfilled
-    if self.line_item_fulfillments
-      total = 0
-      self.line_item_fulfillments.each {|i| total += i.quantity_fulfilled }
-      total
-    end
+    # if self.line_item_fulfillments
+    #   total = 0
+    #   self.line_item_fulfillments.each {|i| total += i.quantity_fulfilled }
+    #   total
+    # end
+    LineItemFulfillment.where(:order_line_item_id => 1).group(:order_line_item_id).sum(:quantity_fulfilled).inject(0) {|sum, k| sum + k[1] }
   end
   
 end
