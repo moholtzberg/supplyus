@@ -11,7 +11,22 @@
 // about supported directives.
 //
 //= require jquery
+//= require jquery-ui/autocomplete
 //= require jquery_ujs
+//= require best_in_place
 //= require bootstrap
 //= require turbolinks
-//= require_tree .
+//  require_tree .
+
+jQuery(function() {
+	return $('.best_in_place').best_in_place();
+});
+
+jQuery(function() {
+	return $('#item_brand_name').autocomplete({
+		source: $('#item_brand_name').data('autocomplete-source')
+	}).focus(function (event, ui) {
+		this.value = ui.item.label;
+		event.preventDefault();
+	});
+});

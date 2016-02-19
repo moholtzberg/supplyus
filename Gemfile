@@ -1,14 +1,10 @@
 source 'https://rubygems.org'
 
-
-# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.3'
-# Use sqlite3 as the database for Active Record
-gem 'sqlite3'
+
+gem 'sqlite3', group: :development
 gem 'pg'
-# gem 'mongodb'
-# gem 'mongoid'
-# Use SCSS for stylesheets
+
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
@@ -19,6 +15,7 @@ gem 'coffee-rails', '~> 4.1.0'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
+gem "jquery-ui-rails"
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 gem 'turbolinks'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
@@ -29,15 +26,19 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
-# Use Unicorn as the app server
 gem 'unicorn'
 
 gem 'bootstrap-sass', '~> 3.3.5'
 gem 'font-awesome-sass'
 
+gem 'paperclip'
+gem 'aws-sdk', '< 2.0'
+
 gem 'devise'
 gem 'roo'
 gem 'will_paginate-bootstrap'
+gem 'twitter-typeahead-rails', :git => "git://github.com/yourabi/twitter-typeahead-rails.git"
+gem 'best_in_place'
 
 gem 'sidekiq'
 gem 'shrimp'

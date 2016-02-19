@@ -19,6 +19,21 @@ class OrderLineItemsController < ApplicationController
     puts "-->> #{@order.inspect}"
   end
   
+  def update
+    @line_item = OrderLineItem.find_by(:id => params[:id])
+    if @line_item.update_attributes(order_line_item_params)
+      flash[:notice] = "\"#{@line_item.order_line_number}\" has been updated"
+    else
+      flash[:error] = "There were some problems with the form you submitted"
+    end
+    respond_to do |format|
+      format.html
+      format.json do 
+        respond_with_bip(@line_item)
+      end
+    end
+  end
+  
   def destroy
     @order = OrderLineItem.find_by(:id => params[:id]).order
     OrderLineItem.destroy(params[:id])
@@ -27,7 +42,7 @@ class OrderLineItemsController < ApplicationController
   private
   
   def order_line_item_params
-    params.require(:order_line_item).permit(:order_id, :item_id, :price, :quantity)
+    params.require(:order_line_item).permit(:order_id, :item_id, :price, :quantity, :quantity_canceled)
   end
   
 end

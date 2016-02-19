@@ -21,7 +21,7 @@
 		
 		<% @order.order_line_items.each do |ol| %>
 		
-		<tr class="line_item">
+		<tr class="line_item" data-order_line_item_id="<%= ol.id %>">
 			
 			<td>
 				<%= ol.order_line_number %>
@@ -30,23 +30,23 @@
 			<td>
 				<%= ol.item.number %>
 			</td>
-			<td>
-				<%= ol.quantity.round %>
+			<td class="quantity">
+				<%= best_in_place ol, :quantity %>
 			</td>
 			
-			<td>
-				<%= ol.quantity_canceled.to_i %>
+			<td class="quantity_canceled">
+				<%= best_in_place ol, :quantity_canceled %>
 			</td>
 			
-			<td>
-				<%= ol.actual_quantity.to_i %>
+			<td class="actual_quantity">
+				<%= ol.actual_quantity %>
 			</td>
 			
-			<td>
-				<%= number_to_currency(ol.price) %>
+			<td lass="price">
+				<%= best_in_place ol, :price, :value => number_to_currency(ol.price) %>
 			</td>
 			
-			<td>
+			<td lass="sub_total">
 				<%= number_to_currency(ol.sub_total) %>
 			</td>
 			
@@ -68,3 +68,12 @@
 	</tfooter>
 		
 </table>
+<script>
+	$('.best_in_place').bind("ajax:success", function (e) {
+		//var qty = $(this).closest('tr').attr("data-order_line_item_id").val()
+		var qty = e.currentTarget
+		console.log(qty[0])
+		var parent = e.currentTarget.parent()
+		$(this).closest('tr').effect('highlight');
+	});
+</script>

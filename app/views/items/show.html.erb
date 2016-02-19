@@ -14,13 +14,13 @@
 		</tr>
 		
 		<tr>
-			<td><%= @item.number %></td>
+			<td><%= best_in_place @item, :number %></td>
 			<td><%= @item.name %></td>
 			<td><%= number_to_currency(@item.price) %></td>
 			<td><%= number_to_currency(@item.cost_price) %></td>
 		</tr>
 		<tr>
-			<td colspan="4"><%= @item.description %></td>
+			<td colspan="4"><%= best_in_place @item, :description %></td>
 		<tr>
 		
 	</table>

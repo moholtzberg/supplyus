@@ -2,7 +2,11 @@ class BrandsController < ApplicationController
   layout "admin"
   
   def index
-    @brands = Brand.all
+    @brands = Brand.order(:name).where("name like ?", "%#{params[:term]}%")
+    respond_to do |format|
+      format.html
+      format.json {render :json => @brands.map(&:name)}
+    end
   end
   
   def new
