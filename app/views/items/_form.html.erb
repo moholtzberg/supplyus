@@ -11,7 +11,7 @@
 	</div>
 	
 	<div id="brand" class="col-md-12">
-		<%= f.select :brand_id, @brands.collect {|p| [p.name, p.id]}, {:include_blank => "Select Brand"}, {:class => "form-control"} %>
+		<%= f.text_field :brand_name, :class => "form-control", data: {autocomplete_source: brands_path} %>
 	</div>
 	
 	<div id="category" class="col-md-12">
