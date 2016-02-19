@@ -9,16 +9,16 @@
 		<th>Total</th>
 		<th>&nbsp;</th>
 	</tr>
-<% current_user.orders.each do |order|%>
-	<% if order.completed_at? and order.has_line_items %>
+<% current_user.orders.open.each do |order|%>
+	<%# if order.completed_at and order.has_line_items %>
 		<tr>
 			<td><%= order.number %></td>
-			<td><%= order.completed_at.strftime("%m/%d/%Y") %></td>
+			<td><%= order.completed_at %></td>
 			<td><%= order.po_number %></td>
 			<td><%= number_to_currency(order.total) %></td>
 			<td><%= link_to "View Details", "my_account/#{order.number}" %></td>
 		</tr>
-	<% end %>
+	<%# end %>
 <% end %>
 <table>
 

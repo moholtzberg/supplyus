@@ -6,6 +6,7 @@ class Order < ActiveRecord::Base
   #default_scope { self.open }
   
   scope :is_locked, -> () { where(:locked => true) }
+  scope :is_unlocked, -> () { where.not(:locked => true) }
   scope :is_complete, -> () { where.not(:completed_at => nil)}
   scope :is_incomplete, -> () { where(:completed_at => nil)}
   scope :has_account, -> () { where.not(:account_id => nil) }
