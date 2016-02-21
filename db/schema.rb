@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160216223810) do
+ActiveRecord::Schema.define(version: 20160219193128) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -337,6 +337,11 @@ ActiveRecord::Schema.define(version: 20160216223810) do
     t.string  "number"
     t.boolean "delivered"
     t.string  "signed_by"
+  end
+
+  create_table "user_accounts", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "account_id"
   end
 
   create_table "users", force: :cascade do |t|

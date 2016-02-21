@@ -20,7 +20,7 @@
 		<div class="pull-right">
 			<%= form_for @cart, url: add_to_cart_path, :class => "form-inline", :remote => true do |f| %>
 				<div class="form-group">
-					<% if current_user and current_user.has_account and i.actual_price(current_user.account.id) <= i.price %>
+					<% if current_user and current_user.has_account and i.actual_price(current_user.account.id).to_f <= i.price.to_f %>
 					<h4>Your Price: <%= number_to_currency(i.actual_price(current_user.account.id)) %><h4>
 					<% else %>
 					<h4>Your Price: <%= number_to_currency(i.price) %><h4>

@@ -20,10 +20,10 @@ class Order < ActiveRecord::Base
   
   before_save :make_record_number
   
-  def destroy
-    raise "Cannot delete order a locked order" unless locked != true
-    raise "Cannot delete an order with shipments" unless quantity_shipped == 0
-  end
+  # def destroy
+  #   raise "Cannot delete order a locked order" unless locked != true
+  #   raise "Cannot delete an order with shipments" unless quantity_shipped == 0
+  # end
   
   def self.open
     Order.joins(:order_line_items).distinct(:order_id)
@@ -31,14 +31,14 @@ class Order < ActiveRecord::Base
   end
   
   def self.empty
-    Order.includes(:order_line_items).where(:order_line_items => {:order_id => nil}).count
+    Order.includes(:order_line_items).where(:order_line_items => {:order_id => nil})
     # Order.all.select { |o| o.has_no_line_items }
   end
   
   # def has_line_items
-  #     Order.joins(:order_line_items).distinct(:order_id)
-  #     # order_line_items.count >= 1
-  #   end
+  #   Order.joins(:order_line_items).distinct(:order_id)
+  #   # order_line_items.count >= 1
+  #end
   
   # def has_no_line_items
   #   order_line_items.count == 0

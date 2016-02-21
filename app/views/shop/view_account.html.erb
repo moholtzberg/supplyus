@@ -1,0 +1,53 @@
+<% if params[:account_id] %>
+	
+	<% unless @account.nil? %>
+	<table class="table table-bordered">
+
+		<tr>
+			<td>My Account <%# link_to "Edit", "/edit_account" %></td>
+		</tr>
+
+		<tr>
+			<td>
+				<address>
+				<%= @account.name %><br/>
+				<%= @account.ship_to_address_1 %><br/>
+				<%= @account.ship_to_address_2 %><br/>
+				<%= @account.ship_to_city %>, <%= @account.ship_to_state %> <%= @account.ship_to_zip %><br/>
+				<%= @account.ship_to_phone %>
+				</address>
+			</td>
+		</tr>
+	
+	</table>
+	<% end %>
+
+	<table class="table table-bordered">
+		<tr>
+			<th colspan="5">Recent Orders</th>
+		</tr>
+		<tr>
+			<th>Number</th>
+			<th>Date</th>
+			<th>PO Number</th>
+			<th>Total</th>
+			<th>&nbsp;</th>
+		</tr>
+	
+		<% @orders.each do |order|%>
+		<tr>
+			<td><%= order.number %></td>
+			<td><%= order.completed_at.strftime("%m/%d/%Y") %></td>
+			<td><%= order.po_number %></td>
+			<td><%= number_to_currency(order.total) %></td>
+			<td><%= link_to "View Details", "/my_account/order/#{order.number}" %></td>
+		</tr>
+		<% end %>
+		
+		<tr>
+			<td class="text-center" colspan="5"><%= will_paginate @orders, renderer: BootstrapPagination::Rails %></td>
+		</tr>
+	
+	<table>
+		
+<% end %>

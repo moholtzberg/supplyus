@@ -5,6 +5,10 @@ class ShopController < ApplicationController
   
   before_action :authenticate_user!, :only => :my_account
   
+  def check_authorization
+    
+  end
+  
   def index
     @categories = Category.is_parent
     @items = Item.all
@@ -72,7 +76,16 @@ class ShopController < ApplicationController
   end
   
   def my_account
-    
+  end
+  
+  def my_items
+    @items = OrderLineItem.joins(:order, :item).where("orders.account_id = ?", current_user.account.id).select(:item_id).uniq(:item_id).map {|a| a.item_id}
+    @items = Item.where(id: @items).joins(:order_line_items).group(:item_id).order("order_line_items.quantity DESC")
+  end
+  
+  def view_account
+    @account = Account.find_by(:id => params[:account_id])
+    @orders = @account.orders.open.is_complete.paginate(:page => params[:page], :per_page => 10)
   end
   
   def view_order
