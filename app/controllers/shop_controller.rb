@@ -16,11 +16,17 @@ class ShopController < ApplicationController
   
   def category
     @category = Category.find_by(:slug => params[:category])
+    if Category.find_by(:slug => params[:category]).nil?
+      raise ActionController::RoutingError.new('Not Found')
+    end
     @items = Item.where(:category_id => @category.id).paginate(:page => params[:page])
   end
   
   def item
     @category = Category.find_by(:slug => params[:category])
+    if Item.find_by(:slug => params[:item]).nil?
+      raise ActionController::RoutingError.new('Not Found')
+    end
     @item = Item.find_by(:slug => params[:item])
   end
   
