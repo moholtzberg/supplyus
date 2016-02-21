@@ -8,6 +8,7 @@ class Item < ActiveRecord::Base
   #   medium: '400x400>'
   # }
   has_many :order_line_items
+  has_many :item_properties
   belongs_to :category
   belongs_to :brand
   belongs_to :model
@@ -75,57 +76,79 @@ class Item < ActiveRecord::Base
     # .order("denotations_count DESC")
   end
   
-  def import_xml
-    AWS.config({
-        :access_key_id => "#{SECRET['AWS']['ACCESS_KEY_ID']}",
-        :secret_access_key => "#{SECRET['AWS']['SECRET_ACCESS_KEY']}",
-    })
-    bucket_name = '247officesuppy/400/400'
-
-    s3 = AWS::S3.new()
-    bucket = s3.buckets[bucket_name]
+  def import_xml_new
+    noko = File.open("#{Rails.root}/app/assets/images/ecdb.individual_items/#{self.number}.xml") { |f| Nokogiri::XML(f) }
     
-    begin
-      noko = Hash.from_xml(open("#{Rails.root}/app/assets/images/ecdb.individual_items/#{self.number}.xml"))
-    rescue
-      "No such file #{self.number}.xml"
-    else
-      info = noko["SyncItemMaster"]["DataArea"]["ItemMaster"]["ItemMasterHeader"]
-      brand = info["ManufacturerItemID"]["schemeAgencyName"]
-      
-      sku_group_image = ""
-      info["Classification"].each {|o| if o["type"] == "SKU_Group" then sku_group_image = o["SkuGroupImage"] end }
-      single_image = info['DrawingAttachment']['FileName']
-      
-      if AWS::S3.new.buckets["247officesuppy"].objects["400/400/#{single_image}"].exists?
-        
-        image = single_image
-        puts "----> SINGLE IMAGE = #{image}"
-        bucket.objects["#{image}"].acl = :public_read unless bucket.objects["#{image}"].nil?
-        
-      elsif AWS::S3.new.buckets["247officesuppy"].objects["400/400/#{sku_group_image}"].exists?
-        
-        image = sku_group_image
-        puts "----> SKU GROUP IMAGE = #{image}"
-        bucket.objects["#{image}"].acl = :public_read unless bucket.objects["#{image}"].nil?
-        
-      else
-        image = "NOA.JPG"
-      end
-      
-      item_images = self.images
-      
-      if self.images.count > 1
-        (1..self.images.count).each {|im| Image.find_by(id: "im").destroy }
-      end
-      
-      if self.images.count == 1
-        Image.find_by(id: self.images.first.id).update_attributes(:attachment_file_name => image)
-      else
-        Image.create(:attachment_file_name => image)
-      end
-      
+    noko.xpath("//oa:Specification//oa:Property//oa:NameValue").each_with_index do |k,v, index|  
+      ItemProperty.create(:key => k.attributes["name"], :value => k.text, :order => index, :active => true)
     end
+    
+    cat1 = noko.css("[listName=HierarchyLevel1]").text
+    cat1_slug = cat1.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-')
+    cat1 = Category.find_or_create_by(:name => cat1, slug: cat1_slug)
+    
+    cat2 = noko.css("[listName=HierarchyLevel2]").text
+    cat2_slug = cat2.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-')
+    cat2 = Category.find_or_create_by(name: cat2, slug: cat2_slug, parent_id: cat1.id)
+    
+    cat3 = noko.css("[listName=HierarchyLevel3]").text
+    cat3_slug = cat3.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-')
+    cat3 = Category.find_or_create_by(name: cat3, slug: cat3_slug, parent_id: cat2.id)
+    
+    update_attributes(:category_id => cat3.id)
   end
+  
+  # def import_xml
+  #     AWS.config({
+  #         :access_key_id => "#{SECRET['AWS']['ACCESS_KEY_ID']}",
+  #         :secret_access_key => "#{SECRET['AWS']['SECRET_ACCESS_KEY']}",
+  #     })
+  #     bucket_name = '247officesuppy/400/400'
+  # 
+  #     s3 = AWS::S3.new()
+  #     bucket = s3.buckets[bucket_name]
+  #     
+  #     begin
+  #       noko = Hash.from_xml(open("#{Rails.root}/app/assets/images/ecdb.individual_items/#{self.number}.xml"))
+  #     rescue
+  #       "No such file #{self.number}.xml"
+  #     else
+  #       info = noko["SyncItemMaster"]["DataArea"]["ItemMaster"]["ItemMasterHeader"]
+  #       brand = info["ManufacturerItemID"]["schemeAgencyName"]
+  #       
+  #       sku_group_image = ""
+  #       info["Classification"].each {|o| if o["type"] == "SKU_Group" then sku_group_image = o["SkuGroupImage"] end }
+  #       single_image = info['DrawingAttachment']['FileName']
+  #       
+  #       if AWS::S3.new.buckets["247officesuppy"].objects["400/400/#{single_image}"].exists?
+  #         
+  #         image = single_image
+  #         puts "----> SINGLE IMAGE = #{image}"
+  #         bucket.objects["#{image}"].acl = :public_read unless bucket.objects["#{image}"].nil?
+  #         
+  #       elsif AWS::S3.new.buckets["247officesuppy"].objects["400/400/#{sku_group_image}"].exists?
+  #         
+  #         image = sku_group_image
+  #         puts "----> SKU GROUP IMAGE = #{image}"
+  #         bucket.objects["#{image}"].acl = :public_read unless bucket.objects["#{image}"].nil?
+  #         
+  #       else
+  #         image = "NOA.JPG"
+  #       end
+  #       
+  #       item_images = self.images
+  #       
+  #       if self.images.count > 1
+  #         (1..self.images.count).each {|im| Image.find_by(id: "im").destroy }
+  #       end
+  #       
+  #       if self.images.count == 1
+  #         Image.find_by(id: self.images.first.id).update_attributes(:attachment_file_name => image)
+  #       else
+  #         Image.create(:attachment_file_name => image)
+  #       end
+  #       
+  #     end
+  #   end
   
 end

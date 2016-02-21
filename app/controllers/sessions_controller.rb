@@ -3,6 +3,10 @@ class SessionsController < Devise::SessionsController
   before_filter :find_categories
   before_filter :find_cart
   
+  def check_authorization
+    
+  end
+  
   def find_categories
     @categories = Category.is_parent
   end

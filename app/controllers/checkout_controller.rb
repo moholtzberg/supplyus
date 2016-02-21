@@ -6,6 +6,10 @@ class CheckoutController < ApplicationController
   
   before_action :authenticate_user!
   
+  def check_authorization
+    
+  end
+  
   def address
     @checkout = Checkout.find_by(:id => session[:cart_id])
     if current_user.account.nil?
