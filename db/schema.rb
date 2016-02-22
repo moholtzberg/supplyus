@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160219193128) do
+ActiveRecord::Schema.define(version: 20160221181258) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -66,6 +66,7 @@ ActiveRecord::Schema.define(version: 20160219193128) do
     t.boolean  "preferred"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "prefix"
   end
 
   create_table "categories", force: :cascade do |t|

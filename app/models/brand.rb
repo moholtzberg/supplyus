@@ -6,6 +6,6 @@ class Brand < ActiveRecord::Base
   
   scope :active, -> () { where(:active => true) }
   
-  validates_uniqueness_of :name
+  # validates_uniqueness_of :name
   
 end

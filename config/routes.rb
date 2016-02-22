@@ -50,6 +50,7 @@ Rails.application.routes.draw do
       resources :charges
       resources :invoices
       resources :brands
+      resources :brand_imports
       resources :credit_cards
       resources :vendors
       get "equipment/delete/:id" => "equipment#delete"
