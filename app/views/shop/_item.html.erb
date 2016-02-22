@@ -6,8 +6,8 @@
 			</a>
 		</div>
 		<div class="media-body">
-			<h4 class="media-heading"><%= "#{i.number} - #{i.name}" %></h4>
-			<p><%= i.description %></p>
+			<h4 class="media-heading"><strong><%= "#{i.number}" %></strong> - <%= "#{i.name}" %></h4>
+			<p><%= i.description.truncate_words(36, omission: '...') unless i.description.nil? %></p>
 			<p>
 				<% unless i.category.nil? %><span class="label label-info"><%= i.category.name %></span><% end %>
 				<% unless i.brand.nil? %><span class="label label-warning"><%= i.brand.name %></span><% end %>

@@ -15,19 +15,20 @@ class ShopController < ApplicationController
   end
   
   def category
-    @category = Category.find_by(:slug => params[:category])
-    if Category.find_by(:slug => params[:category]).nil?
+    @category = Category.where("slug = lower(?)", params[:category].downcase).take
+    if Category.where("slug = lower(?)", params[:category].downcase).take.nil?
       raise ActionController::RoutingError.new('Not Found')
     end
-    @items = Item.where(:category_id => @category.id).paginate(:page => params[:page])
+    # @items = Item.where(:category_id => @category.id).paginate(:page => params[:page])
+    @items = ItemCategory.where(:category_id => @category.id).paginate(:page => params[:page])
   end
   
   def item
-    @category = Category.find_by(:slug => params[:category])
-    if Item.find_by(:slug => params[:item]).nil?
+    @category = Category.where("slug = lower(?)", params[:category].downcase).take
+    if Item.where("slug = lower(?)", params[:item].downcase).take.nil?
       raise ActionController::RoutingError.new('Not Found')
     end
-    @item = Item.find_by(:slug => params[:item])
+    @item = Item.where("slug = lower(?)", params[:item].downcase).take
   end
   
   def search

@@ -13,7 +13,7 @@
 <% end %>
 
 <% @items.each do |i| %>
-	<%= render :partial => "shop/item", :locals => {:i => i} %>
+	<%= render :partial => "shop/item", :locals => {:i => i.item} %>
 <% end %>
 
 <%= will_paginate @items, renderer: BootstrapPagination::Rails %>

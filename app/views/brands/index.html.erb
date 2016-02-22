@@ -7,6 +7,7 @@
 	
 			<tr>
 				<th>ID</th>
+				<th>Prefix</th>
 				<th>Name</th>
 				<th>Active</th>
 				<th>Preferred</th>
@@ -16,6 +17,7 @@
 			<% @brands.each do |a| %>
 			<tr>
 				<td><%= a.id %></td>
+				<th><%= a.prefix %></th>
 				<td><%= a.name %></td>
 				<td><%= a.active ? "Yes" : "No" %></td>
 				<td><%= a.preferred ? "Yes" : "No" %></td>
