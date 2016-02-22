@@ -7,7 +7,7 @@
 		<% current_user.user_accounts.each do |ac|%>
 		<tr>
 			<td><%= ac.account.name %></td>
-			<td><%= ac.user.email %></td>
+			<td><%= ac.account.user.email %></td>
 			<td><%= link_to "View Account", "my_account/#{ac.account.id}" %></td>
 		</tr>
 		<% end %>
