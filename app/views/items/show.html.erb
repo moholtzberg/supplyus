@@ -3,7 +3,7 @@
 	<table class="table table-bordered table-striped">
 		
 		<tr>
-			<td><%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/#{@item.default_image_path}", :class => "media-object", :height => "400", :width => "400" %></td>
+			<td colspan="2"><%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/#{@item.default_image_path}", :class => "media-object", :height => "250", :width => "250" %></td>
 		</tr>
 		
 		<tr>
@@ -27,22 +27,47 @@
 	
 	<br/>
 	
-	<table class="table">
+	<div class="col-md-6">
 		
-		<tr>
-			<th>Account</th>
-			<th>Item</th>
-			<th>Price</th>
-		</tr>
+		<table class="table table-bordered table-condensed table-striped">
+
+			<tr>
+				<th>Account</th>
+				<th>Price</th>
+			</tr>
+
+			<% @item.account_item_prices.each do |it| %>
+			<tr>
+				<td><%= it.account.name %></td>
+				<td><%= (it.price == it.item.actual_price(it.account_id)) ? it.item.actual_price(it.account_id) : 'NULL' %></td>
+			</tr>
+			<% end %>
+
+		</table>
 		
-		<% @item.account_item_prices.each do |it| %>
-		<tr>
-			<td><%= it.account.name %></td>
-			<td><%= it.item.number %> - <%= link_to it.item.name, item_path(it) %></td>
-			<td><%= (it.price == it.item.actual_price(it.account_id)) ? it.item.actual_price(it.account_id) : 'NULL' %></td>
-		</tr>
-		<% end %>
+	</div>
+	<div class="col-md-6">
 		
-	</table>
+		<table class="table table-bordered table-condensed table-striped">
+
+			<tr>
+				<th>Order</th>
+				<th>Ship To Account Name</th>
+				<th>Quantity</th>
+				<th>Price</th>
+			</tr>
+
+			<% @item.order_line_items.each do |it| %>
+			<tr>
+				<td><%= it.order.number %></td>
+				<td><%= it.order.ship_to_account_name %></td>
+				<td><%= it.actual_quantity %></td>
+				<td><%= it.price %></td>
+			</tr>
+			<% end %>
+
+		</table>
+		
+	</div>
 	
 </div>

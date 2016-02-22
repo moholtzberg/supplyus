@@ -1,70 +1,64 @@
 <% content_for :app_location do %>Shipments/New<% end %>
 <div id="orders" class="col-md-12">
 	
-	<div class="widget panel">
-		<%= form_for @shipment, url: order_shipments_path, :remote => false do |f| %>
-		<table class="table">
-			
+	<%= form_for @shipment, url: order_shipments_path, :remote => false do |f| %>
+	<table class="table">
+		
+		<tr>
+			<th>ID</th>
+			<th>Item Name/Description</th>
+			<th>Quantity Ordered</th>
+			<th>Quantity Shipped</th>
+			<th>Quantity To Ship Now</th>
+		<tr>
+		
+		<%= hidden_field_tag :order_id, params[:order_id].to_i %>
+		
+		<% @line_items.each_with_index do |li, idx| %>
+			<% if li.shipped != true %>
+			<%= hidden_field_tag "lines[#{idx}][order_line_item_id]", li.id.to_i %>
 			<tr>
-				<th>ID</th>
-				<th>Item Name/Description</th>
-				<th>Quantity Ordered</th>
-				<th>Quantity Shipped</th>
-				<th>Quantity To Ship Now</th>
+				<td><%= li.id %></td>
+				<td><%= "#{li.item.number} / #{li.item.name}" unless li.item.nil? %></td>
+				<td><%= li.quantity %></td>
+				<td><%= li.quantity_shipped %></td>
+				<td><%= text_field_tag "lines[#{idx}][quantity_ship_now]", (li.quantity.to_i - li.quantity_shipped.to_i), :class => "form-control" %></td>
 			<tr>
-			
-			<%= hidden_field_tag :order_id, params[:order_id].to_i %>
-			
-			<% @line_items.each_with_index do |li, idx| %>
-				<% unless li.shipped %>
-				<%= hidden_field_tag "lines[#{idx}][order_line_item_id]", li.id.to_i %>
-				<tr>
-					<td><%= li.id %></td>
-					<td><%= "#{li.item.number} / #{li.item.name}" %></td>
-					<td><%= li.quantity %></td>
-					<td><%= li.quantity_shipped %></td>
-					<td><%= text_field_tag "lines[#{idx}][quantity_ship_now]", (li.quantity.to_i - li.quantity_shipped.to_i), :class => "form-control" %></td>
-				<tr>
-				<% end %>
 			<% end %>
-
-				
-			
-			
-		</talbe>
-		
-		<table class="table table-bordered">
-			
-			<tr>
-				<td>Tracking Number 1</td>
-				<td><%= text_field_tag "tracking_numbers[0][number]" %></td>
-			</tr>
-			<tr>
-				<td>Tracking Number 2</td>
-				<td><%= text_field_tag "tracking_numbers[1][number]" %></td>
-			</tr>
-			<tr>
-				<td>Tracking Number 3</td>
-				<td><%= text_field_tag "tracking_numbers[2][number]" %></td>
-			</tr>
-			<tr>
-				<td>Tracking Number 4</td>
-				<td><%= text_field_tag "tracking_numbers[3][number]" %></td>
-			</tr>
-			<tr>
-				<td>Tracking Number 5</td>
-				<td><%= text_field_tag "tracking_numbers[4][number]" %></td>
-			</tr>
-			
-		</table>
-		
-		<table>
-			<tr>
-				<td colspan="5"><%= f.submit "Create Shipment", :class => "btn btn-primary pull-right" %></td>
-			</tr>
-		</table>
 		<% end %>
 		
-	</div>
+	</talbe>
+	
+	<table class="table table-bordered">
+		
+		<tr>
+			<td>Tracking Number 1</td>
+			<td><%= text_field_tag "tracking_numbers[0][number]" %></td>
+		</tr>
+		<tr>
+			<td>Tracking Number 2</td>
+			<td><%= text_field_tag "tracking_numbers[1][number]" %></td>
+		</tr>
+		<tr>
+			<td>Tracking Number 3</td>
+			<td><%= text_field_tag "tracking_numbers[2][number]" %></td>
+		</tr>
+		<tr>
+			<td>Tracking Number 4</td>
+			<td><%= text_field_tag "tracking_numbers[3][number]" %></td>
+		</tr>
+		<tr>
+			<td>Tracking Number 5</td>
+			<td><%= text_field_tag "tracking_numbers[4][number]" %></td>
+		</tr>
+		
+	</table>
+	
+	<table>
+		<tr>
+			<td colspan="5"><%= f.submit "Create Shipment", :class => "btn btn-primary pull-right" %></td>
+		</tr>
+	</table>
+	<% end %>
 	
 </div>

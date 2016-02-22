@@ -46,7 +46,7 @@ class OrderLineItem < ActiveRecord::Base
     # else
     #   false
     # end
-    LineItemShipment.where(:order_line_item_id => 4).group(:order_line_item_id).sum(:quantity_shipped).inject(0) {|k, v| (k + v[1]) != 0 ? true : false }
+    LineItemShipment.where(:order_line_item_id => self.id).group(:order_line_item_id).sum(:quantity_shipped).inject(0) {|k, v| (k + v[1]) != 0 ? true : false }
   end
   
   def quantity_shipped
@@ -55,7 +55,7 @@ class OrderLineItem < ActiveRecord::Base
     #   self.line_item_shipments.each {|i| total += i.quantity_shipped }
     #   total
     # end
-    LineItemShipment.where(:order_line_item_id => 1).group(:order_line_item_id).sum(:quantity_shipped).inject(0) {|sum, k| sum + k[1] }
+    LineItemShipment.where(:order_line_item_id => self.id).group(:order_line_item_id).sum(:quantity_shipped).inject(0) {|sum, k| sum + k[1] }
   end
   
   def fulfilled
@@ -66,7 +66,7 @@ class OrderLineItem < ActiveRecord::Base
     # else
     #   false
     # end
-     LineItemFulfillment.where(:order_line_item_id => 4).group(:order_line_item_id).sum(:quantity_shipped).inject(0) {|k, v| (k + v[1]) != 0 ? true : false }
+     LineItemFulfillment.where(:order_line_item_id => self.id).group(:order_line_item_id).sum(:quantity_shipped).inject(0) {|k, v| (k + v[1]) != 0 ? true : false }
   end
   
   def quantity_fulfilled
@@ -75,7 +75,7 @@ class OrderLineItem < ActiveRecord::Base
     #   self.line_item_fulfillments.each {|i| total += i.quantity_fulfilled }
     #   total
     # end
-    LineItemFulfillment.where(:order_line_item_id => 1).group(:order_line_item_id).sum(:quantity_fulfilled).inject(0) {|sum, k| sum + k[1] }
+    LineItemFulfillment.where(:order_line_item_id => self.id).group(:order_line_item_id).sum(:quantity_fulfilled).inject(0) {|sum, k| sum + k[1] }
   end
   
 end
