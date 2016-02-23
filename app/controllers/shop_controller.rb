@@ -20,7 +20,7 @@ class ShopController < ApplicationController
       raise ActionController::RoutingError.new('Not Found')
     end
     # @items = Item.where(:category_id => @category.id).paginate(:page => params[:page])
-    @items = ItemCategory.where(:category_id => @category.id).paginate(:page => params[:page])
+    @items = ItemCategory.where(:category_id => [@category.id, @category.children.map(&:id)]).paginate(:page => params[:page])
   end
   
   def item

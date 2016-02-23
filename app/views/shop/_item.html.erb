@@ -9,8 +9,9 @@
 			<h4 class="media-heading"><strong><%= "#{i.number}" %></strong> - <%= "#{i.name}" %></h4>
 			<p><%= i.description.truncate_words(36, omission: '...') unless i.description.nil? %></p>
 			<p>
-				<% unless i.category.nil? %><span class="label label-info"><%= i.category.name %></span><% end %>
 				<% unless i.brand.nil? %><span class="label label-warning"><%= i.brand.name %></span><% end %>
+				<% unless i.category.nil? %><span class="label label-info"><%= i.category.name %></span><% end %>
+				<% i.item_categories.each do |cat|%>&nbsp;<span class="label label-info"><%= cat.category.name %></span><% end %>
 			</p>
 		</div>
 	</div>
