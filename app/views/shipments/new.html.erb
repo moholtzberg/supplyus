@@ -2,7 +2,26 @@
 <div id="orders" class="col-md-12">
 	
 	<%= form_for @shipment, url: order_shipments_path, :remote => false do |f| %>
-	<table class="table">
+	
+	<table class="table table-bordered">
+		
+		<tr>
+			<th>Order Number</th>
+			<th>Ship To Account Name</th>
+			<th>Ship Date</th>
+			<th>Carrier</th>
+		</tr>
+		
+		<tr>
+			<td><%= @order.number %></td>
+			<td><%= @order.ship_to_account_name %></td>
+			<td><%= f.date_field :ship_date, :class => "form-control" %></td>
+			<td><%= f.select :carrier, ["UPS", "FedEx", "US Postal Service", "Ensenda", "Roadrunner"], {}, :class => "form-control" %></td>
+		</tr>
+		
+	</table>
+	
+	<table class="table table-bordered">
 		
 		<tr>
 			<th>ID</th>
@@ -20,9 +39,9 @@
 			<tr>
 				<td><%= li.id %></td>
 				<td><%= "#{li.item.number} / #{li.item.name}" unless li.item.nil? %></td>
-				<td><%= li.quantity %></td>
+				<td><%= li.actual_quantity %></td>
 				<td><%= li.quantity_shipped %></td>
-				<td><%= text_field_tag "lines[#{idx}][quantity_ship_now]", (li.quantity.to_i - li.quantity_shipped.to_i), :class => "form-control" %></td>
+				<td><%= text_field_tag "lines[#{idx}][quantity_ship_now]", (li.actual_quantity.to_i - li.quantity_shipped.to_i), :class => "form-control" %></td>
 			<tr>
 			<% end %>
 		<% end %>
@@ -50,6 +69,70 @@
 		<tr>
 			<td>Tracking Number 5</td>
 			<td><%= text_field_tag "tracking_numbers[4][number]" %></td>
+		</tr>
+		<tr>
+			<td>Tracking Number 5</td>
+			<td><%= text_field_tag "tracking_numbers[5][number]" %></td>
+		</tr>
+		<tr>
+			<td>Tracking Number 5</td>
+			<td><%= text_field_tag "tracking_numbers[6][number]" %></td>
+		</tr>
+		<tr>
+			<td>Tracking Number 5</td>
+			<td><%= text_field_tag "tracking_numbers[7][number]" %></td>
+		</tr>
+		<tr>
+			<td>Tracking Number 5</td>
+			<td><%= text_field_tag "tracking_numbers[8][number]" %></td>
+		</tr>
+		<tr>
+			<td>Tracking Number 5</td>
+			<td><%= text_field_tag "tracking_numbers[9][number]" %></td>
+		</tr>
+		<tr>
+			<td>Tracking Number 5</td>
+			<td><%= text_field_tag "tracking_numbers[10][number]" %></td>
+		</tr>
+		<tr>
+			<td>Tracking Number 5</td>
+			<td><%= text_field_tag "tracking_numbers[11][number]" %></td>
+		</tr>
+		<tr>
+			<td>Tracking Number 5</td>
+			<td><%= text_field_tag "tracking_numbers[12][number]" %></td>
+		</tr>
+		<tr>
+			<td>Tracking Number 5</td>
+			<td><%= text_field_tag "tracking_numbers[13][number]" %></td>
+		</tr>
+		<tr>
+			<td>Tracking Number 5</td>
+			<td><%= text_field_tag "tracking_numbers[14][number]" %></td>
+		</tr>
+		<tr>
+			<td>Tracking Number 5</td>
+			<td><%= text_field_tag "tracking_numbers[15][number]" %></td>
+		</tr>
+		<tr>
+			<td>Tracking Number 5</td>
+			<td><%= text_field_tag "tracking_numbers[16][number]" %></td>
+		</tr>
+		<tr>
+			<td>Tracking Number 5</td>
+			<td><%= text_field_tag "tracking_numbers[17][number]" %></td>
+		</tr>
+		<tr>
+			<td>Tracking Number 5</td>
+			<td><%= text_field_tag "tracking_numbers[18][number]" %></td>
+		</tr>
+		<tr>
+			<td>Tracking Number 5</td>
+			<td><%= text_field_tag "tracking_numbers[19][number]" %></td>
+		</tr>
+		<tr>
+			<td>Tracking Number 5</td>
+			<td><%= text_field_tag "tracking_numbers[20][number]" %></td>
 		</tr>
 		
 	</table>

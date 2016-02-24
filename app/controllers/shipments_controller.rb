@@ -2,12 +2,13 @@ class ShipmentsController < ApplicationController
   layout "admin"
   
   def new
-    @shipment = Shipment.new(:order_id => params[:order_id])
-    @line_items = OrderLineItem.where(:order_id => params[:order_id])
+    @order = Order.find_by(:id => params[:order_id])
+    @shipment = Shipment.new(:order_id => @order.id)
+    @line_items = OrderLineItem.where(:order_id => @order.id)
   end
   
   def create
-    shipment = Shipment.new(:date => Time.now, :order_id => params[:order_id])
+    shipment = Shipment.new(:date => Time.now, :order_id => params[:order_id], :carrier => params[:shipment][:carrier], :ship_date => params[:shipment][:ship_date])
     
     params[:lines].each do |line|
       shipment.line_item_shipments.new(:order_line_item_id => line[1]["order_line_item_id"], :quantity_shipped => line[1]["quantity_ship_now"])

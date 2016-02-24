@@ -45,7 +45,7 @@ class Order < ActiveRecord::Base
   # end
   
   def sub_total
-    OrderLineItem.where(order_id: id).group(:order_line_number, :price, :quantity).sum(:price, :quantity).inject(0) {|sum, k| sum + (k[0][1].to_f * k[0][2].to_f)}
+    OrderLineItem.where(order_id: id).group(:order_line_number, :price, :quantity, :quantity_canceled).sum(:price, :quantity).inject(0) {|sum, k| sum + (k[0][1].to_f * (k[0][2].to_f - k[0][3].to_f))}
     
   end
   
@@ -63,7 +63,7 @@ class Order < ActiveRecord::Base
     #   self.order_line_items.each {|i| total += i.actual_quantity }
     #   total
     # end
-    OrderLineItem.where(order_id: id).group(:order_line_number, :quantity).sum(:quantity).inject(0) {|sum, k| sum + (k[0][1].to_f)}
+    OrderLineItem.where(order_id: id).group(:order_line_number, :quantity, :quantity_canceled).sum(:quantity).inject(0) {|sum, k| sum + (k[0][1].to_f - k[0][2].to_f)}
   end
   
   def shipped
