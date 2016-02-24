@@ -2,18 +2,18 @@ class OrdersController < ApplicationController
   layout "admin"
   
   def index
-    @orders = Order.open.is_complete.reorder(:completed_at => :desc)
+    @orders = Order.open.is_complete.reorder(:completed_at => :desc).includes(:account, :order_line_items)
     @orders = @orders.paginate(:page => params[:page], :per_page => 10)
   end
   
   def locked
-    @orders = Order.is_locked
+    @orders = Order.is_locked.includes(:account, :order_line_items)
     @orders = @orders.paginate(:page => params[:page], :per_page => 10)
     render "index"
   end
   
   def incomplete
-    @orders = Order.open.is_incomplete
+    @orders = Order.open.is_incomplete.includes(:account, :order_line_items)
     @orders = @orders.paginate(:page => params[:page], :per_page => 10)
     render "index"
   end

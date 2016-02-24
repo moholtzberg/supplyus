@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160224015220) do
+ActiveRecord::Schema.define(version: 20160224064821) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -79,6 +79,9 @@ ActiveRecord::Schema.define(version: 20160224015220) do
     t.boolean "active"
   end
 
+  add_index "categories", ["id"], name: "category_id_ix"
+  add_index "categories", ["parent_id"], name: "category_parent_id_ix"
+
   create_table "charges", force: :cascade do |t|
     t.integer "account_id"
     t.integer "payment_plan_id"
@@ -139,6 +142,9 @@ ActiveRecord::Schema.define(version: 20160224015220) do
     t.integer "item_id"
   end
 
+  add_index "item_categories", ["category_id"], name: "item_category_category_id_ix"
+  add_index "item_categories", ["item_id"], name: "item_category_item_id_ix"
+
   create_table "item_properties", force: :cascade do |t|
     t.integer "item_id"
     t.string  "key"
@@ -180,6 +186,8 @@ ActiveRecord::Schema.define(version: 20160224015220) do
     t.datetime "updated_at",    null: false
     t.integer  "brand_id"
   end
+
+  add_index "items", ["id"], name: "item_id_ix"
 
   create_table "line_item_fulfillments", force: :cascade do |t|
     t.integer  "order_line_item_id"
