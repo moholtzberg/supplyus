@@ -2,8 +2,8 @@ class Order < ActiveRecord::Base
   
   include ApplicationHelper
   
-  default_scope { order(:id) }
-  #default_scope { self.open }
+  # default_scope { order(:id) }
+  # default_scope { self.open }
   
   scope :is_locked, -> () { where(:locked => true) }
   scope :is_unlocked, -> () { where.not(:locked => true) }

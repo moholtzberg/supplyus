@@ -1,8 +1,10 @@
 class OrdersController < ApplicationController
   layout "admin"
+  helper_method :sort_column, :sort_direction
   
   def index
-    @orders = Order.open.is_complete.reorder(:completed_at => :desc).includes(:account, :order_line_items)
+    @orders = Order.open.is_complete.includes(:account, :order_line_items)
+    @orders = @orders.order(sort_column + " " + sort_direction)
     @orders = @orders.paginate(:page => params[:page], :per_page => 10)
   end
   
@@ -70,6 +72,17 @@ class OrdersController < ApplicationController
 
   def order_params
     params.require(:order).permit(:account_id, :number, :po_number, :bill_to_attention, :bill_to_address_1, :bill_to_address_2, :bill_to_city, :bill_to_state, :bill_to_zip, :bill_to_phone, :ship_to_attention, :ship_to_address_1, :ship_to_address_2, :ship_to_city, :ship_to_state, :ship_to_zip, :ship_to_phone)
+  end
+
+  def sort_column
+    related_columns = Order.reflect_on_all_associations(:belongs_to).map {|a| a.klass.column_names.map {|col| "#{a.klass.table_name}.#{col}"}}
+    columns = Order.column_names.map {|a| "orders.#{a}" }
+    columns.push(related_columns).flatten!.uniq!
+    columns.include?(params[:sort]) ? params[:sort] : "orders.id"
+  end
+
+  def sort_direction
+    %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
   end
   
 end

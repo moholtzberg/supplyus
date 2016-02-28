@@ -1,14 +1,15 @@
 <% content_for :app_location do %>Brands/Index<% end %>
 <div id="brands" class="col-md-12">
-	
-	<div class="widget panel">
 
-		<table class="table">
+		<table class="table table-bordered">
 	
 			<tr>
 				<th>ID</th>
 				<th>Parent</th>
 				<th>Name</th>
+				<th>Slug</th>
+				<th>Item Categories</th>
+				<th>Items</th>
 				<th>Active</th>
 				<th>&nbsp;</th>
 			</tr>
@@ -18,8 +19,11 @@
 				<td><%= a.id %></td>
 				<td><%= a.parent.name unless a.parent.nil? %></td>
 				<td><%= a.name %></td>
+				<td><%= a.slug %></td>
+				<td><%= a.item_categories.count %></td>
+				<td><%= a.items.count %></td>
 				<td><%= a.active ? "Yes" : "No" %></td>
-				<td class="text-right">
+				<td class="text-center">
 				
 					<div class="dropdown">
 						<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -35,8 +39,6 @@
 			<% end %>
 	
 		</table>
-
-	</div>
 	
 	<%= link_to new_category_path, :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
 	

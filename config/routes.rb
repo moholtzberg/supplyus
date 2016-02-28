@@ -53,6 +53,7 @@ Rails.application.routes.draw do
       resources :brand_imports
       resources :categories
       resources :credit_cards
+      resources :users
       resources :vendors
       get "equipment/delete/:id" => "equipment#delete"
       get "/" => "home#show"
@@ -82,6 +83,7 @@ Rails.application.routes.draw do
   get "/edit_account" => "shop#edit_account"
   get "/cart" => "shop#cart"
   get "/search" => "shop#search"
+  get "/categories/:parent_id" => "shop#categories"
   get "/:category/:item" => "shop#item"
   get "/:category" => "shop#category"
   get "/" => "shop#index"

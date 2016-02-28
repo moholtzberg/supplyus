@@ -11,14 +11,14 @@
 		<table class="table table-bordered">
 
 			<tr>
-				<td>ID</td>
-				<td>Name</td>
-				<td>Address 1</td>
-				<td>City</td>
-				<td>State</td>
-				<td>Zip</td>
-				<td>Phone</td>
-				<td>&nbsp;</td>
+				<th><%= sortable "id" %></th>
+				<th><%= sortable "name" %></th>
+				<th>Address 1</th>
+				<th><%= sortable "ship_to_city", "City" %></th>
+				<th><%= sortable "ship_to_state", "State" %></th>
+				<th><%= sortable "ship_to_zip", "Zip" %></th>
+				<th>Phone</th>
+				<th>&nbsp;</th>
 			</tr>
 
 			<% @accounts.each do |a| %>

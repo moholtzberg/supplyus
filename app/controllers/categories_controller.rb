@@ -2,7 +2,7 @@ class CategoriesController < ApplicationController
   layout "admin"
   
   def index
-    @categories = Category.order(:name).where("name like ?", "%#{params[:term]}%")
+    @categories = Category.includes(:item_categories).order(:parent_id).where("name like ?", "%#{params[:term]}%")
     respond_to do |format|
       format.html
       format.json {render :json => @categories.map(&:name)}

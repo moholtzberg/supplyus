@@ -1,9 +1,11 @@
 <ul class="nav nav-pills nav-stacked">
 	<li class="<% if current_page?(:path => :accounts) %>active<% end %>"><%= link_to "Accounts", accounts_path %></li>
-	<li class="<% if current_page?(:path => :invoices) %>active<% end %>"><%= link_to "Invoices", invoices_path %></li>
 	<li class="<% if current_page?(:path => :orders) %>active<% end %>"><%= link_to "Orders", orders_path %></li>
+	<li class="<% if current_page?(:path => :invoices) %>active<% end %>"><%= link_to "Invoices", invoices_path %></li>
 	<li class="<% if current_page?(:path => :items) %>active<% end %>"><%= link_to "Items", items_path %></li>
 	<li class="<% if current_page?(:path => :vendors) %>active<% end %>"><%= link_to "Vendors", vendors_path %></li>
-	<!--<li class="<%# if current_page?(:path => :payment_plan_templates) %>active<%# end %>"><%= link_to "Plans", payment_plan_templates_path %></li> -->
+	<li class="<% if current_page?(:path => :brands) %>active<% end %>"><%= link_to "Brands", brands_path %></li>
+	<li class="<% if current_page?(:path => :categories) %>active<% end %>"><%= link_to "Categories", categories_path %></li>
+	<li class="<% if current_page?(:path => :users) %>active<% end %>"><%= link_to "Users", users_path %></li>
 	<!-- <li class="<%# if current_page?(:path => :charges) %>active<%# end %>"><%= link_to "Charges", charges_path %></li> -->
 </ul>

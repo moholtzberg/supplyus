@@ -1,8 +1,9 @@
 class AccountsController < ApplicationController
   layout "admin"
+  helper_method :sort_column, :sort_direction
   
   def index
-    @accounts = Account.all
+    @accounts = Account.order(sort_column + " " + sort_direction)
   end
   
   def new
@@ -62,6 +63,15 @@ class AccountsController < ApplicationController
 
   def registration_params
     params.require(:account).permit(:name, :email, :address_1, :address_2, :city, :state, :zip, :phone, :fax)
+  end
+
+  def sort_column
+    puts Account.column_names[0]
+    Account.column_names.include?(params[:sort]) ? params[:sort] : "name"
+  end
+
+  def sort_direction
+    %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
   end
   
 end
