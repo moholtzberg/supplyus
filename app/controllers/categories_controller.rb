@@ -3,7 +3,7 @@ class CategoriesController < ApplicationController
   
   def index
     term = params[:keywords]
-    @categories = Category.includes(:items).order(:parent_id).where("lower(name) like ? or lower(id) like ?", "%#{term}%", "%#{term}%")
+    @categories = Category.includes(:items).order(:parent_id).where("lower(name) like ?", "%#{term}%")
     @categories = @categories.paginate(:page => params[:page], :per_page => 25)
     respond_to do |format|
       format.html

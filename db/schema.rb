@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160224064821) do
+ActiveRecord::Schema.define(version: 20160229051241) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -345,6 +345,8 @@ ActiveRecord::Schema.define(version: 20160224064821) do
     t.float   "rate"
     t.text    "description"
     t.boolean "active"
+    t.float   "minimum_amount"
+    t.float   "free_at_amount"
   end
 
   create_table "tracking_numbers", force: :cascade do |t|

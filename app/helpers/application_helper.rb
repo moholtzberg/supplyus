@@ -23,8 +23,9 @@ module ApplicationHelper
         record_number = last_record.number
       end
       record_number = get_number_from_record_number(record_number)
-      puts "----> RECORD NUMBER is #{record_number}"
-      self.number = "#{self.class.to_s[0..2].upcase}#{record_number.to_i + 1}"
+      record_number = record_number.next
+      puts "----> RECORD NUMBER IS #{record_number}"
+      self.number = "#{self.class.to_s[0..2].upcase}#{record_number.to_i}"
     end
   end
   
