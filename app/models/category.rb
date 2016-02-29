@@ -9,4 +9,12 @@ class Category < ActiveRecord::Base
   scope :is_parent, -> () { where(:parent_id => nil) }
   # scope :children,  -> (parent_id) { where(:parent_id => parent_id) }
   
+  def parent_name
+    parent.try(:name)
+  end
+  
+  def parent_name=(name)
+    self.parent = Category.find_by(:name => name) if name.present?
+  end
+  
 end
