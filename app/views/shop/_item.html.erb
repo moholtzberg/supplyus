@@ -1,5 +1,6 @@
 <div id=item_"<%= i.id %>" class="media item_listing">
-	<div class="col-md-9">
+	
+	<div class="col-md-9 col-xs-12">
 		<div class="media-left">
 			<a href="#">
 				<%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/#{i.default_image_path}", :class => "media-object", :height => "100", :width => "100" %>
@@ -7,7 +8,7 @@
 		</div>
 		<div class="media-body">
 			<h4 class="media-heading"><strong><%= "#{i.number}" %></strong> - <%= "#{i.name}" %></h4>
-			<p><%= i.description.truncate_words(36, omission: '...') unless i.description.nil? %></p>
+			<p class="hidden-xs"><%= i.description.truncate_words(36, omission: '...') unless i.description.nil? %></p>
 			<p>
 				<% unless i.brand.nil? %><span class="label label-warning"><%= i.brand.name %></span><% end %>
 				<% unless i.category.nil? %><span class="label label-info"><%= i.category.name %></span><% end %>
@@ -17,23 +18,25 @@
 	</div>
 	
 
-	<div class="col-md-3">
+	<div class="col-md-3 col-xs-12">
 		<div class="pull-right">
 			<%= form_for @cart, url: add_to_cart_path, :class => "form-inline", :remote => true do |f| %>
 				<div class="form-group">
 					<% if current_user and current_user.has_account and i.actual_price(current_user.account.id).to_f <= i.price.to_f %>
-					<h4>Your Price: <%= number_to_currency(i.actual_price(current_user.account.id)) %><h4>
+					<h4><span class="hidden-xs">Your Price:</span> <%= number_to_currency(i.actual_price(current_user.account.id)) %><h4>
 					<% else %>
-					<h4>Your Price: <%= number_to_currency(i.price) %><h4>
+					<h4><span class="hidden-xs">Your Price:</span> <%= number_to_currency(i.price) %><h4>
 					<% end %>
 					<%= f.hidden_field :item_id, :value => i.id %>
 					<div class="input-group">
-						<%= f.number_field :quantity, :value => 1, :class => "form-control input-sm" %>
+						<%= f.number_field :quantity, :value => 1, :class => "form-control input-sm input-block" %>
 					</div>
 				</div>
-				<%= f.submit "Add To Cart", :class => "btn btn-primary btn-sm" %>
+				<%= f.submit "Add To Cart", :class => "btn btn-primary btn-sm btn-block" %>
 			<% end %>
 		</div>
 	</div>
+	
 </div>
+
 <hr/>
