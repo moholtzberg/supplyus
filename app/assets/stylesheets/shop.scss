@@ -522,3 +522,35 @@ input.form-control {
   color: #333;
   border: 1px solid #ddd;
 }
+
+
+
+#mobile-search {
+	padding-left: 0;
+	padding-right: 0;
+	form {
+		margin: 0;
+		border: 0;
+		padding: 8px;
+		padding-left: 15px;
+		input {
+			box-shadow: inset 0 0 0 0 !important;
+		}
+	}
+}
+
+ul#account_links {
+	border-bottom: 1px solid;
+	li {
+		padding-left: 0;
+		padding-right: 0;
+		margin-top: 10px;
+		margin-bottom: 10px;
+		a {
+			display: inline;
+		}
+		div.cart {
+			padding-left: 15px;
+		}
+	}
+}

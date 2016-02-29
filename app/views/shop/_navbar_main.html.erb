@@ -28,81 +28,86 @@
 	</div>
 	
 	<nav id="main_nav" class="navbar navbar-default" role="navigation">
-
-		<div class="navbar-header">
-
-			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-				<span class="sr-only">Toggle navigation</span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-			</button>
-    	</div>
-
-		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-
-			<ul id="account_links" class="nav navbar-nav list-inline hidden-md hidden-lg hidden-xl">
-				<% if current_user %>
-					<li><%= link_to I18n.t(:my_account), "/account" %></li>
-					<li><%= link_to I18n.t(:logout), destroy_user_session_path, :method => "delete" %></li>
-				<% else %>
-					<li><%= link_to I18n.t(:login), new_user_session_path %> or <%= link_to I18n.t(:create_a_new_account), new_user_registration_path %></li>
-				<% end %>
-			</ul>
+		
+		<div class="container">	
 			
-			<ul class="nav navbar-nav">
-
-				<% @categories.each do |cat| %>
-					<!-- <li><%# link_to cat.name, "/#{cat.slug}" %></li> -->
-					<li class="dropdown mega-dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown"><%= cat.name %><span class="caret"></span></a>
-						<ul class="dropdown-menu mega-dropdown-menu">
-							<% cat.children.limit(cat.children.count/3).each do |child| %>
-							<li class="col-sm-4">
-								<ul>
-									<li><%= link_to child.name, "/#{child.slug}"%></li>
-								</ul>
-							</li>
-							<% end %>
-							<% cat.children.limit(cat.children.count/3).offset(cat.children.count/3).each do |child| %>
-							<li class="col-sm-4">
-								<ul>
-									<li><%= link_to child.name, "/#{child.slug}"%></li>
-								</ul>
-							</li>
-							<% end %>
-							<% cat.children.limit(cat.children.count/3).offset((cat.children.count/3)*2).each do |child| %>
-							<li class="col-sm-4">
-								<ul>
-									<li><%= link_to child.name, "/#{child.slug}"%></li>
-								</ul>
-							</li>
-							<% end %>
-						</ul>
-					</li>
-				<% end %>
+			<div class="navbar-header">
+			
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
 				
-			</ul>
-
-				<span class="hidden-md hidden-lg hidden-xl">
-
-					<li class="nav-divider"></li>
-					
-					<%# Spree::Page.by_store(current_store).visible.sidebar_links.each do |page| %>
-						<%# if page.foreign_link.present? %>
-						<li><%# link_to page.title, page.foreign_link, target: '_blank', ref: 'nofollow' %></li>
-						<%# else %>
-						<%# page_uri = Rails.application.routes.named_routes[:spree].path.spec.to_s == '/' ? page.slug : Rails.application.routes.named_routes[:spree].path.spec.to_s + page.slug %>
-						<li class="<%# 'current' if (request.fullpath.gsub('//','/') == page_uri) %>"><%# link_to page.title, page_uri, ref: 'nofollow' %></li>
-						<%# end %>
-					<%# end %>
-
-				</span>
-
-			</ul>
-
+				<div id="mobile-search" class="col-xs-10 hidden-sm hidden-md hidden-lg hidden-xl">
+					<form id="searchBox" accept-charset="UTF-8" action="/search" method="get" role="search" class="navbar-form">
+						<div class="input-group">
+							<input type="text" class="form-control" placeholder="Search" name="srch-term" id="srch-term">
+							<div class="input-group-btn">
+								<button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+							</div>
+						</div>
+					</form>
+				</div>
+				
+			</div>
+			
+			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+				
+				<ul id="account_links" class="nav navbar-nav list-inline hidden-md hidden-lg hidden-xl">
+						<li>
+							<div class="cart">
+								<%= render :partial => "shop/cart" %>
+							<div>
+						</li>
+					<% if current_user %>
+						<li><%= link_to I18n.t(:my_account), "/account" %></li>
+						<li><%= link_to I18n.t(:logout), destroy_user_session_path, :method => "delete" %></li>
+					<% else %>
+						<li><%= link_to I18n.t(:login), new_user_session_path %><span class="inline">or</span><%= link_to I18n.t(:create_a_new_account), new_user_registration_path %></li>
+					<% end %>
+				</ul>
+			
+				<% cache "categories" do %>
+				<ul class="nav navbar-nav">
+				
+					<% @categories.each do |cat| %>
+						<!-- <li><%# link_to cat.name, "/#{cat.slug}" %></li> -->
+						<li class="dropdown mega-dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><%= cat.name %><span class="caret"></span></a>
+							<ul class="dropdown-menu mega-dropdown-menu">
+								<% cat.children.limit(cat.children.count/3).each do |child| %>
+								<li class="col-sm-4">
+									<ul>
+										<li><%= link_to child.name, "/#{child.slug}"%></li>
+									</ul>
+								</li>
+								<% end %>
+								<% cat.children.limit(cat.children.count/3).offset(cat.children.count/3).each do |child| %>
+								<li class="col-sm-4">
+									<ul>
+										<li><%= link_to child.name, "/#{child.slug}"%></li>
+									</ul>
+								</li>
+								<% end %>
+								<% cat.children.limit(cat.children.count/3).offset((cat.children.count/3)*2).each do |child| %>
+								<li class="col-sm-4">
+									<ul>
+										<li><%= link_to child.name, "/#{child.slug}"%></li>
+									</ul>
+								</li>
+								<% end %>
+							</ul>
+						</li>
+					<% end %>
+				
+				</ul>
+				<% end %>
+			</div>
+		
 		</div>
-
+		
 	</nav>
 
 </div>

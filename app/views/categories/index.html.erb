@@ -1,44 +1,53 @@
-<% content_for :app_location do %>Brands/Index<% end %>
+<% content_for :app_location do %>Categories/Index<% end %>
 <div id="brands" class="col-md-12">
 
-		<table class="table table-bordered">
+	<table class="table table-bordered">
 	
-			<tr>
-				<th>ID</th>
-				<th>Parent</th>
-				<th>Name</th>
-				<th>Slug</th>
-				<th>Item Categories</th>
-				<th>Items</th>
-				<th>Active</th>
-				<th>&nbsp;</th>
-			</tr>
-			
-			<% @categories.each do |a| %>
-			<tr>
-				<td><%= a.id %></td>
-				<td><%= a.parent.name unless a.parent.nil? %></td>
-				<td><%= a.name %></td>
-				<td><%= a.slug %></td>
-				<td><%= a.item_categories.count %></td>
-				<td><%= a.items.count %></td>
-				<td><%= a.active ? "Yes" : "No" %></td>
-				<td class="text-center">
-				
-					<div class="dropdown">
-						<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-							<span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-							<li><%= link_to("Edit", edit_category_path(a.id), :remote => true)  %></li>
-						</ul>
-					</div>
-				
-				</td>
-			</tr>
-			<% end %>
+		<tr>
+			<td colspan="8">
+				<form id="searchBox" accept-charset="UTF-8" action="/admin/categories" method="get" role="search">
+					<input type="text" class="form-control" id="keywords" name="keywords" placeholder="Search Over 5,000 Products" value="">
+				</form>
+			</td>
+		</tr>
 	
-		</table>
+		<tr>
+			<th width="5%">ID</th>
+			<th width="25%">Parent</th>
+			<th width="25%">Name</th>
+			<th width="25%">Slug</th>
+			<th width="5%">Show In Menu</th>
+			<th width="5%">Children</th>
+			<th width="5%">Items</th>
+			<th width="5%">Active</th>
+			<th>&nbsp;</th>
+		</tr>
+	
+		<% @categories.each do |a| %>
+		<tr <% unless a.active %>class="danger"<% end %>>
+			<td><%= a.id %></td>
+			<td><%= a.parent.name unless a.parent.nil? %></td>
+			<td><%= a.name %></td>
+			<td><%= a.slug %></td>
+			<td><%= a.show_in_menu %></td>
+			<td><%= a.children.count %></td>
+			<td><%= a.items.count %></td>
+			<td class="text-center">
+		
+				<div class="dropdown">
+					<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+						<li><%= link_to("Edit", edit_category_path(a.id), :remote => true)  %></li>
+					</ul>
+				</div>
+		
+			</td>
+		</tr>
+		<% end %>
+		
+	</table>
 	
 	<%= link_to new_category_path, :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
 	

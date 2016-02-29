@@ -2,7 +2,9 @@ class CategoriesController < ApplicationController
   layout "admin"
   
   def index
-    @categories = Category.includes(:item_categories).order(:parent_id).where("name like ?", "%#{params[:term]}%")
+    term = params[:keywords]
+    @categories = Category.includes(:items).order(:parent_id).where("lower(name) like ? or lower(id) like ?", "%#{term}%", "%#{term}%")
+    @categories = @categories.paginate(:page => params[:page], :per_page => 25)
     respond_to do |format|
       format.html
       format.json {render :json => @categories.map(&:name)}

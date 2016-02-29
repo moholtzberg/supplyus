@@ -14,6 +14,14 @@ class ShopController < ApplicationController
     @items = Item.all
   end
   
+  def categories
+    parent = params[:parent_id].to_i
+    @categories = Category.where(:parent_id => parent, :active => true)
+    respond_to do |format|
+      format.json {render :json => @categories}
+    end
+  end
+  
   def category
     @category = Category.where("slug = lower(?)", params[:category].downcase).take
     if Category.where("slug = lower(?)", params[:category].downcase).take.nil?
@@ -92,7 +100,7 @@ class ShopController < ApplicationController
   
   def view_account
     @account = Account.find_by(:id => params[:account_id])
-    @orders = @account.orders.open.is_complete.paginate(:page => params[:page], :per_page => 10)
+    @orders = @account.orders.open.is_complete.includes(:order_shipping_method).paginate(:page => params[:page], :per_page => 10)
   end
   
   def view_order
