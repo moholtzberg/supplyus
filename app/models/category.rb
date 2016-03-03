@@ -5,7 +5,7 @@ class Category < ActiveRecord::Base
   has_many :items, :through => :item_categories
   has_many :children, :class_name => "Category", :foreign_key => :parent_id
   
-  scope :active, -> () { where(:active => true) }
+  scope :is_active, -> () { where(:active => true) }
   scope :is_parent, -> () { where(:parent_id => nil) }
   # scope :children,  -> (parent_id) { where(:parent_id => parent_id) }
   
