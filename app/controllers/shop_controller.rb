@@ -10,8 +10,8 @@ class ShopController < ApplicationController
   end
   
   def index
-    # @categories = Category.is_parent.is_active
-    # @items = Item.all
+    @categories = Category.is_parent.is_active
+    @items = Item.all
   end
   
   def categories
