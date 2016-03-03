@@ -10,8 +10,8 @@ class ShopController < ApplicationController
   end
   
   def index
-    @categories = Category.is_parent
-    @items = Item.all
+    # @categories = Category.is_parent.is_active
+    # @items = Item.all
   end
   
   def categories
@@ -47,23 +47,31 @@ class ShopController < ApplicationController
   
   def add_to_cart
     i = Item.find_by(:id => params[:cart][:item_id])
-    c = Cart.find_or_create_by(:id => session[:cart_id])
-    c.ip_address = request.remote_ip
-    c.save
-    line = c.contents.by_item(i.id)
+    puts "SESSION --------> #{session[:cart_id]}"
+    if !session[:cart_id].blank? and session[:cart_id].is_a? Numeric
+      @cart = Cart.find_by(:id => session[:cart_id])
+    else
+      @cart = Cart.create
+      session[:cart_id] = @cart.id
+    end
+    # c = Cart.find_or_create_by(:id => session[:cart_id])
+    @cart.ip_address = request.remote_ip
+    @cart.save
+    line = @cart.contents.by_item(i.id)
     unless line.blank?
       qty = line.first.quantity.to_f + params[:cart][:quantity].to_f
       line = line.first
       line.quantity = qty
       line.save
     else
+      
       if current_user and !current_user.account.nil?
         if current_user.has_account
-          c.account_id = current_user.account.id
+          @cart.account_id = current_user.account.id
         end
-        c.contents.create(:item_id => params[:cart][:item_id], :quantity => params[:cart][:quantity], :price => i.actual_price(current_user.account.id))
+        @cart.contents.create(:item_id => params[:cart][:item_id], :quantity => params[:cart][:quantity], :price => i.actual_price(current_user.account.id))
       else
-        c.contents.create(:item_id => params[:cart][:item_id], :quantity => params[:cart][:quantity], :price => i.price)
+        @cart.contents.create(:item_id => params[:cart][:item_id], :quantity => params[:cart][:quantity], :price => i.price)
       end
       
     end
@@ -79,9 +87,8 @@ class ShopController < ApplicationController
   end
   
   def cart
-    @cart = Cart.find_by(:id => session[:cart_id])
+    @cart = Cart.find_or_initialize_by(:id => session[:cart_id])
     if current_user && current_user.has_account
-      puts "PUT?z"
       @cart.account_id = current_user.account.id
       @cart.order_line_items.each do |c| 
         c.price = c.item.actual_price(@cart.account_id)
@@ -112,7 +119,7 @@ class ShopController < ApplicationController
   end
   
   def find_categories
-    @categories = Category.is_parent
+    @categories = Category.is_parent.is_active
   end
   
   def find_cart
@@ -126,14 +133,26 @@ class ShopController < ApplicationController
     # puts "......---->> #{session[:cart_id]}"
     # @cart = Cart.find_by(:id => session[:cart_id]) unless @cart.nil? else @cart = Cart.create.id
     
+    ###############
+    
+    # if !session[:cart_id].blank? and session[:cart_id].is_a? Numeric
+    #   unless !Cart.find_by(:id => session[:cart_id]).nil?
+    #     session[:cart_id] = nil
+    #     @cart = nil
+    #   end
+    # else
+    #   @cart = Cart.find_by(:id => session[:cart_id])
+    # end
+    
+    ###############
+    
     if !session[:cart_id].blank? and session[:cart_id].is_a? Numeric
-      unless !Cart.find_by(:id => session[:cart_id]).nil?
-        session[:cart_id] = Cart.create.id
-      end
+      @cart = Cart.find_or_initialize_by(:id => session[:cart_id])
     else
-      session[:cart_id] = Cart.create.id
+      @cart = Cart.find_or_initialize_by(:id => session[:cart_id])
     end
-    @cart = Cart.find_by(:id => session[:cart_id])
+    session[:cart_id] = @cart.id
+    puts "CAAAAAAAAAAAAAAAAAAAAAAAAARRRRRRTTTTTT -> #{@cart.number}"
   end
   
 end

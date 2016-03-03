@@ -2,10 +2,10 @@
 	<%= link_to cart_path, :class => "btn btn-success navbar-btn btn-xs" do %>
 		<i class="fa fa-shopping-cart"></i>
 		<span id="cart_item_count">&nbsp;
-		<% unless @cart.empty? %>
-			<%= "#{@cart.item_count.to_i} item".pluralize(@cart.item_count) %> in your cart 
-		<% else %>
+		<% if @cart.nil? or @cart.empty? %>
 			Cart Empty
+		<% else %>
+			<%= "#{@cart.item_count.to_i} item".pluralize(@cart.item_count) %> in your cart 
 		<% end %>
 		</span>
 	<% end %>
@@ -15,11 +15,11 @@
 	<%= link_to cart_path, :class => "btn btn-success navbar-btn" do %>
 		<i class="fa fa-shopping-cart"></i>
 		<span id="cart_item_count">&nbsp;
-		<% unless @cart.empty? %>
-			<%= "#{@cart.item_count.to_i} item".pluralize(@cart.item_count) %> in your cart 
-		<% else %>
-			Cart Empty
-		<% end %>
+			<% if @cart.nil? or @cart.empty? %>
+				Cart Empty
+			<% else %>
+				<%= "#{@cart.item_count.to_i} item".pluralize(@cart.item_count) %> in your cart 
+			<% end %>
 		</span>
 	<% end %>
 </div>
