@@ -16,20 +16,27 @@ module ApplicationHelper
     puts "WE MAKING A NUMBER #{self.class}"
     if number.blank?
       puts "NUMBER IS NIL"
-      last_record = self.class.last
+      last_record = self.class.unscoped.last
       if last_record.nil? or last_record.number.nil?
         record_number = "10000"
       else
         record_number = last_record.number
       end
+      puts "----> INITIAL #{record_number}"
       record_number = get_number_from_record_number(record_number)
+      puts "----> RECORD BEFORE NEXT #{record_number}"
       record_number = record_number.next
       puts "----> RECORD NUMBER IS #{record_number}"
+      if self.class.find_by(:number => record_number)
+        puts "----> SELF CLASS FIND BY :NUMBER => #{record_number} #{self.class.find_by(:number => record_number).number}"
+        record_number = record_number.next
+      end
       self.number = "#{self.class.to_s[0..2].upcase}#{record_number.to_i}"
     end
   end
   
   def get_number_from_record_number(record_number)
+    
     record_number.sub!(/[A-Za-z]+/, "")
     return record_number
   end
