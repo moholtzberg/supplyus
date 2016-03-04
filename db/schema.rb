@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160229051241) do
+ActiveRecord::Schema.define(version: 20160304052346) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -203,6 +203,10 @@ ActiveRecord::Schema.define(version: 20160229051241) do
     t.datetime "date"
   end
 
+  add_index "line_item_shipments", ["id"], name: "line_item_shipment_id_ix"
+  add_index "line_item_shipments", ["order_line_item_id"], name: "line_item_shipment_order_line_item_id_ix"
+  add_index "line_item_shipments", ["shipment_id"], name: "line_item_shipment_shipment_id_ix"
+
   create_table "makes", force: :cascade do |t|
     t.string   "name"
     t.datetime "created_at", null: false
@@ -248,6 +252,10 @@ ActiveRecord::Schema.define(version: 20160229051241) do
     t.integer  "quantity_canceled"
   end
 
+  add_index "order_line_items", ["id"], name: "order_line_item_id_ix"
+  add_index "order_line_items", ["item_id"], name: "order_line_item_item_id_ix"
+  add_index "order_line_items", ["order_id"], name: "order_line_item_order_id_ix"
+
   create_table "order_shipping_methods", force: :cascade do |t|
     t.integer  "order_id"
     t.integer  "shipping_method_id"
@@ -288,6 +296,9 @@ ActiveRecord::Schema.define(version: 20160229051241) do
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
   end
+
+  add_index "orders", ["account_id"], name: "order_customer_id_ix"
+  add_index "orders", ["id"], name: "order_id_ix"
 
   create_table "payment_methods", force: :cascade do |t|
     t.string  "name"
