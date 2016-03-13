@@ -50,4 +50,30 @@
 	
 	<table>
 		
+	<table class="table table-bordered">
+		<tr>
+			<th colspan="5">Invoices</th>
+		</tr>
+		<tr>
+			<th>Number</th>
+			<th>Date</th>
+			<th>Total</th>
+			<th>&nbsp;</th>
+		</tr>
+
+		<% @invoices.each do |inv|%>
+		<tr>
+			<td><%= inv.number %></td>
+			<td><%= inv.date.strftime("%m/%d/%Y") %></td>
+			<td><%= number_to_currency(inv.total) %></td>
+			<td><%= link_to "View Details", "/my_account/invoice/#{inv.number}" %></td>
+		</tr>
+		<% end %>
+
+		<tr>
+			<td class="text-center" colspan="5"><%= will_paginate @invoices, renderer: BootstrapPagination::Rails %></td>
+		</tr>
+
+	<table>
+		
 <% end %>

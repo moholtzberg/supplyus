@@ -1,6 +1,6 @@
 class CategoriesController < ApplicationController
   layout "admin"
-  
+  # respond_to :html, :json
   def index
     term = params[:keywords]
     @categories = Category.includes(:parent).order(:parent_id).where("lower(name) like ?", "%#{term}%")

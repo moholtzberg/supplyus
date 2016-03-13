@@ -40,6 +40,11 @@ gem 'will_paginate-bootstrap'
 gem 'twitter-typeahead-rails', :git => "git://github.com/yourabi/twitter-typeahead-rails.git"
 gem 'best_in_place'
 
+gem 'rack-mini-profiler'
+gem "bullet", :group => "development"
+gem 'dalli'
+
+
 gem 'sidekiq'
 gem 'shrimp'
 gem 'stripe'

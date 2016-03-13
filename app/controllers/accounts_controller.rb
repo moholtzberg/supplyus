@@ -3,7 +3,11 @@ class AccountsController < ApplicationController
   helper_method :sort_column, :sort_direction
   
   def index
-    @accounts = Account.order(sort_column + " " + sort_direction)
+    @accounts = Account.order(sort_column + " " + sort_direction).where("name like ?", "%#{params[:term]}%")
+    respond_to do |format|
+      format.html
+      format.json {render :json => @accounts.map(&:name)}
+    end
   end
   
   def new

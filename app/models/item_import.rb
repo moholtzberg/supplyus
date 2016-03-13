@@ -13,16 +13,20 @@ class ItemImport
 
   def save
     puts "---->>>>> #{imported_products.inspect}"
-    if imported_products.map(&:valid?).all?
-      imported_products.each(&:save!)
-      true
-    else
-      imported_products.each_with_index do |product, index|
-        product.errors.full_messages.each do |message|
-          errors.add :base, "Row #{index+2}: #{message}"
+    imported_products.each do |imp|
+      if !imp.nil?
+        if imp.valid?
+          imp.save!
+        else
+          imported_products.each_with_index do |product, index|
+            product.errors.full_messages.each do |message|
+              errors.add :base, "Row #{index+2}: #{message}"
+            end
+          end
+          false
         end
+        true
       end
-      false
     end
   end
 
@@ -34,18 +38,19 @@ class ItemImport
     spreadsheet = CSV.read(file.path, :headers => true, :encoding => 'ISO-8859-1')
     # header = spreadsheet[0]
     spreadsheet.map do |row|
-      
-      unless Item.find_by(:number => row["number"])
-        item = Item.new
-        item.attributes = row.to_hash.slice(*Item.attribute_names())
-      else
-        item = Item.find_by(:number => row["number"])
-        id = item.id
-        item.attributes = row.to_hash.slice(*Item.attribute_names())
-        item.id = id
+      if row["price"].to_f > 0 and row["cost_price"].to_f > 0
+        unless Item.find_by(:number => row["number"])
+          item = Item.new
+          item.attributes = row.to_hash.slice(*Item.attribute_names())
+        else
+          item = Item.find_by(:number => row["number"])
+          id = item.id
+          item.attributes = row.to_hash.slice(*Item.attribute_names())
+          item.id = id
+        end
+        puts "----> #{item.inspect}"
+        item
       end
-      puts "----> #{item.inspect}"
-      item
     end
   end
 

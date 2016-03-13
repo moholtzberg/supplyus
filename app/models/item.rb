@@ -1,6 +1,7 @@
 class Item < ActiveRecord::Base
   
   has_many :account_item_prices
+  has_many :item_vendor_prices
   has_many :images
   # has_attached_file :image, styles: {
   #   thumb: '100x100>',
@@ -27,8 +28,16 @@ class Item < ActiveRecord::Base
     self.brand = Brand.find_by(:name => name) if name.present?
   end
   
+  def category_name
+    category.try(:name)
+  end
+  
+  def category_name=(name)
+    self.category = Category.find_by(:name => name) if name.present?
+  end
+  
   def self.search(word)
-    includes(:brand).where("lower(number) like ? or lower(items.name) like ? or lower(description) like ? or lower(brands.name) like ?", "%#{word.downcase}%", "%#{word.downcase}%", "%#{word.downcase}%", "%#{word.downcase}%").references(:brand)
+    includes(:brand, :category).where("lower(number) like ? or lower(items.name) like ? or lower(items.description) like ? or lower(brands.name) like ?", "%#{word.downcase}%", "%#{word.downcase}%", "%#{word.downcase}%", "%#{word.downcase}%").references(:brand, :category)
   end
   
   self.per_page = 10
@@ -88,74 +97,98 @@ class Item < ActiveRecord::Base
       #   ItemProperty.create(:item_id => self.id, :key => k.attributes["name"], :value => k.text, :order => index, :active => true)
       # end
       
-      brand = Brand.find_by(:prefix => noko.css("[agencyRole=Prefix_Number]").text.gsub(/\s+/, ""))
-      brand = brand.id unless brand.nil?
       
-      noko.css("[listName=HierarchyLevel1]").each do |cat1|
-        cat1_slug = cat1.text.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-')
-        Category.find_or_create_by(:name => cat1.text, slug: cat1_slug)
+      noko.xpath("//us:Matchbook").each_with_index do |k, index|  
+        # ItemProperty.create(:item_id => self.id, :key => k.attributes["name"], :value => k.text, :order => index, :active => true)
+        rel_make    = noko.xpath("//us:Matchbook")[index].element_children[0].element_children[0].text
+        rel_family  = noko.xpath("//us:Matchbook")[index].element_children[2].text
+        rel_model   = noko.xpath("//us:Matchbook")[index].element_children[3].text
+        
+        cat = Category.find_by(:slug => "inks-toners")
+        
+        make_slug = rel_make.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-')
+        make = Category.find_or_create_by(:name => rel_make, :parent_id => cat.id, :slug => make_slug)
+        
+        family_slug = rel_family.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-')
+        family = Category.find_or_create_by(:name => rel_family, :parent_id => make.id, :slug => family_slug)
+        
+        model_slug = rel_model.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-')
+        imodel = Category.find_or_create_by(:name => rel_model, :parent_id => family.id, :slug => model_slug)
+        
+        ItemCategory.find_or_create_by(:item_id => current_item_id, :category_id => imodel.id)
+        
       end
       
-      noko.css("[listName=HierarchyLevel2]").each_with_index do |cat2, index|
-        cat1 = Category.find_by(:slug => noko.css("[listName=HierarchyLevel1]")[index].text.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-'))
-        cat2_slug = cat2.text.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-')
-        Category.find_or_create_by(name: cat2.text, slug: cat2_slug, parent_id: cat1.id)
-      end
-      
-      noko.css("[listName=HierarchyLevel3]").each_with_index do |cat3, index|
-        cat2 = Category.find_by(:slug => noko.css("[listName=HierarchyLevel2]")[index].text.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-'))
-        cat3_slug = cat3.text.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-')
-        cat3 = Category.find_or_create_by(name: cat3.text, slug: cat3_slug, parent_id: cat2.id)
-        puts "-------------------------------------> #{current_item_id}"
-        ItemCategory.find_or_create_by(:item_id => current_item_id, :category_id => cat3.id)
-      end
-      
-      height = noko.xpath("//us:Packaging//us:Dimensions//oa:HeightMeasure").text
-      width = noko.xpath("//us:Packaging//us:Dimensions//oa:WidthMeasure").text
-      length = noko.xpath("//us:Packaging//us:Dimensions//oa:LengthMeasure").text
-      wieght = noko.xpath("//us:Packaging//us:Dimensions//us:WeightMeasure").text
-      
-      name = noko.css("[type=Long_Item_Description]").text
-      description = noko.css("[type=Item_Consolidated_Copy]").text
-      
-      
-      update_attributes(:brand_id => brand, :slug => self.number.downcase, :height => height, :width => width, :length => length, :weight => weight, :name => name, :description => description)
-    
-      bucket_name = '247officesuppy/400/400'
-      s3 = AWS::S3.new()
-      bucket = s3.buckets[bucket_name]
-      
-      
-      sku_group_image = noko.xpath("//us:SkuGroupImage").text
-      single_image = noko.xpath("//oa:DrawingAttachment//oa:FileName").text
-      
-      if AWS::S3.new.buckets["247officesuppy"].objects["400/400/#{single_image}"].exists?
-        image = single_image
-        puts "----> SINGLE IMAGE = #{image}"
-        bucket.objects["#{image}"].acl = :public_read unless bucket.objects["#{image}"].nil?
-      elsif AWS::S3.new.buckets["247officesuppy"].objects["400/400/#{sku_group_image}"].exists?
-        image = sku_group_image
-        puts "----> SKU GROUP IMAGE = #{image}"
-        bucket.objects["#{image}"].acl = :public_read unless bucket.objects["#{image}"].nil?
-      else
-        image = nil
-      end
-      
-      if image
-        item_images = self.images
-      
-        if self.images.count > 1
-          (1..self.images.count).each {|im| Image.find_by(id: self.images[im].id).destroy }
-        end
-      
-        if self.images.count == 1
-          Image.find_by(id: self.images.first.id).update_attributes(:attachment_file_name => image)
-        else
-          Image.create(:attachment_file_name => image)
-        end
-      end
-      
-    end
+      #(0..(noko.xpath("//us:Matchbook").count)-1).each {|i| puts noko.xpath("//us:Matchbook//us:Device")[i] }
+          # 
+          #   brand = Brand.find_by(:prefix => noko.css("[agencyRole=Prefix_Number]").text.gsub(/\s+/, ""))
+          #   brand = brand.id unless brand.nil?
+          #   
+          #   noko.css("[listName=HierarchyLevel1]").each do |cat1|
+          #     cat1_slug = cat1.text.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-')
+          #     Category.find_or_create_by(:name => cat1.text, slug: cat1_slug)
+          #   end
+          #   
+          #   noko.css("[listName=HierarchyLevel2]").each_with_index do |cat2, index|
+          #     cat1 = Category.find_by(:slug => noko.css("[listName=HierarchyLevel1]")[index].text.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-'))
+          #     cat2_slug = cat2.text.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-')
+          #     Category.find_or_create_by(name: cat2.text, slug: cat2_slug, parent_id: cat1.id)
+          #   end
+          #   
+          #   noko.css("[listName=HierarchyLevel3]").each_with_index do |cat3, index|
+          #     cat2 = Category.find_by(:slug => noko.css("[listName=HierarchyLevel2]")[index].text.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-'))
+          #     cat3_slug = cat3.text.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-')
+          #     cat3 = Category.find_or_create_by(name: cat3.text, slug: cat3_slug, parent_id: cat2.id)
+          #     puts "-------------------------------------> #{current_item_id}"
+          #     ItemCategory.find_or_create_by(:item_id => current_item_id, :category_id => cat3.id)
+          #   end
+          #   
+          #   height = noko.xpath("//us:Packaging//us:Dimensions//oa:HeightMeasure").text
+          #   width = noko.xpath("//us:Packaging//us:Dimensions//oa:WidthMeasure").text
+          #   length = noko.xpath("//us:Packaging//us:Dimensions//oa:LengthMeasure").text
+          #   wieght = noko.xpath("//us:Packaging//us:Dimensions//us:WeightMeasure").text
+          #   
+          #   name = noko.css("[type=Long_Item_Description]").text
+          #   description = noko.css("[type=Item_Consolidated_Copy]").text
+          #   
+          #   
+          #   update_attributes(:brand_id => brand, :slug => self.number.downcase, :height => height, :width => width, :length => length, :weight => weight, :name => name, :description => description)
+          # 
+          #   bucket_name = '247officesuppy/400/400'
+          #   s3 = AWS::S3.new()
+          #   bucket = s3.buckets[bucket_name]
+          #   
+          #   
+          #   sku_group_image = noko.xpath("//us:SkuGroupImage").text
+          #   single_image = noko.xpath("//oa:DrawingAttachment//oa:FileName").text
+          #   
+          #   if AWS::S3.new.buckets["247officesuppy"].objects["400/400/#{single_image}"].exists?
+          #     image = single_image
+          #     puts "----> SINGLE IMAGE = #{image}"
+          #     bucket.objects["#{image}"].acl = :public_read unless bucket.objects["#{image}"].nil?
+          #   elsif AWS::S3.new.buckets["247officesuppy"].objects["400/400/#{sku_group_image}"].exists?
+          #     image = sku_group_image
+          #     puts "----> SKU GROUP IMAGE = #{image}"
+          #     bucket.objects["#{image}"].acl = :public_read unless bucket.objects["#{image}"].nil?
+          #   else
+          #     image = nil
+          #   end
+          #   
+          #   if image
+          #     item_images = self.images
+          #   
+          #     if self.images.count > 1
+          #       (1..self.images.count).each {|im| Image.find_by(id: self.images[im].id).destroy }
+          #     end
+          #   
+          #     if self.images.count == 1
+          #       Image.find_by(id: self.images.first.id).update_attributes(:attachment_file_name => image)
+          #     else
+          #       Image.create(:attachment_file_name => image)
+          #     end
+          #   end
+          #   
+          end
     
   end
   

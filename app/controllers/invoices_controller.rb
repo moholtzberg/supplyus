@@ -6,6 +6,9 @@ class InvoicesController < ApplicationController
     if params[:account_id]
       @invoices.by_account(params[:account_id])
     end
+    if params[:order_id]
+      @invoices.by_order(params[:order_id])
+    end
   end
   
   def show

@@ -4,7 +4,7 @@ class CreditCard < ActiveRecord::Base
     belongs_to :payment_plan
     
     scope :expiring_soon, -> { where(expiration: 30.days.ago..90.days.from_now) }
-    
+    scope :active, -> { where("expiration >= ?", Date.today) }
     # before_save :charge_card
     
     # def charge_card

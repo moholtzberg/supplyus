@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160304052346) do
+ActiveRecord::Schema.define(version: 20160304175907) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -130,11 +130,12 @@ ActiveRecord::Schema.define(version: 20160304052346) do
   add_index "invoice_payment_applications", ["payment_id"], name: "index_invoice_payment_applications_on_payment_id"
 
   create_table "invoices", force: :cascade do |t|
-    t.integer "account_id"
-    t.text    "number"
-    t.date    "date"
-    t.float   "total"
-    t.integer "order_id"
+    t.integer  "account_id"
+    t.text     "number"
+    t.date     "date"
+    t.float    "total"
+    t.integer  "order_id"
+    t.datetime "due_date"
   end
 
   create_table "item_categories", force: :cascade do |t|

@@ -1,7 +1,14 @@
 class Account < ActiveRecord::Base
   
-  # self.inheritance_column = :account_type
-  # 
+  self.inheritance_column = :account_type
+  
+  alias_attribute :address_1, :ship_to_address_1
+  alias_attribute :address_2, :ship_to_address_2
+  alias_attribute :city,      :ship_to_city
+  alias_attribute :state,     :ship_to_state
+  alias_attribute :zip,       :ship_to_zip
+  alias_attribute :phone,     :ship_to_phone
+  alias_attribute :fax,       :ship_to_fax
   # scope :customers, -> { where(:account_type => "Customer")}
   # scope :vendors, -> { where(:account_type => "Vendor")}
   # 
@@ -18,12 +25,13 @@ class Account < ActiveRecord::Base
   has_many :invoices
   has_many :credit_cards
   has_many :orders
-  
+  #   
   validates :name, :presence => true
   validates :ship_to_address_1, :presence => true
   validates :ship_to_city, :presence => true
   validates :ship_to_state, :presence => true
   validates :ship_to_zip, :presence => true
+  
   # before_create :set_billing_start_and_day
   # after_create  :set_up_payment_plans
   

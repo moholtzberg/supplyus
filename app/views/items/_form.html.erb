@@ -11,11 +11,13 @@
 	</div>
 	
 	<div id="brand" class="col-md-12">
+		<%= f.label :brand_name, :class => "control-label" %>
 		<%= f.text_field :brand_name, :class => "form-control", data: {autocomplete_source: brands_path} %>
 	</div>
 	
 	<div id="category" class="col-md-12">
-		<%= f.select :category_id, @categories.collect {|p| [p.name, p.id]}, {:include_blank => "Select Category"}, {:class => "form-control"} %>
+		<%= f.label :category_name, :class => "control-label" %>
+		<%= f.text_field :category_name, :class => "form-control", data: {autocomplete_source: categories_path} %>
 	</div>
 	
 	<div id="price" class="col-md-4">
@@ -52,5 +54,19 @@
 		<%= f.label :length, :class => "control-label" %>
 		<%= f.text_field :length, :class => "form-control" %>
 	</div>
+	
+	<script>
+	jQuery(function() {
+		return $('#item_brand_name').autocomplete({
+			source: $('#item_brand_name').data('autocomplete-source')
+		})
+	});
+
+	jQuery(function() {
+		return $('#item_category_name').autocomplete({
+			source: $('#item_category_name').data('autocomplete-source')
+		})
+	});
+	</script>
 	
 </fieldset>

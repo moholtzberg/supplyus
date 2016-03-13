@@ -12,4 +12,20 @@ class AccountItemPrice < ActiveRecord::Base
   
   scope :order_by_item, -> () { order(:item_id => :asc)}
   
+  def item_number
+    item.try(:number)
+  end
+  
+  def item_number=(number)
+    self.item = Item.find_by(:number => number) if number.present?
+  end
+  
+  def account_name
+    account.try(:name)
+  end
+  
+  def account_name=(name)
+    self.acaount = Account.find_by(:name => name) if name.present?
+  end
+  
 end

@@ -43,7 +43,7 @@
 			</td>
 			
 			<td lass="price">
-				<%= best_in_place ol, :price, :value => number_to_currency(ol.price) %>
+				<%= best_in_place ol, :price, :value => number_to_currency(ol.price.to_f) %>
 			</td>
 			
 			<td lass="sub_total">

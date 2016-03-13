@@ -3,7 +3,7 @@ class OrdersController < ApplicationController
   helper_method :sort_column, :sort_direction
   
   def index
-    @orders = Order.open.is_complete.includes(:account, :order_line_items)
+    @orders = Order.open.is_complete.includes(:account, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]})
     @orders = @orders.order(sort_column + " " + sort_direction)
     @orders = @orders.paginate(:page => params[:page], :per_page => 10)
   end
@@ -16,6 +16,12 @@ class OrdersController < ApplicationController
   
   def incomplete
     @orders = Order.open.is_incomplete.includes(:account, :order_line_items)
+    @orders = @orders.paginate(:page => params[:page], :per_page => 10)
+    render "index"
+  end
+  
+  def shipped
+    @orders = Order.includes(:account, :order_line_items).open.is_incomplete.shipped
     @orders = @orders.paginate(:page => params[:page], :per_page => 10)
     render "index"
   end

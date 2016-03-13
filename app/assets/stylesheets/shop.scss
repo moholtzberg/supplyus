@@ -452,6 +452,12 @@ input.form-control {
 		}
 	}
 }
+
+.modal {
+	#modal-content {
+		background-color: rgb(255, 255, 255);
+	}
+}
 .gold {
 	color:	#dad66; /*if no support for background-clip*/
 	background: -webkit-linear-gradient(transparent, transparent),

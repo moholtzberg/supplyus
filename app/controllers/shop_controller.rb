@@ -107,11 +107,23 @@ class ShopController < ApplicationController
   
   def view_account
     @account = Account.find_by(:id => params[:account_id])
-    @orders = @account.orders.open.is_complete.includes(:order_shipping_method).paginate(:page => params[:page], :per_page => 10)
+    @orders = @account.orders.open.is_complete.includes(:order_shipping_method).paginate(:page => params[:orders_page], :per_page => 10)
+    @invoices = @account.invoices.paginate(:page => params[:invoices_page], :per_page => 10)
   end
   
   def view_order
     @order = Order.find_by(:number => params[:order_number])
+  end
+  
+  def view_invoice
+    @invoice = Invoice.find_by(:number => params[:invoice_number])
+  end
+  
+  def pay_invoice
+    @account = current_user.account
+    @credit_card = CreditCard.new
+    @invoice = Invoice.find_by(:number => params[:invoice_number])
+    @payment = Payment.new
   end
   
   def edit_account

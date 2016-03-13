@@ -25,6 +25,7 @@ Rails.application.routes.draw do
         collection do
           get :incomplete
           get :locked
+          get :shipped
         end
         member do
           put :lock
@@ -38,8 +39,12 @@ Rails.application.routes.draw do
           get :search
         end
       end
+      resources :customers
       resources :item_imports
+      resources :account_item_prices
       resources :account_item_price_imports
+      resources :item_vendor_prices
+      resources :item_vendor_price_imports
       resources :meters
       resources :meter_readings
       resources :contacts
@@ -72,15 +77,20 @@ Rails.application.routes.draw do
   get   "checkout/payment" => "checkout#payment"
   get   "checkout/confirm" => "checkout#confirm"
   patch "checkout/complete"=> "checkout#complete"
+  
   post  "/add_to_cart" => "shop#add_to_cart"
   patch "/add_to_cart" => "shop#add_to_cart"
   post  "/update_cart" => "shop#update_cart"
   patch "/update_cart" => "shop#update_cart"
+  
   get "/my_account/items" => "shop#my_items"
   get "/my_account/order/:order_number" => "shop#view_order"
+  get "/my_account/invoice/:invoice_number/pay" => "shop#pay_invoice"
+  get "/my_account/invoice/:invoice_number" => "shop#view_invoice"
   get "/my_account/:account_id" => "shop#view_account"
   get "/my_account" => "shop#my_account"
   get "/edit_account" => "shop#edit_account"
+  
   get "/cart" => "shop#cart"
   get "/search" => "shop#search"
   get "/categories/:parent_id" => "shop#categories"

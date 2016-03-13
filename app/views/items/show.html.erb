@@ -3,14 +3,26 @@
 	<table class="table table-bordered table-striped">
 		
 		<tr>
-			<td colspan="2"><%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/#{@item.default_image_path}", :class => "media-object", :height => "250", :width => "250" %></td>
+			<td width="60%">
+				<%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/#{@item.default_image_path}", :class => "media-object", :height => "250", :width => "250" %>
+			</td>
+			<td width="40%">
+				<% @item.item_categories.each do |cat| %>
+				
+					<span class="label label-default"><%= cat.category.name %></span>
+				<% end %>
+			</td>
 		</tr>
 		
+	</table>
+	
+	<table class="table table-bordered table-striped">
+		
 		<tr>
-			<th>Number</th>
-			<th>Name</th>
-			<th>Price</th>
-			<th>Cost</th>
+			<th width="20%">Number</th>
+			<th width="60%">Name</th>
+			<th width"10%">Price</th>
+			<th width"10%">Cost</th>
 		</tr>
 		
 		<tr>
@@ -27,10 +39,38 @@
 	
 	<br/>
 	
-	<div class="col-md-6">
+	<div class="col-md-4">
 		
 		<table class="table table-bordered table-condensed table-striped">
+			
+			<tr>
+				<td colspan="2"><%= link_to "Add Account Item Price", new_item_vendor_price_path(:item_id => @item.id), :class => "btn btn-primary btn-block btn-xs", :remote => true %>
+			</tr>
+			
+			<tr>
+				<th>Vendor</th>
+				<th>Price</th>
+			</tr>
 
+			<% @item.item_vendor_prices.each do |it| %>
+			<tr>
+				<td><%= it.vendor.name %></td>
+				<td><%= number_to_currency(it.price) %></td>
+			</tr>
+			<% end %>
+
+		</table>
+		
+	</div>
+	
+	<div class="col-md-4">
+		
+		<table class="table table-bordered table-condensed table-striped">
+			
+			<tr>
+				<td colspan="2"><%= link_to "Add Account Item Price", new_account_item_price_path(:item_id => @item.id), :class => "btn btn-primary btn-block btn-xs", :remote => true %>
+			</tr>
+			
 			<tr>
 				<th>Account</th>
 				<th>Price</th>
@@ -46,13 +86,14 @@
 		</table>
 		
 	</div>
-	<div class="col-md-6">
+	
+	<div class="col-md-4">
 		
 		<table class="table table-bordered table-condensed table-striped">
 
 			<tr>
 				<th>Order</th>
-				<th>Ship To Account Name</th>
+				<th>Ship To Name</th>
 				<th>Quantity</th>
 				<th>Price</th>
 			</tr>
@@ -71,3 +112,11 @@
 	</div>
 	
 </div>
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div

@@ -46,7 +46,8 @@ class OrderLineItem < ActiveRecord::Base
     # else
     #   false
     # end
-    LineItemShipment.where(:order_line_item_id => self.id).group(:order_line_item_id).sum(:quantity_shipped).inject(0) {|k, v| (k + v[1]) != 0 ? true : false }
+    OrderLineItem.joins(:line_item_shipments).where("line_item_shipments.order_line_item_id = ?", self.id).group(:order_line_item_id).sum(:quantity_shipped)
+    # LineItemShipment.where(:order_line_item_id => self.id).group(:order_line_item_id).sum(:quantity_shipped).inject(0) {|k, v| (k + v[1]) != 0 ? true : false }
   end
   
   def quantity_shipped
