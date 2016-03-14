@@ -1,42 +1,49 @@
 <div id="accounts" class="col-md-12">
 	
-	<div class="">
-		
-		<% if flash[:notice] %>
-		<div id="flash_messages" class="aelrt alert-success" role="alert">
-			<strong><%= flash[:notice] %></strong>
-		</div>
-		<% end %>
-		
-		<table class="table table-bordered">
 
-			<tr>
-				<th><%= sortable "id" %></th>
-				<th><%= sortable "name" %></th>
-				<th>Address 1</th>
-				<th><%= sortable "ship_to_city", "City" %></th>
-				<th><%= sortable "ship_to_state", "State" %></th>
-				<th><%= sortable "ship_to_zip", "Zip" %></th>
-				<th>Phone</th>
-				<th>&nbsp;</th>
-			</tr>
-
-			<% @accounts.each do |a| %>
-			<tr>
-				<td><%= a.id %></td>
-				<td><%= a.name %></td>
-				<td><%= a.ship_to_address_1 %></td>
-				<td><%= a.ship_to_city %></td>
-				<td><%= a.ship_to_state %></td>
-				<td><%= a.ship_to_zip %></td>
-				<td><%= number_to_phone(a.ship_to_phone) %></td>
-				<td><%= link_to(account_path(a.id), :class => "btn btn-info btn-xs") do %><span class="glyphicon glyphicon-search"></span><% end %></td>
-			</tr>
-			<% end %>
-
-		</table>
 		
+	<% if flash[:notice] %>
+	<div id="flash_messages" class="aelrt alert-success" role="alert">
+		<strong><%= flash[:notice] %></strong>
 	</div>
+	<% end %>
+	
+	<table class="table table-bordered">
+		
+		<tr>
+			<td colspan="8">
+				<form id="searchBox" accept-charset="UTF-8" action="/admin/accounts" method="get" role="search">
+					<input type="text" class="form-control" id="term" name="term" placeholder="Enter account name" value="">
+				</form>
+			</td>
+		</tr>
+		
+		<tr>
+			<th><%= sortable "id" %></th>
+			<th><%= sortable "name" %></th>
+			<th>Address 1</th>
+			<th><%= sortable "ship_to_city", "City" %></th>
+			<th><%= sortable "ship_to_state", "State" %></th>
+			<th><%= sortable "ship_to_zip", "Zip" %></th>
+			<th>Phone</th>
+			<th>&nbsp;</th>
+		</tr>
+
+		<% @accounts.each do |a| %>
+		<tr>
+			<td><%= a.id %></td>
+			<td><%= a.name %></td>
+			<td><%= a.ship_to_address_1 %></td>
+			<td><%= a.ship_to_city %></td>
+			<td><%= a.ship_to_state %></td>
+			<td><%= a.ship_to_zip %></td>
+			<td><%= number_to_phone(a.ship_to_phone) %></td>
+			<td><%= link_to(account_path(a.id), :class => "btn btn-info btn-xs") do %><span class="glyphicon glyphicon-search"></span><% end %></td>
+		</tr>
+		<% end %>
+
+	</table>
+		
 	
 	<%= link_to new_account_path, :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
 	
