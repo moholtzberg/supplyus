@@ -15,8 +15,8 @@
 		<tr>
 			<td><%= @order.number %></td>
 			<td><%= @order.ship_to_account_name %></td>
-			<td><%= f.date_field :ship_date, :class => "form-control" %></td>
-			<td><%= f.select :carrier, ["UPS", "FedEx", "US Postal Service", "Ensenda", "Roadrunner"], {}, :class => "form-control" %></td>
+			<td><%= f.date_field :ship_date, :class => "form-control", :value => Date.today %></td>
+			<td><%= f.select :carrier, ["UPS", "FedEx", "US Postal Service", "Ensenda", "Roadrunner", "Dohrn"], {}, :class => "form-control" %></td>
 		</tr>
 		
 	</table>
@@ -34,7 +34,7 @@
 		<%= hidden_field_tag :order_id, params[:order_id].to_i %>
 		
 		<% @line_items.each_with_index do |li, idx| %>
-			<% if li.shipped != true %>
+			<% if li.shipped != true and li.actual_quantity != 0 %>
 			<%= hidden_field_tag "lines[#{idx}][order_line_item_id]", li.id.to_i %>
 			<tr>
 				<td><%= li.id %></td>
@@ -48,7 +48,7 @@
 		
 	</talbe>
 	
-	<table class="table table-bordered">
+	<table class="table table-bordered table-condensed">
 		
 		<tr>
 			<td>Tracking Number 1</td>
@@ -71,68 +71,44 @@
 			<td><%= text_field_tag "tracking_numbers[4][number]" %></td>
 		</tr>
 		<tr>
-			<td>Tracking Number 5</td>
+			<td>Tracking Number 6</td>
 			<td><%= text_field_tag "tracking_numbers[5][number]" %></td>
 		</tr>
 		<tr>
-			<td>Tracking Number 5</td>
+			<td>Tracking Number 7</td>
 			<td><%= text_field_tag "tracking_numbers[6][number]" %></td>
 		</tr>
 		<tr>
-			<td>Tracking Number 5</td>
+			<td>Tracking Number 8</td>
 			<td><%= text_field_tag "tracking_numbers[7][number]" %></td>
 		</tr>
 		<tr>
-			<td>Tracking Number 5</td>
+			<td>Tracking Number 9</td>
 			<td><%= text_field_tag "tracking_numbers[8][number]" %></td>
 		</tr>
 		<tr>
-			<td>Tracking Number 5</td>
+			<td>Tracking Number 10</td>
 			<td><%= text_field_tag "tracking_numbers[9][number]" %></td>
 		</tr>
 		<tr>
-			<td>Tracking Number 5</td>
+			<td>Tracking Number 11</td>
 			<td><%= text_field_tag "tracking_numbers[10][number]" %></td>
 		</tr>
 		<tr>
-			<td>Tracking Number 5</td>
+			<td>Tracking Number 12</td>
 			<td><%= text_field_tag "tracking_numbers[11][number]" %></td>
 		</tr>
 		<tr>
-			<td>Tracking Number 5</td>
+			<td>Tracking Number 13</td>
 			<td><%= text_field_tag "tracking_numbers[12][number]" %></td>
 		</tr>
 		<tr>
-			<td>Tracking Number 5</td>
+			<td>Tracking Number 14</td>
 			<td><%= text_field_tag "tracking_numbers[13][number]" %></td>
 		</tr>
 		<tr>
-			<td>Tracking Number 5</td>
+			<td>Tracking Number 15</td>
 			<td><%= text_field_tag "tracking_numbers[14][number]" %></td>
-		</tr>
-		<tr>
-			<td>Tracking Number 5</td>
-			<td><%= text_field_tag "tracking_numbers[15][number]" %></td>
-		</tr>
-		<tr>
-			<td>Tracking Number 5</td>
-			<td><%= text_field_tag "tracking_numbers[16][number]" %></td>
-		</tr>
-		<tr>
-			<td>Tracking Number 5</td>
-			<td><%= text_field_tag "tracking_numbers[17][number]" %></td>
-		</tr>
-		<tr>
-			<td>Tracking Number 5</td>
-			<td><%= text_field_tag "tracking_numbers[18][number]" %></td>
-		</tr>
-		<tr>
-			<td>Tracking Number 5</td>
-			<td><%= text_field_tag "tracking_numbers[19][number]" %></td>
-		</tr>
-		<tr>
-			<td>Tracking Number 5</td>
-			<td><%= text_field_tag "tracking_numbers[20][number]" %></td>
 		</tr>
 		
 	</table>

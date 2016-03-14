@@ -47,12 +47,12 @@ class ShopController < ApplicationController
   
   def add_to_cart
     i = Item.find_by(:id => params[:cart][:item_id])
-    puts "SESSION --------> #{session[:cart_id]}"
-    if !session[:cart_id].blank? and session[:cart_id].is_a? Numeric
-      @cart = Cart.find_by(:id => session[:cart_id])
+    puts "SESSION --------> #{cookies.permanent.signed[:cart_id]}"
+    if !cookies.permanent.signed[:cart_id].blank? and cookies.permanent.signed[:cart_id].is_a? Numeric
+      @cart = Cart.find_by(:id => cookies.permanent.signed[:cart_id])
     else
       @cart = Cart.create
-      session[:cart_id] = @cart.id
+      cookies.permanent.signed[:cart_id] = @cart.id
     end
     # c = Cart.find_or_create_by(:id => session[:cart_id])
     @cart.ip_address = request.remote_ip
@@ -87,7 +87,7 @@ class ShopController < ApplicationController
   end
   
   def cart
-    @cart = Cart.find_or_initialize_by(:id => session[:cart_id])
+    @cart = Cart.find_or_initialize_by(:id => cookies.permanent.signed[:cart_id])
     if current_user && current_user.has_account
       @cart.account_id = current_user.account.id
       @cart.order_line_items.each do |c| 
@@ -113,6 +113,7 @@ class ShopController < ApplicationController
   
   def view_order
     @order = Order.find_by(:number => params[:order_number])
+    @shipments = Shipment.where(:order_id => @order.id)
   end
   
   def view_invoice
@@ -158,12 +159,12 @@ class ShopController < ApplicationController
     
     ###############
     
-    if !session[:cart_id].blank? and session[:cart_id].is_a? Numeric
-      @cart = Cart.find_or_initialize_by(:id => session[:cart_id])
+    if !cookies.permanent.signed[:cart_id].blank? and cookies.permanent.signed[:cart_id].is_a? Numeric
+      @cart = Cart.find_or_initialize_by(:id => cookies.permanent.signed[:cart_id])
     else
-      @cart = Cart.find_or_initialize_by(:id => session[:cart_id])
+      @cart = Cart.find_or_initialize_by(:id => cookies.permanent.signed[:cart_id])
     end
-    session[:cart_id] = @cart.id
+    cookies.permanent.signed[:cart_id] = @cart.id
     puts "CAAAAAAAAAAAAAAAAAAAAAAAAARRRRRRTTTTTT -> #{@cart.number}"
   end
   

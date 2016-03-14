@@ -45,7 +45,7 @@
 		<% end %>
 		
 		<tr>
-			<td class="text-center" colspan="5"><%= will_paginate @orders, renderer: BootstrapPagination::Rails %></td>
+			<td class="text-center" colspan="5"><%= will_paginate @orders, renderer: BootstrapPagination::Rails, :param_name => "orders_page" %></td>
 		</tr>
 	
 	<table>
@@ -71,7 +71,7 @@
 		<% end %>
 
 		<tr>
-			<td class="text-center" colspan="5"><%= will_paginate @invoices, renderer: BootstrapPagination::Rails %></td>
+			<td class="text-center" colspan="5"><%= will_paginate @invoices, renderer: BootstrapPagination::Rails, :param_name => "invoices_page" %></td>
 		</tr>
 
 	<table>

@@ -11,7 +11,7 @@ class CheckoutController < ApplicationController
   end
   
   def address
-    @checkout = Checkout.find_by(:id => session[:cart_id])
+    @checkout = Checkout.find_by(:id => cookies.permanent.signed[:cart_id])
     if current_user.account.nil?
       @address = Account.new
     else
@@ -27,7 +27,7 @@ class CheckoutController < ApplicationController
     params[:checkout][:bill_to_state] = params[:checkout][:ship_to_state] unless !params[:checkout][:bill_to_state].blank?
     params[:checkout][:bill_to_zip] = params[:checkout][:ship_to_zip] unless !params[:checkout][:bill_to_zip].blank?
     params[:checkout][:bill_to_phone] = params[:checkout][:ship_to_phone] unless !params[:checkout][:bill_to_phone].blank?
-    cart = Checkout.find_by(:id => session[:cart_id])
+    cart = Checkout.find_by(:id => cookies.permanent.signed[:cart_id])
     if current_user.has_account
       cart.account_id = current_user.account.id
       cart.order_line_items.each {|c| c.price = c.item.actual_price(cart.account_id)}
@@ -39,17 +39,17 @@ class CheckoutController < ApplicationController
   end
   
   def shipping
-    @checkout = OrderShippingMethod.new(:order_id => session[:cart_id])
+    @checkout = OrderShippingMethod.new(:order_id => cookies.permanent.signed[:cart_id])
   end
   
   def update_shipping
     shipping = ShippingMethod.find_by(:id => params[:order_shipping_method][:shipping_method_id])
     puts "---> #{shipping.inspect}"
-    unless OrderShippingMethod.find_by(:order_id => session[:cart_id]).nil?
+    unless OrderShippingMethod.find_by(:order_id => cookies.permanent.signed[:cart_id]).nil?
       "WE HAVE AND ID"
-      o = OrderShippingMethod.find_by(:order_id => session[:cart_id])
+      o = OrderShippingMethod.find_by(:order_id => cookies.permanent.signed[:cart_id])
     else
-      o = OrderShippingMethod.new(:order_id => session[:cart_id])
+      o = OrderShippingMethod.new(:order_id => cookies.permanent.signed[:cart_id])
     end
     puts "-----> #{o.inspect}"
     o.update_attributes(:shipping_method_id => shipping.id, :amount => shipping.calculate(@cart.sub_total))
@@ -60,22 +60,22 @@ class CheckoutController < ApplicationController
   end
   
   def payment
-    @checkout = Checkout.find_by(:id => session[:cart_id])
+    @checkout = Checkout.find_by(:id => cookies.permanent.signed[:cart_id])
     if current_user.has_account
       redirect_to checkout_confirm_path
     end
   end
   
   def confirm
-    @checkout = Checkout.find_by(:id => session[:cart_id])
+    @checkout = Checkout.find_by(:id => cookies.permanent.signed[:cart_id])
   end
   
   def complete
-    c = Checkout.find_by(:id => session[:cart_id])
+    c = Checkout.find_by(:id => cookies.permanent.signed[:cart_id])
     c.completed_at = Time.now
     if c.save
       if c.complete
-        session[:cart_id] = nil
+        cookies.permanent.signed[:cart_id] = nil
         puts "GOING INTO THE MAILER"
         OrderMailer.order_confirmation(c.id).deliver_later
         redirect_to my_account_path
@@ -89,14 +89,14 @@ class CheckoutController < ApplicationController
   end
   
   def find_cart
-    if !session[:cart_id].blank? and session[:cart_id].is_a? Numeric
-      unless !Cart.find_by(:id => session[:cart_id]).nil?
-        session[:cart_id] = Cart.create.id
+    if !cookies.permanent.signed[:cart_id].blank? and cookies.permanent.signed[:cart_id].is_a? Numeric
+      unless !Cart.find_by(:id => cookies.permanent.signed[:cart_id]).nil?
+        cookies.permanent.signed[:cart_id] = Cart.create.id
       end
     else
-      session[:cart_id] = Cart.create.id
+      cookies.permanent.signed[:cart_id] = Cart.create.id
     end
-    @cart = Cart.find_by(:id => session[:cart_id])
+    @cart = Cart.find_by(:id => cookies.permanent.signed[:cart_id])
   end
   
   def shipping_params

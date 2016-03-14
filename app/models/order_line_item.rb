@@ -24,7 +24,6 @@ class OrderLineItem < ActiveRecord::Base
 
   def make_line_number
     if self.order_id.blank?
-      puts "NO ORDER YETTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"
     else
       self.order_line_number = self.order.order_line_items.count + 1
     end
