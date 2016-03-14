@@ -25,6 +25,7 @@ class Account < ActiveRecord::Base
   has_many :invoices
   has_many :credit_cards
   has_many :orders
+  has_many :account_item_prices
   #   
   validates :name, :presence => true
   validates :ship_to_address_1, :presence => true

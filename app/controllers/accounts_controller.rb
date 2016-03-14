@@ -16,6 +16,7 @@ class AccountsController < ApplicationController
   
   def show
     @account = Account.find(params[:id])
+    @item_prices = AccountItemPrice.where(account_id: @account.id).includes(:item)
   end
   # def create
   #   account = Account.create(params[:new_account])

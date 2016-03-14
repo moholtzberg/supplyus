@@ -29,6 +29,26 @@
 
 <div class="col-md-7">
 	
+	<div id="account_item_prices" class="col-md-12">
+		<table class="table table-bordered table-condensed table-hover">
+			<tr>
+				<th>Item Number</th>
+				<th>Description</th>
+				<th width="10%">Contract Price</th>
+				<th width="10%">Cost Price</th>
+			</tr>
+			
+			<% @item_prices.each do |a| %>
+			<tr <% if a.item && (a.price < a.item.price) %>class="danger" <% end %>>
+				<td><%= a.item.number unless a.item.nil? %></td>
+				<td><%= a.item.name unless a.item.nil? %></td>
+				<td><%= number_to_currency(a.price) %></td>
+				<td><%= number_to_currency(a.item.cost_price) unless a.item.nil? %></td>
+			</tr>
+			<% end %>
+		</table>
+	</div>
+	
 	<div id="payment_plans" class="col-md-12">
 		<%= render :partial => "home/payment_plans", :locals => {:account => @account} %>
 	</div>
