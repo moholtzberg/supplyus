@@ -59,23 +59,23 @@ class OrderLineItem < ActiveRecord::Base
   end
   
   def fulfilled
-    # if self.line_item_fulfillments
-    #   total = 0
-    #   self.line_item_fulfillments.each {|i| total += i.quantity_fulfilled }
-    #   total == quantity
-    # else
-    #   false
-    # end
-     LineItemFulfillment.where(:order_line_item_id => self.id).group(:order_line_item_id).sum(:quantity_shipped).inject(0) {|k, v| (k + v[1]) != 0 ? true : false }
+    if self.line_item_fulfillments
+      total = 0
+      self.line_item_fulfillments.each {|i| total += i.quantity_fulfilled }
+      total == quantity
+    else
+      false
+    end
+     # LineItemFulfillment.where(:order_line_item_id => self.id).group(:order_line_item_id).sum(:quantity_fulfilled).inject(0) {|k, v| (k + v[1]) != 0 ? true : false }
   end
   
   def quantity_fulfilled
-    # if self.line_item_fulfillments
-    #   total = 0
-    #   self.line_item_fulfillments.each {|i| total += i.quantity_fulfilled }
-    #   total
-    # end
-    LineItemFulfillment.where(:order_line_item_id => self.id).group(:order_line_item_id).sum(:quantity_fulfilled).inject(0) {|sum, k| sum + k[1] }
+    if self.line_item_fulfillments
+      total = 0
+      self.line_item_fulfillments.each {|i| total += i.quantity_fulfilled }
+      total
+    end
+    # LineItemFulfillment.where(:order_line_item_id => self.id).group(:order_line_item_id).sum(:quantity_fulfilled).inject(0) {|sum, k| sum + k[1] }
   end
   
 end
