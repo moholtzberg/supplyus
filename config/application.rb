@@ -3,6 +3,8 @@ require File.expand_path('../boot', __FILE__)
 require 'csv'
 require 'aws-sdk-v1'
 require 'rails/all'
+# require 'pdfkit'
+# require 'wicked_pdf'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -35,5 +37,7 @@ module Recurring
 
     # Do not swallow errors in after_commit/after_rollback callbacks.
     config.active_record.raise_in_transactional_callbacks = true
+    # config.middleware.use "PDFKit::Middleware", :print_media_type => true
+    # config.middleware.use WickedPdf::Middleware
   end
 end

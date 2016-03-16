@@ -34,7 +34,7 @@
 		<%= hidden_field_tag :order_id, params[:order_id].to_i %>
 		
 		<% @line_items.each_with_index do |li, idx| %>
-			<% if li.shipped != true and li.actual_quantity != 0 %>
+			<% if li.quantity_shipped.to_i != li.actual_quantity and li.actual_quantity != 0 %>
 			<%= hidden_field_tag "lines[#{idx}][order_line_item_id]", li.id.to_i %>
 			<tr>
 				<td><%= li.id %></td>

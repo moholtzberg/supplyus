@@ -16,12 +16,14 @@ class InvoicesController < ApplicationController
   end
   
   def new
-    @invoice = Invoice.new(:order_id => params[:order_id])
-    @line_items = OrderLineItem.where(:order_id => params[:order_id])
+    @order = Order.find_by(:id => params[:order_id])
+    puts @order.completed_at
+    @invoice = Invoice.new(:order_id => @order.id)
+    @line_items = OrderLineItem.where(:order_id => @order.id)
   end
   
   def create
-    invoice = Invoice.new(:date => Time.now, :order_id => params[:order_id])
+    invoice = Invoice.new(:date => params[:invoice][:date], :order_id => params[:order_id], :due_date => params[:invoice][:due_date])
     
     params[:lines].each do |line|
       invoice.line_item_fulfillments.new(:order_line_item_id => line[1]["order_line_item_id"], :quantity_fulfilled => line[1]["quantity_fulfill_now"])

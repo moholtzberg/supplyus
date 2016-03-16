@@ -39,7 +39,9 @@ gem 'roo'
 gem 'will_paginate-bootstrap'
 gem 'twitter-typeahead-rails', :git => "git://github.com/yourabi/twitter-typeahead-rails.git"
 gem 'best_in_place'
-
+# gem 'pdfkit'
+gem 'wicked_pdf'
+gem 'wkhtmltopdf-binary'
 gem 'rack-mini-profiler'
 gem "bullet", :group => "development"
 gem 'dalli'

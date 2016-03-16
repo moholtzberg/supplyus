@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	
+	<head>
+		<title>Recurring</title>
+		<%= wicked_pdf_stylesheet_link_tag "admin", media: 'all' -%>
+		<%= wicked_pdf_stylesheet_link_tag "print", media: 'all' -%>
+		<%# csrf_meta_tags %>
+		<!-- <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/css/jasny-bootstrap.min.css">
+		<link href="http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css" rel="stylesheet" /> -->
+	</head>
+
+	<body id="print">
+		
+		<script>
+		function number_pages() {
+			var vars={};
+			var x=document.location.search.substring(1).split('&');
+			for(var i in x) {
+				var z=x[i].split('=',2);vars[z[0]] = decodeURIComponent(z[1]);
+			}
+			var x=['frompage','topage','page','webpage','section','subsection','subsubsection'];
+			for(var i in x) {
+				var y = document.getElementsByClassName(x[i]);
+				for(var j=0; j<y.length; ++j) y[j].textContent = vars[x[i]];
+			}
+		}
+		</script>
+		
+		<div id="name">
+			<address>24/7 Office Supply, Inc.<br/>
+				2957 NW 27th Street<br/>
+				Fort Lauderdale, FL 33311<br/>
+				(888) 247-8775<br/>
+				www.247officesupply.com
+			</address>
+		</div>
+		
+		<div id="main-panel">
+			<%= yield %>
+		</div>
+		
+	</body>
+	
+</html>

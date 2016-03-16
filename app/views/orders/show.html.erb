@@ -24,7 +24,7 @@
 			</td>
 		</tr>
 	</table>
-	<br/>
+	
 	<table class="table table-bordered">
 		<tr class="bg-primary">
 			<th width="25%">Order Number</th>
@@ -39,7 +39,7 @@
 			<td><%= @order.po_number %></td>
 		</tr>
 	</table>
-	<br/>
+	
 	<table class="table table-bordered">
 
 		<tr class="bg-primary">
@@ -51,7 +51,7 @@
 			<th width="7%" class="text-center">Subtotal</th>
 		</tr>
 
-		<% @order.order_line_items.active.each_with_index do |li, idx| %>
+		<% @order_line_items.active.each_with_index do |li, idx| %>
 		<tr>
 			<td class="text-center"><%= li.order_line_number %></td>
 			<td><%= li.item.number unless li.item.nil? %> / <%= li.item.name unless li.item.nil? %></td>
@@ -73,7 +73,7 @@
 		</tr>
 		<tr>
 			<td colspan="5">Order Total</td>
-			<td colspan="2" class="text-center"><strong> <%= number_to_currency(@order.order_shipping_method.amount + @order.sub_total) unless @order.order_shipping_method.nil? %></strong></td>
+			<td colspan="2" class="text-center"><strong> <%= number_to_currency(@order.total) %></strong></td>
 		</tr>
 	</table>
 	

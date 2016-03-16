@@ -41,7 +41,14 @@ class OrdersController < ApplicationController
   
   def show
     @order = Order.find(params[:id])
+    @order_line_items = @order.order_line_items.includes(:item)
     @shipments = Shipment.where(:order_id => @order.id)
+    respond_to do |format|
+      format.html
+      format.pdf do
+        render :pdf => "#{@order.number}", :title => "#{@order.number}", :layout => 'admin_print.html.erb', :page_size => 'Letter', :background => false, :template => 'orders/show.html.erb', :print_media_type => true, :show_as_html => params[:debug].present?
+      end
+    end
   end
   
   def edit

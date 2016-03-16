@@ -1,4 +1,5 @@
 <table class="table table-bordered">
+	<thead>
 	<tr>
 		<th width="50%">Shipping Address</th>
 		<th width="50%">Billing Address</th>
@@ -21,12 +22,19 @@
 			<%= @order.bill_to_phone %>
 		</td>
 	</tr>
+	</thead>
 </table>
 
 <table class="table table-bordered">
 	<tr>
-		<th width="50%">PO Number</th>
-		<td width="50%"><%= @order.po_number %></td>
+		<th width="33%">Order Number</th>
+		<th width="34%">Order Date</th>
+		<th width="33%">PO Number</th>
+	</tr>
+	<tr>
+		<td width="33%"><%= @order.number %></td>
+		<td width="34%"><%= @order.completed_at.strftime("%m/%d/%Y") unless @order.completed_at.nil? %></td>
+		<td width="33%"><%= @order.po_number %></td>
 	</tr>
 </table>
 
@@ -43,7 +51,7 @@
 	</tr>
 	
 	<% @order.order_line_items.active.each_with_index do |li, idx| %>
-	<tr>
+	<tr class="line_items">
 		<td class="text-center"><%= li.order_line_number %></td>
 		<td><%= li.item.number unless li.item.nil? %> / <%= li.item.name unless li.item.nil? %></td>
 		<td class="text-center"><%= li.quantity.to_i %></td>
@@ -81,6 +89,6 @@
 		<td><%= shipment.ship_date.strftime("%m/%d/%y") unless shipment.ship_date.nil? %></td>
 		<td><%= shipment.carrier %></td>
 		<td><% shipment.tracking_numbers.each do |tr|%><%= tr.number %><br/><% end %></td>
-	<tr>
+	</tr>
 	<% end %>
 </table>
