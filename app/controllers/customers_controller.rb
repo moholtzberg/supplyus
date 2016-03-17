@@ -1,4 +1,4 @@
-class AccountsController < ApplicationController
+class CustomersController < ApplicationController
   layout "admin"
   helper_method :sort_column, :sort_direction
   respond_to :html, :json
