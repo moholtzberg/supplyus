@@ -44,6 +44,7 @@ Rails.application.routes.draw do
       resources :account_item_prices
       resources :account_item_price_imports
       resources :item_vendor_prices
+      resources :item_categories
       resources :item_vendor_price_imports
       resources :meters
       resources :meter_readings
