@@ -1,0 +1,21 @@
+<table class="table table-bordered table-condensed table-striped">
+	
+	<tr>
+		<td colspan="3"><%= link_to "Add Item Vendor Price", new_item_vendor_price_path(:item_id => item.id), :class => "btn btn-primary btn-block btn-xs", :remote => true %>
+	</tr>
+	
+	<tr>
+		<th>Vendor</th>
+		<th>Vendor Item Number</th>
+		<th>Price</th>
+	</tr>
+
+	<% item.item_vendor_prices.each do |it| %>
+	<tr>
+		<td><%= it.vendor.name %></td>
+		<td><%= it.vendor_item_number %></td>
+		<td><%= number_to_currency(it.price) %></td>
+	</tr>
+	<% end %>
+
+</table>

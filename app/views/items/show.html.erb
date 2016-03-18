@@ -8,9 +8,37 @@
 			</td>
 			<td width="40%">
 				<% @item.item_categories.each do |cat| %>
-				
 					<span class="label label-default"><%= cat.category.name %></span>
 				<% end %>
+				<%= form_for ItemCategory.new, :method => :post, :remote => true do |f| %>
+					<%= f.select :category_name, {}, {} %>
+				<% end %>
+				<script>
+				$('#item_category_category_name').select2({
+					ajax: {
+						url: '<%= categories_path %>',
+						dataType:'json',
+						quietMillis: 300,
+						processResults: function (data) {
+							console.log(data)
+							return {
+								results: data
+							};
+						}
+					}
+				});
+				// jQuery(function() {
+					// return $('#item_category_category_name')
+					// .bind( "keydown", function( event ) {
+					// 	if ( event.keyCode === $.ui.keyCode.TAB && $( this ).autocomplete( "instance" ).menu.active ) {
+					// 		event.preventDefault();
+					// 	}
+					// })
+					// .autocomplete({
+					// 	source: $('#item_category_category_name').data('autocomplete-source')
+					// })
+				// });
+				</script>
 			</td>
 		</tr>
 		
@@ -37,79 +65,55 @@
 		
 	</table>
 	
-	<br/>
+	<ul class="nav nav-tabs nav-justified">
+	  <li role="presentation" class="active"><a href="#orders" aria-controls="orders" role="tab" data-toggle="tab">Orders</a></li>
+	  <li role="presentation"><a href="#item_vendor_prices" aria-controls="item_vendor_prices" role="tab" data-toggle="tab">Vendor Item Prices</a></li>
+	  <li role="presentation"><a href="#account_item_prices" aria-controls="account_item_prices" role="tab" data-toggle="tab">Account Item Prices</a></li>
+	</ul>
 	
-	<div class="col-md-4">
+	<div class="tab-content">
 		
-		<table class="table table-bordered table-condensed table-striped">
+		<br/>
+		
+		<div role="tabpanel" class="tab-pane active" id="orders">
 			
-			<tr>
-				<td colspan="2"><%= link_to "Add Account Item Price", new_item_vendor_price_path(:item_id => @item.id), :class => "btn btn-primary btn-block btn-xs", :remote => true %>
-			</tr>
+				<table class="table table-bordered table-condensed table-striped">
+					<tr>
+						<th>Order</th>
+						<th>Ship To Name</th>
+						<th>Quantity</th>
+						<th>Price</th>
+					</tr>
+					<% @item.order_line_items.each do |it| %>
+					<tr>
+						<td><%= it.order.number %></td>
+						<td><%= it.order.ship_to_account_name %></td>
+						<td><%= it.actual_quantity %></td>
+						<td><%= it.price %></td>
+					</tr>
+					<% end %>
+				</table>
 			
-			<tr>
-				<th>Vendor</th>
-				<th>Price</th>
-			</tr>
+		</div>
+		
+		<div id="item_vendor_prices" class="tab-pane" role="tabpanel">
 
-			<% @item.item_vendor_prices.each do |it| %>
-			<tr>
-				<td><%= it.vendor.name %></td>
-				<td><%= number_to_currency(it.price) %></td>
-			</tr>
-			<% end %>
+			<%= render :partial => "item_vendor_prices", :locals => {:item => @item} %>
 
-		</table>
+		</div>
+
+		<div id="account_item_prices" class="tab-pane" role="tabpanel">
+
+			<%= render :partial => "account_item_prices", :locals => {:item => @item} %>
+
+		</div>
 		
 	</div>
 	
-	<div class="col-md-4">
-		
-		<table class="table table-bordered table-condensed table-striped">
-			
-			<tr>
-				<td colspan="2"><%= link_to "Add Account Item Price", new_account_item_price_path(:item_id => @item.id), :class => "btn btn-primary btn-block btn-xs", :remote => true %>
-			</tr>
-			
-			<tr>
-				<th>Account</th>
-				<th>Price</th>
-			</tr>
-
-			<% @item.account_item_prices.each do |it| %>
-			<tr>
-				<td><%= it.account.name %></td>
-				<td><%= (it.price == it.item.actual_price(it.account_id)) ? it.item.actual_price(it.account_id) : 'NULL' %></td>
-			</tr>
-			<% end %>
-
-		</table>
-		
-	</div>
 	
-	<div class="col-md-4">
-		
-		<table class="table table-bordered table-condensed table-striped">
+	
 
-			<tr>
-				<th>Order</th>
-				<th>Ship To Name</th>
-				<th>Quantity</th>
-				<th>Price</th>
-			</tr>
-
-			<% @item.order_line_items.each do |it| %>
-			<tr>
-				<td><%= it.order.number %></td>
-				<td><%= it.order.ship_to_account_name %></td>
-				<td><%= it.actual_quantity %></td>
-				<td><%= it.price %></td>
-			</tr>
-			<% end %>
-
-		</table>
-		
-	</div>
+	
 	
 </div>
 

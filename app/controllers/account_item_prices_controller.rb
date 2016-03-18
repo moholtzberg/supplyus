@@ -16,6 +16,7 @@ class AccountItemPricesController < ApplicationController
     end
     item_price.price = params[:account_item_price][:price]
     item_price.save
+    @item = item
   end
   
 end

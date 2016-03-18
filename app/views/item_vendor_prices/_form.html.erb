@@ -1,0 +1,31 @@
+<fieldset>	
+	
+	<div id="item" class="col-md-12">
+		<%= f.label :item_number, :class => "control-label" %>
+		<%= f.text_field :item_number, :class => "form-control disabled" %>
+	</div>
+	
+	<div id="vendor_item_number" class="col-md-12">
+		<%= f.label :vendor_item_number, :class => "control-label" %>
+		<%= f.text_field :vendor_item_number, :class => "form-control" %>
+	</div>
+	
+	<div id="account" class="col-md-12">
+		<%= f.label :vendor_name, :class => "control-label" %>
+		<%= f.text_field :vendor_name, :class => "form-control", data: {autocomplete_source: vendors_path} %>
+	</div>
+	
+	<div id="price" class="col-md-12">
+		<%= f.label :price, :class => "control-label" %>
+		<%= f.text_field :price, :class => "form-control" %>
+	</div>
+	
+	<script>
+	jQuery(function() {
+		return $('#item_vendor_price_vendor_name').autocomplete({
+			source: $('#item_vendor_price_vendor_name').data('autocomplete-source')
+		});
+	});
+	</script>
+	
+</fieldset>

@@ -3,12 +3,24 @@ class UsersController < ApplicationController
   helper_method :sort_column, :sort_direction
   
   def index
-    @users = User.order(sort_column + " " + sort_direction)
+    @users = User.order(sort_column + " " + sort_direction).includes(:account)
     @users = @users.paginate(:page => params[:page], :per_page => 25)
   end
   
   def new
     @user = User.new
+  end
+  
+  def create
+    @user = User.new(user_params)
+    if @user.save
+      puts user_params[:email]
+      if Account.find_by(:email => params[:user][:email])
+        Account.find_by(:email => params[:user][:email]).update_attributes(:user_id => @user.id)
+      end
+      @users = User.order(sort_column + " " + sort_direction).includes(:account)
+      @users = @users.paginate(:page => params[:page], :per_page => 25)
+    end
   end
   
   def show
@@ -28,5 +40,8 @@ class UsersController < ApplicationController
     %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
   end
   
+  def user_params
+     params.require(:user).permit(:email, :password, :password_confirmation)
+  end
   
 end

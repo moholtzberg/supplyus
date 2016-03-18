@@ -1,6 +1,6 @@
 class Item < ActiveRecord::Base
   
-  has_many :account_item_prices
+  has_many :account_item_prices, :dependent => :destroy, :inverse_of => :item
   has_many :item_vendor_prices
   has_many :images
   # has_attached_file :image, styles: {
