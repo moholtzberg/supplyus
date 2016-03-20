@@ -107,8 +107,8 @@ class ShopController < ApplicationController
   
   def view_account
     @account = Account.find_by(:id => params[:account_id])
-    @orders = @account.orders.open.is_complete.includes(:order_shipping_method).paginate(:page => params[:orders_page], :per_page => 10)
-    @invoices = @account.invoices.paginate(:page => params[:invoices_page], :per_page => 10)
+    @orders = @account.orders.open.is_complete.includes(:order_shipping_method).paginate(:page => params[:page], :per_page => 10)
+    # @invoices = @account.invoices.paginate(:page => params[:page], :per_page => 10)
   end
   
   def view_order
@@ -138,7 +138,7 @@ class ShopController < ApplicationController
   end
   
   def find_categories
-    @categories = Category.is_parent.is_active
+    @menu = Category.is_parent.is_active.show_in_menu
   end
   
   def find_cart

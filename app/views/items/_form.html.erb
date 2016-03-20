@@ -5,9 +5,14 @@
 		<%= f.text_field :number, :class => "form-control" %>
 	</div>
 	
-	<div id="description" class="col-md-8">
+	<div id="name" class="col-md-8">
+		<%= f.label "Name (short)", :class => "control-label" %>
+		<%= f.text_field :name, :class => "form-control" %>
+	</div>
+	
+	<div id="description" class="col-md-12">
 		<%= f.label :description, :class => "control-label" %>
-		<%= f.text_field :description, :class => "form-control" %>
+		<%= f.text_area :description, :class => "form-control" %>
 	</div>
 	
 	<div id="brand" class="col-md-12">
@@ -53,6 +58,15 @@
 	<div id="length" class="col-md-3">
 		<%= f.label :length, :class => "control-label" %>
 		<%= f.text_field :length, :class => "form-control" %>
+	</div>
+	
+	<div class="clearfix"></div>
+	
+	<div class="checkbox col-md-12">
+		<label>
+			<%= f.check_box :active %>
+			<%= f.label :active, I18n.t(:active) %>
+		</label>
 	</div>
 	
 	<script>

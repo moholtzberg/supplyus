@@ -7,6 +7,7 @@ class Category < ActiveRecord::Base
   
   scope :is_active, -> () { where(:active => true) }
   scope :is_parent, -> () { where(:parent_id => nil) }
+  scope :show_in_menu, -> () { where(:show_in_menu => true) }
   # scope :children,  -> (parent_id) { where(:parent_id => parent_id) }
   
   def parent_name

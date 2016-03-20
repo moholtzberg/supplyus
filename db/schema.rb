@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160318160430) do
+ActiveRecord::Schema.define(version: 20160320050119) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -173,7 +173,7 @@ ActiveRecord::Schema.define(version: 20160318160430) do
     t.integer  "category_id"
     t.integer  "model_id"
     t.boolean  "is_serialized"
-    t.string   "number",        null: false
+    t.string   "number",                       null: false
     t.string   "name"
     t.string   "slug"
     t.text     "description"
@@ -184,9 +184,10 @@ ActiveRecord::Schema.define(version: 20160318160430) do
     t.float    "height"
     t.float    "width"
     t.float    "length"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
     t.integer  "brand_id"
+    t.boolean  "active",        default: true, null: false
   end
 
   add_index "items", ["id"], name: "item_id_ix"

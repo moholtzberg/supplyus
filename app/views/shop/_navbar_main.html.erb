@@ -69,10 +69,10 @@
 					<% end %>
 				</ul>
 			
-				<% cache "categories" do %>
+				<% cache @menu do %>
 				<ul class="nav navbar-nav">
 				
-					<% @categories.each do |cat| %>
+					<% @menu.each do |cat| %>
 						<!-- <li><%# link_to cat.name, "/#{cat.slug}" %></li> -->
 						<li class="dropdown mega-dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><%= cat.name %><span class="caret"></span></a>
