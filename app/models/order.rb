@@ -2,28 +2,23 @@ class Order < ActiveRecord::Base
   
   include ApplicationHelper
   
-  # default_scope { order(:id) }
-  # default_scope { self.open }
-  
   scope :is_locked, -> () { where(:locked => true) }
   scope :is_unlocked, -> () { where.not(:locked => true) }
   scope :is_complete, -> () { where.not(:completed_at => nil)}
   scope :is_incomplete, -> () { where(:completed_at => nil)}
   scope :has_account, -> () { where.not(:account_id => nil) }
   scope :no_account, -> () { where(:account_id => nil) }
-  has_many :order_line_items, :dependent => :destroy, :inverse_of => :order
-  has_one :order_shipping_method
+ 
   belongs_to :account
+  has_one :order_shipping_method
+  has_many :order_line_items, :dependent => :destroy, :inverse_of => :order
   has_many :items, :through => :order_line_items
+  has_many :order_payment_applications
+  has_many :payments, :through => :order_payment_applications
   
   accepts_nested_attributes_for :order_line_items, :allow_destroy => true
   
   before_save :make_record_number
-  
-  # def destroy
-  #   raise "Cannot delete order a locked order" unless locked != true
-  #   raise "Cannot delete an order with shipments" unless quantity_shipped == 0
-  # end
   
   def self.shipped
     # Order.joins(:order_line_items => :line_item_shipments).group(:order_id, :order_line_item_id).sum("line_item_shipments.quantity_shipped").sum("order_line_items.quantity").inject(0) {|k, v| (k + v[1]) != 0 ? true : false }
@@ -57,16 +52,7 @@ class Order < ActiveRecord::Base
     Order.includes(:order_line_items).where(:order_line_items => {:order_id => nil})
     # Order.all.select { |o| o.has_no_line_items }
   end
-  
-  # def has_line_items
-  #   Order.joins(:order_line_items).distinct(:order_id)
-  #   # order_line_items.count >= 1
-  #end
-  
-  # def has_no_line_items
-  #   order_line_items.count == 0
-  # end
-  
+    
   def sub_total
     Rails.cache.fetch([self, "#{self.class.to_s.downcase}_sub_total"]) {
       OrderLineItem.where(order_id: id).group(:order_line_number, :price, :quantity, :quantity_canceled).sum(:price, :quantity).inject(0) {|sum, k| sum + (k[0][1].to_f * (k[0][2].to_f - k[0][3].to_f))}
@@ -84,7 +70,6 @@ class Order < ActiveRecord::Base
       sub_total.to_f + shipping_total.to_f
     }
   end
-  
   
   def quantity
     # if self.order_line_items
@@ -160,5 +145,37 @@ class Order < ActiveRecord::Base
       end
     }
   end
+  
+  def payments_total
+    total_paid = 0.0
+    self.payments.each {|a| total_paid = total_paid + a.amount}
+    total_paid
+  end
+  
+  def paid
+    total_paid = 0.0
+    self.payments.each {|a| total_paid = total_paid + a.amount}
+    total_paid == self.total ? true : false
+  end
+  
+  def balance_due
+    total_paid = 0.0
+    puts self.payments.count
+    self.payments.each {|a| total_paid = total_paid + a.amount}
+    return (self.total.to_f - total_paid.to_f)
+  end
+  
+  def due_on
+    if self.due_date
+      self.due_date
+    else
+      if account.payment_terms
+        self.completed_at + account.payment_terms
+      else
+        self.completed_at + 30.days
+      end
+    end
+  end
+  
   
 end

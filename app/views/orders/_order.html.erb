@@ -1,12 +1,16 @@
-<td class="text-center"><%= order.id %></td>
-<td><%= order.number %></td>
+
+<td><a href="#" data-toggle="tooltip" title="order_id_<%= order.id %>"><%= order.number %></a><div class="tooltip top" role="tooltip">
+  <div class="tooltip-arrow"></div>
+  <div class="tooltip-inner">
+    <%= order.id %>
+  </div>
+</div></td>
 <td><%= order.account.name unless order.account.blank? %></td>
 <td><%= number_to_currency(order.total) %><%# number_to_currency(order.sum) unless order.sum.nil? %></td>
 <td><%= number_to_currency(order.amount_shipped) %></td>
 <td><%= number_to_currency(order.amount_fulfilled) %></td>
 <td class="text-center"><%= order.completed_at.strftime("%m/%d/%y %I:%M %p") unless order.completed_at.nil? %></td>
 <td class="locked"><%= order.locked ? "Yes" : "No" %></td>
-<td><%= order.ip_address %></td>
 <td>
 
 	<div class="dropdown">

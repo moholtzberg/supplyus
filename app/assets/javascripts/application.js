@@ -16,8 +16,12 @@
 //= require best_in_place
 //= require bootstrap
 //= require turbolinks
-//=  require_tree .
+//= require_tree .
 
 jQuery(function() {
 	return $('.best_in_place').best_in_place();
+});
+
+$(document).ready(function() {
+  $("[data-toggle=tooltip").tooltip();
 });

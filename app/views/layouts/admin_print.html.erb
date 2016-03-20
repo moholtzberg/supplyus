@@ -3,6 +3,7 @@
 	
 	<head>
 		<title>Recurring</title>
+		<!-- <link rel="stylesheet" href="http://localhost:3000/assets/admin.css" /> -->
 		<%= wicked_pdf_stylesheet_link_tag "admin", media: 'print' -%>
 		<%= wicked_pdf_stylesheet_link_tag "print", media: 'print' -%>
 		<%# csrf_meta_tags %>
@@ -27,16 +28,7 @@
 		}
 		</script>
 		
-		<div id="name">
-			<address>24/7 Office Supply, Inc.<br/>
-				2957 NW 27th Street<br/>
-				Fort Lauderdale, FL 33311<br/>
-				(888) 247-8775<br/>
-				www.247officesupply.com
-			</address>
-		</div>
-		
-		<div id="main-panel">
+		<div id="main-panel" onload="number_pages()">
 			<%= yield %>
 		</div>
 		

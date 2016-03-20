@@ -31,6 +31,7 @@ Rails.application.routes.draw do
           put :lock
         end
         resources :shipments, :only => [:new, :create]
+        resources :payments, :shallow => true
         resources :invoices
       end
       resources :order_line_items

@@ -22,20 +22,20 @@
 @import "font-awesome";
 @media print {
 	body#print {
-		thead {
-			display: table-header-group;
+		.thead {
+/*			display: table-header-group;*/
 		}
 		padding-top: 0 !important;
 		margin-top: 0 !important;
 		font-size: 10px !important;
 		#main-panel {
 			display: block; 
-/*			page-break-before: always;*/
 			table {
+				clear: both;
 				margin-left: 0;
 				padding-right: 0;
 				tr.line_items {
-/*					display: table; */
+					display: table-row; 
 					page-break-before: always;
 				}
 			}

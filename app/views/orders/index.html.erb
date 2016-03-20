@@ -10,15 +10,14 @@
 	<table class="table table-bordered">
 		
 		<tr>
-			<th width="2%"><%= sortable "orders.id", "ID" %></th>
+			
 			<th witdh="5%"><%= sortable "orders.number", "Number" %></th>
 			<th width="42%"><%= sortable "accounts.name", "Account" %></th>
-			<th width="8%">Sub Total</th>
-			<th width="8%">Shipped</th>
-			<th width="8%">Fulfilled</th>
+			<th width="10%">Sub Total</th>
+			<th width="10%">Shipped</th>
+			<th width="10%">Fulfilled</th>
 			<th width="13%" class="text-center"><%= sortable "orders.completed_at", "Completed At" %></th>
 			<th width="4%"><%= sortable "orders.locked", "Locked" %></th>
-			<th width="8%"><%= sortable "orders.ip_address", "IP Address" %></th>
 			<th width="2%">&nbsp;</th>
 		</tr>
 		
