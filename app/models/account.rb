@@ -33,6 +33,10 @@ class Account < ActiveRecord::Base
   validates :ship_to_state, :presence => true
   validates :ship_to_zip, :presence => true
   
+  def payment_terms
+    90
+  end
+  
   # before_create :set_billing_start_and_day
   # after_create  :set_up_payment_plans
   
