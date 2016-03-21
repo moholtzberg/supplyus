@@ -85,7 +85,7 @@ class CheckoutController < ApplicationController
   end
   
   def find_categories
-    @categories = Category.is_parent
+     @menu = Category.is_parent.is_active.show_in_menu
   end
   
   def find_cart
