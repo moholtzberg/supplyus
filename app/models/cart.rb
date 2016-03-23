@@ -8,7 +8,7 @@ class Cart < Order
   
   def item_count
     stuff = 0
-    contents.each {|li| stuff = stuff + li.quantity}
+    contents.each {|li| stuff = stuff + li.quantity.to_i}
     stuff
   end
   

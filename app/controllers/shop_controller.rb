@@ -69,9 +69,9 @@ class ShopController < ApplicationController
         if current_user.has_account
           @cart.account_id = current_user.account.id
         end
-        @cart.contents.create(:item_id => params[:cart][:item_id], :quantity => params[:cart][:quantity], :price => i.actual_price(current_user.account.id))
+        @cart.contents.create(:item_id => params[:cart][:item_id], :quantity => params[:cart][:quantity].to_i, :price => i.actual_price(current_user.account.id))
       else
-        @cart.contents.create(:item_id => params[:cart][:item_id], :quantity => params[:cart][:quantity], :price => i.price)
+        @cart.contents.create(:item_id => params[:cart][:item_id], :quantity => params[:cart][:quantity].to_i, :price => i.price)
       end
       
     end
@@ -81,7 +81,7 @@ class ShopController < ApplicationController
     lines = params[:lines]
     lines.each_with_index do |line, idx|
       id = line[1]["id"]
-      qt = line[1]["quantity"]
+      qt = line[1]["quantity"].to_i
       OrderLineItem.find(id).update_attributes(:quantity => qt)
     end
   end
