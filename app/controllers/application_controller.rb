@@ -18,7 +18,7 @@ class ApplicationController < ActionController::Base
   end
   
   def check_authorization
-    unless current_user.email == "admin@247officesupply.com"
+    unless current_user.email.in?(["admin@247officesupply.com", "mjbustamante@247officesupply.com"])
       redirect_to "/"
     end
   end
