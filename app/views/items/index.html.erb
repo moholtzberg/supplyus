@@ -1,7 +1,7 @@
 <% content_for :app_location do %>Items/Index<% end %>
 <div id="items" class="col-md-12">
 
-	<table class="table table-bordered">
+	<table class="table table-bordered table-condensed table-responsive">
 		
 		<tr>
 			<td colspan="8">
@@ -12,23 +12,23 @@
 		</tr>
 		
 		<tr>
-			<th>ID</th>
+			<th class="hidden-xs">ID</th>
 			<th>Number</th>
 			<th>Name/Description</th>
 			<th>Price</th>
-			<th>Cost Price</th>
-			<th>Times Purchased</th>
+			<th class="hidden-xs">Cost Price</th>
+			<th class="hidden-xs">Times Purchased</th>
 			<th>&nbsp;</th>
 		</tr>
 		
 		<% @items.each do |a| %>
 		<tr>
-			<td><%= a.id %></td>
+			<td class="hidden-xs"><%= a.id %></td>
 			<td><%= a.number %></td>
 			<td><%= a.name %></td>
 			<td><%= number_to_currency(a.price) %></td>
-			<td><%= number_to_currency(a.cost_price) %></td>
-			<td><%= a.times_purchased.to_i %></td>
+			<td class="hidden-xs"><%= number_to_currency(a.cost_price) %></td>
+			<td class="hidden-xs"><%= a.times_purchased.to_i %></td>
 			<td class="text-center">
 			
 				<div class="dropdown">

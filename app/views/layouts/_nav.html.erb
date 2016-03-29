@@ -1,12 +1,12 @@
 <ul class="nav nav-pills nav-stacked">
-	<li class="<% if current_page?(:path => :accounts) %>active<% end %>"><%= link_to "Accounts", accounts_path %></li>
-	<li class="<% if current_page?(:path => :orders) %>active<% end %>"><%= link_to "Orders", orders_path %></li>
-	<li class="<% if current_page?(:path => :invoices) %>active<% end %>"><%= link_to "Invoices", invoices_path %></li>
-	<li class="<% if current_page?(:path => :items) %>active<% end %>"><%= link_to "Items", items_path %></li>
-	<li class="<% if current_page?(:path => :vendors) %>active<% end %>"><%= link_to "Vendors", vendors_path %></li>
-	<li class="<% if current_page?(:path => :brands) %>active<% end %>"><%= link_to "Brands", brands_path %></li>
-	<li class="<% if current_page?(:path => :categories) %>active<% end %>"><%= link_to "Categories", categories_path %></li>
-	<li class="<% if current_page?(:path => :users) %>active<% end %>"><%= link_to "Users", users_path %></li>
+	<li class="<% if current_page?(:accounts) %>active<% end %>"><%= link_to "Accounts", accounts_path %></li>
+	<li class="<% if current_page?(:orders) %>active<% end %>"><%= link_to "Orders", orders_path %></li>
+	<li class="<% if current_page?(:invoices) %>active<% end %>"><%= link_to "Invoices", invoices_path %></li>
+	<li class="<% if current_page?(:items) %>active<% end %>"><%= link_to "Items", items_path %></li>
+	<li class="<% if current_page?(:vendors) %>active<% end %>"><%= link_to "Vendors", vendors_path %></li>
+	<li class="<% if current_page?(:brands) %>active<% end %>"><%= link_to "Brands", brands_path %></li>
+	<li class="<% if current_page?(:categories) %>active<% end %>"><%= link_to "Categories", categories_path %></li>
+	<li class="<% if current_page?(:users) %>active<% end %>"><%= link_to "Users", users_path %></li>
 	<li class="dropdown"><%= link_to "Settings", "#", :class => "dropdown-toggle", :data => {:toggle => "dropdown"} %>
 		<ul class="dropdown-menu dropdown-menu-right">
 			<li><a href="#">Lorem Ipsum</a></li>

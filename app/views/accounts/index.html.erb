@@ -1,14 +1,7 @@
+<% content_for :app_location do %>Accounts >> Index<% end %>
 <div id="accounts" class="col-md-12">
 	
-
-		
-	<% if flash[:notice] %>
-	<div id="flash_messages" class="aelrt alert-success" role="alert">
-		<strong><%= flash[:notice] %></strong>
-	</div>
-	<% end %>
-	
-	<table class="table table-bordered">
+	<table class="table table-bordered table-condensed table-responsive">
 		
 		<tr>
 			<td colspan="8">
@@ -19,26 +12,26 @@
 		</tr>
 		
 		<tr>
-			<th><%= sortable "id" %></th>
+			<th class="hidden-xs"><%= sortable "id" %></th>
 			<th><%= sortable "name" %></th>
-			<th>Address 1</th>
-			<th><%= sortable "ship_to_city", "City" %></th>
-			<th><%= sortable "ship_to_state", "State" %></th>
-			<th><%= sortable "ship_to_zip", "Zip" %></th>
-			<th>Phone</th>
+			<th class="hidden-xs">Address 1</th>
+			<th class="hidden-xs"><%= sortable "ship_to_city", "City" %></th>
+			<th class="hidden-xs"><%= sortable "ship_to_state", "State" %></th>
+			<th class="hidden-xs"><%= sortable "ship_to_zip", "Zip" %></th>
+			<th class="hidden-xs">Phone</th>
 			<th>&nbsp;</th>
 		</tr>
 
 		<% @accounts.each do |a| %>
 		<tr>
-			<td><%= a.id %></td>
+			<td class="hidden-xs"><%= a.id %></td>
 			<td><%= a.name %></td>
-			<td><%= a.ship_to_address_1 %></td>
-			<td><%= a.ship_to_city %></td>
-			<td><%= a.ship_to_state %></td>
-			<td><%= a.ship_to_zip %></td>
-			<td><%= number_to_phone(a.ship_to_phone) %></td>
-			<td><%= link_to(account_path(a.id), :class => "btn btn-info btn-xs") do %><span class="glyphicon glyphicon-search"></span><% end %></td>
+			<td class="hidden-xs"><%= a.ship_to_address_1 %></td>
+			<td class="hidden-xs"><%= a.ship_to_city %></td>
+			<td class="hidden-xs"><%= a.ship_to_state %></td>
+			<td class="hidden-xs"><%= a.ship_to_zip %></td>
+			<td class="hidden-xs"><%= number_to_phone(a.ship_to_phone) %></td>
+			<td class="text-center"><%= link_to(account_path(a.id), :class => "btn btn-info btn-xs") do %><span class="glyphicon glyphicon-search"></span><% end %></td>
 		</tr>
 		<% end %>
 

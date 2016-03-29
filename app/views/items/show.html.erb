@@ -3,6 +3,14 @@
 	<table class="table table-bordered table-striped">
 		
 		<tr>
+			<td colspan="8">
+				<form id="searchBox" accept-charset="UTF-8" action="/admin/items" method="get" role="search">
+					<input type="text" class="form-control" id="keywords" name="keywords" placeholder="Search Over 5,000 Products" value="">
+				</form>
+			</td>
+		</tr>
+		
+		<tr>
 			<td width="60%">
 				<%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/#{@item.default_image_path}", :class => "media-object", :height => "250", :width => "250" %>
 			</td>

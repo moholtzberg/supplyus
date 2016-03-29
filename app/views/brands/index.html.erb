@@ -1,24 +1,24 @@
 <% content_for :app_location do %>Brands/Index<% end %>
 <div id="brands" class="col-md-12">
 
-	<table class="table table-bordered">
+	<table class="table table-bordered table-condensed table-responsive">
 
 		<tr>
-			<th>ID</th>
+			<th class="hidden-xs">ID</th>
 			<th>Prefix</th>
 			<th>Name</th>
-			<th>Active</th>
-			<th>Preferred</th>
+			<th class="hidden-xs">Active</th>
+			<th class="hidden-xs">Preferred</th>
 			<th>&nbsp;</th>
 		</tr>
 		
 		<% @brands.each do |a| %>
 		<tr>
-			<td><%= a.id %></td>
+			<td class="hidden-xs"><%= a.id %></td>
 			<td><%= a.prefix %></td>
 			<td><%= a.name %></td>
-			<td><%= a.active ? "Yes" : "No" %></td>
-			<td><%= a.preferred ? "Yes" : "No" %></td>
+			<td class="hidden-xs"><%= a.active ? "Yes" : "No" %></td>
+			<td class="hidden-xs"><%= a.preferred ? "Yes" : "No" %></td>
 			<td class="text-center">
 			
 				<div class="dropdown">

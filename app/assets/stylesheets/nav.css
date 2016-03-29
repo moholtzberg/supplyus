@@ -37,7 +37,7 @@ body > .navmenu {
   position: absolute;
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 768px) {
   body {
     padding: 0 0 0 250px;
   }

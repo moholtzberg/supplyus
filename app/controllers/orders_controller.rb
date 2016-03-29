@@ -26,8 +26,6 @@ class OrdersController < ApplicationController
     render "index"
   end
   
-
-  
   def new
     if params[:account_id]
       @accounts = Account.find_by(:id => params[:account_id])
