@@ -14,10 +14,16 @@
 
 	<div class="header-top-right">
 		<ul class="list-inline">
-			<li></li>
 			<% if current_user %>
-			<li><%= "Hello #{current_user.email}" %> <%= link_to I18n.t(:my_account), "/my_account" %></li>
-			<li><%= link_to I18n.t(:logout), destroy_user_session_path, :method => "delete" %></li>
+			<li class="dropdown">
+				Hello <a href="#" class="dropdown-toggle" data-toggle="dropdown"><%= "#{current_user.email}" %> <b class="caret"></b></a>
+				<ul class="dropdown-menu dropdown-menu-right">
+					<li><%= link_to I18n.t(:my_account), "/my_account" %></li>
+					<li><%= link_to "Change password", edit_user_registration_path, :remote => true %></li>
+					<li class="divider"></li>
+					<li><%= link_to I18n.t(:logout), destroy_user_session_path, :method => "delete" %></li>
+				</ul>
+			</li>
 			<% else %>
 			<li><%= link_to I18n.t(:login), new_user_session_path %> or <%= link_to I18n.t(:create_a_new_account), new_user_registration_path %></li>
 			<% end %>

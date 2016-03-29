@@ -3,9 +3,15 @@ class OrdersController < ApplicationController
   helper_method :sort_column, :sort_direction
   
   def index
-    @orders = Order.open.is_complete.includes(:account, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]})
+    @orders = Order.is_complete.includes(:account, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}).open
     @orders = @orders.order(sort_column + " " + sort_direction)
     @orders = @orders.paginate(:page => params[:page], :per_page => 10)
+  end
+  
+  def shipped
+    @orders = Order.is_complete.includes(:account, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}).shipped
+    @orders = @orders.paginate(:page => params[:page], :per_page => 10)
+    render "index"
   end
   
   def locked
@@ -20,11 +26,7 @@ class OrdersController < ApplicationController
     render "index"
   end
   
-  def shipped
-    @orders = Order.includes(:account, :order_line_items).open.is_incomplete.shipped
-    @orders = @orders.paginate(:page => params[:page], :per_page => 10)
-    render "index"
-  end
+
   
   def new
     if params[:account_id]

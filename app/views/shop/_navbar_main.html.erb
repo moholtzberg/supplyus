@@ -55,17 +55,25 @@
 			
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				
-				<ul id="account_links" class="nav navbar-nav list-inline hidden-md hidden-lg hidden-xl">
-						<li>
-							<div class="cart">
-								<%= render :partial => "shop/cart" %>
-							<div>
-						</li>
+				<ul id="account_links" class="nav navbar-nav hidden-md hidden-lg hidden-xl">
+					<li>
+						<div class="cart">
+							<%= render :partial => "shop/cart" %>
+						<div>
+					</li>
+
 					<% if current_user %>
-						<li><%= link_to I18n.t(:my_account), "/account" %></li>
-						<li><%= link_to I18n.t(:logout), destroy_user_session_path, :method => "delete" %></li>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown"><%= "#{current_user.email}" %> <b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><%= link_to I18n.t(:my_account), "/my_account" %></li>
+							<li><%= link_to I18n.t(:change_password), "/change_password", :remote => true %></li>
+							<li class="divider"></li>
+							<li><%= link_to I18n.t(:logout), destroy_user_session_path, :method => "delete" %></li>
+						</ul>
+					</li>
 					<% else %>
-						<li><%= link_to I18n.t(:login), new_user_session_path %><span class="inline">or</span><%= link_to I18n.t(:create_a_new_account), new_user_registration_path %></li>
+					<li><%= link_to I18n.t(:login), new_user_session_path %> or <%= link_to I18n.t(:create_a_new_account), new_user_registration_path %></li>
 					<% end %>
 				</ul>
 			

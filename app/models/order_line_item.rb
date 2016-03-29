@@ -11,7 +11,6 @@ class OrderLineItem < ActiveRecord::Base
   scope :by_item, -> (item) { where(:item_id => item) }
   scope :active,  -> () { where(:quantity => 1..Float::INFINITY) }
   
-  
   before_create :make_line_number, :on => :create
   
   validates :order_line_number, :uniqueness => {
@@ -21,7 +20,13 @@ class OrderLineItem < ActiveRecord::Base
   validates :item_id, :uniqueness => {
     :scope => :order_id
   }
-
+  
+  after_commit :flush_cache
+  
+  def flush_cache
+    Rails.cache.delete("open_orders")
+  end
+  
   def make_line_number
     if self.order_id.blank?
     else

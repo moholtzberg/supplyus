@@ -1,0 +1,4 @@
+<% unless flash[:error] %>
+	$("#myModal").modal("toggle")
+	$("#modal-content").html("<%= j render :partial => 'users/registrations/change_password', :format => 'html' %>")
+<% end %>

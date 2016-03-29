@@ -26,6 +26,7 @@ Rails.application.routes.draw do
           get :incomplete
           get :locked
           get :shipped
+          get :fulfilled
         end
         member do
           put :lock
@@ -40,6 +41,7 @@ Rails.application.routes.draw do
           get :search
         end
       end
+      resources :assets
       resources :customers
       resources :item_imports
       resources :account_item_prices

@@ -9,6 +9,14 @@
 			<%= form_for(resource, as: resource_name, url: user_registration_path) do |f| %>
 			<div data-hook="signup_inside_form">
 				<%= render :partial => 'user_form', :locals => { :f => f } %>
+				
+				<fieldset>
+					<legend>Account Info</legend>
+				<%= fields_for :account, resource.account do |a| %>
+					<%= render :partial => 'accounts/form', :locals => { :f => a } %>
+				<% end %>
+				</fieldset>
+				
 				<p><%= f.submit I18n.t(:create), :class => 'btn btn-lg btn-success btn-block' %></p>
 			</div>
 			<% end %>
