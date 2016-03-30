@@ -103,7 +103,7 @@
 			<tr class="line_items">
 				<td><%= shipment.carrier %></td>
 				<td><%= shipment.ship_date.strftime("%m/%d/%y") unless shipment.ship_date.nil? %></td>
-				<td><% shipment.tracking_numbers.each do |tr|%><%= tr.number %><br/><% end %></td>
+				<td><% shipment.tracking_numbers.each do |tr|%><%= link_to tr.number, tr.link %><br/><% end %></td>
 			</tr>
 		<% end %>
 	</table>

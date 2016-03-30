@@ -21,6 +21,7 @@ class ShipmentsController < ApplicationController
     end
     
     if shipment.save
+      ShipmentMailer.shipment_confirmation(shipment.id).deliver_later
       redirect_to order_path(params[:order_id])
     end
   end

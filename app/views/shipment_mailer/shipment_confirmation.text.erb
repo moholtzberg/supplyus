@@ -1,0 +1,41 @@
+SHIPMENT CONFIRMATION - 24/7 Office Supply
+===============================================
+
+Dear <%= @shipment.orders.first.account.name %>,
+
+Thank you for your order, you will be notified when your order is ready to ship.
+
+Sincerely,
+
+The 24/7 Office Supply Team.
+
+
+ORDER DETAILS:
+================
+NUMBER:		<%= @shipment.orders.first.number %>
+DATE:		<%= @shipment.ship_date %>
+ACCOUNT:	<%= @shipment.orders.first.account.name %>
+PO NUMBER:	<%= @shipment.orders.first.po_number %>
+
+SHIP TO ADDRESS:
+================
+<%= @shipment.orders.first.account.name %>
+<%= @shipment.orders.first.ship_to_attention %>
+<%= @shipment.orders.first.ship_to_address_1 %>
+<%= @shipment.orders.first.ship_to_address_2 %>
+<%= @shipment.orders.first.ship_to_city %>, <%= @shipment.orders.first.ship_to_state %> <%= @shipment.orders.first.ship_to_zip %>
+<%= @shipment.orders.first.ship_to_phone %>
+
+THE FOLLOWING ITEMS HAVE SHIPPED:
+================
+<% @shipment.order_line_items.order(:order_line_number).each do |o| %>
+	<% if o.quantity_shipped > 0 %>
+<%= o.order_line_number %>.	<%= o.quantity_shipped %> x <%= "#{o.item.number} / #{o.item.name}" %>
+	<% end %>
+<% end %>
+
+TRACKING INFORMATION
+================
+<% @shipment.tracking_numbers.each do |t| %>
+<%= @shipment.carrier %> - <%= t.number %> - <%= t.link %>
+<% end %>
