@@ -1,14 +1,18 @@
 <% content_for :app_location do %>Users/Index<% end %>
 <div id="users" class="col-md-12">
 	
-	<table class="table table-bordered">
+	<table class="table table-bordered table-condensed">
 		
 		<tr>
-			<th width="2%"><%= sortable "users.id", "ID" %></th>
-			<th witdh="35%"><%= sortable "users.email", "Email" %></th>
-			<th width="35%"><%= sortable "account.name", "Account" %></th>
-			<th width="13%" class="text-center"><%= sortable "users.current_sign_in_at", "Current Sign In" %></th>
-			<th width="13%"><%= sortable "users.last_sin_in_ip", "IP Address" %></th>
+			<th width="2%" class="hidden-xs"><%= sortable "users.id", "ID" %></th>
+			<th witdh="20%" class="hidden-xs"><%= sortable "users.first_name", "First Name" %></th>
+			<th witdh="20%" class="hidden-xs"><%= sortable "users.last_name", "Last Name" %></th>
+			<th class="visible-xs">Full Name</th>
+			<th witdh="20%" class="hidden-xs"><%= sortable "users.email", "Email" %></th>
+			<th><%= sortable "account.name", "Account" %></th>
+			<th witdh="20%" class="hidden-xs"><%= sortable "users.phone_number", "Phone Number" %></th>
+			<th width="13%" class="text-center hidden-xs"><%= sortable "users.current_sign_in_at", "Current Sign In" %></th>
+			<th width="13%" class="hidden-xs"><%= sortable "users.last_sin_in_ip", "IP Address" %></th>
 			<th width="2%">&nbsp;</th>
 		</tr>
 		

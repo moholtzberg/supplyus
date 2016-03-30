@@ -1,5 +1,5 @@
 class Account < ActiveRecord::Base
-  
+  devise :registerable
   self.inheritance_column = :account_type
   
   alias_attribute :address_1, :ship_to_address_1

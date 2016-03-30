@@ -21,7 +21,19 @@ class OrderLineItem < ActiveRecord::Base
     :scope => :order_id
   }
   
+  validates :item_id, :presence => true
+  
   after_commit :flush_cache
+  
+  def item_number
+    item.try(:number)
+  end
+  
+  def item_number=(name)
+    puts name
+    self.item = Item.find_by(:number => name) if name.present?
+    puts self.item.number
+  end
   
   def flush_cache
     Rails.cache.delete("open_orders")

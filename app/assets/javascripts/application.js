@@ -11,7 +11,7 @@
 // about supported directives.
 //
 //= require jquery
-//= require jquery-ui/autocomplete
+// require jquery-ui/autocomplete
 //= require jquery_ujs
 //= require best_in_place
 //= require bootstrap

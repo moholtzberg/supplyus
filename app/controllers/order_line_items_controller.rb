@@ -42,7 +42,7 @@ class OrderLineItemsController < ApplicationController
   private
   
   def order_line_item_params
-    params.require(:order_line_item).permit(:order_id, :item_id, :price, :quantity, :quantity_canceled)
+    params.require(:order_line_item).permit(:order_id, :item_id, :price, :quantity, :quantity_canceled, :item_number)
   end
   
 end

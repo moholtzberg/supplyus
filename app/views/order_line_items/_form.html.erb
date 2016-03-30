@@ -6,7 +6,7 @@
 
 		<td colspan="2">
 			<%# f.select :item_id, @items.collect {|m| ["#{m.number} - #{m.description}", m.id, :price => m.actual_price(@order.account_id)]}, {:include_blank => "Select Item"},:class => "form-control" %>
-			<%= f.text_field :item_id, :class => "form-control" %>
+			<%= f.text_field :item_number, :class => "form-control", data: {autocomplete_source: search_items_path} %>
 		</td>
 		
 		<td>
@@ -25,41 +25,16 @@
 			<%= f.button :class => "btn btn-primary btn-sm", :type => :submit do %>Add<% end %>
 		</td>
 		<script>
-		$(function() {	
-			$( "#order_line_item_item_id" ).autocomplete({
-	      source: function( request, response ) {
-	        $.ajax({
-	          url: "<%= search_items_url %>",
-	          dataType: "jsonp",
-	          data: {
-	            keywords: request.term
-	          },
-	          success: function( data ) {
-	            console.log(data)
-	          }
-	        });
-	      },
-	      minLength: 3,
-	      select: function( event, ui ) {
-	        log( ui.item ?
-	          "Selected: " + ui.item.label :
-	          "Nothing selected, input was " + this.value);
-	      },
-	      open: function() {
-	        $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
-	      },
-	      close: function() {
-	        $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
-	      }
-	    });
-	  });
-	  </script>
-
-	
+		jQuery(function() {
+			return $('#order_line_item_item_number').autocomplete({
+				source: $('#order_line_item_item_number').data('autocomplete-source')
+			});
+		});
+		</script>
+		
 		<script>
 		$("select#order_line_item_item_id").change(function(e){
 			var price = $(this).find("option:selected").attr("price")
-			console.log(price)
 			$("input#order_line_item_price").val(parseFloat(price).toFixed(2))
 		})
 		</script>

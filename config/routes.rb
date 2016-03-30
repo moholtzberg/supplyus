@@ -62,7 +62,10 @@ Rails.application.routes.draw do
       resources :brand_imports
       resources :categories
       resources :credit_cards
-      resources :users
+      resources :users do
+        get :edit_password
+        get :reset_password
+      end
       resources :vendors
       get "equipment/delete/:id" => "equipment#delete"
       get "/" => "home#show"

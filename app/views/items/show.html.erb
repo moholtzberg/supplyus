@@ -49,6 +49,17 @@
 				</script>
 			</td>
 		</tr>
+		<tr>
+			<td>Key</td>
+			<td>Value</td>
+		</tr>
+		<% @item.item_properties.each  do |ip| %>
+		<tr>
+			<td><%= ip.key %></td>
+			<td><%= ip.value %></td>
+		</tr>
+		<% end %>
+		
 		
 	</table>
 	

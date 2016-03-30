@@ -1,8 +1,12 @@
-<td class="text-center"><%= user.id %></td>
-<td><%= user.email %></td>
+<td class="text-center hidden-xs"><%= user.id %></td>
+<td class="hidden-xs"><%= user.first_name %></td>
+<td class="hidden-xs"><%= user.last_name %></td>
+<td class="visible-xs"><%= "#{user.first_name} #{user.last_name}" %></td>
+<td class="hidden-xs"><%= user.email %></td>
 <td><%= user.account.name unless user.account.blank? %></td>
-<td><%= user.current_sign_in_at.strftime("%m/%d/%y") unless user.current_sign_in_at.nil? %></td>
-<td><%= user.last_sign_in_ip %></td>
+<td class="hidden-xs"><%= user.phone_number %></td>
+<td class="hidden-xs"><%= user.current_sign_in_at.strftime("%m/%d/%y") unless user.current_sign_in_at.nil? %></td>
+<td class="hidden-xs"><%= user.last_sign_in_ip %></td>
 <td>
 
 	<div class="dropdown">
@@ -10,9 +14,11 @@
 			<span class="caret"></span>
 		</button>
 		<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-			<li><%= link_to("View", user_path(user.id))  %></li>
-			<li><%# link_to("Edit", edit_user_path(user.id)) %></li>
-			<li><%# link_to("Lock", lock_order_path(user.id), :remote => true, :method => "put") %></li>
+			<li><%= link_to("Edit", edit_user_path(user.id), :remote => true)  %></li>
+		<% if current_user.email == "admin@247officesupply.com" %><li><%= link_to("Change Password", user_edit_password_path(user.id), :remote => true) %></li><% end %>
+			<li><%= link_to("Reset Password", user_reset_password_path(user.id), :remote => true) %>
+
+			</li>
 		</ul>
 	</div>
 

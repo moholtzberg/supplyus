@@ -11,6 +11,18 @@ class UsersController < ApplicationController
     @user = User.new
   end
   
+  def edit
+    @user = User.find_by(id: params[:id])
+  end
+  
+  def edit_password
+    @user = User.find_by(id: params[:user_id])
+  end
+  
+  def reset_password
+    User.find_by(id: params[:user_id]).send_reset_password_instructions
+  end
+  
   def create
     @user = User.new(user_params)
     if @user.save
@@ -21,6 +33,22 @@ class UsersController < ApplicationController
       @users = User.order(sort_column + " " + sort_direction).includes(:account)
       @users = @users.paginate(:page => params[:page], :per_page => 25)
     end
+  end
+  
+  def update
+    @user = User.find_by(id: params[:id])
+    puts @user.email
+    if @user.update_attributes(user_params)
+      flash[:notice] = "\"#{@user.email}\" has been updated"
+    else
+      flash[:error] = "There were some problems with the form you submitted"
+    end
+    # puts user_params[:email]
+    # if Account.find_by(:email => params[:user][:email])
+    #   Account.find_by(:email => params[:user][:email]).update_attributes(:user_id => @user.id)
+    # end
+    @users = User.order(sort_column + " " + sort_direction).includes(:account)
+    @users = @users.paginate(:page => params[:page], :per_page => 25)
   end
   
   def show
@@ -41,7 +69,7 @@ class UsersController < ApplicationController
   end
   
   def user_params
-     params.require(:user).permit(:email, :password, :password_confirmation)
+     params.require(:user).permit(:email, :password, :password_confirmation, :first_name, :last_name, :phone_number)
   end
   
 end
