@@ -30,7 +30,8 @@ class InvoicesController < ApplicationController
     end
     
     if invoice.save
-      redirect_to invoice_path(invoice.id)
+      OrderMailer.invoice_notification(invoice.id).deliver_later
+      redirect_to order_path(invoice.id)
     end
   end
   

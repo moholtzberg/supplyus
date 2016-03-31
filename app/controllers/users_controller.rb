@@ -25,8 +25,9 @@ class UsersController < ApplicationController
   
   def create
     @user = User.new(user_params)
+    puts @user.inspect
     if @user.save
-      puts user_params[:email]
+      puts params[:user][:email]
       if Account.find_by(:email => params[:user][:email])
         Account.find_by(:email => params[:user][:email]).update_attributes(:user_id => @user.id)
       end

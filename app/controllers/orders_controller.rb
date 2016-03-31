@@ -10,18 +10,26 @@ class OrdersController < ApplicationController
   
   def shipped
     @orders = Order.is_complete.includes(:account, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}).shipped
+    @orders = @orders.order(sort_column + " " + sort_direction)
+    @orders = @orders.paginate(:page => params[:page], :per_page => 10)
+    render "index"
+  end
+  
+  def fulfilled
+    @orders = Order.is_complete.includes(:account, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}).fulfilled
+    @orders = @orders.order(sort_column + " " + sort_direction)
     @orders = @orders.paginate(:page => params[:page], :per_page => 10)
     render "index"
   end
   
   def locked
-    @orders = Order.is_locked.includes(:account, :order_line_items)
+    @orders = Order.is_complete.is_locked.includes(:account, :order_line_items)
     @orders = @orders.paginate(:page => params[:page], :per_page => 10)
     render "index"
   end
   
   def incomplete
-    @orders = Order.open.is_incomplete.includes(:account, :order_line_items)
+    @orders = Order.is_incomplete.includes(:account, :order_line_items)
     @orders = @orders.paginate(:page => params[:page], :per_page => 10)
     render "index"
   end

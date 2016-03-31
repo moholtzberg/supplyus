@@ -53,6 +53,13 @@ class Order < ActiveRecord::Base
     # .having(order_line_items[:quantity].eq(line_item_shipments[:quantity_shipped]))
   end
   
+  def self.fulfilled
+    Rails.cache.fetch([name, "fulfilled_orders"]) {
+      ids = Order.joins(:order_line_items).distinct(:order_id).map {|o| if o.fulfilled == true then o.id end }
+      Order.where(id: ids)
+    }
+  end
+  
   def self.open
     Rails.cache.fetch([name, "open_orders"]) {
       ids = Order.joins(:order_line_items).distinct(:order_id).map {|o| if o.shipped == false then o.id end }

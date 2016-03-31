@@ -14,6 +14,8 @@
 	
 	<%= form_for @user, :method => :post, :remote => true, :html => {:class => "form-horizontal"} do |f| %>
 		<%= render :partial => "users/form", :locals => {:f => f} %>
+		
+		<%= render :partial => "users/password_form", :locals => {:f => f} %>
 	<% end %>
 	
 </div>

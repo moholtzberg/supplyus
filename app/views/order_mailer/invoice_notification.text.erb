@@ -1,0 +1,44 @@
+INVOICE NOTIFICATION - 24/7 Office Supply
+===============================================
+
+Dear <%= @order.account.name %>,
+
+Thank you for your order, your invoice is ready.
+
+Sincerely,
+
+The 24/7 Office Supply Team.
+
+
+INVOICE DETAILS:
+================
+NUMBER:		<%= @order.number %>
+DATE:		<%= @order.completed_at %>
+ACCOUNT:	<%= @order.account.name %>
+PO NUMBER:	<%= @order.po_number %>
+
+BILL TO ADDRESS:
+================
+<%= @order.account.name %>
+<%= @order.bill_to_attention %>
+<%= @order.bill_to_address_1 %>
+<%= @order.bill_to_address_2 %>
+<%= @order.bill_to_city %>, <%= @order.bill_to_state %> <%= @order.bill_to_zip %>
+<%= @order.bill_to_phone %>
+
+ORDER LINE ITEMS:
+================
+<% @order.order_line_items.order(:order_line_number).each do |o| %>
+	<% if o.quantity_fulfilled > 0 %>
+<%= o.order_line_number %>.	<%= o.quantity %> x <%= "#{o.item.number} / #{o.item.name}" %> @ <%= number_to_currency(o.price) %>/Each. = <%= number_to_currency(o.sub_total) %>
+	<% end %>
+<% end %>
+
+SUMMARY
+================
+Subtotal 	- <%= number_to_currency(@order.sub_total) %>
+Shipping 	- <%= number_to_currency(@order.shipping_total) %>
+Total 		- <%= number_to_currency(@order.total) %>
+
+http://www.247officesupply.com/my_account/<%= "#{@order.number}" %>
+<%= link_to "Download PDF", "#{my_account_url}/#{@order.number}.pdf"
