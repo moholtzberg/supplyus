@@ -1,5 +1,5 @@
 set :user, "rails"
-set :use_sudo, false
+set :use_sudo, true
 # set :application, "twenty-four-seven"
 set :repo_url, 'git@github.com:moholtzberg/recurring.git'
 set :branch, "master"
@@ -17,7 +17,7 @@ set :shell, '/bin/bash'
 # default_environment["RAILS_ENV"] = 'production'
 # set :linked_files, %w{config/database.yml config/newrelic.yml app/views/spree/shared/_lucky_orange.html.erb public/google98548de7465bed0f.html}
 set :linked_files, %w{config/application.rb config/database.yml}
-set :linked_dirs, %W{public/spree}
+# set :linked_dirs, %W{public/spree}
 
 task :init do
   on roles(:all) do

@@ -24,14 +24,14 @@ class InvoicesController < ApplicationController
   
   def create
     invoice = Invoice.new(:date => params[:invoice][:date], :order_id => params[:order_id], :due_date => params[:invoice][:due_date])
-    
+    order = Order.find_by(:id => params[:order_id])
     params[:lines].each do |line|
       invoice.line_item_fulfillments.new(:order_line_item_id => line[1]["order_line_item_id"], :quantity_fulfilled => line[1]["quantity_fulfill_now"])
     end
     
     if invoice.save
-      OrderMailer.invoice_notification(invoice.id).deliver_later
-      redirect_to order_path(invoice.id)
+      OrderMailer.invoice_notification(order.id).deliver_later
+      redirect_to order_path(order.id)
     end
   end
   

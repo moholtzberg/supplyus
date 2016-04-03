@@ -13,7 +13,7 @@ The 24/7 Office Supply Team.
 ORDER DETAILS:
 ================
 NUMBER:		<%= @order.number %>
-DATE:		<%= @order.completed_at %>
+DATE:		<%= @order.completed_at.strftime("%m/%d/%Y %I:%M %p") %>
 ACCOUNT:	<%= @order.account.name %>
 PO NUMBER:	<%= @order.po_number %>
 

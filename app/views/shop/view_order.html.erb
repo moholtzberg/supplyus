@@ -40,7 +40,7 @@
 	</tr>
 	<tr>
 		<td width="33%"><%= @order.number %></td>
-		<td width="34%"><%= @order.completed_at.strftime("%m/%d/%Y") unless @order.completed_at.nil? %></td>
+		<td width="34%"><%= @order.completed_at.strftime("%m/%d/%Y %I:%M %p") unless @order.completed_at.nil? %></td>
 		<td width="33%"><%= @order.po_number %></td>
 	</tr>
 </table>
@@ -53,6 +53,8 @@
 		<th width="7%" class="text-center">Quantity</th>
 		<th width="7%" class="text-center">Canceled</th>
 		<th width="7%" class="text-center">Actual</th>
+		<th width="7%" class="text-center">Shipped</th>
+		<th width="7%" class="text-center">Billed</th>
 		<th width="7%" class="text-center">Price</th>
 		<th width="7%" class="text-center">Subtotal</th>
 	</tr>
@@ -64,29 +66,31 @@
 		<td class="text-center"><%= li.quantity.to_i %></td>
 		<td class="text-center"><%= li.quantity_canceled.to_i %></td>
 		<td class="text-center"><%= li.actual_quantity.to_i %></td>
+		<td class="text-center"><%= li.quantity_shipped.to_i %></td>
+		<td class="text-center"><%= li.quantity_fulfilled.to_i %></td>
 		<td class="text-center"><%= number_to_currency(li.price) %></td>
 		<td class="text-center"><%= number_to_currency(li.sub_total) %></td>
 	<tr>
 	<% end %>
 	
 	<tr>
-		<td colspan="5">Sub Total</td>
+		<td colspan="7">Sub Total</td>
 		<td colspan="2" class="text-center"><strong><%= number_to_currency(@order.sub_total) %></strong></td>
 	</tr>
 	<tr>
-		<td colspan="5"><%= @order.order_shipping_method.name unless @order.order_shipping_method.nil? %> - Shipping</td>
+		<td colspan="7"><%= @order.order_shipping_method.name unless @order.order_shipping_method.nil? %> - Shipping</td>
 		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@order.shipping_total) %></strong></td>
 	</tr>
 	<tr>
-		<td colspan="5">Order Total</td>
+		<td colspan="7">Order Total</td>
 		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@order.shipping_total.to_f + @order.sub_total.to_f) %></strong></td>
 	</tr>
 	<tr>
-		<td colspan="5">Payments</td>
+		<td colspan="7">Payments</td>
 		<td colspan="2" class="text-center"><strong> <%= @order.payments.blank? ? number_to_currency(0) : number_to_currency(@order.payments_total) %></strong></td>
 	</tr>
 	<tr>
-		<td colspan="5">Balance Due</th>
+		<td colspan="7">Balance Due</th>
 		<td colspan="2" class="text-center"><strong> <%=  number_to_currency(@order.balance_due) %></strong></td>
 	</tr>
 	

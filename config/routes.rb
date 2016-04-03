@@ -67,6 +67,7 @@ Rails.application.routes.draw do
         get :reset_password
       end
       resources :vendors
+      resources :settings
       get "equipment/delete/:id" => "equipment#delete"
       get "/" => "home#show"
     end

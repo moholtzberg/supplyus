@@ -15,8 +15,8 @@
 		<tr>
 			<td><%= @order.number %></td>
 			<td><%= @order.ship_to_account_name %></td>
-			<td><%= f.date_field :date, :class => "form-control", :value => Date.today %></td>
-			<td><%= f.date_field :due_date, :class => "form-control", :value => @order.completed_at %></td>
+			<td><%= f.date_field :date, :class => "form-control", :value => @order.completed_at.to_date %></td>
+			<td><%= f.date_field :due_date, :class => "form-control", :value => @order.due_on.to_date %></td>
 		</tr>
 		
 	</table>
@@ -34,7 +34,7 @@
 		<%= hidden_field_tag :order_id, params[:order_id].to_i %>
 		
 		<% @line_items.each_with_index do |li, idx| %>
-			<% unless li.fulfilled %>
+			<% if li.quantity_fulfilled.to_i != li.actual_quantity and li.actual_quantity != 0 %>
 			<%= hidden_field_tag "lines[#{idx}][order_line_item_id]", li.id.to_i %>
 			<tr>
 				<td><%= li.id %></td>

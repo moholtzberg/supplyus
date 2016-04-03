@@ -41,7 +41,7 @@
 		</tr>
 		<tr>
 			<td><%= @order.number %></td>
-			<td><%= @order.completed_at.strftime("%m/%d/%Y") unless @order.completed_at.nil? %></td>
+			<td><%= @order.completed_at.strftime("%m/%d/%Y %I:%M %p") unless @order.completed_at.nil? %></td>
 			<td><%= @order.locked ? "Yes" : "No" %></td>
 			<td><%= @order.po_number %></td>
 		</tr>
@@ -50,12 +50,13 @@
 	<table class="table table-bordered table-condensed">
 
 		<tr class="bg-primary">
-			<th width="65%" class="text-left" colspan="2">Item Name/Description</th>
-			<th width="7%" class="text-center">Qty</th>
-			<th width="7%" class="text-center">Cancel</th>
-			<th width="7%" class="text-center">Ship</th>
-			<th width="7%" class="text-center">Price</th>
-			<th width="7%" class="text-center">Subtotal</th>
+			<th width="64%" class="text-left" colspan="2">Item Name/Description</th>
+			<th width="6%" class="text-center">Qty</th>
+			<th width="6%" class="text-center">Cancel</th>
+			<th width="6%" class="text-center">Ship</th>
+			<th width="6%" class="text-center">Billed</th>
+			<th width="6%" class="text-center">Price</th>
+			<th width="6%" class="text-center">Subtotal</th>
 		</tr>
 
 		<% @order_line_items.active.each_with_index do |li, idx| %>
@@ -65,30 +66,31 @@
 			<td class="text-center"><%= li.quantity.to_i %></td>
 			<td class="text-center"><%= li.quantity_canceled.to_i %></td>
 			<td class="text-center"><%= li.quantity_shipped if li.shipped %></td>
+			<td class="text-center"><%= li.quantity_fulfilled if li.fulfilled %></td>
 			<td class="text-center"><%= number_to_currency(li.price) %></td>
 			<td class="text-center"><%= number_to_currency(li.sub_total) %></td>
 		<tr>
 		<% end %>
 
 		<tr class="line_items">
-			<td colspan="5">Sub Total</td>
+			<td colspan="6">Sub Total</td>
 			<td colspan="2" class="text-center"><strong><%= number_to_currency(@order.sub_total) %></strong></td>
 		</tr>
 		<tr class="line_items">
-			<td colspan="5"><%= "#{@order.order_shipping_method.name} - " unless  @order.order_shipping_method.nil?%>Shipping</td>
+			<td colspan="6"><%= "#{@order.order_shipping_method.name} - " unless  @order.order_shipping_method.nil?%>Shipping</td>
 			<td colspan="2" class="text-center"><strong> <%= number_to_currency(@order.order_shipping_method.amount) unless  @order.order_shipping_method.nil? %></strong></td>
 		</tr>
 		<tr class="line_items">
-			<td colspan="5">Order Total</td>
+			<td colspan="6">Order Total</td>
 			<td colspan="2" class="text-center"><strong> <%= number_to_currency(@order.total) %></strong></td>
 		</tr>
 		
 		<tr>
-			<td colspan="5">Payments</td>
+			<td colspan="6">Payments</td>
 			<td colspan="2" class="text-center"><strong> <%= @order.payments.blank? ? number_to_currency(0) : number_to_currency(@order.payments_total) %></strong></td>
 		</tr>
 		<tr>
-			<td colspan="5">Balance Due</th>
+			<td colspan="6">Balance Due</th>
 			<td colspan="2" class="text-center"><strong> <%=  number_to_currency(@order.balance_due) %></strong></td>
 		</tr>
 		

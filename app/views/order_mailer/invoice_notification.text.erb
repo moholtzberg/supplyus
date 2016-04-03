@@ -13,7 +13,7 @@ The 24/7 Office Supply Team.
 INVOICE DETAILS:
 ================
 NUMBER:		<%= @order.number %>
-DATE:		<%= @order.completed_at %>
+DUE DATE:	<%= @order.due_on %>
 ACCOUNT:	<%= @order.account.name %>
 PO NUMBER:	<%= @order.po_number %>
 
@@ -26,7 +26,7 @@ BILL TO ADDRESS:
 <%= @order.bill_to_city %>, <%= @order.bill_to_state %> <%= @order.bill_to_zip %>
 <%= @order.bill_to_phone %>
 
-ORDER LINE ITEMS:
+INVOICE LINE ITEMS:
 ================
 <% @order.order_line_items.order(:order_line_number).each do |o| %>
 	<% if o.quantity_fulfilled > 0 %>
@@ -36,9 +36,10 @@ ORDER LINE ITEMS:
 
 SUMMARY
 ================
-Subtotal 	- <%= number_to_currency(@order.sub_total) %>
-Shipping 	- <%= number_to_currency(@order.shipping_total) %>
-Total 		- <%= number_to_currency(@order.total) %>
+Subtotal 		- <%= number_to_currency(@order.sub_total) %>
+Shipping 		- <%= number_to_currency(@order.shipping_total) %>
+Total 			- <%= number_to_currency(@order.total) %>
+Payments 		- <%= number_to_currency(@order.payments_total) %>
+Balance Due 	- <%= number_to_currency(@order.balance_due) %>
 
-http://www.247officesupply.com/my_account/<%= "#{@order.number}" %>
-<%= link_to "Download PDF", "#{my_account_url}/#{@order.number}.pdf"
+http://www.247officesupply.com/my_account/invoice/<%= "#{@order.number}" %>

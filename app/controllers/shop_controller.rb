@@ -123,7 +123,7 @@ class ShopController < ApplicationController
   end
   
   def view_invoice
-    @invoice = Invoice.find_by(:number => params[:invoice_number])
+    @invoice = Order.find_by(:number => params[:invoice_number])
   end
   
   def pay_invoice
