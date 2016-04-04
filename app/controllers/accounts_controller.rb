@@ -3,7 +3,10 @@ class AccountsController < ApplicationController
   helper_method :sort_column, :sort_direction
   
   def index
-    @accounts = Account.order(sort_column + " " + sort_direction).where("name like ?", "%#{params[:term]}%")
+    @accounts = Account.order(sort_column + " " + sort_direction)
+    unless params[:term].blank?
+      @accounts = @accounts.search(params[:term]) if params[:term].present?
+    end
     respond_to do |format|
       format.html
       format.json {render :json => @accounts.map(&:name)}
@@ -17,6 +20,10 @@ class AccountsController < ApplicationController
   def show
     @account = Account.find(params[:id])
     @item_prices = AccountItemPrice.where(account_id: @account.id).includes(:item)
+  end
+  
+  def edit
+    @account = Account.find_by(:id => params[:id])
   end
   # def create
   #   account = Account.create(params[:new_account])
@@ -69,11 +76,23 @@ class AccountsController < ApplicationController
     # flash[:error] = e.message
     # render :new
   end
+  
+  def update
+    @account = Account.find_by(:id => params[:id])
+    if @account.update_attributes(account_params)
+      @accounts = Account.all
+      @accounts = @accounts.paginate(:page => params[:page], :per_page => 25)
+      respond_to do |format|
+        format.html
+        format.js
+      end
+    end
+  end
 
   private
 
   def account_params
-    params.require(:account).permit(:name, :email, :address_1, :address_2, :city, :state, :zip, :phone, :fax, :email)
+    params.require(:account).permit(:name, :email, :address_1, :address_2, :city, :state, :zip, :phone, :fax, :email, :group_name)
   end
 
   def sort_column

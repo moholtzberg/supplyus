@@ -28,4 +28,11 @@ class AccountItemPrice < ActiveRecord::Base
     self.acaount = Account.find_by(:name => name) if name.present?
   end
   
+  def copy_from=(account)
+    Account.find_by(:name => account) if account.present?
+  end
+  
+  def copy_from
+  end
+  
 end

@@ -11,7 +11,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160401173148) do
+ActiveRecord::Schema.define(version: 20160404184043) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -43,6 +46,7 @@ ActiveRecord::Schema.define(version: 20160401173148) do
     t.string  "bill_to_phone"
     t.string  "bill_to_fax"
     t.boolean "active"
+    t.integer "group_id"
   end
 
   create_table "assets", force: :cascade do |t|
@@ -79,8 +83,8 @@ ActiveRecord::Schema.define(version: 20160401173148) do
     t.boolean "active"
   end
 
-  add_index "categories", ["id"], name: "category_id_ix"
-  add_index "categories", ["parent_id"], name: "category_parent_id_ix"
+  add_index "categories", ["id"], name: "category_id_ix", using: :btree
+  add_index "categories", ["parent_id"], name: "category_parent_id_ix", using: :btree
 
   create_table "charges", force: :cascade do |t|
     t.integer "account_id"
@@ -121,13 +125,22 @@ ActiveRecord::Schema.define(version: 20160401173148) do
     t.string  "model"
   end
 
+  create_table "groups", force: :cascade do |t|
+    t.string   "group_type"
+    t.string   "name"
+    t.string   "slug"
+    t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "invoice_payment_applications", force: :cascade do |t|
     t.integer "payment_id"
     t.integer "invoice_id"
   end
 
-  add_index "invoice_payment_applications", ["invoice_id"], name: "index_invoice_payment_applications_on_invoice_id"
-  add_index "invoice_payment_applications", ["payment_id"], name: "index_invoice_payment_applications_on_payment_id"
+  add_index "invoice_payment_applications", ["invoice_id"], name: "index_invoice_payment_applications_on_invoice_id", using: :btree
+  add_index "invoice_payment_applications", ["payment_id"], name: "index_invoice_payment_applications_on_payment_id", using: :btree
 
   create_table "invoices", force: :cascade do |t|
     t.integer  "account_id"
@@ -143,8 +156,8 @@ ActiveRecord::Schema.define(version: 20160401173148) do
     t.integer "item_id"
   end
 
-  add_index "item_categories", ["category_id"], name: "item_category_category_id_ix"
-  add_index "item_categories", ["item_id"], name: "item_category_item_id_ix"
+  add_index "item_categories", ["category_id"], name: "item_category_category_id_ix", using: :btree
+  add_index "item_categories", ["item_id"], name: "item_category_item_id_ix", using: :btree
 
   create_table "item_properties", force: :cascade do |t|
     t.integer "item_id"
@@ -190,7 +203,7 @@ ActiveRecord::Schema.define(version: 20160401173148) do
     t.boolean  "active",        default: true, null: false
   end
 
-  add_index "items", ["id"], name: "item_id_ix"
+  add_index "items", ["id"], name: "item_id_ix", using: :btree
 
   create_table "line_item_fulfillments", force: :cascade do |t|
     t.integer  "order_line_item_id"
@@ -206,9 +219,9 @@ ActiveRecord::Schema.define(version: 20160401173148) do
     t.datetime "date"
   end
 
-  add_index "line_item_shipments", ["id"], name: "line_item_shipment_id_ix"
-  add_index "line_item_shipments", ["order_line_item_id"], name: "line_item_shipment_order_line_item_id_ix"
-  add_index "line_item_shipments", ["shipment_id"], name: "line_item_shipment_shipment_id_ix"
+  add_index "line_item_shipments", ["id"], name: "line_item_shipment_id_ix", using: :btree
+  add_index "line_item_shipments", ["order_line_item_id"], name: "line_item_shipment_order_line_item_id_ix", using: :btree
+  add_index "line_item_shipments", ["shipment_id"], name: "line_item_shipment_shipment_id_ix", using: :btree
 
   create_table "makes", force: :cascade do |t|
     t.string   "name"
@@ -255,9 +268,9 @@ ActiveRecord::Schema.define(version: 20160401173148) do
     t.integer  "quantity_canceled"
   end
 
-  add_index "order_line_items", ["id"], name: "order_line_item_id_ix"
-  add_index "order_line_items", ["item_id"], name: "order_line_item_item_id_ix"
-  add_index "order_line_items", ["order_id"], name: "order_line_item_order_id_ix"
+  add_index "order_line_items", ["id"], name: "order_line_item_id_ix", using: :btree
+  add_index "order_line_items", ["item_id"], name: "order_line_item_item_id_ix", using: :btree
+  add_index "order_line_items", ["order_id"], name: "order_line_item_order_id_ix", using: :btree
 
   create_table "order_payment_applications", force: :cascade do |t|
     t.integer  "payment_id"
@@ -266,8 +279,8 @@ ActiveRecord::Schema.define(version: 20160401173148) do
     t.datetime "updated_at"
   end
 
-  add_index "order_payment_applications", ["order_id"], name: "index_order_payment_applications_on_order_id"
-  add_index "order_payment_applications", ["payment_id"], name: "index_order_payment_applications_on_payment_id"
+  add_index "order_payment_applications", ["order_id"], name: "index_order_payment_applications_on_order_id", using: :btree
+  add_index "order_payment_applications", ["payment_id"], name: "index_order_payment_applications_on_payment_id", using: :btree
 
   create_table "order_shipping_methods", force: :cascade do |t|
     t.integer  "order_id"
@@ -310,8 +323,8 @@ ActiveRecord::Schema.define(version: 20160401173148) do
     t.datetime "updated_at",           null: false
   end
 
-  add_index "orders", ["account_id"], name: "order_customer_id_ix"
-  add_index "orders", ["id"], name: "order_id_ix"
+  add_index "orders", ["account_id"], name: "order_customer_id_ix", using: :btree
+  add_index "orders", ["id"], name: "order_id_ix", using: :btree
 
   create_table "payment_methods", force: :cascade do |t|
     t.string  "name"
@@ -408,10 +421,11 @@ ActiveRecord::Schema.define(version: 20160401173148) do
     t.string   "first_name"
     t.string   "last_name"
     t.string   "phone_number"
+    t.integer  "group_id"
   end
 
-  add_index "users", ["email"], name: "index_users_on_email", unique: true
-  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
+  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
   create_table "vendors", force: :cascade do |t|
     t.string   "number"

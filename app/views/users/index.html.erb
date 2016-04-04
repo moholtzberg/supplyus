@@ -4,6 +4,14 @@
 	<table class="table table-bordered table-condensed">
 		
 		<tr>
+			<td colspan="9">
+				<form id="searchBox" accept-charset="UTF-8" action="/admin/users" method="get" role="search">
+					<input type="text" class="form-control" id="term" name="term" placeholder="Enter user name" value="">
+				</form>
+			</td>
+		</tr>
+		
+		<tr>
 			<th width="2%" class="hidden-xs"><%= sortable "users.id", "ID" %></th>
 			<th witdh="20%" class="hidden-xs"><%= sortable "users.first_name", "First Name" %></th>
 			<th witdh="20%" class="hidden-xs"><%= sortable "users.last_name", "Last Name" %></th>

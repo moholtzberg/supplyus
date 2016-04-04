@@ -4,6 +4,9 @@ class UsersController < ApplicationController
   
   def index
     @users = User.order(sort_column + " " + sort_direction).includes(:account)
+    unless params[:term].blank?
+      @users = @users.search(params[:term]) if params[:term].present?
+    end
     @users = @users.paginate(:page => params[:page], :per_page => 25)
   end
   

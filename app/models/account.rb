@@ -17,6 +17,7 @@ class Account < ActiveRecord::Base
   # end
   
   belongs_to :user
+  belongs_to :group
   has_many :contacts
   has_many :equipment, :class_name => "Equipment"
   has_many :charges
@@ -35,6 +36,18 @@ class Account < ActiveRecord::Base
   
   def payment_terms
     90
+  end
+  
+  def self.search(term)
+    where("lower(name) like (?)", "%#{term.downcase}%")
+  end
+  
+  def group_name
+    group.try(:name)
+  end
+  
+  def group_name=(name)
+    self.group = Group.find_by(:name => name) if name.present?
   end
   
   # before_create :set_billing_start_and_day

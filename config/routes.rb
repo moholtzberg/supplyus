@@ -43,6 +43,7 @@ Rails.application.routes.draw do
       end
       resources :assets
       resources :customers
+      resources :groups
       resources :item_imports
       resources :account_item_prices
       resources :account_item_price_imports
