@@ -124,6 +124,12 @@ class ShopController < ApplicationController
   
   def view_invoice
     @invoice = Order.find_by(:number => params[:invoice_number])
+    respond_to do |format|
+      format.html
+      format.pdf do
+        render :pdf => "#{@invoice.number}", :title => "#{@invoice.number}", :layout => 'admin_print.html.erb', :page_size => 'Letter', :background => false, :template => 'shop/view_invoice.html.erb', :print_media_type => true
+      end
+    end
   end
   
   def pay_invoice

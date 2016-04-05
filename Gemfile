@@ -45,7 +45,9 @@ gem 'wkhtmltopdf-binary'
 gem 'rack-mini-profiler'
 gem "bullet", :group => "development"
 gem 'dalli'
+# gem 'activemerchant'
 
+gem 'ransack'
 
 gem 'sidekiq'
 gem 'shrimp'

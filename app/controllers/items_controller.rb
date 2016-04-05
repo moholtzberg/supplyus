@@ -17,8 +17,8 @@ class ItemsController < ApplicationController
     # ====
     
     @items = Item.all
-    unless params[:keywords].blank?
-      @items = @items.search(params[:keywords]) if params[:keywords].present?
+    unless params[:term].blank?
+      @items = @items.lookup(params[:term]) if params[:term].present?
     end
     @items = @items.paginate(:page => params[:page], :per_page => 25)
     
@@ -62,6 +62,7 @@ class ItemsController < ApplicationController
   
   def update
     @item = Item.find_by(:id => params[:id])
+    puts params[:item][:category_tokens]
     if @item.update_attributes(registration_params)
       flash[:notice] = "\"#{@item.number}\" has been updated"
     else
@@ -82,7 +83,7 @@ class ItemsController < ApplicationController
   private
 
   def registration_params
-    params.require(:item).permit(:number, :name, :description, :price, :cost_price, :sale_price, :model_id, :is_serialized, :weight, :height, :width, :length, :item_type_id, :category_id, :brand_id, :brand_name, :category_name, :active)
+    params.require(:item).permit(:number, :name, :description, :price, :cost_price, :sale_price, :model_id, :is_serialized, :weight, :height, :width, :length, :item_type_id, :category_id, :brand_id, :brand_name, :category_name, :active, :category_tokens)
   end
   
 end

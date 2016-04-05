@@ -47,8 +47,10 @@
 			<td><%= number_to_currency(order.balance_due) %></td>
 			<td><%= order.due_on.strftime("%m/%d/%Y") %></td>
 			<td class="text-center">
-				<%= link_to "/my_account/order/#{order.number}" , :class => "btn btn-primary btn-xs" do %><i class="fa fa-folder-open-o"></i><% end %>
-				<%= link_to "/my_account/order/#{order.number}.pdf", :class => "btn btn-danger btn-xs" do %><i class="fa fa-file-pdf-o"></i><% end %>
+				<%= link_to "/my_account/order/#{order.number}" , :class => "btn btn-primary btn-xs text-left" do %><i class="fa fa-shopping-cart"></i> ORDER<% end %>
+				<% if order.fulfilled %>
+					<%= link_to "/my_account/invoice/#{order.number}", :class => "btn btn-success btn-xs text-left" do %><i class="fa fa-file-o"></i> INVOICE<% end %>
+				<% end %>
 			</td>
 		</tr>
 		<% end %>

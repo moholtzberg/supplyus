@@ -60,6 +60,13 @@
 		<%= f.text_field :length, :class => "form-control" %>
 	</div>
 	
+	
+
+	<div id="category_ids" class="col-md-3">
+		<%= f.label :category_tokens, :class => "control-label" %>
+		<%= f.text_field :category_tokens, :class => "form-control", data: {load: @item.categories} %>
+	</div>
+	
 	<div class="clearfix"></div>
 	
 	<div class="checkbox col-md-12">
@@ -79,6 +86,13 @@
 	jQuery(function() {
 		return $('#item_category_name').autocomplete({
 			source: $('#item_category_name').data('autocomplete-source')
+		})
+	});
+	
+	jQuery(function() {
+		return $('#item_category_tokens').tokenInput("/admin/categories.json", {
+			queryParam: "term",
+			 prePopulate: $('#item_category_tokens').data('load')
 		})
 	});
 	</script>

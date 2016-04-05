@@ -13,6 +13,7 @@
 //= require jquery
 // require jquery-ui/autocomplete
 //= require jquery_ujs
+//= require jquery.tokeninput
 //= require best_in_place
 //= require bootstrap
 //= require turbolinks
