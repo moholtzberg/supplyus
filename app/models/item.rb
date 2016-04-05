@@ -11,9 +11,11 @@ class Item < ActiveRecord::Base
   has_many :order_line_items
   has_many :item_properties
   has_many :item_categories
+  has_many :categories, :through => :item_categories
   belongs_to :category
   belongs_to :brand
   belongs_to :model
+  attr_reader :category_tokens
   
   validates_uniqueness_of :number
   # validates_uniqueness_of :slug
@@ -36,8 +38,39 @@ class Item < ActiveRecord::Base
     self.category = Category.find_by(:name => name) if name.present?
   end
   
+  def category_tokens=(tokens)
+    self.category_ids = tokens.split(",")
+  end
+  
+  def self.lookup(word)
+    includes(:brand, :categories).where("lower(number) like ? or lower(items.name) like ? or lower(items.description) like ? or lower(brands.name) like ? or lower(categories.name) like ?", "%#{word.downcase}%", "%#{word.downcase}%", "%#{word.downcase}%", "%#{word.downcase}%", "%#{word.downcase}%").references(:brand, :categories)
+    # word = word.downcase.gsub(/[^a-z 0-9]/, " ")
+    # if ransack(:number_cont_all => word.split).result.count > 1
+    #   ransack(:number_cont_all => word.split).result
+    # elsif ransack(:number_or_name_cont_all => word.split).result.count > 1
+    #   ransack(:number_or_name_cont_all => word.split, :name_cont_all => word.split).result
+    # elsif ransack(:number_or_name_or_description_cont_all => word.split).result.count > 1
+    #   ransack(:number_or_name_or_description_cont_all => word.split).result
+    # elsif ransack(:number_or_name_or_description_or_categories_name_cont_all => word.split).result.count > 1
+    #   ransack(:number_or_name_or_description_or_categories_name_cont_all => word.split).result
+    # else
+    #   ransack(:number_or_name_or_description_or_categories_name_cont_all => word.split).result
+    # end
+    
+  end
+  
   def self.search(word)
-    includes(:brand, :category).where("lower(number) like ? or lower(items.name) like ? or lower(items.description) like ? or lower(brands.name) like ?", "%#{word.downcase}%", "%#{word.downcase}%", "%#{word.downcase}%", "%#{word.downcase}%").references(:brand, :category)
+    includes(:brand, :categories).where("lower(number) like ? or lower(items.name) like ? or lower(items.description) like ? or lower(brands.name) like ? or lower(categories.name) like ?", "%#{word.downcase}%", "%#{word.downcase}%", "%#{word.downcase}%", "%#{word.downcase}%", "%#{word.downcase}%").references(:brand, :categories)
+    # word = word.downcase.gsub(/[^a-z 0-9]/, " ")
+    # if ransack(:number_cont_all => word.split).result.count > 1
+    #   ransack(:number_cont_all => word.split).result
+    # elsif ransack(:number_or_name_cont_all => word.split).result.count > 1
+    #   ransack(:number_or_name_cont_all => word.split, :name_cont_all => word.split).result
+    # elsif ransack(:number_or_name_or_description_cont_all => word.split).result.count > 1
+    #   ransack(:number_or_name_or_description_cont_all => word.split).result
+    # else
+    #   ransack(:number_or_name_or_description_or_categories_name_cont_all => word.split).result
+    # end
   end
   
   self.per_page = 10
