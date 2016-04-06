@@ -1,3 +1,8 @@
+
+
+
+
+
 <div class="col-md-5">
 	
 	<div class="col-md-12">
@@ -26,30 +31,42 @@
 	</div>
 	
 </div>
-
-<%= link_to "Copy Price Catalogue", new_account_item_price_path(:copy => true, :account_id => @account.id), :class => "btn btn-primary", :remote => true  %>
+<% month = "January".to_date %>
+<% from = month.beginning_of_month %>
+<% to = month.end_of_month %>
+<table class="table table-condesned table-bordered">
+	<tr>
+		<th colspan="6">Statement From: <%= from.strftime("%m/%d/%Y") %> To: <%= to.strftime("%m/%d/%Y")%></th>
+	</tr>
+	<tr>
+		<th>Account Name</th>
+		<th>Bill To Account</th>
+		<th>Due Date</th>
+		<th>Number</th>
+		<th>Amount</th>
+		<th>Balance Due</th>
+	</tr>
+	<% total = 0 %>
+	<% @account.orders.where(:completed_at => from..to).each do |o| %>
+		<% if o.fulfilled %>
+		<tr>
+			<% total += o.balance_due %>
+			<td><%= o.account.name %></td>
+			<td><%= o.bill_to_account_name %></td>
+			<td><%= o.due_on.strftime("%m/%d/%Y ") %></td>
+			<td><%= o.number %></td>
+			<td><%= number_to_currency(o.total) %></td>
+			<td><%= number_to_currency(o.balance_due) %></td>
+		</tr>
+		<% end %>
+	<% end %>
+	<tr>
+		<td colspan="6"><%= total %></td>
+	</tr>
+	
+</table>
 
 <div class="col-md-7">
-	
-	<div id="account_item_prices" class="col-md-12">
-		<table class="table table-bordered table-condensed table-hover">
-			<tr>
-				<th>Item Number</th>
-				<th>Description</th>
-				<th width="10%">Contract Price</th>
-				<th width="10%">Cost Price</th>
-			</tr>
-			
-			<% @item_prices.each do |a| %>
-			<tr <% if a.item && (a.price < a.item.price) %>class="danger" <% end %>>
-				<td><%= a.item.number unless a.item.nil? %></td>
-				<td><%= a.item.name unless a.item.nil? %></td>
-				<td><%= number_to_currency(a.price) %></td>
-				<td><%= number_to_currency(a.item.cost_price) unless a.item.nil? %></td>
-			</tr>
-			<% end %>
-		</table>
-	</div>
 	
 	<div id="payment_plans" class="col-md-12">
 		<%= render :partial => "home/payment_plans", :locals => {:account => @account} %>
@@ -63,6 +80,29 @@
 		<%= render :partial => "home/invoices", :locals => {:account => @account} %>
 	</div>
 	
+</div>
+
+<div id="account_item_prices" class="col-md-12">
+	<%= link_to "Copy Price Catalogue", new_account_item_price_path(:copy => true, :account_id => @account.id), :class => "btn btn-primary", :remote => true  %>
+	<table class="table table-bordered table-condensed table-hover">
+		<tr>
+			<th>Item Number</th>
+			<th>Description</th>
+			<th width="10%">Contract Price</th>
+			<th width="10%">Cost Price</th>
+		</tr>
+		
+		<% @item_prices.each do |a| %>
+		<tr <% if a.item && (a.price.to_f < a.item.cost_price.to_f) %>class="danger" <% end %>>
+			<td><%= a.item.number unless a.item.nil? %></td>
+			<td><%= a.item.name unless a.item.nil? %></td>
+			<td><%= number_to_currency(a.price) %></td>
+			<td><%= number_to_currency(a.item.cost_price) unless a.item.nil? %></td>
+			<td><%= link_to "Delete", account_item_price_path(a.id), :method => :delete, :remote => true %></td>
+			
+		</tr>
+		<% end %>
+	</table>
 </div>
 
 <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">

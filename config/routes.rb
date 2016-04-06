@@ -44,6 +44,7 @@ Rails.application.routes.draw do
       resources :assets
       resources :customers
       resources :groups
+      resources :group_item_prices
       resources :item_imports
       resources :account_item_prices
       resources :account_item_price_imports
@@ -70,6 +71,7 @@ Rails.application.routes.draw do
       resources :vendors
       resources :settings
       get "equipment/delete/:id" => "equipment#delete"
+      get "items/delete/:id" => "items#delete"
       get "/" => "home#show"
     end
   end

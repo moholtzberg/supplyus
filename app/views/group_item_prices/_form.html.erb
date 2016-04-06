@@ -22,9 +22,9 @@
 	<% end %>
 	
 	<% unless params[:copy] %>
-	<div id="account" class="col-md-12">
-		<%= f.label :account_name, :class => "control-label" %>
-		<%= f.text_field :account_name, :class => "form-control", data: {autocomplete_source: accounts_path} %>
+	<div id="group" class="col-md-12">
+		<%= f.label :group_name, :class => "control-label" %>
+		<%= f.text_field :group_name, :class => "form-control", data: {autocomplete_source: groups_path} %>
 	</div>
 	
 	<div id="price" class="col-md-12">
@@ -35,14 +35,14 @@
 	
 	<script>
 	jQuery(function() {
-		return $('#account_item_price_copy_from').autocomplete({
-			source: $('#account_item_price_copy_from').data('autocomplete-source')
+		return $('#group_item_price_copy_from').autocomplete({
+			source: $('#group_item_price_copy_from').data('autocomplete-source')
 		})
 	});
 	
 	jQuery(function() {
-		return $('#account_item_price_account_name').autocomplete({
-			source: $('#account_item_price_account_name').data('autocomplete-source')
+		return $('#group_item_price_group_name').autocomplete({
+			source: $('#group_item_price_group_name').data('autocomplete-source')
 		})
 	});
 	</script>

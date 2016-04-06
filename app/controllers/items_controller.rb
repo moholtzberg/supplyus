@@ -80,6 +80,18 @@ class ItemsController < ApplicationController
     
   end
   
+  def delete
+    @item = Item.find_by(:id => params[:id])
+  end
+  
+  def destroy
+    e = Item.find_by(:id => params[:id])
+    e.destroy!
+    respond_to do |format|
+      format.js { alert("ITem Detelet") }
+    end
+  end
+  
   private
 
   def registration_params

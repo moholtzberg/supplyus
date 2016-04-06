@@ -85,9 +85,10 @@
 	</table>
 	
 	<ul class="nav nav-tabs nav-justified">
-	  <li role="presentation" class="active"><a href="#orders" aria-controls="orders" role="tab" data-toggle="tab">Orders</a></li>
-	  <li role="presentation"><a href="#item_vendor_prices" aria-controls="item_vendor_prices" role="tab" data-toggle="tab">Vendor Item Prices</a></li>
-	  <li role="presentation"><a href="#account_item_prices" aria-controls="account_item_prices" role="tab" data-toggle="tab">Account Item Prices</a></li>
+		<li role="presentation" class="active"><a href="#orders" aria-controls="orders" role="tab" data-toggle="tab">Orders</a></li>
+		<li role="presentation"><a href="#item_vendor_prices" aria-controls="item_vendor_prices" role="tab" data-toggle="tab">Vendor Item Prices</a></li>
+		<li role="presentation"><a href="#account_item_prices" aria-controls="account_item_prices" role="tab" data-toggle="tab">Account Item Prices</a></li>
+		<li role="presentation"><a href="#group_item_prices" aria-controls="group_item_prices" role="tab" data-toggle="tab">Group Item Prices</a></li>
 	</ul>
 	
 	<div class="tab-content">
@@ -125,6 +126,12 @@
 
 			<%= render :partial => "account_item_prices", :locals => {:item => @item} %>
 
+		</div>
+		
+		<div id="group_item_prices" class="tab-pane" role="tabpanel">
+			
+			<%= render :partial => "group_item_prices", :locals => {:item => @item} %>
+			
 		</div>
 		
 	</div>
