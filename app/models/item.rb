@@ -1,5 +1,7 @@
 class Item < ActiveRecord::Base
   
+  scope :active, -> { where(:active => true)}
+  
   has_many :account_item_prices, :dependent => :destroy, :inverse_of => :item
   has_many :group_item_prices, :dependent => :destroy, :inverse_of => :item
   has_many :item_vendor_prices
@@ -9,6 +11,7 @@ class Item < ActiveRecord::Base
   #   square: '200x200#',
   #   medium: '400x400>'
   # }
+  
   has_many :order_line_items
   has_many :item_properties
   has_many :item_categories

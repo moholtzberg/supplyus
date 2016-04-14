@@ -3,6 +3,9 @@ Rails.application.routes.draw do
   authenticate :user do
     scope "/admin" do
       resources :accounts do
+        member do
+          get :statements
+        end
         resources :contacts
         resources :charges
         resources :credit_cards
@@ -27,6 +30,7 @@ Rails.application.routes.draw do
           get :locked
           get :shipped
           get :fulfilled
+          get :unfulfilled
         end
         member do
           put :lock

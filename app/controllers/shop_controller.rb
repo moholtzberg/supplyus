@@ -40,7 +40,7 @@ class ShopController < ApplicationController
   end
   
   def search
-    @items = Item.where(nil)
+    @items = Item.where(nil).active
     @items = @items.search(params[:keywords]) if params[:keywords].present?
     @items = @items.paginate(:page => params[:page])
   end
@@ -101,8 +101,13 @@ class ShopController < ApplicationController
   end
   
   def my_items
-    @items = OrderLineItem.joins(:order, :item).where("orders.account_id = ?", current_user.account.id).select(:item_id).uniq(:item_id).map {|a| a.item_id}
-    @items = Item.where(id: @items).joins(:order_line_items).group(:item_id).order("order_line_items.quantity DESC")
+    # @items = OrderLineItem.joins(:order, :item).where("orders.account_id = ?", current_user.account.id).select(:item_id).uniq(:item_id).map {|a| a.item_id}
+    # @items = Item.where(id: @items).joins(:order_line_items).group(:item_id).order("order_line_items.quantity DESC")
+    
+    order_ids = Order.where(:account_id => current_user.account.id).where.not(:completed_at => nil).map(&:id)
+    item_ids = OrderLineItem.where(:order_id => order_ids, :quantity => 1..Float::INFINITY).map {|q| q.item_id unless q.actual_quantity < 1}
+    @items = Item.where(:id => item_ids).active.order(:name)
+    @items = @items.paginate(:page => params[:page])
   end
   
   def view_account

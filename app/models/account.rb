@@ -9,6 +9,26 @@ class Account < ActiveRecord::Base
   alias_attribute :zip,       :ship_to_zip
   alias_attribute :phone,     :ship_to_phone
   alias_attribute :fax,       :ship_to_fax
+  
+  def bill_address_1
+    ship_to_address_1 if bill_to_address_1.blank?
+  end
+  
+  def bill_address_2
+    ship_to_address_2 if bill_to_address_2.blank?
+  end
+  
+  def bill_city
+    ship_to_city if bill_to_city.blank?
+  end
+  
+  def bill_state
+    ship_to_state if bill_to_state.blank?
+  end
+  
+  def bill_zip
+    ship_to_zip if bill_to_zip.blank?
+  end
   # scope :customers, -> { where(:account_type => "Customer")}
   # scope :vendors, -> { where(:account_type => "Vendor")}
   # 
@@ -48,6 +68,10 @@ class Account < ActiveRecord::Base
   
   def group_name=(name)
     self.group = Group.find_by(:name => name) if name.present?
+  end
+  
+  def outstanding_invoices
+    orders.fulfilled.unpaid.map(&:total).sum
   end
   
   # before_create :set_billing_start_and_day

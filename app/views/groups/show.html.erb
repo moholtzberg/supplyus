@@ -1,0 +1,90 @@
+<div id="accounts" class="col-md-12">
+		
+	<table class="table table-bordered table-striped">
+		
+		<tr>
+			<th width="20%">Name</th>
+			<th width="80%">Description</th>
+		</tr>
+		
+		<tr>
+			<td><%= @group.name %></td>
+			<td><%= @group.description %></td>
+		</tr>
+		
+	</table>
+	
+	<ul class="nav nav-tabs nav-justified">
+		<li role="presentation" class="active"><a href="#members" aria-controls="members" role="tab" data-toggle="tab">Members</a></li>
+		<li role="presentation"><a href="#group_item_prices" aria-controls="group_item_prices" role="tab" data-toggle="tab">Group Item Prices</a></li>
+	</ul>
+	
+	<div class="tab-content">
+		
+		<br/>
+		
+		<div role="tabpanel" class="tab-pane active" id="members">
+			
+				<table class="table table-bordered table-condensed table-striped">
+					<tr>
+						<th>Name</th>
+						<th>Address</th>
+						<th>City</th>
+						<th>State</th>
+						<th>Zip</th>
+						<th>Email</th>
+					</tr>
+					<% @group.accounts.each do |it| %>
+					<tr>
+						<td><%= it.name %></td>
+						<td><%= it.address_1 %></td>
+						<td><%= it.city %></td>
+						<td><%= it.state %></td>
+						<td><%= it.zip %></td>
+						<td><%= it.email %></td>
+					</tr>
+					<% end %>
+				</table>
+			
+		</div>
+		
+		<div id="group_item_prices" class="tab-pane" role="tabpanel">
+			
+			<%= link_to "Copy Price Catalogue", new_group_item_price_path(:copy => true, :group_id => @group.id), :class => "btn btn-primary", :remote => true  %>
+
+			<table class="table table-bordered table-condensed table-hover">
+				<tr>
+					<th>Item</th>
+					<th>Name</th>
+					<th>Price</th>
+					<th>Cost Price</th>
+					<th>&nbsp;</th>
+				</tr>
+
+				<% @group.group_item_prices.each do |a| %>
+
+				<tr <% if a.item && (a.price.to_f < a.item.cost_price.to_f) %>class="danger" <% end %>>
+					<td><%= a.item.number unless a.item.nil?  %></td>
+					<td><%= a.item.name unless a.item.nil?  %></td>
+					<td><%= number_to_currency(a.price) %></td>
+					<td><%= number_to_currency(a.item.cost_price) unless a.item.nil? %></td>
+					<td><%= link_to "Delete", group_item_price_path(a.id), :method => :delete, :remote => true %></td>
+				</tr>
+
+				<% end %>
+
+			</table>
+			
+		</div>
+		
+	</div>
+	
+</div>
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div

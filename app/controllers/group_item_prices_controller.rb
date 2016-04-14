@@ -28,14 +28,18 @@ class GroupItemPricesController < ApplicationController
   
   def copy
     puts "WE ARE IN THE COPY ACTION"
-    from_acct = Account.find_by(name: params[:account_item_price][:copy_from])
-    to_acct = Account.find_by(id: params[:account_id])
+    from_acct = Account.find_by(name: params[:group_item_price][:copy_from])
+    to_group = Group.find_by(id: params[:group_id])
     factor = params[:price_factor].blank? ? 1 : params[:price_factor].to_f
     AccountItemPrice.where(account_id: from_acct).each do |aip|
-      puts aip.inspect
-      AccountItemPrice.create(account_id: to_acct.id, item_id: aip.item_id, price: (aip.price * factor))
+      GroupItemPrice.create(group_id: to_group.id, item_id: aip.item_id, price: (aip.price * factor))
     end
-    render :js => "window.location.href = '#{account_path(to_acct.id)}'"
+    render :js => "window.location.href = '#{group_path(to_group.id)}'"
+  end
+  
+  def destroy
+    GroupItemPrice.find_by(:id => params[:id]).destroy
   end
   
 end
+

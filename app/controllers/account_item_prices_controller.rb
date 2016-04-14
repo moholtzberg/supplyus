@@ -32,10 +32,13 @@ class AccountItemPricesController < ApplicationController
     to_acct = Account.find_by(id: params[:account_id])
     factor = params[:price_factor].blank? ? 1 : params[:price_factor].to_f
     AccountItemPrice.where(account_id: from_acct).each do |aip|
-      puts aip.inspect
       AccountItemPrice.create(account_id: to_acct.id, item_id: aip.item_id, price: (aip.price * factor))
     end
     render :js => "window.location.href = '#{account_path(to_acct.id)}'"
+  end
+  
+  def destroy
+    AccountItemPrice.where(id: params[:id]).destroy!
   end
   
 end

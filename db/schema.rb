@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160406164559) do
+ActiveRecord::Schema.define(version: 20160413151937) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -272,9 +272,11 @@ ActiveRecord::Schema.define(version: 20160406164559) do
     t.float    "price"
     t.float    "discount"
     t.text     "description"
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
     t.integer  "quantity_canceled"
+    t.integer  "quantity_shipped",   default: 0
+    t.integer  "quantity_fulfilled", default: 0
   end
 
   add_index "order_line_items", ["id"], name: "order_line_item_id_ix"

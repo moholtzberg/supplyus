@@ -25,6 +25,7 @@ class AccountsController < ApplicationController
   def edit
     @account = Account.find_by(:id => params[:id])
   end
+  
   # def create
   #   account = Account.create(params[:new_account])
   #   if account.save!
@@ -85,6 +86,19 @@ class AccountsController < ApplicationController
       respond_to do |format|
         format.html
         format.js
+      end
+    end
+  end
+  
+  def statements
+    @account = Account.find_by(:id => params[:id])
+    puts params[:from_date]
+    @from = Date.strptime(params[:from_date], '%m/%d/%y').kind_of?(Date) ? Date.strptime(params[:from_date], '%m/%d/%y') : Date.today.beginning_of_month
+    @to = Date.strptime(params[:to_date], '%m/%d/%y').kind_of?(Date) ? Date.strptime(params[:to_date], '%m/%d/%y') : Date.today.beginning_of_month
+    respond_to do |format|
+      format.html
+      format.pdf do
+        render :pdf => "#{@account.number}_statement", :title => "#{@account.name} statement", :layout => 'admin_print.html.erb', :page_size => 'Letter', :background => false,:orientation => 'Landscape', :template => 'accounts/statements.html.erb', :print_media_type => true, :show_as_html => params[:debug].present?
       end
     end
   end

@@ -31,40 +31,6 @@
 	</div>
 	
 </div>
-<% month = "January".to_date %>
-<% from = month.beginning_of_month %>
-<% to = month.end_of_month %>
-<table class="table table-condesned table-bordered">
-	<tr>
-		<th colspan="6">Statement From: <%= from.strftime("%m/%d/%Y") %> To: <%= to.strftime("%m/%d/%Y")%></th>
-	</tr>
-	<tr>
-		<th>Account Name</th>
-		<th>Bill To Account</th>
-		<th>Due Date</th>
-		<th>Number</th>
-		<th>Amount</th>
-		<th>Balance Due</th>
-	</tr>
-	<% total = 0 %>
-	<% @account.orders.where(:completed_at => from..to).each do |o| %>
-		<% if o.fulfilled %>
-		<tr>
-			<% total += o.balance_due %>
-			<td><%= o.account.name %></td>
-			<td><%= o.bill_to_account_name %></td>
-			<td><%= o.due_on.strftime("%m/%d/%Y ") %></td>
-			<td><%= o.number %></td>
-			<td><%= number_to_currency(o.total) %></td>
-			<td><%= number_to_currency(o.balance_due) %></td>
-		</tr>
-		<% end %>
-	<% end %>
-	<tr>
-		<td colspan="6"><%= total %></td>
-	</tr>
-	
-</table>
 
 <div class="col-md-7">
 	

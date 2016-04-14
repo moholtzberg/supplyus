@@ -3,28 +3,35 @@ class OrdersController < ApplicationController
   helper_method :sort_column, :sort_direction
   
   def index
-    @orders = Order.is_complete.includes(:account, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}).open
+    @orders = Order.is_complete.includes(:account, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}).unshipped
     @orders = @orders.order(sort_column + " " + sort_direction)
-    @orders = @orders.paginate(:page => params[:page], :per_page => 10)
+    @orders = @orders.paginate(:page => params[:page], :per_page => 20)
   end
   
   def shipped
     @orders = Order.is_complete.includes(:account, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}).shipped
     @orders = @orders.order(sort_column + " " + sort_direction)
-    @orders = @orders.paginate(:page => params[:page], :per_page => 10)
+    @orders = @orders.paginate(:page => params[:page], :per_page => 20)
     render "index"
   end
   
   def fulfilled
     @orders = Order.is_complete.includes(:account, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}).fulfilled
     @orders = @orders.order(sort_column + " " + sort_direction)
-    @orders = @orders.paginate(:page => params[:page], :per_page => 10)
+    @orders = @orders.paginate(:page => params[:page], :per_page => 20)
+    render "index"
+  end
+  
+  def unfulfilled
+    @orders = Order.is_complete.includes(:account, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}).unfulfilled
+    @orders = @orders.order(sort_column + " " + sort_direction)
+    @orders = @orders.paginate(:page => params[:page], :per_page => 20)
     render "index"
   end
   
   def locked
     @orders = Order.is_complete.is_locked.includes(:account, :order_line_items)
-    @orders = @orders.paginate(:page => params[:page], :per_page => 10)
+    @orders = @orders.paginate(:page => params[:page], :per_page => 20)
     render "index"
   end
   
@@ -50,6 +57,18 @@ class OrdersController < ApplicationController
   def show
     @order = Order.find(params[:id])
     @order_line_items = @order.order_line_items.includes(:item)
+    @shipments = Shipment.where(:order_id => @order.id)
+    respond_to do |format|
+      format.html
+      format.pdf do
+        render :pdf => "#{@order.number}", :title => "#{@order.number}", :layout => 'admin_print.html.erb', :page_size => 'Letter', :background => false, :template => 'orders/show.html.erb', :print_media_type => true, :show_as_html => params[:debug].present?
+      end
+    end
+  end
+  
+  def invoice
+    @order = Order.find(params[:id])
+    @order_line_items = @order.order_line_items.includes(:item, :line_item_fulfillments)
     @shipments = Shipment.where(:order_id => @order.id)
     respond_to do |format|
       format.html

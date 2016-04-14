@@ -47,7 +47,11 @@
 			<%= yield %>
 		</div>
 		
-		
+		<%# if current_user && current_user.email == "admin@247officesupply.com" %>
+			<% if params[:show_console] %>
+				<%= console %>
+			<% end %>
+		<%# end %>
 		
 	</body>
 	
