@@ -5,7 +5,7 @@ class AccountsController < ApplicationController
   def index
     @accounts = Account.order(sort_column + " " + sort_direction)
     unless params[:term].blank?
-      @accounts = @accounts.search(params[:term]) if params[:term].present?
+      @accounts = @accounts.lookup(params[:term]) if params[:term].present?
     end
     respond_to do |format|
       format.html

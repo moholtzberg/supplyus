@@ -10,10 +10,8 @@ class OrderLineItem < ActiveRecord::Base
   
   scope :by_item, -> (item) { where(:item_id => item) }
   scope :active,  -> () { where(:quantity => 1..Float::INFINITY) }
-  # scope :unshipped, -> { where.not(:id => LineItemShipment.pluck(:order_line_item_id).uniq) }
-  # scope :shipped, -> () { where(:id => LineItemShipment.pluck(:order_line_item_id).uniq) }
-  scope :unfulfilled, -> { where.not(:id => LineItemFulfillment.pluck(:order_line_item_id).uniq) }
-  scope :fulfilled, -> () { where(:id => LineItemFulfillment.where(:order_line_item_id => self.id).group(:order_line_item_id).sum(:quantity_fulfilled).pluck(:order_line_item_id).uniq) }
+  # scope :unfulfilled, -> { where.not(:id => LineItemFulfillment.pluck(:order_line_item_id).uniq) }
+  # scope :fulfilled, -> () { where(:id => LineItemFulfillment.where(:order_line_item_id => self.id).group(:order_line_item_id).sum(:quantity_fulfilled).pluck(:order_line_item_id).uniq) }
   
   before_create :make_line_number, :on => :create
   
@@ -32,9 +30,7 @@ class OrderLineItem < ActiveRecord::Base
   
   def update_shipped_fulfilled
     qs = calculate_quantity_shipped
-    puts "-------------------> QS #{qs}"
     qf = calculate_quantity_fulfilled
-    puts "-------------------> QF #{qf}"
     self.update_columns(:quantity_shipped => qs, :quantity_fulfilled => qf)
   end
   
@@ -122,6 +118,10 @@ class OrderLineItem < ActiveRecord::Base
     #    # LineItemFulfillment.where(:order_line_item_id => self.id).group(:order_line_item_id).sum(:quantity_fulfilled).inject(0) {|k, v| (k + v[1]) != 0 ? true : false }
     #  }
     quantity_fulfilled == actual_quantity
+  end
+  
+  def unfulfilled
+    quantity_fulfilled != actual_quantity
   end
   
   def fulfilled_id

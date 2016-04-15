@@ -13,6 +13,14 @@
 	<table class="table table-bordered table-condensed">
 		
 		<tr>
+			<td colspan="9">
+				<form id="searchBox" accept-charset="UTF-8" action="/admin/orders" method="get" role="search">
+					<input type="text" class="form-control" id="term" name="term" placeholder="Enter user name" value="<%= params[:term] %>">
+				</form>
+			</td>
+		</tr>
+		
+		<tr>
 			
 			<th witdh="5%"><%= sortable "orders.number", "Number" %></th>
 			<th><%= sortable "accounts.name", "Account" %></th>

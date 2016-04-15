@@ -4,12 +4,18 @@ class OrdersController < ApplicationController
   
   def index
     @orders = Order.is_complete.includes(:account, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}).unshipped
+    unless params[:term].blank?
+      @orders = @orders.lookup(params[:term]) if params[:term].present?
+    end
     @orders = @orders.order(sort_column + " " + sort_direction)
     @orders = @orders.paginate(:page => params[:page], :per_page => 20)
   end
   
   def shipped
     @orders = Order.is_complete.includes(:account, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}).shipped
+    unless params[:term].blank?
+      @orders = @orders.lookup(params[:term]) if params[:term].present?
+    end
     @orders = @orders.order(sort_column + " " + sort_direction)
     @orders = @orders.paginate(:page => params[:page], :per_page => 20)
     render "index"
@@ -17,6 +23,9 @@ class OrdersController < ApplicationController
   
   def fulfilled
     @orders = Order.is_complete.includes(:account, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}).fulfilled
+    unless params[:term].blank?
+      @orders = @orders.lookup(params[:term]) if params[:term].present?
+    end
     @orders = @orders.order(sort_column + " " + sort_direction)
     @orders = @orders.paginate(:page => params[:page], :per_page => 20)
     render "index"
@@ -24,6 +33,9 @@ class OrdersController < ApplicationController
   
   def unfulfilled
     @orders = Order.is_complete.includes(:account, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}).unfulfilled
+    unless params[:term].blank?
+      @orders = @orders.lookup(params[:term]) if params[:term].present?
+    end
     @orders = @orders.order(sort_column + " " + sort_direction)
     @orders = @orders.paginate(:page => params[:page], :per_page => 20)
     render "index"
@@ -31,12 +43,18 @@ class OrdersController < ApplicationController
   
   def locked
     @orders = Order.is_complete.is_locked.includes(:account, :order_line_items)
+    unless params[:term].blank?
+      @orders = @orders.lookup(params[:term]) if params[:term].present?
+    end
     @orders = @orders.paginate(:page => params[:page], :per_page => 20)
     render "index"
   end
   
   def incomplete
     @orders = Order.is_incomplete.includes(:account, :order_line_items)
+    unless params[:term].blank?
+      @orders = @orders.lookup(params[:term]) if params[:term].present?
+    end
     @orders = @orders.paginate(:page => params[:page], :per_page => 10)
     render "index"
   end
@@ -76,6 +94,16 @@ class OrdersController < ApplicationController
         render :pdf => "#{@order.number}", :title => "#{@order.number}", :layout => 'admin_print.html.erb', :page_size => 'Letter', :background => false, :template => 'orders/show.html.erb', :print_media_type => true, :show_as_html => params[:debug].present?
       end
     end
+  end
+  
+  def resend_order
+    order = Order.find_by(:id => params[:id])
+    OrderMailer.order_notification(order.id).deliver_later
+  end
+  
+  def resend_invoice
+    order = Order.find_by(:id => params[:id])
+    OrderMailer.invoice_notification(order.id).deliver_later
   end
   
   def edit

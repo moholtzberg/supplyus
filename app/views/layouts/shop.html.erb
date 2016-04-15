@@ -65,4 +65,9 @@
 
 	</body>
 	
+	<% if Rails.env.development? || (current_user and current_user.email == "admin@247officesupply.com") %>
+		<% if params[:show_console] %>
+			<%= console %>
+		<% end %>
+	<% end %>
 </html>

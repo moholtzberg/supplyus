@@ -27,6 +27,10 @@ class Order < ActiveRecord::Base
   
   after_commit :flush_cache
   
+  def self.lookup(term)
+    includes(:account, {:order_line_items => [:item]}).where("lower(orders.number) like (?) or lower(orders.po_number) like (?) or lower(items.number) like (?) or lower(items.description) like (?)", "%#{term.downcase}%", "%#{term.downcase}%", "%#{term.downcase}%", "%#{term.downcase}%").references(:account, {:order_line_items => [:item]})
+  end
+  
   def flush_cache
     Rails.cache.delete([self.class.name,"open_orders"])
   end
@@ -54,7 +58,7 @@ class Order < ActiveRecord::Base
     #   ids = Order.joins(:order_line_items).distinct(:order_id).map {|o| if o.fulfilled == true then o.id end }
     #   Order.where(id: ids)
     # }
-    ids = Order.is_complete.where.not(:id => OrderLineItem.all.map {|a| if a.fulfilled then a.order_id end}).map(&:unfulfilled_id)
+    ids = Order.is_complete.where(:id => OrderLineItem.all.map {|a| if a.unfulfilled then a.order_id end}).map(&:unfulfilled_id)
     Order.where(id: ids)
   end
   

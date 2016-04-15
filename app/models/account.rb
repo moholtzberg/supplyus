@@ -36,6 +36,10 @@ class Account < ActiveRecord::Base
   #   %w(Customer Vendor)
   # end
   
+  def self.lookup(term)
+    includes(:user).where("lower(users.first_name) like (?) or lower(users.last_name) like (?) or lower(users.email) like (?) or lower(accounts.name) like (?)", "%#{term.downcase}%", "%#{term.downcase}%", "%#{term.downcase}%", "%#{term.downcase}%").references(:user)
+  end
+  
   belongs_to :user
   belongs_to :group
   has_many :contacts

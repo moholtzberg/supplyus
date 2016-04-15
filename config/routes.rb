@@ -34,6 +34,8 @@ Rails.application.routes.draw do
         end
         member do
           put :lock
+          put :resend_invoice
+          put :resend_order
         end
         resources :shipments, :only => [:new, :create]
         resources :payments, :shallow => true
