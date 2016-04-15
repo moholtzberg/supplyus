@@ -10,8 +10,14 @@ class User < ActiveRecord::Base
   has_many :orders, :through => :account
   belongs_to :contact
   
+  accepts_nested_attributes_for :account
+  
   def has_account
     self.account.nil? ? false : true
+  end
+  
+  def self.lookup(term)
+    includes(:account).where("lower(first_name) like (?) or lower(last_name) like (?) or lower(users.email) like (?) or lower(accounts.name) like (?)", "%#{term.downcase}%", "%#{term.downcase}%", "%#{term.downcase}%", "%#{term.downcase}%").references(:account)
   end
   
 end
