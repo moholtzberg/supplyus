@@ -1,5 +1,5 @@
 <td><%= order.number %></td>
-<td><%= order.account.name unless order.account.blank? %></td>
+<td><%= order.account.name unless order.account.blank? %>&nbsp;<% if order.account.group_id != nil %><small>(<%= order.account.group.name %>)</small><% end %></td>
 <td><%= number_to_currency(order.total) %><%# number_to_currency(order.sum) unless order.sum.nil? %></td>
 <td class="hidden-xs"><%= number_to_currency(order.amount_shipped) %></td>
 <td class="hidden-xs"><%= number_to_currency(order.amount_fulfilled) %></td>

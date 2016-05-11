@@ -49,7 +49,11 @@ Rails.application.routes.draw do
       end
       resources :assets
       resources :customers
-      resources :groups
+      resources :groups do 
+        member do 
+          get :statements
+        end
+      end
       resources :group_item_prices
       resources :item_imports
       resources :account_item_prices

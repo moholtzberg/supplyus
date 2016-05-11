@@ -9,7 +9,7 @@ class OrderMailer < ApplicationMailer
     mail(
          :to => @order.account.user.email,
          :bcc => "sales@247officesupply.com",
-         :subject => "24/7 Office Supply - Order Confirmation #{@order.number}", 
+         :subject => "Order Notification #{@order.number}", 
          :text => render_to_string("order_mailer/order_confirmation").to_str
     )
   end
@@ -30,13 +30,16 @@ class OrderMailer < ApplicationMailer
     @order = Order.find_by(:id => order_id)
     @invoice = @order
     attachments["INV_#{@order.number}.pdf"] = WickedPdf.new.pdf_from_string(
-      render_to_string(:pdf => "INV_#{@order.number}lllllll", :template => 'shop/view_invoice.html.erb', :layout => "admin_print")
+      render_to_string(:pdf => "INV_#{@order.number}", :template => 'shop/view_invoice.html.erb', :layout => "admin_print")
+    )
+    attachments["INV_#{@order.number}-1.pdf"] = WickedPdf.new.pdf_from_string(
+      render_to_string(:pdf => "INV_#{@order.number}", :template => 'shop/view_invoice.html.erb', :layout => "admin_print")
     )
     # self.instance_variable_set(:@lookup_context, nil)
     mail(
          :to => @order.account.user.email,
          :bcc => "sales@247officesupply.com",
-         :subject => "24/7 Office Supply - Invoice Notification #{@order.number}", 
+         :subject => "Invoice Notification #{@order.number}", 
          :text => render_to_string("order_mailer/order_confirmation").to_str
     )
   end

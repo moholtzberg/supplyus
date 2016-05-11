@@ -1,5 +1,6 @@
 class ShipmentMailer < ApplicationMailer
-  default from: "orders@247officesupply.com"
+  
+  default from: "24\/7 Office Supply <orders@247officesupply.com>"
   
   def shipment_confirmation(shipment_id)
     
@@ -8,7 +9,7 @@ class ShipmentMailer < ApplicationMailer
     mail(
          :to => @shipment.orders.first.account.user.email,
          :bcc => "sales@247officesupply.com",
-         :subject => "24/7 Office Supply - Shipment Confirmation #{@shipment.orders.first.number}", 
+         :subject => "Shipment Notification #{@shipment.orders.first.number}", 
          :text => render_to_string("shipment_mailer/shipment_confirmation").to_str
     )
   end

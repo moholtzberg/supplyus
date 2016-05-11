@@ -8,7 +8,7 @@ class Order < ActiveRecord::Base
   scope :is_incomplete, -> () { where(:completed_at => nil)}
   scope :has_account, -> () { where.not(:account_id => nil) }
   scope :no_account, -> () { where(:account_id => nil) }
-  scope :by_date_range, -> (from, to) { where("due_date > ? AND due_date <= ?", from, to) }
+  scope :by_date_range, -> (from, to) { where("due_date >= ? AND due_date <= ?", from, to) }
   # scope :shipped, -> () { where(:id => OrderLineItem.shipped.pluck(:order_id).uniq) }
   # scope :fulfilled, -> () { where(:id => LineItemFulfillment.pluck(:invoice_id).unpaid.uniq) }
   # scope :fulfilled, -> () { where(:id => OrderLineItem.fulfilled.pluck(:order_id).uniq) }
