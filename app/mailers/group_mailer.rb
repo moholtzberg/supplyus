@@ -5,8 +5,8 @@ class GroupMailer < ApplicationMailer
   def statement_notification(group_id, from, to)
     @group = Group.find_by(:id => group_id)
     @accounts = @group.accounts
-    @from = Date.strptime(from, '%m/%d/%y').kind_of?(Date) ? Date.strptime(from, '%m/%d/%y') : Date.today.beginning_of_month
-    @to = Date.strptime(to, '%m/%d/%y').kind_of?(Date) ? Date.strptime(to, '%m/%d/%y') : Date.today.end_of_month
+    @from = DateTime.strptime(from, '%m/%d/%y').kind_of?(Date) ? DateTime.strptime(from, '%m/%d/%y') : DateTime.current
+    @to = DateTime.strptime(to, '%m/%d/%y').kind_of?(Date) ? DateTime.strptime(to, '%m/%d/%y') : DateTime.current
     
     attachments["#{@group.name}_Statement_#{@from}_to_#{@to}.pdf"] = WickedPdf.new.pdf_from_string(
       render_to_string(:title => "#{@group.name} statement #{@from}-#{@to}", :layout => 'admin_print.html.erb', :orientation => 'Landscape', :template => 'groups/statements.html.erb', :print_media_type => true)
@@ -23,6 +23,7 @@ class GroupMailer < ApplicationMailer
     end
     
     mail(
+         # :to => @order.account.user.email,
          :to => "moholtzberg@gmail.com",
          :bcc => "sales@247officesupply.com",
          :subject => "Group Statement Notification - #{@group.name}", 

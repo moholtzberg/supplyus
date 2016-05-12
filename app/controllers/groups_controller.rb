@@ -32,15 +32,17 @@ class GroupsController < ApplicationController
   def statements
     @group = Group.find_by(:id => params[:id])
     @accounts = @group.accounts
-    @from = Date.strptime(params[:from_date], '%m/%d/%y').kind_of?(Date) ? Date.strptime(params[:from_date], '%m/%d/%y') : Date.today.beginning_of_month
-    @to = Date.strptime(params[:to_date], '%m/%d/%y').kind_of?(Date) ? Date.strptime(params[:to_date], '%m/%d/%y') : Date.today.end_of_month
+    @from = Date.strptime(params[:from_date], '%m/%d/%y').kind_of?(Date) ? Date.strptime(params[:from_date], '%m/%d/%y') : Date.today
+    @to = Date.strptime(params[:to_date], '%m/%d/%y').kind_of?(Date) ? Date.strptime(params[:to_date], '%m/%d/%y') : Date.today
     respond_to do |format|
       format.html
       format.pdf do
         render :pdf => "#{@group.name}_statement_#{@from}-#{@to}", :title => "#{@group.name} statement #{@from}-#{@to}", :layout => 'admin_print.html.erb', :page_size => 'Letter', :background => false, :orientation => 'Landscape', :template => 'groups/statements.html.erb', :print_media_type => true, :show_as_html => params[:debug].present?
       end
     end
-    GroupMailer::statement_notification(@group.id, params[:from_date], params[:to_date]).deliver_later
+    if params[:deliver_notification]
+      GroupMailer::statement_notification(@group.id, params[:from_date], params[:to_date]).deliver_later
+    end
   end
 
   private

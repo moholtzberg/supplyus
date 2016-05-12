@@ -32,9 +32,6 @@ class OrderMailer < ApplicationMailer
     attachments["INV_#{@order.number}.pdf"] = WickedPdf.new.pdf_from_string(
       render_to_string(:pdf => "INV_#{@order.number}", :template => 'shop/view_invoice.html.erb', :layout => "admin_print")
     )
-    attachments["INV_#{@order.number}-1.pdf"] = WickedPdf.new.pdf_from_string(
-      render_to_string(:pdf => "INV_#{@order.number}", :template => 'shop/view_invoice.html.erb', :layout => "admin_print")
-    )
     # self.instance_variable_set(:@lookup_context, nil)
     mail(
          :to => @order.account.user.email,
