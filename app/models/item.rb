@@ -144,14 +144,14 @@ class Item < ActiveRecord::Base
   end
   
   def slugger
-    puts "we slugging it out"
-    if self.slug.nil?
-      puts "NO SLUG"
-      self.slug = name.downcase.tr(" ", "-") unless self.name.nil?
-      puts "---> #{self.inspect}"
-    else
-      puts "---> #{self.slug}"
-    end
+    # puts "we slugging it out"
+    # if self.slug.nil?
+    #   puts "NO SLUG"
+    self.slug = name.downcase.tr(" ", "-") unless self.name.nil?
+    #   puts "---> #{self.inspect}"
+    # else
+    #   puts "---> #{self.slug}"
+    # end
   end
   
   def times_purchased
