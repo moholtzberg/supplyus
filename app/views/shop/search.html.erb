@@ -5,8 +5,8 @@
 </div>
 
 <% unless @items.nil? %>
-	<% @items.each do |i| %>
-		<%= render :partial => "item", :locals => {:i => i} %>
+	<% @items.each do |item| %>
+		<%= render :partial => "item", :locals => {:i => item} %>
 	<% end %>
 <% else %>
 <p>Sorry, No items were found!</p>
