@@ -5,11 +5,11 @@
 </div>
 
 <% unless @items.nil? %>
-	<% @items.each do |i| %>
-		<%= render :partial => "item", :locals => {:i => i} %>
+	<% @items.each_hit_with_result do |hit, item| %>
+		<%= render :partial => "item", :locals => {:i => item, :hit => hit} %>
 	<% end %>
 <% else %>
 <p>Sorry, No items were found!</p>
 <% end %>	  
 
-<%= will_paginate @items, renderer: BootstrapPagination::Rails %>
+<%= will_paginate @items.hits, renderer: BootstrapPagination::Rails %>
