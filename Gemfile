@@ -47,14 +47,7 @@ gem "bullet", :group => "development"
 gem 'dalli'
 gem 'activemerchant'
 
-# gem 'ransack'
-
-gem 'sunspot_rails'
-gem 'progress_bar'
- 
-group :development do
-    gem 'sunspot_solr'
-end
+gem 'ransack'
 
 gem 'sidekiq'
 gem 'shrimp'
