@@ -40,14 +40,9 @@ class ShopController < ApplicationController
   end
   
   def search
-    # @qry = Item.active
-    # @items = @items.search(params[:keywords]) if params[:keywords].present?
-    @qry = Item.search do
-      fulltext params[:keywords], :highlight => true
-      paginate(:page => params[:page])
-    end
-    @items = @qry
-    # @items = @items.paginate(:page => params[:page])
+    @items = Item.where(nil).active
+    @items = @items.search(params[:keywords]) if params[:keywords].present?
+    @items = @items.paginate(:page => params[:page])
   end
   
   def add_to_cart
