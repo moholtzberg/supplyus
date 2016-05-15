@@ -147,7 +147,7 @@ class Item < ActiveRecord::Base
     # puts "we slugging it out"
     # if self.slug.nil?
     #   puts "NO SLUG"
-    self.slug = name.downcase.tr(" ", "-") unless self.name.nil?
+    self.slug = number.downcase.tr(" ", "-") unless self.number.nil?
     #   puts "---> #{self.inspect}"
     # else
     #   puts "---> #{self.slug}"
