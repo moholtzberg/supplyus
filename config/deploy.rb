@@ -1,5 +1,5 @@
 set :user, "rails"
-set :use_sudo, true
+set :use_sudo, false
 # set :application, "twenty-four-seven"
 set :repo_url, 'git@github.com:moholtzberg/recurring.git'
 set :branch, "master"
