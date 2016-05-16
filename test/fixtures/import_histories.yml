@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  nb_imported: 1
+  nb_failed: 1
+  nb_in_queue: 1
+
+two:
+  nb_imported: 1
+  nb_failed: 1
+  nb_in_queue: 1

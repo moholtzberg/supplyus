@@ -1,0 +1,26 @@
+<!--   
+<div class="col-md-offset-1 col-md-10">
+
+	<h2>Import file</h2>
+  <% if alert %>
+  	<br>
+  	<div class="alert alert-danger alert-dismissible" role="alert">
+  		<strong>Error!: </strong> <%=alert%>
+  	</div>
+  	<br>
+  <% end %>
+
+  <% if notice %>
+  	<br>
+  	<div class="alert alert-success alert-dismissible" role="alert">
+  		<strong>Succuss!: </strong> <%=notice%>
+  	</div>
+  <% end %>
+
+  <%= form_tag upload_file_path, multipart: true do %>
+    <%= file_field_tag :file %>
+    <br>
+    <%= submit_tag "Import" %>
+  <% end %>
+
+</div> -->

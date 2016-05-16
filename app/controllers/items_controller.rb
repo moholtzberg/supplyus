@@ -91,6 +91,17 @@ class ItemsController < ApplicationController
       format.js { alert("ITem Detelet") }
     end
   end
+
+  # GET
+  # def import_items
+  # end
+
+  # # POST
+  # def upload_file
+  #   return redirect_to import_file_path, alert: "File is required." unless params[:file].present?
+  #   ImportItemWorker.perform_async(params[:file].path)
+  #   redirect_to import_file_path, notice: "File pushed to the buckground worker, please see logs for more details about rows importation"
+  # end
   
   private
 

@@ -1,7 +1,15 @@
 <% content_for :app_location do %>Items Import/New<% end %>
-<div id="items" class="col-md-12">
+<div id="items" class="col-md-offset-1 col-md-10">
 	
 	<h1>Item Import</h1>
+
+	<% if alert %>
+		<br>
+		<div class="alert alert-danger alert-dismissible" role="alert">
+			<strong>Error!: </strong> <%=alert%>
+		</div>
+		<br>
+	<% end %>
 	
 	<p>A CSV or Excel file can be used to import records. The first row should be the column name. The following columns are allowed.</p>
 
@@ -38,8 +46,13 @@
 		<div class="field">
 		<%= f.file_field :file %>
 		</div>
-		<div class="buttons"><%= f.submit "Import" %></div>
+		<br>
+		<button type="submit" class="btn btn-primary">Import</button>
+
 		
 	<% end %>
+<br>
+<br>
 	
 </div>
+

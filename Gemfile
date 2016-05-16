@@ -49,7 +49,7 @@ gem 'dalli'
 
 gem 'ransack'
 
-gem 'sidekiq'
+gem 'sidekiq', '~> 4.1', '>= 4.1.1'
 gem 'shrimp'
 gem 'stripe'
 # gem 'whenever'

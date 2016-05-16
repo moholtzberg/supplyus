@@ -83,6 +83,10 @@ Rails.application.routes.draw do
       get "equipment/delete/:id" => "equipment#delete"
       get "items/delete/:id" => "items#delete"
       get "/" => "home#show"
+      
+      get "/check_for_import" => "item_imports#check_for_import"
+
+
     end
   end
   
