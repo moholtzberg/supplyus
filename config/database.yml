@@ -11,14 +11,14 @@ production:
   password: <%= SECRET["DATABASE"]["PROD_PW"] %>
   port: <%= SECRET["DATABASE"]["PROD_PORT"] %>
 
-# development:
-#   <<: *default
-#   adapter: <%= SECRET["DATABASE"]["PROD_ENGINE"] %>
-#   host: <%= SECRET["DATABASE"]["PROD_HOST"] %>
-#   database: twenty_four_seven
-#   username: <%= SECRET["DATABASE"]["PROD_UN"] %>
-#   password: <%= SECRET["DATABASE"]["PROD_PW"] %>
-#   port: <%= SECRET["DATABASE"]["PROD_PORT"] %>
+staging:
+  <<: *default
+  adapter: <%= SECRET["DATABASE"]["PROD_ENGINE"] %>
+  host: <%= SECRET["DATABASE"]["PROD_HOST"] %>
+  database: twenty_four_seven
+  username: <%= SECRET["DATABASE"]["PROD_UN"] %>
+  password: <%= SECRET["DATABASE"]["PROD_PW"] %>
+  port: <%= SECRET["DATABASE"]["PROD_PORT"] %>
 
 development:
   <<: *default
