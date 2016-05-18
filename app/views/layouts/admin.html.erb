@@ -44,7 +44,7 @@
 		<div id="clearTop" class="clearfix hidden-xs hidden-sm hidden-md"></div>
 		
 		<div id="main-panel">
-			<% if ImportHistory.last.is_processing == 1 %>
+			<% if !ImportHistory.last.nil? and ImportHistory.last.is_processing == 1 %>
 				<div class="col-md-offset-1 col-md-10">
 					<br>
 					<div class="alert alert-success alert-dismissible" role="alert">
@@ -71,7 +71,7 @@
 	
 </html>
 
-<% if ImportHistory.last.is_processing == 1 %>
+<% if !ImportHistory.last.nil? and ImportHistory.last.is_processing == 1 %>
 	<script>
 		
 		var timer;
