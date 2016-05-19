@@ -98,7 +98,7 @@ class OrderLineItem < ActiveRecord::Base
   def calculate_quantity_shipped
     if self.line_item_shipments
       total = 0
-      self.line_item_shipments.each {|i| total += i.quantity_shipped }
+      self.line_item_shipments.each {|i| total += i.quantity_shipped.to_f }
       total
     end
     # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_quantity_shipped"]) {
