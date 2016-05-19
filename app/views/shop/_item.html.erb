@@ -7,12 +7,15 @@
 			</a>
 		</div>
 		<div class="media-body">
-			<h4 class="media-heading"><strong><%= "#{i.number}" %></strong> - <%= "#{i.name}" %></h4>
+			<h4 class="media-heading">
+				<strong><%= i.number %></strong> - <%= i.name %>
+			</h4>
 			<p class="hidden-xs"><%= i.description.truncate_words(36, omission: '...') unless i.description.nil? %></p>
 			<p>
 				<% unless i.brand.nil? %><span class="label label-warning"><%= i.brand.name %></span><% end %>
-				<% unless i.category.nil? %><span class="label label-info"><%= i.category.name %></span><% end %>
-				<!-- <%# i.item_categories.each do |cat|%>&nbsp;<span class="label label-info"><%# cat.category.name %></span><%# end %> -->
+				<%# unless i.category.nil? %><span class="label label-info"><%# i.category.name %></span><%# end %>
+				<% i.item_categories.limit(25).each do |cat| %>&nbsp;<span class="label label-info"><%= cat.category.name %></span><% end %>
+				<%# i.item_categories.inspect %>
 			</p>
 		</div>
 	</div>
@@ -22,11 +25,11 @@
 		<div class="pull-right">
 			<%= form_for @cart, url: add_to_cart_path, :class => "form-inline", :remote => true do |f| %>
 				<div class="form-group">
-					<% if current_user and current_user.has_account and i.actual_price(current_user.account.id).to_f <= i.price.to_f %>
-					<h4><span class="hidden-xs">Your Price:</span> <%= number_to_currency(i.actual_price(current_user.account.id)) %><h4>
-					<% else %>
+					<%# if (current_user and current_user.has_account and i.actual_price(current_user.account.id) <= i.price.to_f) %>
+					<!-- <h4><span class="hidden-xs">Your Price:</span> <%# number_to_currency(i.actual_price(current_user.account.id)) %><h4> -->
+					<% #else %>
 					<h4><span class="hidden-xs">Your Price:</span> <%= number_to_currency(i.price) %><h4>
-					<% end %>
+					<%# end %>
 					<%= f.hidden_field :item_id, :value => i.id %>
 					<div class="input-group">
 						<%= f.number_field :quantity, :value => 1, :class => "form-control input-sm input-block" %>
