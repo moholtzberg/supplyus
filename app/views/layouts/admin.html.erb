@@ -35,7 +35,7 @@
 				<a class="navbar-brand" href="/"><i class="fa fa-circle-o text-danger"></i> Recurring Billing</a>
 			</div>
 
-			<a href="/users/sign_out" id="logout" class="btn btn-warning pull-right hidden-xs hidden-sm">
+			<a href="<%= destroy_user_session_path %>" id="logout" class="btn btn-warning pull-right hidden-xs hidden-sm" data-method="delete">
 				<i class="fa fa-fw fa-sign-out"></i>Sign Out
 			</a>
 			

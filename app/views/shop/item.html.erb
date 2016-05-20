@@ -1,23 +1,136 @@
 <% content_for :title do %><%= @category.name %> <%= @item.name %><% end %>
 
-<div class="page-header">
-	<h3><strong><%= @item.number %></strong> - <%= @item.name %></h3>
-</div>
+<%# http://www.practicalecommerce.com/articles/121511-Create-Responsive-Ecommerce-Product-Pages-with-Bootstrap %>
 
 <div class="col-md-6">
-	<table class="table table-bordered table-condensed table-striped">
-	<% @item.item_properties.each do |pr| %>
-		<tr>
-			<td><strong><%= pr.key%></strong></td>
-			<td><%= pr.value %></td>
-		</tr>
-	<% end %>
-	</table>
+	
+	<div class="row">
+		<div class="col-md-3">
+			<% @item.images.each do |img| %>
+				<a><%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/#{img.attachment_file_name}", :height => "100", :class => "thumbnail", :id => "#{img.id}"%></a>
+			<% end %>	
+		</div>
+		<div class="col-md-9">
+			<%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/#{@item.default_image_path}", :width => "350", :id => "main_image" %>
+		</div>
+	</div>
+	
 </div>
 
+<script>
+	$(".thumbnail").click(function(event){
+		var src = $("#"+ event.currentTarget.id).attr("src")
+		$("#main_image").attr("src", src)
+	})
+</script>
 
-<%= form_for @cart, url: add_to_cart_path, :remote => true do |f| %>
-	<%= f.hidden_field :item_id, :value => @item.id %>
-	<%= f.text_field :quantity, :value => 1 %>
-	<%= f.submit %>
-<% end %>
+<div class="col-md-6">
+
+	<div class="row">
+		<div class="col-md-12">
+			<h2><%= @item.name %></h2>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-12">
+			<% unless @item.brand.blank? or @item.brand.name.blank? %>
+			<strong>Brand:</strong> <span class="monospaced"><%= @item.brand.name %></span>
+			<br/>
+			<% end %>
+			<strong>Number:</strong> <span class="monospaced"><%= @item.number %></span>
+			<br/>
+			<% @item.categories.each do |cat| %>
+				<span class="label label-primary"><%= cat.name %></span>
+			<% end %>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-12 bottom-rule">
+			<h2 class="product-price"><%= number_to_currency(@item.price)%></h2>
+		</div>
+	</div><!-- end row -->
+
+	<hr/>
+
+	<div class="row add-to-cart">
+		<%= form_for @cart, url: add_to_cart_path, :remote => true do |f| %>
+		<div class="col-md-5 product-qty">
+				<span class="btn btn-default btn-lg btn-qty">
+					<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+				</span>
+				<%= f.hidden_field :item_id, :value => @item.id %>
+				<%= f.text_field :quantity, :value => 1, :class => "btn btn-default btn-lg btn-qty" %>
+				<span class="btn btn-default btn-lg btn-qty">
+					<span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+				</span>
+		</div>
+		<div class="col-md-4">
+			<button type="submit" class="btn btn-lg btn-brand btn-full-width">Add to Cart</button>
+		</div>
+		<% end %>
+	</div><!-- end row -->
+
+	<div class="row">
+		<div class="col-md-12 bottom-rule top-10"></div>
+	</div><!-- end row -->
+
+	<hr/>
+
+	<!-- Nav tabs -->
+	<ul class="nav nav-tabs" role="tablist">
+		<li role="presentation" class="active">
+			<a href="#features" aria-controls="features" role="tab" data-toggle="tab">Features</a>
+		</li>
+		<li role="presentation">
+			<a href="#description" aria-controls="description" role="tab" data-toggle="tab">Description</a>
+		</li>
+		<li role="presentation">
+			<a href="#specs" aria-controls="notes" role="tab" data-toggle="tab">Specs</a>
+		</li>
+	</ul>
+
+	<!-- Tab panes -->
+	<div class="tab-content">
+		<div role="tabpanel" class="tab-pane active" id="features">
+			<div class="row">
+				<div class="col-md-12">
+					<br/>
+					<ul>
+						<% @item.item_properties.where("key LIKE ?", "%feature_%").each do |feat| %>
+							<li><%= feat.value %></li>
+						<% end %>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div role="tabpanel" class="tab-pane" id="description">
+			<div class="row">
+				<div class="col-md-12">
+					<br/>
+					<p><%= @item.description %></p>
+				</div>
+			</div>
+		</div>
+		<div role="tabpanel" class="tab-pane" id="specs">
+			<div class="row">
+				<div class="col-md-12">
+					<p>
+						<table class="table table-bordered table-condensed table-striped">
+						<% @item.item_properties.each do |pr| %>
+							<% unless pr.key =~ /feature_/ %>
+							<tr>
+								<td><strong><%= pr.key%></strong></td>
+								<td><%= pr.value %></td>
+							</tr>
+							<% end %>
+						<% end %>
+						</table>
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>

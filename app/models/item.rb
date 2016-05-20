@@ -46,6 +46,14 @@ class Item < ActiveRecord::Base
     self.category_ids = tokens.split(",")
   end
   
+  def default_category
+    if !self.categories.first.nil?
+      self.categories.first
+    else
+      Category.find_or_create_by(:name => "Uncategorized", :slug => "uncategorized")
+    end
+  end
+  
   def self.lookup(word)
     includes(:brand, :categories).where("lower(number) like ? or lower(items.name) like ? or lower(items.description) like ? or lower(brands.name) like ? or lower(categories.name) like ?", "%#{word.downcase}%", "%#{word.downcase}%", "%#{word.downcase}%", "%#{word.downcase}%", "%#{word.downcase}%").references(:brand, :categories)
     # word = word.downcase.gsub(/[^a-z 0-9]/, " ")
@@ -177,30 +185,34 @@ class Item < ActiveRecord::Base
     rescue
       puts "No such file #{self.number}.xml"
     else
-    
+      
+      noko.xpath("//us:Classification//oa:Note").each_with_index do |v, index|
+        ItemProperty.find_or_create_by(:item_id => current_item_id, :key => "feature_#{index}", :value => v.text, :order => index, :active => true)
+      end
+      
       noko.xpath("//oa:Specification//oa:Property//oa:NameValue").each_with_index do |k,v, index|  
-        ItemProperty.find_or_create_by(:item_id => current_item_id, :key => k.attributes["name"].to_s, :value => k.text.to_s, :order => index, :active => true)
+        ItemProperty.create(:item_id => current_item_id, :key => k.attributes["name"], :value => k.text, :order => index, :active => true)
       end
       
       # noko.xpath("//us:Matchbook").each_with_index do |k, index|  
-      #   # ItemProperty.create(:item_id => self.id, :key => k.attributes["name"], :value => k.text, :order => index, :active => true)
-      #   rel_make    = noko.xpath("//us:Matchbook")[index].element_children[0].element_children[0].text
-      #   rel_family  = noko.xpath("//us:Matchbook")[index].element_children[2].text
-      #   rel_model   = noko.xpath("//us:Matchbook")[index].element_children[3].text
-      #   
-      #   cat = Category.find_by(:slug => "inks-toners")
-      #   
-      #   make_slug = rel_make.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-')
-      #   make = Category.find_or_create_by(:name => rel_make, :parent_id => cat.id, :slug => make_slug)
-      #   
-      #   family_slug = rel_family.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-')
-      #   family = Category.find_or_create_by(:name => rel_family, :parent_id => make.id, :slug => family_slug)
-      #   
-      #   model_slug = rel_model.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-')
-      #   imodel = Category.find_or_create_by(:name => rel_model, :parent_id => family.id, :slug => model_slug)
-      #   
-      #   ItemCategory.find_or_create_by(:item_id => current_item_id, :category_id => imodel.id)
-      #   
+        # ItemProperty.create(:item_id => self.id, :key => k.attributes["name"], :value => k.text, :order => index, :active => true)
+        # rel_make    = noko.xpath("//us:Matchbook")[index].element_children[0].element_children[0].text
+        # rel_family  = noko.xpath("//us:Matchbook")[index].element_children[2].text
+        # rel_model   = noko.xpath("//us:Matchbook")[index].element_children[3].text
+        # 
+        # cat = Category.find_by(:slug => "inks-toners")
+        # 
+        # make_slug = rel_make.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-')
+        # make = Category.find_or_create_by(:name => rel_make, :parent_id => cat.id, :slug => make_slug)
+        # 
+        # family_slug = rel_family.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-')
+        # family = Category.find_or_create_by(:name => rel_family, :parent_id => make.id, :slug => family_slug)
+        # 
+        # model_slug = rel_model.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-')
+        # imodel = Category.find_or_create_by(:name => rel_model, :parent_id => family.id, :slug => model_slug)
+        # 
+        # ItemCategory.find_or_create_by(:item_id => current_item_id, :category_id => imodel.id)
+
       # end
       
       (0..(noko.xpath("//us:Matchbook").count)-1).each {|i| puts noko.xpath("//us:Matchbook//us:Device")[i] }
@@ -268,7 +280,11 @@ class Item < ActiveRecord::Base
         end
         
       end
-      Image.find_by(:item_id => current_item_id, :attachment_file_name => "NOA.JPG").destroy
+      
+      if !Image.find_by(:item_id => current_item_id, :attachment_file_name => "NOA.JPG").nil?
+        Image.find_by(:item_id => current_item_id, :attachment_file_name => "NOA.JPG").destroy
+      end
+      
     end
   
   end
