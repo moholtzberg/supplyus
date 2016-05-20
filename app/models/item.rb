@@ -186,8 +186,36 @@ class Item < ActiveRecord::Base
       puts "No such file #{self.number}.xml"
     else
       
-      noko.xpath("//us:Classification//oa:Note").each_with_index do |v, index|
-        ItemProperty.find_or_create_by(:item_id => current_item_id, :key => "feature_#{index}", :value => v.text, :order => index, :active => true)
+      unless noko.css("[status=Summary_Selling_Statement]").nil?
+        ItemProperty.find_or_create_by(item_id: current_item_id, key: "summary_selling_statement", value: noko.css("[status=Summary_Selling_Statement]").text, active: true)
+      end
+      
+      unless noko.css("[status=Selling_Point_1]").nil?
+        ItemProperty.find_or_create_by(item_id: current_item_id, key: "selling_point_1", value: noko.css("[status=Selling_Point_1]").text, active: true)
+      end
+      
+      unless noko.css("[status=Selling_Point_2]").nil?
+        ItemProperty.find_or_create_by(item_id: current_item_id, key: "selling_point_2", value: noko.css("[status=Selling_Point_2]").text, active: true)
+      end
+      
+      unless noko.css("[status=Selling_Point_3]").nil?
+        ItemProperty.find_or_create_by(item_id: current_item_id, key: "selling_point_3", value: noko.css("[status=Selling_Point_3]").text, active: true)
+      end
+      
+      unless noko.css("[status=Selling_Point_4]").nil?
+        ItemProperty.find_or_create_by(item_id: current_item_id, key: "selling_point_4", value: noko.css("[status=Selling_Point_4]").text, active: true)
+      end
+      
+      unless noko.css("[status=Selling_Point_5]").nil?
+        ItemProperty.find_or_create_by(item_id: current_item_id, key: "selling_point_5", value: noko.css("[status=Selling_Point_5]").text, active: true)
+      end
+      
+      unless noko.css("[status=Selling_Point_6]").nil?
+        ItemProperty.find_or_create_by(item_id: current_item_id, key: "selling_point_6", value: noko.css("[status=Selling_Point_6]").text, active: true)
+      end
+      
+      unless noko.css("[status=Selling_Point_7]").nil?
+        ItemProperty.find_or_create_by(item_id: current_item_id, key: "selling_point_7", value: noko.css("[status=Selling_Point_7]").text, active: true)
       end
       
       noko.xpath("//oa:Specification//oa:Property//oa:NameValue").each_with_index do |k,v, index|  
@@ -212,7 +240,6 @@ class Item < ActiveRecord::Base
         # imodel = Category.find_or_create_by(:name => rel_model, :parent_id => family.id, :slug => model_slug)
         # 
         # ItemCategory.find_or_create_by(:item_id => current_item_id, :category_id => imodel.id)
-
       # end
       
       (0..(noko.xpath("//us:Matchbook").count)-1).each {|i| puts noko.xpath("//us:Matchbook//us:Device")[i] }
@@ -220,24 +247,24 @@ class Item < ActiveRecord::Base
       brand = Brand.find_by(:prefix => noko.css("[agencyRole=Prefix_Number]").text.gsub(/\s+/, ""))
       brand = brand.id unless brand.nil?
         
-      noko.css("[listName=HierarchyLevel1]").each do |cat1|
-        cat1_slug = cat1.text.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-')
-        Category.find_or_create_by(:name => cat1.text, slug: cat1_slug)
-      end
-        
-      noko.css("[listName=HierarchyLevel2]").each_with_index do |cat2, index|
-        cat1 = Category.find_by(:slug => noko.css("[listName=HierarchyLevel1]")[index].text.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-'))
-        cat2_slug = cat2.text.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-')
-        Category.find_or_create_by(name: cat2.text, slug: cat2_slug, parent_id: cat1.id)
-      end
-        
-      noko.css("[listName=HierarchyLevel3]").each_with_index do |cat3, index|
-        cat2 = Category.find_by(:slug => noko.css("[listName=HierarchyLevel2]")[index].text.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-'))
-        cat3_slug = cat3.text.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-')
-        cat3 = Category.find_or_create_by(name: cat3.text, slug: cat3_slug, parent_id: cat2.id)
-        puts "-------------------------------------> #{current_item_id}"
-        ItemCategory.find_or_create_by(:item_id => current_item_id, :category_id => cat3.id)
-      end
+      # noko.css("[listName=HierarchyLevel1]").each do |cat1|
+      #   cat1_slug = cat1.text.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-')
+      #   Category.find_or_create_by(:name => cat1.text, slug: cat1_slug)
+      # end
+      #   
+      # noko.css("[listName=HierarchyLevel2]").each_with_index do |cat2, index|
+      #   cat1 = Category.find_by(:slug => noko.css("[listName=HierarchyLevel1]")[index].text.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-'))
+      #   cat2_slug = cat2.text.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-')
+      #   Category.find_or_create_by(name: cat2.text, slug: cat2_slug, parent_id: cat1.id)
+      # end
+      #   
+      # noko.css("[listName=HierarchyLevel3]").each_with_index do |cat3, index|
+      #   cat2 = Category.find_by(:slug => noko.css("[listName=HierarchyLevel2]")[index].text.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-'))
+      #   cat3_slug = cat3.text.downcase.gsub(/[^0-9A-z]/, '-').gsub(/[-]+/, '-')
+      #   cat3 = Category.find_or_create_by(name: cat3.text, slug: cat3_slug, parent_id: cat2.id)
+      #   puts "-------------------------------------> #{current_item_id}"
+      #   ItemCategory.find_or_create_by(:item_id => current_item_id, :category_id => cat3.id)
+      # end
         
       height = noko.xpath("//us:Packaging//us:Dimensions//oa:HeightMeasure").text
       width = noko.xpath("//us:Packaging//us:Dimensions//oa:WidthMeasure").text
@@ -252,13 +279,18 @@ class Item < ActiveRecord::Base
       bucket_name = '247officesuppy/400/400'
       s3 = AWS::S3.new()
       bucket = s3.buckets[bucket_name]
-    
+      
+      self.images.map(&:destroy)
+      
       image_array = []
       image_array.push noko.xpath("//oa:DrawingAttachment//oa:FileName").text
       noko.xpath("//oa:Attachment//oa:FileName").text.split(";").map {|a| image_array.push a}
-      image_array.push noko.xpath("//us:SkuGroupImage").text
       
-      image_array.each do |single_image|
+      if image_array.empty?
+        image_array.push noko.xpath("//us:SkuGroupImage").text
+      end
+      
+      image_array.each_with_index do |single_image, pos|
         
         single_image = single_image.tr(" ", "")
         if AWS::S3.new.buckets["247officesuppy"].objects["400/400/#{single_image}"].exists?
@@ -275,7 +307,9 @@ class Item < ActiveRecord::Base
           puts self.images.inspect
           unless Image.find_by(item_id: id, attachment_file_name: image)
             puts "No Image Found for #{id} and #{image}"
-            Image.create(:item_id => id, :attachment_file_name => image) unless image == "NOA.JPG"
+            Image.create(:item_id => id, :attachment_file_name => image, :position => pos) unless image == "NOA.JPG"
+          else
+            Image.find_by(id: self.images.first.id).update_attributes(:item_id => current_item_id, :attachment_file_name => image, :position => pos) unless image == "NOA.JPG"
           end
         end
         

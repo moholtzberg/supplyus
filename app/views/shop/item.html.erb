@@ -43,6 +43,8 @@
 			<% @item.categories.each do |cat| %>
 				<span class="label label-primary"><%= cat.name %></span>
 			<% end %>
+			<br/>
+			<strong><% @item.item_properties.where(:key => "summary_selling_statement") %></strong>
 		</div>
 	</div>
 
@@ -98,8 +100,10 @@
 				<div class="col-md-12">
 					<br/>
 					<ul>
-						<% @item.item_properties.where("key LIKE ?", "%feature_%").each do |feat| %>
+						<% @item.item_properties.where("key LIKE ?", "%selling_point_%").each do |feat| %>
+							<% unless feat.value.blank? %>
 							<li><%= feat.value %></li>
+							<% end %>
 						<% end %>
 					</ul>
 				</div>
@@ -119,7 +123,7 @@
 					<p>
 						<table class="table table-bordered table-condensed table-striped">
 						<% @item.item_properties.each do |pr| %>
-							<% unless pr.key =~ /feature_/ %>
+							<% unless pr.key =~ /(selling_point_|summary_selling_statement)/ %>
 							<tr>
 								<td><strong><%= pr.key%></strong></td>
 								<td><%= pr.value %></td>
