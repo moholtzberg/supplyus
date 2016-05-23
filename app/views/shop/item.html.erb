@@ -44,7 +44,7 @@
 				<span class="label label-primary"><%= cat.name %></span>
 			<% end %>
 			<br/>
-			<h4><%= @item.features.where(:key => "summary_selling_statement").first.value %></h4>
+			<h4><%= @item.features.where(:key => "summary_selling_statement").first.value unless @item.features.find_by(:key => "summary_selling_statement").nil? %></h4>
 		</div>
 	</div>
 
