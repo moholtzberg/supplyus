@@ -14,6 +14,9 @@ class Item < ActiveRecord::Base
   
   has_many :order_line_items
   has_many :item_properties
+  has_many :specifications, :class_name => "Specification"
+  has_many :features, :class_name => "Feature"
+  has_many :properties, :class_name => "Property"
   has_many :item_categories
   has_many :categories, :through => :item_categories
   belongs_to :category
@@ -186,36 +189,62 @@ class Item < ActiveRecord::Base
       puts "No such file #{self.number}.xml"
     else
       
+      self.item_properties.map(&:destroy)
+      
+      unless noko.xpath("//us:GlobalItem//us:GTINItem").nil?
+        ItemProperty.find_or_create_by(item_id: current_item_id, key: "gtin_item", value: noko.xpath("//us:GlobalItem//us:GTINItem").text, active: true, :type => "Property")
+      end
+      
+      unless noko.xpath("//us:GlobalItem//us:GTINCarton").nil?
+        ItemProperty.find_or_create_by(item_id: current_item_id, key: "gtin_carton", value: noko.xpath("//us:GlobalItem//us:GTINCarton").text, active: true, :type => "Property")
+      end
+      
+      unless noko.xpath("//us:GlobalItem//us:GTINBox").nil?
+        ItemProperty.find_or_create_by(item_id: current_item_id, key: "gtin_box", value: noko.xpath("//us:GlobalItem//us:GTINBox").text, active: true, :type => "Property")
+      end
+      
+      unless noko.xpath("//us:GlobalItem//us:GTINPallet").nil?
+        ItemProperty.find_or_create_by(item_id: current_item_id, key: "gtin_pallet", value: noko.xpath("//us:GlobalItem//us:GTINPallet").text, active: true, :type => "Property")
+      end
+      
+      unless noko.xpath("//us:GlobalItem//us:UPCRetail").nil?
+        ItemProperty.find_or_create_by(item_id: current_item_id, key: "upc_retail", value: noko.xpath("//us:GlobalItem//us:UPCRetail").text, active: true, :type => "Property")
+      end
+      
+      unless noko.xpath("//us:GlobalItem//us:UPCCarton").nil?
+        ItemProperty.find_or_create_by(item_id: current_item_id, key: "upc_carton", value: noko.xpath("//us:GlobalItem//us:UPCCarton").text, active: true, :type => "Property")
+      end
+      
       unless noko.css("[status=Summary_Selling_Statement]").nil?
-        ItemProperty.find_or_create_by(item_id: current_item_id, key: "summary_selling_statement", value: noko.css("[status=Summary_Selling_Statement]").text, active: true)
+        ItemProperty.find_or_create_by(item_id: current_item_id, key: "summary_selling_statement", value: noko.css("[status=Summary_Selling_Statement]").text, active: true, :type => "Feature")
       end
       
       unless noko.css("[status=Selling_Point_1]").nil?
-        ItemProperty.find_or_create_by(item_id: current_item_id, key: "selling_point_1", value: noko.css("[status=Selling_Point_1]").text, active: true)
+        ItemProperty.find_or_create_by(item_id: current_item_id, key: "selling_point_1", value: noko.css("[status=Selling_Point_1]").text, active: true, :type => "Feature")
       end
       
       unless noko.css("[status=Selling_Point_2]").nil?
-        ItemProperty.find_or_create_by(item_id: current_item_id, key: "selling_point_2", value: noko.css("[status=Selling_Point_2]").text, active: true)
+        ItemProperty.find_or_create_by(item_id: current_item_id, key: "selling_point_2", value: noko.css("[status=Selling_Point_2]").text, active: true, :type => "Feature")
       end
       
       unless noko.css("[status=Selling_Point_3]").nil?
-        ItemProperty.find_or_create_by(item_id: current_item_id, key: "selling_point_3", value: noko.css("[status=Selling_Point_3]").text, active: true)
+        ItemProperty.find_or_create_by(item_id: current_item_id, key: "selling_point_3", value: noko.css("[status=Selling_Point_3]").text, active: true, :type => "Feature")
       end
       
       unless noko.css("[status=Selling_Point_4]").nil?
-        ItemProperty.find_or_create_by(item_id: current_item_id, key: "selling_point_4", value: noko.css("[status=Selling_Point_4]").text, active: true)
+        ItemProperty.find_or_create_by(item_id: current_item_id, key: "selling_point_4", value: noko.css("[status=Selling_Point_4]").text, active: true, :type => "Feature")
       end
       
       unless noko.css("[status=Selling_Point_5]").nil?
-        ItemProperty.find_or_create_by(item_id: current_item_id, key: "selling_point_5", value: noko.css("[status=Selling_Point_5]").text, active: true)
+        ItemProperty.find_or_create_by(item_id: current_item_id, key: "selling_point_5", value: noko.css("[status=Selling_Point_5]").text, active: true, :type => "Feature")
       end
       
       unless noko.css("[status=Selling_Point_6]").nil?
-        ItemProperty.find_or_create_by(item_id: current_item_id, key: "selling_point_6", value: noko.css("[status=Selling_Point_6]").text, active: true)
+        ItemProperty.find_or_create_by(item_id: current_item_id, key: "selling_point_6", value: noko.css("[status=Selling_Point_6]").text, active: true, :type => "Feature")
       end
       
       unless noko.css("[status=Selling_Point_7]").nil?
-        ItemProperty.find_or_create_by(item_id: current_item_id, key: "selling_point_7", value: noko.css("[status=Selling_Point_7]").text, active: true)
+        ItemProperty.find_or_create_by(item_id: current_item_id, key: "selling_point_7", value: noko.css("[status=Selling_Point_7]").text, active: true, :type => "Feature")
       end
       
       noko.xpath("//oa:Specification//oa:Property//oa:NameValue").each_with_index do |k,v, index|  
