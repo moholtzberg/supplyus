@@ -1,74 +1,78 @@
+<div class="col-md-12">
 
-
-
-
-
-<div class="col-md-5">
-	
-	<div class="col-md-12">
-
-		<div class="widget panel">
-			
-			<div class="panel-body">
-				<% if !@account.name.nil? %><%= @account.name %><% end %>
-				<% if !@account.address_1.nil? %><br/><%= @account.address_1 %><% end %>
-				<% if !@account.address_2.nil? %><br/><%= @account.address_2 %><% end %>
-				<%= @account.city %>, <%= @account.state %> <%= @account.zip %><br/>
-				<% if !@account.phone.nil? %><br/><%= number_to_phone(@account.phone) %><% end %>
-				<% if !@account.fax.nil? %><br/><%= number_to_phone(@account.fax) %><% end %>
-				<hr/>
-				<% if !@account.stripe_customer_id.nil? %><%= @account.stripe_customer_id %><% end %>
-			</div>
+	<div class="widget panel">
+		
+		<div class="panel-body">
+			<% if !@account.name.nil? %><%= @account.name %><% end %>
+			<% if !@account.address_1.nil? %><br/><%= @account.address_1 %><% end %>
+			<% if !@account.address_2.nil? %><br/><%= @account.address_2 %><% end %>
+			<%= @account.city %>, <%= @account.state %> <%= @account.zip %><br/>
+			<% if !@account.phone.nil? %><br/><%= number_to_phone(@account.phone) %><% end %>
+			<% if !@account.fax.nil? %><br/><%= number_to_phone(@account.fax) %><% end %>
+			<hr/>
+			<% if !@account.stripe_customer_id.nil? %><%= @account.stripe_customer_id %><% end %>
 		</div>
 	</div>
 	
-	<div id="contacts" class="col-md-12">
-		<%= render :partial => "home/contacts", :locals => {:account => @account} %>
-	</div>
+	<ul class="nav nav-tabs nav-justified">
+		<li role="presentation" class="active"><a href="#orders" aria-controls="orders" role="tab" data-toggle="tab">Orders</a></li>
+		<li role="presentation"><a href="#account_item_prices" aria-controls="account_item_prices" role="tab" data-toggle="tab">Account Item Prices</a></li>
+	</ul>
 	
-	<div id="credit_cards" class="col-md-12">
-		<%= render :partial => "home/credit_cards", :locals => {:account => @account} %>
-	</div>
+	<div class="tab-content">
 	
-</div>
-
-<div class="col-md-7">
+		<br/>
 	
-	<div id="payment_plans" class="col-md-12">
-		<%= render :partial => "home/payment_plans", :locals => {:account => @account} %>
-	</div>
-	
-	<div id="equipment" class="col-md-12">
-		<%= render :partial => "home/equipment", :locals => {:account => @account} %>
-	</div>
-	
-	<div id="invoices" class="col-md-12">
-		<%= render :partial => "home/invoices", :locals => {:account => @account} %>
-	</div>
-	
-</div>
-
-<div id="account_item_prices" class="col-md-12">
-	<%= link_to "Copy Price Catalogue", new_account_item_price_path(:copy => true, :account_id => @account.id), :class => "btn btn-primary", :remote => true  %>
-	<table class="table table-bordered table-condensed table-hover">
-		<tr>
-			<th>Item Number</th>
-			<th>Description</th>
-			<th width="10%">Contract Price</th>
-			<th width="10%">Cost Price</th>
-		</tr>
+		<div role="tabpanel" class="tab-pane active" id="orders">
 		
-		<% @item_prices.each do |a| %>
-		<tr <% if a.item && (a.price.to_f < a.item.cost_price.to_f) %>class="danger" <% end %>>
-			<td><%= a.item.number unless a.item.nil? %></td>
-			<td><%= a.item.name unless a.item.nil? %></td>
-			<td><%= number_to_currency(a.price) %></td>
-			<td><%= number_to_currency(a.item.cost_price) unless a.item.nil? %></td>
-			<td><%= link_to "Delete", account_item_price_path(a.id), :method => :delete, :remote => true %></td>
-			
-		</tr>
-		<% end %>
-	</table>
+			<table class="table table-bordered table-condensed table-striped">
+				<tr>
+					<th>Complete</th>
+					<th>Last Update</th>
+					<th>Number</th>
+					<th width="20%">Total</th>
+					<th width="20%">Amount Shipped</th>
+					<th width="20%">Amount Fulfilled</th>
+				</tr>
+				<% @account.orders.each do |it| %>
+				<tr>
+					<td><%= it.completed_at.nil? ? "No" : "Yes" %></td>
+					<td><%= it.updated_at %>
+					<td><%= link_to it.number, it %></td>
+					<td><%= number_to_currency(it.sub_total) %></td>
+					<td><%= number_to_currency(it.amount_shipped) %></td>
+					<td><%= number_to_currency(it.amount_fulfilled) %></td>
+				</tr>
+				<% end %>
+			</table>
+		
+		</div>
+	
+		<div id="account_item_prices" class="tab-pane" role="tabpanel">
+			<%= link_to "Copy Price Catalogue", new_account_item_price_path(:copy => true, :account_id => @account.id), :class => "btn btn-primary", :remote => true  %>
+			<table class="table table-bordered table-condensed table-hover">
+				<tr>
+					<th>Item Number</th>
+					<th>Description</th>
+					<th width="10%">Contract Price</th>
+					<th width="10%">Cost Price</th>
+				</tr>
+
+				<% @item_prices.limit(50).each do |a| %>
+				<tr <% if a.item && (a.price.to_f < a.item.cost_price.to_f) %>class="danger" <% end %>>
+					<td><%= a.item.number unless a.item.nil? %></td>
+					<td><%= a.item.name unless a.item.nil? %></td>
+					<td><%= number_to_currency(a.price) %></td>
+					<td><%= number_to_currency(a.item.cost_price) unless a.item.nil? %></td>
+					<td><%= link_to "Delete", account_item_price_path(a.id), :method => :delete, :remote => true %></td>
+
+				</tr>
+				<% end %>
+			</table>
+		</div>
+	
+	</div>
+
 </div>
 
 <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -85,6 +89,6 @@
 		
 		</div>
 	</div>
-</div>		
+</div>
 
 <%= javascript_include_tag "https://js.stripe.com/v2/" %>
