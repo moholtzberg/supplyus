@@ -16,7 +16,7 @@
 			<td><%= @order.number %></td>
 			<td><%= @order.ship_to_account_name %></td>
 			<td><%= f.date_field :ship_date, :class => "form-control", :value => Date.today %></td>
-			<td><%= f.select :carrier, ["UPS", "FedEx", "US Postal Service", "Ensenda", "Roadrunner", "Dohrn"], {}, :class => "form-control" %></td>
+			<td><%= f.select :carrier, ["UPS", "FedEx", "US Postal Service", "Ensenda", "Roadrunner", "Dohrn", "Saia", "DHL", "Midwest Motor Express", "Moran Transportaion", "Beaver Express"], {}, :class => "form-control" %></td>
 		</tr>
 		
 	</table>

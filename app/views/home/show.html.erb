@@ -1,19 +1,108 @@
-<div class="col-md-6">
-	<div class="panel widget">
-		<div class="panel-heading">
-			
+<div class="col-md-2">
+	<div class="panel panel-default">
+		<div class="panel-heading text-center">
+			Total Sales
 		</div>
-		<div class="panel-body">
-			<% PaymentPlan.bill_date_passed.each do |p| %>
-				Next Bill Date: <%= p.next_bill_date %><br/>
-			<% end %>
+		<div class="panel-body text-center">
+			<%= number_to_currency(Order.includes(:order_line_items).is_complete.map(&:sub_total).sum) %>
 		</div>
 	</div>
 </div>
-<div class="col-md-6">
-	<div class="panel widget">
-		<% CreditCard.expiring_soon.each do |cc| %>
-			<%= cc.inspect%><br/>
-		<% end %>
+<div class="col-md-2">
+	<div class="panel panel-primary">
+		<div class="panel-heading text-center">
+			Total Orders
+		</div>
+		<div class="panel-body text-center">
+			<%= number_to_human(Order.is_complete.count) %>
+		</div>
+	</div>
+</div>
+<div class="col-md-2">
+	<div class="panel panel-success">
+		<div class="panel-heading text-center">
+			Total Accounts
+		</div>
+		<div class="panel-body text-center">
+			<p class="text-success"><strong><%= number_to_human(Account.count) %></strong></p>
+		</div>
+	</div>
+</div>
+<div class="col-md-2">
+	<div class="panel panel-warning">
+		<div class="panel-heading text-center">
+			Total Users
+		</div>
+		<div class="panel-body text-center">
+			<%= number_to_human(User.count) %>
+		</div>
+	</div>
+</div>
+<div class="col-md-2">
+	<div class="panel panel-danger">
+		<div class="panel-heading text-center">
+			Total Items
+		</div>
+		<div class="panel-body text-center">
+			<%= number_to_human(Item.active.count) %>
+		</div>
+	</div>
+</div>
+<div class="col-md-2">
+	<div class="panel panel-info">
+		<div class="panel-heading text-center">
+			Total Items
+		</div>
+		<div class="panel-body text-center">
+			<%= number_to_human(Category.is_active.count) %>
+		</div>
+	</div>
+</div>
+
+<div class="col-md-12">
+	<div class="panel panel-info">
+		<div class="panel-heading text-center">
+			Key Month over Month Stats
+		</div>
+		<div class="panel-body text-center">
+			<table class="table">
+				<tr>
+					<th span="10%">&nbsp;</th>
+					<th span="15%">Month to Date</th>
+					<th span="15%">Same Time Last Month</th>
+					<th span="15%">Last Month</th>
+					<th span="15%">2 Months Ago</th>
+					<th span="15%">3 Months Ago</th>
+					<th span="15%">Year to date</th>
+				</tr>
+				<tr>
+					<td>Revenue</td>
+					<td><%= number_to_currency(Order.includes(:order_line_items => [:item]).is_complete.by_date_range(Date.today.beginning_of_month, Date.today).map(&:sub_total).sum) %></td>
+					<td><%= number_to_currency(Order.includes(:order_line_items => [:item]).is_complete.by_date_range(1.month.ago, 1.day.ago).map(&:sub_total).sum) %></td>
+					<td><%= number_to_currency(Order.includes(:order_line_items => [:item]).is_complete.by_date_range(1.month.ago.beginning_of_month, 1.month.ago.end_of_month).map(&:sub_total).sum) %></td>
+					<td><%= number_to_currency(Order.includes(:order_line_items => [:item]).is_complete.by_date_range(2.month.ago.beginning_of_month, 2.month.ago.end_of_month).map(&:sub_total).sum) %></td>
+					<td><%= number_to_currency(Order.includes(:order_line_items => [:item]).is_complete.by_date_range(3.month.ago.beginning_of_month, 3.month.ago.end_of_month).map(&:sub_total).sum) %></td>
+					<td><%= number_to_currency(Order.includes(:order_line_items => [:item]).is_complete.by_date_range(Date.today.beginning_of_year, Date.today).map(&:sub_total).sum) %></td>
+				</tr>
+				<tr>
+					<td>Orders</td>
+					<td><%= Order.includes(:order_line_items => [:item]).is_complete.by_date_range(Date.today.beginning_of_month, Date.today).count %></td>
+					<td><%= Order.includes(:order_line_items => [:item]).is_complete.by_date_range(1.month.ago, 1.day.ago).count %></td>
+					<td><%= Order.includes(:order_line_items => [:item]).is_complete.by_date_range(1.month.ago.beginning_of_month, 1.month.ago.end_of_month).count %></td>
+					<td><%= Order.includes(:order_line_items => [:item]).is_complete.by_date_range(2.month.ago.beginning_of_month, 2.month.ago.end_of_month).count %></td>
+					<td><%= Order.includes(:order_line_items => [:item]).is_complete.by_date_range(3.month.ago.beginning_of_month, 3.month.ago.end_of_month).count %></td>
+					<td><%= Order.includes(:order_line_items => [:item]).is_complete.by_date_range(Date.today.beginning_of_year, Date.today).count %></td>
+				</tr>
+				<tr>
+					<td>Profit</td>
+					<td><%= number_to_currency(Order.includes(:order_line_items => [:item]).is_complete.by_date_range(Date.today.beginning_of_month, Date.today).map(&:profit).sum) %></td>
+					<td><%= number_to_currency(Order.includes(:order_line_items => [:item]).is_complete.by_date_range(1.month.ago, 1.day.ago).map(&:profit).sum) %></td>
+					<td><%= number_to_currency(Order.includes(:order_line_items => [:item]).is_complete.by_date_range(1.month.ago.beginning_of_month, 1.month.ago.end_of_month).map(&:profit).sum) %></td>
+					<td><%= number_to_currency(Order.includes(:order_line_items => [:item]).is_complete.by_date_range(2.month.ago.beginning_of_month, 2.month.ago.end_of_month).map(&:profit).sum) %></td>
+					<td><%= number_to_currency(Order.includes(:order_line_items => [:item]).is_complete.by_date_range(3.month.ago.beginning_of_month, 3.month.ago.end_of_month).map(&:profit).sum) %></td>
+					<td><%= number_to_currency(Order.includes(:order_line_items => [:item]).is_complete.by_date_range(Date.today.beginning_of_year, Date.today).map(&:profit).sum) %></td>
+				</tr>
+			</table>
+		</div>
 	</div>
 </div>
