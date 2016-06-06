@@ -80,7 +80,9 @@ class Order < ActiveRecord::Base
     # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_sub_total"]) {
     #   OrderLineItem.where(order_id: id).group(:order_line_number, :price, :quantity, :quantity_canceled).sum(:price, :quantity).inject(0) {|sum, k| sum + (k[0][1].to_f * (k[0][2].to_f - k[0][3].to_f))}
     # }
-    order_line_items.map(&:sub_total).sum
+    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_sub_total"]) {
+      order_line_items.map(&:sub_total).sum
+    }
   end
   
   def shipping_total
@@ -93,8 +95,14 @@ class Order < ActiveRecord::Base
   def total
     # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_total"]) {
     #   Rails.cache.delete("#{self.class.to_s.downcase}_open")
-    sub_total.to_f + shipping_total.to_f
+    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_total"]) {
+      sub_total.to_f + shipping_total.to_f
+    }
     # }
+  end
+  
+  def profit
+    order_line_items.map(&:profit).sum
   end
   
   def quantity
@@ -106,7 +114,9 @@ class Order < ActiveRecord::Base
     # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_quantity"]) {
     # OrderLineItem.where(order_id: id).group(:order_line_number, :quantity, :quantity_canceled).sum(:quantity).inject(0) {|sum, k| sum + (k[0][1].to_f - k[0][2].to_f)}
     # }
-    order_line_items.map(&:actual_quantity).sum
+    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_quantity"]) {
+      order_line_items.map(&:actual_quantity).sum
+    }
   end
   
   def shipped
@@ -164,7 +174,9 @@ class Order < ActiveRecord::Base
     #     total
     #   end
     # }
-    order_line_items.map(&:quantity_shipped).sum
+    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_quantity_shipped"]) {
+      order_line_items.map(&:quantity_shipped).sum
+    }
   end
   
   def amount_shipped
@@ -175,7 +187,9 @@ class Order < ActiveRecord::Base
     #     total
     #   end
     # }
-    order_line_items.map(&:amount_shipped).sum
+    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_amount_shipped"]) {
+      order_line_items.map(&:amount_shipped).sum
+    }
   end
   
   def fulfilled
@@ -208,7 +222,9 @@ class Order < ActiveRecord::Base
     #     total
     #   end
     # }
-    order_line_items.map(&:quantity_fulfilled).sum
+    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_quantity_fulfilled"]) {
+      order_line_items.map(&:quantity_fulfilled).sum
+    }
   end
   
   def amount_fulfilled
@@ -219,26 +235,34 @@ class Order < ActiveRecord::Base
     #     total
     #   end
     # }
-    order_line_items.map(&:amount_fulfilled).sum
+    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_amount_fulfilled"]) {
+      order_line_items.map(&:amount_fulfilled).sum
+    }
   end
   
   def payments_total
-    total_paid = 0.0
-    self.payments.each {|a| total_paid = total_paid + a.amount}
-    total_paid
+    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_payments_total"]) {
+      total_paid = 0.0
+      self.payments.each {|a| total_paid = total_paid + a.amount}
+      total_paid
+    }
   end
   
   def paid
-    total_paid = 0.0
-    self.payments.each {|a| total_paid = total_paid + a.amount}
-    total_paid == self.total ? true : false
+    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_paid"]) {
+      total_paid = 0.0
+      self.payments.each {|a| total_paid = total_paid + a.amount}
+      total_paid == self.total ? true : false
+    }
   end
   
   def balance_due
-    total_paid = 0.0
-    puts self.payments.count
-    self.payments.each {|a| total_paid = total_paid + a.amount}
-    return (self.total.to_f - total_paid.to_f)
+    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_balance_due"]) {
+      total_paid = 0.0
+      puts self.payments.count
+      self.payments.each {|a| total_paid = total_paid + a.amount}
+      return (self.total.to_f - total_paid.to_f)
+    }
   end
   
   def due_on
