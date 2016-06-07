@@ -169,7 +169,11 @@ class Item < ActiveRecord::Base
     # total = 0.0
     # OrderLineItem.joins(:item).where(:item_id => id).each {|o| total += o.quantity.to_i}
     # total
-    OrderLineItem.where(item_id: id).sum(:quantity)
+    OrderLineItem.where(item_id: id).map(&:actual_quantity).sum
+  end
+  
+  def times_purchased_by(account_id)
+    Account.find(account_id).order_line_items.where(item_id: id).map(&:actual_quantity).sum
   end
   
   def self.times_ordered

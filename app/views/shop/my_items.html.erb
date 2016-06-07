@@ -1,3 +1,50 @@
 <% @items.each do |i| %>
-	<%= i.number %> - <%= i.times_purchased %><hr/>
+	<div id=item_"<%= i.id %>" class="media item_listing">
+
+		<div class="col-md-9 col-xs-12">
+			<div class="media-left">
+				<a href="#">
+					<%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/#{i.default_image_path}", :class => "media-object", :height => "100", :width => "100" %>
+				</a>
+			</div>
+			<div class="media-body">
+				<h4 class="media-heading">
+					<strong><% if i.slug.blank? or i.default_category.slug.blank? %><%= "#{i.number}" %><% else %><%= link_to "#{i.number}", "#{i.default_category.slug}/#{i.slug}" %> <% end %></strong> - 
+					<%= "#{i.name}" %>
+				</h4>
+				<p class="hidden-xs"><%= i.description.truncate_words(36, omission: '...') unless i.description.nil? %></p>
+				<p>
+					<% if current_user.account %><span class="label label-success">Purchased <%= pluralize(i.times_purchased_by(current_user.account.id).to_i, "Time") %></span><% end %>
+					<% unless i.brand.nil? %><span class="label label-warning"><%= i.brand.name %></span><% end %>
+					<% i.item_categories.limit(25).each do |cat| %>&nbsp;<span class="label label-info"><%= cat.category.name %></span><% end %>
+				</p>
+			</div>
+		</div>
+		
+		<div class="col-md-3 col-xs-12">
+			<div class="pull-right">
+				<%= form_for @cart, url: add_to_cart_path, :class => "form-inline", :remote => true do |f| %>
+					<div class="form-group">
+
+						<%if (current_user and current_user.has_account and i.actual_price(current_user.account.id) <= i.price.to_f) %>
+						<h4><span class="hidden-xs">Your Price:</span> <%= number_to_currency(i.actual_price(current_user.account.id)) %><h4>
+						<% else %>
+						<h4><span class="hidden-xs">Your Price:</span> <%= number_to_currency(i.price) %><h4>
+						<% end %>
+
+						<%= f.hidden_field :item_id, :value => i.id %>
+						<div class="input-group">
+							<%= f.number_field :quantity, :value => 1, :class => "form-control input-sm input-block" %>
+						</div>
+					</div>
+					<%= f.submit "Add To Cart", :class => "btn btn-primary btn-sm btn-block" %>
+				<% end %>
+			</div>
+		</div>
+
+	</div>
+	
+	<hr/>
 <% end %>
+
+<%= will_paginate @items, renderer: BootstrapPagination::Rails %>

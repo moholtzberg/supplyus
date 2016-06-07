@@ -50,6 +50,7 @@ class Account < ActiveRecord::Base
   has_many :invoices
   has_many :credit_cards
   has_many :orders
+  has_many :order_line_items, :through => :orders
   has_many :account_item_prices
   #   
   validates :name, :presence => true
