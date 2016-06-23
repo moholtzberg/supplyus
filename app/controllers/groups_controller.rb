@@ -3,6 +3,7 @@ class GroupsController < ApplicationController
   helper_method :sort_column, :sort_direction
   
   def index
+    authorize! :read, Group
     @groups = Group.order(sort_column + " " + sort_direction)
     unless params[:term].blank?
       @groups = @groups.lookup(params[:term]) if params[:term].present?
@@ -14,15 +15,18 @@ class GroupsController < ApplicationController
   end
   
   def new
+    authorize! :create, Group
     @group = Group.new
   end
   
   def show
+    authorize! :read, Group
     @group = Group.find(params[:id])
   end
 
   
   def create
+    authorize! :create, Group
     @group = Group.new(group_params)
     if @group.save
       @groups = Group.order(sort_column + " " + sort_direction)

@@ -2,10 +2,12 @@ class ItemVendorPricesController < ApplicationController
   layout "admin"
   
   def new
+    authorize! :create, ItemVendorPrice
     @item_vendor_price = ItemVendorPrice.new(:item_id => params[:item_id])
   end
   
   def create
+    authorize! :create, ItemVendorPrice
     puts params.inspect
     item = Item.find_by(:number => params[:item_vendor_price][:item_number])
     acct = Vendor.find_by(:name => params[:item_vendor_price][:vendor_name])

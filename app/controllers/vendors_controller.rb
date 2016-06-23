@@ -1,8 +1,11 @@
 class VendorsController < ApplicationController
   layout "admin"
   helper_method :sort_column, :sort_direction
-  
+
+  # For checking rights permissions here we use alias for vendor -> :vendor, not Class (Vendor), because Vendor inherits from Account. It described in ability.rb
+
   def index
+    authorize! :read, :vendor
     @vendors = Vendor.order(sort_column + " " + sort_direction).where("name like ?", "%#{params[:term]}%")
     respond_to do |format|
       format.html
@@ -11,14 +14,17 @@ class VendorsController < ApplicationController
   end
   
   def new
+    authorize! :create, :vendor
     @vendor = Vendor.new
   end
   
   def show
+    authorize! :read, :vendor
     @vendor = Vendor.find(params[:id])
   end
   
   def create
+    authorize! :create, :vendor
     @vendor = Vendor.new(vendor_params)
     if @vendor.save
       @vendors = Vendor.order(sort_column + " " + sort_direction)

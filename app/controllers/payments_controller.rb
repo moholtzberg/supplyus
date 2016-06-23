@@ -2,6 +2,7 @@ class PaymentsController < ApplicationController
   layout "admin"
   
   def new
+    authorize! :create, Payment
     @payment = Payment.new
     puts "===================> #{params[:order_id]}"
     @order = Order.find_by_id(params[:order_id])
@@ -14,6 +15,7 @@ class PaymentsController < ApplicationController
   end
   
   def create
+    authorize! :create, Payment
     puts params[:payment][:account_id]
     
     unless PaymentMethod.find(params[:payment][:payment_method]).name == "CreditCard"

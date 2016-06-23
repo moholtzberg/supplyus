@@ -1,0 +1,9 @@
+<div class="col-md-12">
+  <h2>New role</h2>
+  <br>
+  <%= simple_form_for @role, wrapper: :horizontal_form, html: {class: 'form-inline'} do |f| %>
+      <%= f.input :name %>
+      <%= f.button :submit, 'Create' %>
+  <% end %>
+</div>
+

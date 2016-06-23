@@ -1,0 +1,14 @@
+<div class="role_block">
+  <%= select_tag 'user_roles', options_from_collection_for_select(Role.all, 'id', 'name', role ? role.id : nil), include_blank: true,
+                 onchange: 'Recurring.roles.addRole($(this));', data: {user_id: user.id, path: add_role_to_user_roles_path}, id: nil, disabled: role.present?, class: "role_select #{'disabled' if role.present?}" %>
+  <span class="role_icons_block">
+
+    <%= link_to 'javascript: void(0)', onclick: "Recurring.roles.removeRole($(this))",
+                  data: { user_id: user.id, path: remove_role_from_user_roles_path }, class: 'role_action_icon remove_icon active' do %>
+      <i class="fa fa-minus-circle" aria-hidden="true"></i>
+    <% end %>
+    <%= link_to 'javascript: void(0)', onclick: "Recurring.roles.cloneSelect($(this))", class: 'role_action_icon clone_icon active', data: {} do %>
+      <i class="fa fa-plus-circle" aria-hidden="true"></i>
+    <% end %>
+  </span>
+</div>

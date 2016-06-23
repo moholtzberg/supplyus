@@ -3,6 +3,7 @@ class UsersController < ApplicationController
   helper_method :sort_column, :sort_direction
   
   def index
+    authorize! :read, User
     @users = User.order(sort_column + " " + sort_direction).includes(:account)
     unless params[:term].blank?
       @users = @users.lookup(params[:term]) if params[:term].present?
@@ -11,22 +12,27 @@ class UsersController < ApplicationController
   end
   
   def new
+    authorize! :create, User
     @user = User.new
   end
   
   def edit
+    authorize! :update, User
     @user = User.find_by(id: params[:id])
   end
   
   def edit_password
+    authorize! :update, User
     @user = User.find_by(id: params[:user_id])
   end
   
   def reset_password
+    authorize! :update, User
     User.find_by(id: params[:user_id]).send_reset_password_instructions
   end
   
   def create
+    authorize! :create, User
     @user = User.new(user_params)
     puts @user.inspect
     if @user.save
@@ -40,6 +46,7 @@ class UsersController < ApplicationController
   end
   
   def update
+    authorize! :update, User
     @user = User.find_by(id: params[:id])
     puts @user.email
     if @user.update_attributes(user_params)
@@ -56,6 +63,7 @@ class UsersController < ApplicationController
   end
   
   def show
+    authorize! :read, User
     @users = User.find(params[:id])
   end
   

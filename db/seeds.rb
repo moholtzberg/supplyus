@@ -11,6 +11,11 @@
 #  {name: "Office Technology", slug: "technology", description: "Shop Office Technology"},
 #  {name: "Office Furniture", slug: "office-furniture", description: "Shop Office Furniture"}
 #])
+
+# categories = Category.create([
+#  {name: "test 1", slug: "inks-toners", description: "Shop Office Supplies"}
+# ])
+
 #items = Item.create([
 #  {category_id: 1, number: "TN450COMP", name: "Brother® TN450 Compatible Toner", slug: "brother-tn450-compatible-toner", price: 49.99, sale_price: 39.99, cost_price: 21.95},
 #  {category_id: 1, number: "TN750COMP", name: "Brother® TN750 Compatible Toner", slug: "brother-tn750-compatible-toner", price: 59.99, sale_price: 49.99, cost_price: 29.95},

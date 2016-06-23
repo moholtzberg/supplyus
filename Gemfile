@@ -55,12 +55,21 @@ gem 'stripe'
 # gem 'whenever'
 gem 'rufus-scheduler'
 gem 'mailgun_rails'
+# Roles & Permissions
+gem 'cancancan', '~> 1.13', '>= 1.13.1'
+gem 'rolify', '~> 5.1'
+
+gem 'simple_form', '~> 3.2', '>= 3.2.1'
 
 group :development, :test do
   gem 'capistrano-rails', '~> 1.1.3'
   gem 'capistrano-bundler'
   gem 'capistrano-rvm'
-  gem 'byebug'
+  # gem 'byebug'
+  gem 'jazz_hands', github: 'nixme/jazz_hands', branch: 'bring-your-own-debugger'
+  gem 'pry-byebug'
   gem 'web-console', '~> 2.0'
 end
+
+gem 'quiet_assets', '~> 1.1', group: :development
 

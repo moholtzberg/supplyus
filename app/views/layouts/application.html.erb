@@ -19,7 +19,10 @@
 			<header id="header" data-hook>
 				
 				<%= render :partial => "shop/header" %>
-				
+
+        <div id="flashes">
+          <%= bootstrap_flash %>
+        </div>
 			</header>
 
 			<div id="content" class="row" data-hook>
@@ -29,8 +32,6 @@
 				<%# render :partial => 'spree/shared/sidebar' if content_for? :sidebar %>
 
 				<div id="center-panel" class="col-md-<%= !content_for?(:sidebar) ? "12" : "10" %>" data-hook>
-
-					<%# flash_messages %>
 
 					<%= yield %>
 

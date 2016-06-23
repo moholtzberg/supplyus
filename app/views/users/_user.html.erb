@@ -4,6 +4,17 @@
 <td class="visible-xs"><%= "#{user.first_name} #{user.last_name}" %></td>
 <td class="hidden-xs"><%= user.email %></td>
 <td><%= user.account.name unless user.account.blank? %></td>
+<td>
+
+  <% if user.roles.any? %>
+    <% user.roles.each do |role| %>
+      <%= render 'role_select', user: user, role: role %>
+    <% end %>
+  <% else %>
+      <%= render 'role_select', user: user, role: nil %>
+  <% end %>
+
+</td>
 <td class="hidden-xs"><%= user.phone_number %></td>
 <td class="hidden-xs"><%= user.current_sign_in_at.strftime("%m/%d/%y") unless user.current_sign_in_at.nil? %></td>
 <td class="hidden-xs"><%= user.last_sign_in_ip %></td>

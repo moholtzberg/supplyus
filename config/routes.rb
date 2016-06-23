@@ -80,6 +80,12 @@ Rails.application.routes.draw do
       end
       resources :vendors
       resources :settings
+      resources :roles do
+        collection do
+          post :add_role_to_user
+          delete :remove_role_from_user
+        end
+      end
       get "equipment/delete/:id" => "equipment#delete"
       get "items/delete/:id" => "items#delete"
       get "/" => "home#show"

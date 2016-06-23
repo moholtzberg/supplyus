@@ -1,0 +1,33 @@
+<br>
+<%= simple_form_for @role, wrapper: :horizontal_form, html: {class: 'form-inline permissions_form'} do |f| %>
+    <%= f.input :name, label: 'Role:' %>
+    <div class="clearfix"></div>
+    <br>
+    <h4>Permissions</h4>
+
+    <% if @role.name == 'super_admin' %>
+      <p>Role <i>super_admin</i> has all permissions.</p>
+    <% else %>
+        <div id="permissions_block">
+          <% if (permissions = @role.permissions).any? %>
+              <% permissions.each_with_index do |perm, index| %>
+                  <%= render 'permission_form', f: f, perm: perm, index: index %>
+              <% end %>
+          <% else %>
+              <%= render 'permission_form', f: f, perm: @permission, index: 0 %>
+          <% end %>
+        </div>
+
+        <a id="add-permisson-block" onclick="Recurring.roles.addPermissionBlock(); " href="javascript: void(0);">
+          <i class="fa fa-plus-circle" aria-hidden="true"></i>
+          <span>Add permisson block</span>
+        </a>
+        <br>
+        <br>
+        <input class="destroy_ids" name="destroy_ids[]" type="hidden">
+
+        <%= f.button :submit, 'Save' %>
+    <% end %>
+
+<% end %>
+<br><br>

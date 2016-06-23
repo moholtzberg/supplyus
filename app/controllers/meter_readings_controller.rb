@@ -2,16 +2,19 @@ class MeterReadingsController < ApplicationController
   layout "admin"
   
   def show
+    authorize! :read, Account
     @meter_reading = MeterReading.find_by(:id => params[:meter_id])
   end
   
   def new
+    authorize! :create, Account
     @meter_id = params[:meter_id]
     @meter_reading = MeterReading.new
     @last_meter = Meter.find_by(:id => params[:meter_id]).last_valid_meter
   end
   
   def create
+    authorize! :create, Account
     @meter_id = params[:meter_reading][:meter_id]
     puts "------>>> #{Meter.find_by(:id => params[:meter_reading][:meter_id]).equipment.inspect}"
     @account = Meter.find_by(:id => params[:meter_reading][:meter_id]).equipment.account

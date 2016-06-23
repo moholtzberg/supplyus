@@ -2,12 +2,14 @@ class ShipmentsController < ApplicationController
   layout "admin"
   
   def new
+    authorize! :create, Shipment
     @order = Order.find_by(:id => params[:order_id])
     @shipment = Shipment.new(:order_id => @order.id)
     @line_items = OrderLineItem.where(:order_id => @order.id)
   end
   
   def create
+    authorize! :create, Shipment
     shipment = Shipment.new(:date => Time.now, :order_id => params[:order_id], :carrier => params[:shipment][:carrier], :ship_date => params[:shipment][:ship_date])
     
     params[:lines].each do |line|

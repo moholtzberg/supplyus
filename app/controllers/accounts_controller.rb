@@ -3,6 +3,7 @@ class AccountsController < ApplicationController
   helper_method :sort_column, :sort_direction
   
   def index
+    authorize! :read, Account
     @accounts = Account.order(sort_column + " " + sort_direction)
     unless params[:term].blank?
       @accounts = @accounts.lookup(params[:term]) if params[:term].present?
@@ -14,15 +15,18 @@ class AccountsController < ApplicationController
   end
   
   def new
+    authorize! :create, Account
     @account = Account.new
   end
   
   def show
+    authorize! :read, Account
     @account = Account.find(params[:id])
     @item_prices = AccountItemPrice.where(account_id: @account.id).includes(:item)
   end
   
   def edit
+    authorize! :update, Account
     @account = Account.find_by(:id => params[:id])
   end
   
@@ -56,6 +60,7 @@ class AccountsController < ApplicationController
   # end
   
   def create
+    authorize! :create, Account
     @account = Account.new(account_params)
     if @account.save
       @accounts = Account.order(sort_column + " " + sort_direction)
@@ -79,6 +84,7 @@ class AccountsController < ApplicationController
   end
   
   def update
+    authorize! :update, Account
     @account = Account.find_by(:id => params[:id])
     if @account.update_attributes(account_params)
       @accounts = Account.all
@@ -91,6 +97,7 @@ class AccountsController < ApplicationController
   end
   
   def statements
+    authorize! :read, Account
     @account = Account.find_by(:id => params[:id])
     puts params[:from_date]
     @from = Time.strptime(params[:from_date], '%m/%d/%y').kind_of?(Date) ? Time.strptime(params[:from_date], '%m/%d/%y') : DateTime.current

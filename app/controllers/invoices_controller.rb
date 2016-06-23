@@ -2,6 +2,7 @@ class InvoicesController < ApplicationController
   layout "admin"
   
   def index
+    authorize! :read, Invoice
     @invoices = Invoice.all
     if params[:account_id]
       @invoices.by_account(params[:account_id])
@@ -12,10 +13,12 @@ class InvoicesController < ApplicationController
   end
   
   def show
+    authorize! :read, Invoice
     @invoice = Invoice.find(params[:id])
   end
   
   def new
+    authorize! :create, Invoice
     @order = Order.find_by(:id => params[:order_id])
     puts @order.completed_at
     @invoice = Invoice.new(:order_id => @order.id)
@@ -23,6 +26,7 @@ class InvoicesController < ApplicationController
   end
   
   def create
+    authorize! :create, Invoice
     invoice = Invoice.new(:date => params[:invoice][:date], :order_id => params[:order_id], :due_date => params[:invoice][:due_date])
     order = Order.find_by(:id => params[:order_id])
     order.update_attributes(:date => params[:invoice][:date], :due_date => params[:invoice][:due_date])

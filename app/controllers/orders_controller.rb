@@ -3,6 +3,7 @@ class OrdersController < ApplicationController
   helper_method :sort_column, :sort_direction
   
   def index
+    authorize! :read, Order
     @orders = Order.is_complete.includes(:account, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}).unshipped
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
@@ -12,6 +13,7 @@ class OrdersController < ApplicationController
   end
   
   def shipped
+    authorize! :read, Order
     @orders = Order.is_complete.includes(:account, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}).shipped
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
@@ -22,6 +24,7 @@ class OrdersController < ApplicationController
   end
   
   def fulfilled
+    authorize! :read, Order
     @orders = Order.is_complete.includes(:account, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}).fulfilled
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
@@ -32,6 +35,7 @@ class OrdersController < ApplicationController
   end
   
   def unfulfilled
+    authorize! :read, Order
     @orders = Order.is_complete.includes(:account, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}).unfulfilled
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
@@ -42,6 +46,7 @@ class OrdersController < ApplicationController
   end
   
   def locked
+    authorize! :read, Order
     @orders = Order.is_complete.is_locked.includes(:account, :order_line_items)
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
@@ -51,6 +56,7 @@ class OrdersController < ApplicationController
   end
   
   def incomplete
+    authorize! :read, Order
     @orders = Order.is_incomplete.includes(:account, :order_line_items)
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
@@ -60,6 +66,7 @@ class OrdersController < ApplicationController
   end
   
   def new
+    authorize! :create, Order
     if params[:account_id]
       @accounts = Account.find_by(:id => params[:account_id])
       @order = Order.create(:account_id => params[:account_id])
@@ -73,6 +80,7 @@ class OrdersController < ApplicationController
   end
   
   def show
+    authorize! :read, Order
     @order = Order.find(params[:id])
     @order_line_items = @order.order_line_items.includes(:item)
     @shipments = Shipment.where(:order_id => @order.id)
@@ -85,6 +93,7 @@ class OrdersController < ApplicationController
   end
   
   def invoice
+    authorize! :read, Order
     @order = Order.find(params[:id])
     @order_line_items = @order.order_line_items.includes(:item, :line_item_fulfillments)
     @shipments = Shipment.where(:order_id => @order.id)
@@ -107,6 +116,7 @@ class OrdersController < ApplicationController
   end
   
   def edit
+    authorize! :update, Order
     @order = Order.find(params[:id])
     @accounts = Account.all
     @order_line_item = OrderLineItem.new
@@ -114,6 +124,7 @@ class OrdersController < ApplicationController
   end
   
   def update
+    authorize! :update, Order
     @order = Order.find_by(:id => params[:id])
     puts "----------> #{params[:id]}"
     puts "----------> #{@order.inspect}"
@@ -126,10 +137,12 @@ class OrdersController < ApplicationController
   end
   
   def create
+    authorize! :create, Order
     
   end
   
   def lock
+    authorize! :update, Order
     @order_id = params[:id]
     @order = Order.find_by(:id => @order_id)
     @order.locked = true
