@@ -345,6 +345,7 @@ DEPENDENCIES
   bootstrap-sass (~> 3.3.5)
   braintree
   bullet
+  byebug
   cancancan (~> 1.13, >= 1.13.1)
   capistrano-bundler
   capistrano-rails (~> 1.1.3)
