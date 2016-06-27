@@ -47,6 +47,7 @@ class Role < ActiveRecord::Base
           :item_vendor_price_import,
           :account_item_price,
           :account_item_price_import,
+          :group_item_price
   ]
 
 end
