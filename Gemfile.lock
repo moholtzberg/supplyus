@@ -365,6 +365,7 @@ DEPENDENCIES
   quiet_assets (~> 1.1)
   rack-mini-profiler
   rails (= 4.2.3)
+  raindrops (~> 0.15.0)
   ransack
   rolify (~> 5.1)
   roo
