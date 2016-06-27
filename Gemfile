@@ -45,7 +45,8 @@ gem 'wkhtmltopdf-binary'
 gem 'rack-mini-profiler'
 gem "bullet", :group => "development"
 gem 'dalli'
-# gem 'activemerchant'
+gem 'activemerchant', '~> 1.46.0'
+gem 'braintree'
 
 gem 'ransack'
 
@@ -65,7 +66,7 @@ group :development, :test do
   gem 'capistrano-rails', '~> 1.1.3'
   gem 'capistrano-bundler'
   gem 'capistrano-rvm'
-  # gem 'byebug'
+  gem 'byebug'
   gem 'jazz_hands', github: 'nixme/jazz_hands', branch: 'bring-your-own-debugger'
   gem 'pry-byebug'
   gem 'web-console', '~> 2.0'
