@@ -7,7 +7,7 @@ class OrderMailer < ApplicationMailer
     @order = Order.find_by(:id => order_id)
     
     mail(
-         :to => @order.account.user.email,
+         :to => @order.email,
          :bcc => "sales@247officesupply.com",
          :subject => "Order Notification #{@order.number}", 
          :text => render_to_string("order_mailer/order_confirmation").to_str
