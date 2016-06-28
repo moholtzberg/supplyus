@@ -2,7 +2,8 @@ class GroupItemPricesController < ApplicationController
   layout "admin"
   
   def new
-    authorize! :create, Group
+    authorize! :read, Group
+    authorize! :create, GroupItemPrice
     @group_item_price = GroupItemPrice.new(:item_id => params[:item_id])
     if params["copy"] && params["copy"] == "true"
       @group = Group.find_by(:id => params[:group_id])
@@ -10,7 +11,7 @@ class GroupItemPricesController < ApplicationController
   end
   
   def create
-    authorize! :create, Group
+    authorize! :create, GroupItemPrice
     if params[:copy]
       copy
     else
@@ -29,7 +30,7 @@ class GroupItemPricesController < ApplicationController
   end
   
   def copy
-    authorize! :create, Group
+    authorize! :create, GroupItemPrice
     puts "WE ARE IN THE COPY ACTION"
     from_acct = Account.find_by(name: params[:group_item_price][:copy_from])
     to_group = Group.find_by(id: params[:group_id])
@@ -41,7 +42,7 @@ class GroupItemPricesController < ApplicationController
   end
   
   def destroy
-    authorize! :destroy, Group
+    authorize! :destroy, GroupItemPrice
     GroupItemPrice.find_by(:id => params[:id]).destroy
   end
   
