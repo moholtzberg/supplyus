@@ -15,20 +15,20 @@
 			(888) 247-8775
 		</td>
 		<td>
-			<%= @order.ship_to_account_name %><br/>
-			<% unless @order.ship_to_attention.blank? %><%= @order.ship_to_attention %><br/><% end %>
-			<%= @order.ship_to_address_1 %><br/>
-			<% unless @order.ship_to_address_2.blank? %><%= @order.ship_to_address_2 %><br/><% end %>
-			<%= @order.ship_to_city %>, <%= @order.ship_to_state %> <%= @order.ship_to_zip %><br/>
-			<%= @order.ship_to_phone %>
+			<%= @invoice.ship_to_account_name %><br/>
+			<% unless @invoice.ship_to_attention.blank? %><%= @invoice.ship_to_attention %><br/><% end %>
+			<%= @invoice.ship_to_address_1 %><br/>
+			<% unless @invoice.ship_to_address_2.blank? %><%= @invoice.ship_to_address_2 %><br/><% end %>
+			<%= @invoice.ship_to_city %>, <%= @invoice.ship_to_state %> <%= @invoice.ship_to_zip %><br/>
+			<%= @invoice.ship_to_phone %>
 		</td>
 		<td>
-			<%= @order.bill_to_account_name %><br/>
-			<% unless @order.bill_to_attention.blank? %><%= @order.bill_to_attention %><br/><% end %>
-			<%= @order.bill_to_address_1 %><br/>
-			<% unless @order.bill_to_address_2.blank? %><%= @order.bill_to_address_2 %><br/><% end %>
-			<%= @order.bill_to_city %>, <%= @order.bill_to_state %> <%= @order.bill_to_zip %><br/>
-			<%= @order.bill_to_phone %>
+			<%= @invoice.bill_to_account_name %><br/>
+			<% unless @invoice.bill_to_attention.blank? %><%= @invoice.bill_to_attention %><br/><% end %>
+			<%= @invoice.bill_to_address_1 %><br/>
+			<% unless @invoice.bill_to_address_2.blank? %><%= @invoice.bill_to_address_2 %><br/><% end %>
+			<%= @invoice.bill_to_city %>, <%= @invoice.bill_to_state %> <%= @invoice.bill_to_zip %><br/>
+			<%= @invoice.bill_to_phone %>
 		</td>
 	</tr>
 	</thead>
