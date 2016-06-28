@@ -22,7 +22,7 @@
 		<%# current_user.account do |ac|%>
 		<tr>
 			<td><%= current_user.account.name %></td>
-			<td><%= current_user.account.user.email %></td>
+			<td><%= current_user.email %></td>
 			<td><%= link_to "View Account", "my_account/#{current_user.account.id}" %></td>
 		</tr>
 		<%# end %>
