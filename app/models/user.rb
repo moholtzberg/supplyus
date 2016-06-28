@@ -5,16 +5,25 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :validatable
   
   validates :password, :confirmation => true
+  validate :account_is_valid
   
-  has_one :account
+  belongs_to :account
   has_many :user_accounts
   has_many :orders, :through => :account
   belongs_to :contact
   
   accepts_nested_attributes_for :account
   
+  def display_name
+    "#{first_name} #{last_name}"
+  end
+  
   def has_account
     self.account.nil? ? false : true
+  end
+  
+  def account_is_valid
+    puts "check if the account is valid"
   end
   
   def self.lookup(term)
