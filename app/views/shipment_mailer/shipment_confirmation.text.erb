@@ -1,7 +1,7 @@
 SHIPMENT CONFIRMATION - 24/7 Office Supply
 ===============================================
 
-Dear <%= @shipment.orders.first.account.name %>,
+Dear <%= @shipment.orders.first.ship_to_account_name %>,
 
 Thank you for your order, the following items have shipped.
 
@@ -14,12 +14,12 @@ ORDER DETAILS:
 ================
 NUMBER:		<%= @shipment.orders.first.number %>
 DATE:		<%= @shipment.ship_date %>
-ACCOUNT:	<%= @shipment.orders.first.account.name %>
+ACCOUNT:	<%= @shipment.orders.first.account.name unless @shipment.orders.first.account.nil? %>
 PO NUMBER:	<%= @shipment.orders.first.po_number %>
 
 SHIP TO ADDRESS:
 ================
-<%= @shipment.orders.first.account.name %>
+<%= @shipment.orders.first.ship_to_account_name %>
 <%= @shipment.orders.first.ship_to_attention %>
 <%= @shipment.orders.first.ship_to_address_1 %>
 <%= @shipment.orders.first.ship_to_address_2 %>
