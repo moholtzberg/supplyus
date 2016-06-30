@@ -159,9 +159,9 @@
 <div class="clearfix"></div>
 
 <% if Category.find_by(:slug => "must-have-items") %>
-<div class="col-md-12 row">
+<div class="col-md-12 row container">
 
-			<div class="row">
+			<div class="row container">
 				<div class="col-md-9">
 					<h3>Must Have Items</h3>
 				</div>
@@ -174,7 +174,7 @@
 				</div>
 			</div>
 			
-			<div id="carousel-example" class="carousel slide hidden-xs featured-items" data-ride="carousel">
+			<div id="carousel-example" class="row container carousel slide hidden-xs featured-items" data-ride="carousel">
 				<div class="carousel-inner">
 				
 					<% Category.find_by(slug: "must-have-items").item_categories.each_slice(6).with_index do |slice, idx| %>
