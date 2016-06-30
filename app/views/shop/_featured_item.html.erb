@@ -1,0 +1,40 @@
+<div class="col-md-2">
+	<div class="panel panel-default">
+		
+		<div class="panel-heading">
+			<p><%= item.name %></p>
+		</div>
+		
+		<div class="panel-body text-center">
+			
+			<div class="text-center">
+				<%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/#{item.default_image_path}", :class => "media-object", :height => "100", :width => "100" %>
+			</div>
+		
+		
+		
+			<div class="text-center">
+				<% if current_user and current_user.has_account and item.actual_price(current_user.account.id).to_f <= item.price.to_f %>
+				<h5><span class="text-danger"><strong><del><%= number_to_currency(item.price) %></del></strong></span></h5>
+				<h4><span class="text-default"><strong><%= number_to_currency(item.actual_price(current_user.account.id)) %></strong></span><h4>
+				<% else %>
+				<h4><span class="text-default"><%= number_to_currency(item.price) %></span><h4>
+				<% end %>
+			</div>
+	
+		
+			<%= form_for @cart, url: add_to_cart_path, :class => "form-inline", :remote => true do |f| %>
+				<div class="form-group">
+					
+					<%= f.hidden_field :item_id, :value => item.id %>
+					<%= f.hidden_field :quantity, :value => 1 %>
+				</div>
+				<%= f.submit "Add To Cart", :class => "btn btn-primary btn-sm btn-block" %>
+			<% end %>
+		</div>
+	</div>
+</div>
+
+
+                
+                    
