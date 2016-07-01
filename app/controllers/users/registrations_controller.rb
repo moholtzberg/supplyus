@@ -11,11 +11,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def find_categories
     @categories = Category.is_parent
   end
-<<<<<<< Updated upstream
-
-# before_filter :configure_sign_up_params, only: [:create]
-# before_filter :configure_account_update_params, only: [:update]
-=======
   
   # before_filter :configure_sign_up_params, only: [:create]
   # before_filter :configure_account_update_params, only: [:update]
@@ -27,7 +22,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
       u.permit(:email, :password, :password_confirmation, :remember_me, :first_name, :last_name,
       account: [:name, :ship_to_address_1, :ship_to_address_2, :ship_to_city, :ship_to_state, :ship_to_zip, :ship_to_phone])}
   end
->>>>>>> Stashed changes
 
   # GET /resource/sign_up
   # def new
