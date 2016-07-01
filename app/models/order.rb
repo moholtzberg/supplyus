@@ -15,11 +15,13 @@ class Order < ActiveRecord::Base
   scope :past_due_90, -> {fulfilled.unpaid.where(due_date: 61.days.ago..90.days.ago) }
   
   belongs_to :account
+  belongs_to :user
   has_one :order_shipping_method
   has_many :order_line_items, :dependent => :destroy, :inverse_of => :order
   has_many :items, :through => :order_line_items
   has_many :order_payment_applications
   has_many :payments, :through => :order_payment_applications
+  has_many :credit_card_payments, :through => :order_payment_applications
   
   accepts_nested_attributes_for :order_line_items, :allow_destroy => true
   

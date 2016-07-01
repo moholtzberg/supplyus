@@ -38,4 +38,13 @@ class PaymentsController < ApplicationController
     redirect_to order_path(params[:payment][:order_id])
   end
   
+  def capture
+    p = CreditCardPayment.find(params[:id])
+    if p.capture
+      p.build_order_payment_application(:order_id => params[:payment][:order_id])
+      p.save
+    end
+    redirect_to orders_path(params[:payment][:order_id])
+  end
+  
 end

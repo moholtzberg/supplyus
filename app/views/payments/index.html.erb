@@ -1,0 +1,8 @@
+<table class="table">
+<% Payment.all.each do |a| %>
+	<tr>
+		<td><%= a.payment_type %></td>
+		<td><%= number_to_currency(a.amount) %></td>
+		<td><%= a.authorization_code %></td>
+	</tr>
+<% end %>
