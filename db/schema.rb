@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160413151937) do
+ActiveRecord::Schema.define(version: 20160623021309) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -143,6 +143,16 @@ ActiveRecord::Schema.define(version: 20160413151937) do
     t.datetime "updated_at"
   end
 
+  create_table "import_histories", force: :cascade do |t|
+    t.integer  "nb_imported"
+    t.integer  "nb_failed"
+    t.integer  "nb_in_queue"
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+    t.integer  "is_processing", default: 0
+    t.text     "failed_lines",  default: ""
+  end
+
   create_table "invoice_payment_applications", force: :cascade do |t|
     t.integer "payment_id"
     t.integer "invoice_id"
@@ -174,6 +184,7 @@ ActiveRecord::Schema.define(version: 20160413151937) do
     t.string  "value"
     t.integer "order"
     t.boolean "active"
+    t.string  "type",    default: "Specification"
   end
 
   create_table "item_types", force: :cascade do |t|
@@ -332,6 +343,8 @@ ActiveRecord::Schema.define(version: 20160413151937) do
     t.text     "notes"
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
+    t.string   "email"
+    t.integer  "user_id"
   end
 
   add_index "orders", ["account_id"], name: "order_customer_id_ix"
@@ -363,7 +376,29 @@ ActiveRecord::Schema.define(version: 20160413151937) do
     t.integer "credit_card_id"
     t.float   "amount"
     t.string  "stripe_charge_id"
+    t.string  "payment_type",       default: "CreditCardPayment"
+    t.string  "first_name"
+    t.string  "last_name"
+    t.string  "last_four"
+    t.string  "card_type"
+    t.boolean "success",            default: false
+    t.boolean "captured",           default: false
+    t.string  "authorization_code"
+    t.string  "check_number"
   end
+
+  create_table "permissions", force: :cascade do |t|
+    t.string   "mdl_name",                    null: false
+    t.boolean  "can_create",  default: false, null: false
+    t.boolean  "can_read",    default: false, null: false
+    t.boolean  "can_update",  default: false, null: false
+    t.boolean  "can_destroy", default: false, null: false
+    t.integer  "role_id"
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+  end
+
+  add_index "permissions", ["role_id"], name: "index_permissions_on_role_id"
 
   create_table "reciepts", force: :cascade do |t|
     t.integer "payment_plan_id"
@@ -371,6 +406,17 @@ ActiveRecord::Schema.define(version: 20160413151937) do
     t.text    "to_date"
     t.float   "amount"
   end
+
+  create_table "roles", force: :cascade do |t|
+    t.string   "name"
+    t.integer  "resource_id"
+    t.string   "resource_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "roles", ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id"
+  add_index "roles", ["name"], name: "index_roles_on_name"
 
   create_table "settings", force: :cascade do |t|
     t.string "key"
@@ -411,6 +457,13 @@ ActiveRecord::Schema.define(version: 20160413151937) do
     t.string  "signed_by"
   end
 
+  create_table "transactions", force: :cascade do |t|
+    t.integer "payment_id"
+    t.string  "transaction_type"
+    t.float   "amount"
+    t.string  "authorization_code"
+  end
+
   create_table "user_accounts", force: :cascade do |t|
     t.integer "user_id"
     t.integer "account_id"
@@ -433,10 +486,18 @@ ActiveRecord::Schema.define(version: 20160413151937) do
     t.string   "last_name"
     t.string   "phone_number"
     t.integer  "group_id"
+    t.integer  "account_id"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+
+  create_table "users_roles", id: false, force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "role_id"
+  end
+
+  add_index "users_roles", ["user_id", "role_id"], name: "index_users_roles_on_user_id_and_role_id"
 
   create_table "vendors", force: :cascade do |t|
     t.string   "number"
