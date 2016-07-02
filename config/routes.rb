@@ -106,6 +106,7 @@ Rails.application.routes.draw do
   get   "checkout/shipping" => "checkout#shipping"
   patch "checkout/shipping" => "checkout#update_shipping"
   get   "checkout/payment" => "checkout#payment"
+  patch "checkout/payment" => "checkout#update_payment"
   get   "checkout/confirm" => "checkout#confirm"
   patch "checkout/complete"=> "checkout#complete"
   
