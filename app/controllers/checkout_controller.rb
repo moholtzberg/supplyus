@@ -25,6 +25,7 @@ class CheckoutController < ApplicationController
     end
     @checkout.ship_to_attention = "#{current_user.first_name} #{current_user.last_name}" if @checkout.ship_to_attention.nil?
     @checkout.email             = current_user.email if @checkout.email.nil?
+    @checkout.user_id           = current_user.id if @checkout.user_id.nil?
   end
   
   def update_address
@@ -74,7 +75,7 @@ class CheckoutController < ApplicationController
     o.update_attributes(:shipping_method_id => shipping.id, :amount => shipping.calculate(@cart.sub_total))
     
     # if o.save
-      redirect_to checkout_payment_path
+      redirect_to checkout_confirm_path
     # end
   end
   
@@ -89,7 +90,7 @@ class CheckoutController < ApplicationController
   
   def update_payment
     if (params[:payment_method] == "terms" || params[:payment_method] == "check")
-      redirect_to confirm
+      confirm
     else
       if params[:payment_method] == "credit_card"
         a = Order.find_by(:id => cookies.permanent.signed[:cart_id]).credit_card_payments.new
@@ -102,7 +103,6 @@ class CheckoutController < ApplicationController
         a.amount = Order.find_by(:id => cookies.permanent.signed[:cart_id]).total
         if a.authorize
           a.save
-          
           complete
         else
           puts "-----XXX---> #{a.errors.messages}"
@@ -110,7 +110,6 @@ class CheckoutController < ApplicationController
         end
       end
     end
-    
   end
   
   def confirm
@@ -119,6 +118,8 @@ class CheckoutController < ApplicationController
   
   def complete
     c = Checkout.find_by(:id => cookies.permanent.signed[:cart_id])
+    c.email             = current_user.email if c.email.nil?
+    c.user_id           = current_user.id if c.user_id.nil?
     c.completed_at = Time.now
     if c.save
       if c.complete

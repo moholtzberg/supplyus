@@ -26,11 +26,11 @@
 	</tr>
 	<tr>
 		<td colspan="3"><%= @checkout.order_shipping_method.name %> - Shipping</td>
-		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@checkout.order_shipping_method.amount) %></strong></td>
+		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@checkout.order_shipping_method.amount.to_f) %></strong></td>
 	</tr>
 	<tr>
 		<td colspan="3">Order Total</td>
-		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@checkout.order_shipping_method.amount + @checkout.sub_total) %></strong></td>
+		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@checkout.order_shipping_method.amount.to_f + @checkout.sub_total) %></strong></td>
 	</tr>
 </table>
 
