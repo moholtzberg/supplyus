@@ -3,6 +3,11 @@
 	<div class="widget panel">
 		
 		<div class="panel-body">
+			<div class="pull-right">
+				Credit Hold: <%= @account.credit_hold ? "Yes" : "No" %><br/>
+				Credit Limit: <%= number_to_currency(@account.credit_limit) %><br/>
+				Credit Terms: <%= @account.credit_terms %>
+			</div>
 			<% if !@account.name.nil? %><%= @account.name %><% end %>
 			<% if !@account.address_1.nil? %><br/><%= @account.address_1 %><% end %>
 			<% if !@account.address_2.nil? %><br/><%= @account.address_2 %><% end %>
@@ -11,6 +16,8 @@
 			<% if !@account.fax.nil? %><br/><%= number_to_phone(@account.fax) %><% end %>
 			<hr/>
 			<% if !@account.stripe_customer_id.nil? %><%= @account.stripe_customer_id %><% end %>
+			
+
 		</div>
 	</div>
 	

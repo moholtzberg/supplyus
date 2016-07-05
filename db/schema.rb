@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160623021309) do
+ActiveRecord::Schema.define(version: 20160705004425) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -44,6 +44,9 @@ ActiveRecord::Schema.define(version: 20160623021309) do
     t.string  "bill_to_fax"
     t.boolean "active"
     t.integer "group_id"
+    t.float   "credit_limit",       default: 0.0
+    t.integer "credit_terms"
+    t.boolean "credit_hold",        default: true
   end
 
   create_table "assets", force: :cascade do |t|

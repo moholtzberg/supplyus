@@ -59,6 +59,14 @@ class Account < ActiveRecord::Base
   validates :ship_to_state, :presence => true
   validates :ship_to_zip, :presence => true
   
+  def has_credit
+    if credit_limit > 0 and credit_hold != true and credit_terms > 1
+      true
+    else
+      false
+    end
+  end
+  
   def payment_terms
     90
   end

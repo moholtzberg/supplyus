@@ -69,28 +69,51 @@
 			<select id="payment_type" class="form-control">
 				<option value="credit_card">Credit Card</option>
 				<option value="check">Check</option>
-				<% if current_user.account and current_user.account.group and current_user.account.group.active %>
-				<option value="terms">Net 30</option>
+				<% if current_user.account and current_user.account.has_credit %>
+				<option value="terms">Net <%= current_user.account.credit_terms %></option>
 				<% end %>
 			</select>
+			
+			<script>
+			$("select#payment_type").change(function(){
+				var m = this.value;
+				$("#payment_method").val(m);
+			})
+			</script>
 			<div id="credit_card">
 				<input type="hidden" id="payment_method" name="payment_method" value="credit_card" />
 				<input type="hidden" id="order_id" name="order_id" value="<%= @order.id %>" />
-				<input type="text" id="first_namr" name="first_name" class="form-control" placeholder="First Name"/>
-				<input type="text" id="last_name" name="last_name" class="form-control" placeholder="Last Name"/>
-				<input type="text" id="credit_card_number" name="credit_card_number" class="form-control" placeholder="Enter Credit Card Number"/>
-				<input type="text" id="card_security_code" name="card_security_code" class="form-control" placeholder="Enter CVV"/>
+				<div class="form-inline col-md-6">
+					<input type="text" id="first_name" name="first_name" class="form-control" placeholder="First Name"/>
+				<div>
+				<div class="form-inline col-md-6">
+					<input type="text" id="last_name" name="last_name" class="form-control" placeholder="Last Name"/>
+				</div>
+				
+				
+				<input type="text" id="credit_card_number" name="credit_card_number" class="form-control col-md-9" placeholder="Enter Credit Card Number"/>
+				<input type="text" id="card_security_code" name="card_security_code" class="form-control col-md-3" placeholder="Enter CVV"/>
+				
 				<select id="expiration_month" name="expiration_month" class="form-control">
-					<option value="01">January</option>
-					<option value="02">February</option>
+					<% Date::MONTHNAMES.compact.each do |month| %>
+					<option value="<%= Date::MONTHNAMES.index(month) %>"><%= month %></option>
+					<% end %>
 				</select>
+				
 				<select id="expiration_year" name="expiration_year" class="form-control">
+					<option value="2016">2016</option>
+					<option value="2017">2017</option>
 					<option value="2018">2018</option>
 					<option value="2019">2019</option>
+					<option value="2020">2020</option>
+					<option value="2021">2021</option>
+					<option value="2022">2022</option>
+					<option value="2023">2023</option>
+					<option value="2024">2024</option>
 				</select>
 			</div>
 			<div id="check">
-				
+				<input type="hidden" id="payment_method" name="payment_method" value="check" />
 			</div>
 		</td>
 		<td><%= f.submit "Continue", :class => "btn btn-primary pull-right" %></td>
