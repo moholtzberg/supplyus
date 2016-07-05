@@ -14,6 +14,14 @@ class User < ActiveRecord::Base
   
   accepts_nested_attributes_for :account
   
+  def account_name
+    account.try(:name)
+  end
+  
+  def account_name=(name)
+    self.account = Account.find_by(:name => name) if name.present?
+  end
+  
   def display_name
     "#{first_name} #{last_name}"
   end

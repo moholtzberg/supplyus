@@ -19,5 +19,18 @@
 		<%= f.label :phone_number %>
 		<%= f.text_field :phone_number, :class => "form-control" %>
 	</div>
-
+	
+	<div class="col-md-12">
+		<%= f.label :account %>
+		<%= f.text_field :account_name, :class => "form-control", data: {autocomplete_source: accounts_path} %>
+	</div>
+	
+	<script>
+	jQuery(function() {
+		return $('#user_account_name').autocomplete({
+			source: $('#user_account_name').data('autocomplete-source')
+		})
+	});
+	</script>
+	
 </fieldset>
