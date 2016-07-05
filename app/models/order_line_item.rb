@@ -25,7 +25,7 @@ class OrderLineItem < ActiveRecord::Base
   
   validates :item_id, :presence => true
   
-  after_commit :update_shipped_fulfilled
+  after_commit :update_shipped_fulfilled, :if => :persisted?
   after_commit :flush_cache
   
   def update_shipped_fulfilled
