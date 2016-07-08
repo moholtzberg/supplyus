@@ -64,13 +64,13 @@ class OrderLineItem < ActiveRecord::Base
   
   def sub_total
     Rails.cache.fetch([self, "#{self.class.to_s.downcase}_sub_total"]) {
-      actual_quantity.to_f * price.to_f
+      actual_quantity.to_d * price.to_d
     }
   end
   
   def profit
-    tc = actual_quantity.to_i * item.cost_price.to_f
-    sub_total.to_f - tc.to_f
+    tc = actual_quantity.to_i * item.cost_price.to_d
+    sub_total.to_d - tc.to_d
   end
   
   def shipped
@@ -104,7 +104,7 @@ class OrderLineItem < ActiveRecord::Base
   
   def amount_shipped
     Rails.cache.fetch([self, "#{self.class.to_s.downcase}_amount_shipped"]) {
-      quantity_shipped.to_f * price.to_f
+      quantity_shipped.to_d * price.to_d
     }
   end
   
@@ -148,7 +148,7 @@ class OrderLineItem < ActiveRecord::Base
   
   def amount_fulfilled
     Rails.cache.fetch([self, "#{self.class.to_s.downcase}_amount_fulfilled"]) {
-      quantity_fulfilled.to_f * price.to_f
+      quantity_fulfilled.to_d * price.to_d
     }
   end
   

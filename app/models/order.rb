@@ -263,7 +263,7 @@ class Order < ActiveRecord::Base
       total_paid = 0.0
       puts self.payments.count
       self.order_payment_applications.each {|a| total_paid = total_paid + a.applied_amount}
-      return (self.total.to_f - total_paid.to_f)
+      return (self.total.to_d - total_paid.to_d)
     }
   end
   
