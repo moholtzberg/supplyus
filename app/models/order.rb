@@ -245,7 +245,7 @@ class Order < ActiveRecord::Base
   def payments_total
     Rails.cache.fetch([self, "#{self.class.to_s.downcase}_payments_total"]) {
       total_paid = 0.0
-      self.payments.each {|a| total_paid = total_paid + a.amount}
+      self.order_payment_applications.each {|a| total_paid = total_paid + a.applied_amount}
       total_paid
     }
   end
@@ -253,7 +253,7 @@ class Order < ActiveRecord::Base
   def paid
     Rails.cache.fetch([self, "#{self.class.to_s.downcase}_paid"]) {
       total_paid = 0.0
-      self.payments.each {|a| total_paid = total_paid + a.amount}
+      self.order_payment_applications.each {|a| total_paid = total_paid + a.applied_amount}
       total_paid == self.total ? true : false
     }
   end
@@ -262,7 +262,7 @@ class Order < ActiveRecord::Base
     Rails.cache.fetch([self, "#{self.class.to_s.downcase}_balance_due"]) {
       total_paid = 0.0
       puts self.payments.count
-      self.payments.each {|a| total_paid = total_paid + a.amount}
+      self.order_payment_applications.each {|a| total_paid = total_paid + a.applied_amount}
       return (self.total.to_f - total_paid.to_f)
     }
   end

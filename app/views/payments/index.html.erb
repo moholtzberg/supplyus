@@ -1,8 +1,26 @@
-<table class="table">
-<% Payment.all.each do |a| %>
-	<tr>
-		<td><%= a.payment_type %></td>
-		<td><%= number_to_currency(a.amount) %></td>
-		<td><%= a.authorization_code %></td>
-	</tr>
-<% end %>
+<% content_for :app_location do %>Admin / Payments / Index<% end %>
+<div id="orders" class="col-md-12">
+
+	<table class="table table-bordered table-condensed">
+	<% @payments.each do |a| %>
+		<tr>
+			<td><%= a.payment_type %></td>
+			<td><%= number_to_currency(a.amount) %></td>
+			<td><%= a.authorization_code %></td>
+		</tr>
+	<% end %>
+	</table>
+
+	<%# will_paginate @payments, renderer: BootstrapPagination::Rails %>
+
+	<%= link_to new_payment_path, :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
+		
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div>

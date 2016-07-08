@@ -1,0 +1,37 @@
+<fieldset>
+	
+	<div class="col-xs-6 col-md-6">	
+		<label for="payment_first_name"><span class="hidden-xs">FIRST NAME</span><span class="visible-xs-inline">FIRST NAME</span></label>
+		<%= f.text_field :first_name, class: "form-control" %>
+	</div>
+	
+	<div class="col-xs-6 col-md-6">	
+		<label for="payment_last_name"><span class="hidden-xs">LAST NAME</span><span class="visible-xs-inline">LAST NAME</span></label>
+		<%= f.text_field :last_name, class: "form-control" %>
+	</div>
+	
+	<div class="col-xs-12 col-md-12">
+		<label for="cardNumber">CARD NUMBER</label>
+		<div class="input-group">
+			<%= f.text_field :credit_card_number, {class: "form-control", :type => "tel"} %>
+			<span class="input-group-addon"><span class="glyphicon glyphicon-credit-card"></span></span>
+		</div>
+	</div>
+
+	<div class="col-xs-4 col-md-4">	
+		<label for="cardExpiry"><span class="hidden-xs">EXP MONTH</span><span class="visible-xs-inline">EXP MONTH</span></label>
+		<%= f.select :expiration_month, Date::MONTHNAMES.compact.collect, {:class => "form-control"} %>
+		    
+	</div>
+	
+	<div class="col-xs-4 col-md-4">
+		<label for="cardExpiry"><span class="hidden-xs">EXP YEAR</span><span class="visible-xs-inline">EXP YEAR</span></label>
+		<%= select_year nil, {start_year: Date.today.year, end_year: Date.today.year+10}, {name: nil, id: "card_year", "data-stripe" => "exp-year", :class => "form-control"} %>
+	</div>
+
+	<div class="col-xs-4 col-md-4 pull-right">
+		<label for="cardCVC">CVV CODE</label>
+		<%= text_field_tag :card_verification, nil, class: "form-control", name: "cardCVC", "data-stripe" => "cvv", :type => "tel" %>
+	</div>
+	
+</fieldset>

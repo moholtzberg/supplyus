@@ -15,7 +15,7 @@ Rails.application.routes.draw do
           end
         end
         resources :invoices, :shallow => true do
-          resources :payments, :shallow => true
+          # resources :payments, :shallow => true
         end
         resources :payment_plan_templates do
           resources :payment_plans
@@ -38,7 +38,7 @@ Rails.application.routes.draw do
           put :resend_order
         end
         resources :shipments, :only => [:new, :create]
-        resources :payments, :shallow => true
+        # resources :payments, :shallow => true
         resources :invoices
       end
       resources :order_line_items

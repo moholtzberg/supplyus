@@ -1,2 +1,4 @@
-$("#modal-body").html("<%= j render :template => 'payments/new.html', :format => 'html' %>")
+$(".modal-content").html("<%= j render :template => 'payments/new.html', :format => 'html' %>")
+<% unless flash[:error] %>
 $('#myModal').modal("toggle")
+<% end %>

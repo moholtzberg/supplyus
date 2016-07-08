@@ -1,0 +1,6 @@
+<% unless flash[:error] %>
+	$('#myModal').modal("hide")
+	$('body').removeClass('modal-open')
+	$('.modal-backdrop').remove()
+	$("#payments").html("<%= j render :template => 'payments/index.html', :format => 'html' %>")
+<% end %>

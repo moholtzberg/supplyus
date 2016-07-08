@@ -12,7 +12,15 @@
 	<% if a.include?("category") %><li class="<% if current_page?(:categories) %>active<% end %>"><%= link_to "Categories", categories_path %></li><% end %>
 	<% if a.include?("user") %><li class="<% if current_page?(:users) %>active<% end %>"><%= link_to "Users", users_path %></li><% end %>
 	<% if a.include?("group") %><li class="<% if current_page?(:groups) %>active<% end %>"><%= link_to "Groups", groups_path %></li><% end %>
-	<% if a.include?("setting") %><li class="<% if current_page?(:settings) %>active<% end %>"><%= link_to "Settings", settings_path %></li><% end %>
+	<% if a.include?("setting") %>
+		<li>
+			<a href="#settings_menu" data-toggle="collapse">Settings <i class="fa fa-caret-down"></i></a>
+			<ul id="settings_menu" class="sub-menu list-group collapse">
+				<li class="<% if current_page?(:settings) %>active<% end %>"><%= link_to "General Settings", settings_path %></li>
+			</ul>
+		</li>
+	<% end %>
 	<% if a.include?("role") %><li class="<% if current_page?(:roles) %>active<% end %>"><%= link_to "Roles", roles_path %></li><% end %>
+	<% if a.include?("payment") %><li class="<% if current_page?(:payments) %>active<% end %>"><%= link_to "Payments", payments_path %></li><% end %>
 	<!-- <li class="<%# if current_page?(:path => :charges) %>active<%# end %>"><%= link_to "Charges", charges_path %></li> -->
 </ul>
