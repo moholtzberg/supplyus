@@ -64,7 +64,7 @@ class OrderLineItem < ActiveRecord::Base
   
   def sub_total
     Rails.cache.fetch([self, "#{self.class.to_s.downcase}_sub_total"]) {
-      actual_quantity.to_d * price.to_d
+      actual_quantity.to_i * price.to_d
     }
   end
   

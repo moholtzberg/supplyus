@@ -16,7 +16,16 @@ class Payment < ActiveRecord::Base
   end
   
   def total_applications
-    OrderPaymentApplication.where(payment_id: self.id).map(&:applied_amount).sum
+    OrderPaymentApplication.where(payment_id: self.id).map(&:applied_amount).sum.to_d
   end
+  
+  def applied_amount
+    OrderPaymentApplication.where(payment_id: self.id).map(&:applied_amount).sum.to_d
+  end
+  
+  def unapplied_amount
+    amount.to_d - OrderPaymentApplication.where(payment_id: self.id).map(&:applied_amount).sum.to_d
+  end
+  
   
 end

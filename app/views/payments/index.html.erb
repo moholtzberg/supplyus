@@ -2,10 +2,21 @@
 <div id="orders" class="col-md-12">
 
 	<table class="table table-bordered table-condensed">
+		
+		<tr>
+			<th>Payment Type</th>
+			<th>Payent Amount</th>
+			<th>Applied Amount</th>
+			<th>Unapplied amount</th>
+			<th>Authorization Code</th>
+		</tr>
+		
 	<% @payments.each do |a| %>
 		<tr>
 			<td><%= a.payment_type %></td>
 			<td><%= number_to_currency(a.amount) %></td>
+			<td><%= number_to_currency(a.applied_amount) %></td>
+			<td><%= number_to_currency(a.unapplied_amount) %></td>
 			<td><%= a.authorization_code %></td>
 		</tr>
 	<% end %>
