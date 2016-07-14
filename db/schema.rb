@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160707233159) do
+ActiveRecord::Schema.define(version: 20160713220817) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,9 +19,9 @@ ActiveRecord::Schema.define(version: 20160707233159) do
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
     t.integer  "item_id"
-    t.float    "price"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.decimal  "price",      precision: 10, scale: 2, null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
   end
 
   create_table "accounts", force: :cascade do |t|
@@ -131,7 +131,7 @@ ActiveRecord::Schema.define(version: 20160707233159) do
   create_table "group_item_prices", force: :cascade do |t|
     t.integer  "group_id"
     t.integer  "item_id"
-    t.float    "price"
+    t.decimal  "price",      precision: 10, scale: 2, null: false
     t.boolean  "active"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -201,9 +201,9 @@ ActiveRecord::Schema.define(version: 20160707233159) do
   create_table "item_vendor_prices", force: :cascade do |t|
     t.integer  "item_id"
     t.integer  "vendor_id"
-    t.float    "price"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
+    t.decimal  "price",              precision: 10, scale: 2, null: false
+    t.datetime "created_at",                                  null: false
+    t.datetime "updated_at",                                  null: false
     t.string   "vendor_item_number"
   end
 
@@ -212,21 +212,21 @@ ActiveRecord::Schema.define(version: 20160707233159) do
     t.integer  "category_id"
     t.integer  "model_id"
     t.boolean  "is_serialized"
-    t.string   "number",                       null: false
+    t.string   "number",                                                null: false
     t.string   "name"
     t.string   "slug"
     t.text     "description"
-    t.float    "price"
-    t.float    "sale_price"
-    t.float    "cost_price"
+    t.decimal  "price",         precision: 10, scale: 2
+    t.decimal  "sale_price",    precision: 10, scale: 2
+    t.decimal  "cost_price",    precision: 10, scale: 2
     t.float    "weight"
     t.float    "height"
     t.float    "width"
     t.float    "length"
-    t.datetime "created_at",                   null: false
-    t.datetime "updated_at",                   null: false
+    t.datetime "created_at",                                            null: false
+    t.datetime "updated_at",                                            null: false
     t.integer  "brand_id"
-    t.boolean  "active",        default: true, null: false
+    t.boolean  "active",                                 default: true, null: false
   end
 
   add_index "items", ["id"], name: "item_id_ix", using: :btree
@@ -286,14 +286,14 @@ ActiveRecord::Schema.define(version: 20160707233159) do
     t.integer  "order_line_number"
     t.integer  "item_id"
     t.float    "quantity"
-    t.float    "price"
+    t.decimal  "price",              precision: 10, scale: 2,             null: false
     t.float    "discount"
     t.text     "description"
-    t.datetime "created_at",                     null: false
-    t.datetime "updated_at",                     null: false
+    t.datetime "created_at",                                              null: false
+    t.datetime "updated_at",                                              null: false
     t.integer  "quantity_canceled"
-    t.integer  "quantity_shipped",   default: 0
-    t.integer  "quantity_fulfilled", default: 0
+    t.integer  "quantity_shipped",                            default: 0
+    t.integer  "quantity_fulfilled",                          default: 0
   end
 
   add_index "order_line_items", ["id"], name: "order_line_item_id_ix", using: :btree
@@ -314,7 +314,7 @@ ActiveRecord::Schema.define(version: 20160707233159) do
   create_table "order_shipping_methods", force: :cascade do |t|
     t.integer  "order_id"
     t.integer  "shipping_method_id"
-    t.float    "amount"
+    t.decimal  "amount",             precision: 10, scale: 2
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -381,15 +381,15 @@ ActiveRecord::Schema.define(version: 20160707233159) do
     t.integer  "account_id"
     t.integer  "payment_method_id"
     t.integer  "credit_card_id"
-    t.float    "amount"
+    t.decimal  "amount",             precision: 10, scale: 2,                               null: false
     t.string   "stripe_charge_id"
-    t.string   "payment_type",       default: "CreditCardPayment"
+    t.string   "payment_type",                                default: "CreditCardPayment"
     t.string   "first_name"
     t.string   "last_name"
     t.string   "last_four"
     t.string   "card_type"
-    t.boolean  "success",            default: false
-    t.boolean  "captured",           default: false
+    t.boolean  "success",                                     default: false
+    t.boolean  "captured",                                    default: false
     t.string   "authorization_code"
     t.string   "check_number"
     t.datetime "created_at"
@@ -452,7 +452,7 @@ ActiveRecord::Schema.define(version: 20160707233159) do
   create_table "shipping_methods", force: :cascade do |t|
     t.integer "shipping_calculator_id"
     t.string  "name"
-    t.float   "rate"
+    t.decimal "rate",                   precision: 10, scale: 2
     t.text    "description"
     t.boolean "active"
     t.float   "minimum_amount"
@@ -470,7 +470,7 @@ ActiveRecord::Schema.define(version: 20160707233159) do
   create_table "transactions", force: :cascade do |t|
     t.integer "payment_id"
     t.string  "transaction_type"
-    t.float   "amount"
+    t.decimal "amount",             precision: 10, scale: 2, null: false
     t.string  "authorization_code"
   end
 

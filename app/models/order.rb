@@ -83,7 +83,7 @@ class Order < ActiveRecord::Base
     #   OrderLineItem.where(order_id: id).group(:order_line_number, :price, :quantity, :quantity_canceled).sum(:price, :quantity).inject(0) {|sum, k| sum + (k[0][1].to_f * (k[0][2].to_f - k[0][3].to_f))}
     # }
     Rails.cache.fetch([self, "#{self.class.to_s.downcase}_sub_total"]) {
-      order_line_items.map(&:sub_total).sum.to_d
+      order_line_items.map(&:sub_total).sum
     }
   end
   
@@ -98,7 +98,7 @@ class Order < ActiveRecord::Base
     # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_total"]) {
     #   Rails.cache.delete("#{self.class.to_s.downcase}_open")
     Rails.cache.fetch([self, "#{self.class.to_s.downcase}_total"]) {
-      sub_total.to_d + shipping_total.to_d
+      sub_total + shipping_total.to_f.to_d
     }
     # }
   end
