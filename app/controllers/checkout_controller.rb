@@ -43,6 +43,17 @@ class CheckoutController < ApplicationController
       cart.order_line_items.each {|c| c.price = c.item.actual_price(cart.account_id)}
     end
     cart.update_attributes(checkout_params)
+
+    unless OrderTaxRate.find_by(:order_id => cookies.permanent.signed[:cart_id]).nil?
+      o = OrderTaxRate.find_by(:order_id => cookies.permanent.signed[:cart_id])
+    else
+      o = OrderTaxRate.new(:order_id => cookies.permanent.signed[:cart_id])
+    end
+    
+    tax_rate = TaxRate.find_by(:zip_code => cart.ship_to_zip)
+    o.update_attributes(:tax_rate => tax_rate)
+    o.update_attributes(:amount => o.calculate)
+    
     if cart.save
       redirect_to checkout_shipping_path
     else
@@ -62,21 +73,14 @@ class CheckoutController < ApplicationController
   
   def update_shipping
     shipping = ShippingMethod.find_by(:id => params[:order_shipping_method][:shipping_method_id])
-    puts "---> #{shipping.inspect}"
     unless OrderShippingMethod.find_by(:order_id => cookies.permanent.signed[:cart_id]).nil?
       "WE HAVE AND ID"
       o = OrderShippingMethod.find_by(:order_id => cookies.permanent.signed[:cart_id])
     else
       o = OrderShippingMethod.new(:order_id => cookies.permanent.signed[:cart_id])
     end
-    puts "-----> #{o.inspect}"
-    puts "-----> #{@cart.inspect}"
-    puts "-----> #{cookies.permanent.signed[:cart_id]}"
     o.update_attributes(:shipping_method_id => shipping.id, :amount => shipping.calculate(@cart.sub_total))
-    
-    # if o.save
-      redirect_to checkout_confirm_path
-    # end
+    redirect_to checkout_confirm_path
   end
   
   def payment

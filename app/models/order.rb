@@ -17,6 +17,7 @@ class Order < ActiveRecord::Base
   belongs_to :account
   belongs_to :user
   has_one :order_shipping_method
+  has_one :order_tax_rate
   has_many :order_line_items, :dependent => :destroy, :inverse_of => :order
   has_many :items, :through => :order_line_items
   has_many :order_payment_applications
@@ -94,11 +95,15 @@ class Order < ActiveRecord::Base
     # }
   end
   
+  def tax_total
+    order_tax_rate.amount unless order_tax_rate.nil?
+  end
+  
   def total
     # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_total"]) {
     #   Rails.cache.delete("#{self.class.to_s.downcase}_open")
     Rails.cache.fetch([self, "#{self.class.to_s.downcase}_total"]) {
-      sub_total + shipping_total.to_f.to_d
+      sub_total + shipping_total.to_f.to_d + tax_total.to_f.to_d
     }
     # }
   end

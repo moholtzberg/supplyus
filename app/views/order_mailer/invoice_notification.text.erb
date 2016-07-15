@@ -30,13 +30,14 @@ INVOICE LINE ITEMS:
 ================
 <% @order.order_line_items.order(:order_line_number).each do |o| %>
 	<% if o.quantity_fulfilled > 0 %>
-<%= o.order_line_number %>.	<%= o.actual_quantity %> x <%= "#{o.item.number} / #{o.item.name}" %> @ <%= number_to_currency(o.price) %>/Each. = <%= number_to_currency(o.sub_total) %>
+<%= o.order_line_number %>.	<%= o.actual_quantity.to_i %> x <%= "#{o.item.number} / #{o.item.name}" %> @ <%= number_to_currency(o.price) %>/Each. = <%= number_to_currency(o.sub_total) %>
 	<% end %>
 <% end %>
 
 SUMMARY
 ================
 Subtotal     - <%= number_to_currency(@order.sub_total) %>
+Sales Tax    - <%= number_to_currency(@order.tax_total) %>
 Shipping     - <%= number_to_currency(@order.shipping_total) %>
 Total        - <%= number_to_currency(@order.total) %>
 Payments     - <%= number_to_currency(@order.payments_total) %>

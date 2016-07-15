@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160713220817) do
+ActiveRecord::Schema.define(version: 20160714024802) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -319,6 +319,14 @@ ActiveRecord::Schema.define(version: 20160713220817) do
     t.datetime "updated_at"
   end
 
+  create_table "order_tax_rates", force: :cascade do |t|
+    t.integer  "order_id"
+    t.integer  "tax_rate_id"
+    t.decimal  "amount"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "orders", force: :cascade do |t|
     t.string   "number"
     t.integer  "account_id"
@@ -457,6 +465,15 @@ ActiveRecord::Schema.define(version: 20160713220817) do
     t.boolean "active"
     t.float   "minimum_amount"
     t.float   "free_at_amount"
+  end
+
+  create_table "tax_rates", force: :cascade do |t|
+    t.integer  "state_id"
+    t.string   "authority"
+    t.string   "zip_code"
+    t.float    "rate"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "tracking_numbers", force: :cascade do |t|

@@ -76,20 +76,24 @@
 		<td colspan="2" class="text-center"><strong><%= number_to_currency(@invoice.sub_total) %></strong></td>
 	</tr>
 	<tr>
+		<td colspan="3"><%= @invoice.order_tax_rate.name unless @invoice.order_tax_rate.nil? %> - Shipping</td>
+		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@invoice.tax_total) %></strong></td>
+	</tr>
+	<tr>
 		<td colspan="3"><%= @invoice.order_shipping_method.name unless @invoice.order_shipping_method.nil? %> - Shipping</td>
 		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@invoice.shipping_total) %></strong></td>
 	</tr>
 	<tr>
 		<td colspan="3">Invoice Total</td>
-		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@invoice.shipping_total.to_f + @invoice.sub_total.to_f) %></strong></td>
+		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@invoice.total) %></strong></td>
 	</tr>
 	<tr>
 		<td colspan="3">Payments Total</td>
-		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@invoice.payments_total.to_f) %></strong></td>
+		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@invoice.payments_total) %></strong></td>
 	</tr>
 	<tr>
 		<td colspan="3">Balance Due</td>
-		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@invoice.balance_due.to_f) %></strong></td>
+		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@invoice.balance_due) %></strong></td>
 	</tr>
 	<% unless @invoice.paid %>
 		<% if Setting.find_by(:key => "enable_credit_card_payments") and Setting.find_by(:key => "enable_credit_card_payments").value == "t" %>

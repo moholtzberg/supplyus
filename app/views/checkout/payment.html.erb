@@ -58,7 +58,7 @@
 	</tr>
 	<tr>
 		<td><%= @cart.order_shipping_method.name %></td>
-		<td><%= number_to_currency(@cart.order_shipping_method.amount) %></td>
+		<td><%= number_to_currency(@cart.shipping_total) %></td>
 	</tr>
 </table>
 

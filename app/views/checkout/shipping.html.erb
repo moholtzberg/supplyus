@@ -24,6 +24,10 @@
 		<td colspan="3">Sub Total</td>
 		<td colspan="2" class="text-center"><strong><%= number_to_currency(@cart.sub_total) %></strong></td>
 	</tr>
+	<tr>
+		<td colspan="3">Sales Tax</td>
+		<td colspan="2" class="text-center"><strong><%= number_to_currency(@cart.tax_total) %></strong></td>
+	</tr>
 	
 </table>
 

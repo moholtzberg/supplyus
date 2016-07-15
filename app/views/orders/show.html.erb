@@ -81,13 +81,17 @@
 			<td colspan="2" class="text-center"><strong> <%= number_to_currency(@order.order_shipping_method.amount) unless  @order.order_shipping_method.nil? %></strong></td>
 		</tr>
 		<tr class="line_items">
+			<td colspan="6"><%= "#{@order.order_tax_rate.name} - " unless  @order.order_tax_rate.nil?%>Tax</td>
+			<td colspan="2" class="text-center"><strong> <%= number_to_currency(@order.tax_total)%></strong></td>
+		</tr>
+		<tr class="line_items">
 			<td colspan="6">Order Total</td>
 			<td colspan="2" class="text-center"><strong> <%= number_to_currency(@order.total) %></strong></td>
 		</tr>
 		
 		<tr>
 			<td colspan="6">Payments</td>
-			<td colspan="2" class="text-center"><strong> <%= @order.payments.blank? ? number_to_currency(0) : number_to_currency(@order.payments_total) %></strong></td>
+			<td colspan="2" class="text-center"><strong> <%= @order.payments.blank? ? number_to_currency(0) : number_to_currency(@order.payments_total.to_d) %></strong></td>
 		</tr>
 		<tr>
 			<td colspan="6">Balance Due</th>

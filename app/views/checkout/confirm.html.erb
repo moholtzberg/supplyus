@@ -25,12 +25,16 @@
 		<td colspan="2" class="text-center"><strong><%= number_to_currency(@cart.sub_total) %></strong></td>
 	</tr>
 	<tr>
+		<td colspan="3">Sales Tax</td>
+		<td colspan="2" class="text-center"><strong><%= number_to_currency(@cart.tax_total) %></strong></td>
+	</tr>
+	<tr>
 		<td colspan="3"><%= @checkout.order_shipping_method.name %> - Shipping</td>
-		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@checkout.order_shipping_method.amount.to_f) %></strong></td>
+		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@checkout.shipping_total) %></strong></td>
 	</tr>
 	<tr>
 		<td colspan="3">Order Total</td>
-		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@checkout.order_shipping_method.amount.to_f + @checkout.sub_total) %></strong></td>
+		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@checkout.total) %></strong></td>
 	</tr>
 </table>
 

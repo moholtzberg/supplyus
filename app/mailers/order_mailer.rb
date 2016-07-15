@@ -34,10 +34,10 @@ class OrderMailer < ApplicationMailer
     )
     # self.instance_variable_set(:@lookup_context, nil)
     mail(
-         :to => @order.account.user.email,
+         :to => @order.email,
          :bcc => "sales@247officesupply.com",
          :subject => "Invoice Notification #{@order.number}", 
-         :text => render_to_string("order_mailer/order_confirmation").to_str
+         :text => render_to_string("order_mailer/invoice_notification").to_str
     )
   end
   
