@@ -18,8 +18,7 @@
 			<th class="visible-xs">Full Name</th>
 			<th witdh="20%" class="hidden-xs"><%= sortable "users.email", "Email" %></th>
 			<th><%= sortable "account.name", "Account" %></th>
-			<th>Role</th>
-			<th witdh="20%" class="hidden-xs"><%= sortable "users.phone_number", "Phone Number" %></th>
+			<% if current_user.roles.map(&:name).include?("super_admin") %><th>Role</th><% end %>
 			<th width="13%" class="text-center hidden-xs"><%= sortable "users.current_sign_in_at", "Current Sign In" %></th>
 			<th width="13%" class="hidden-xs"><%= sortable "users.last_sin_in_ip", "IP Address" %></th>
 			<th width="2%">&nbsp;</th>
