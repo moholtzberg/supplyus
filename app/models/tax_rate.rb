@@ -7,7 +7,7 @@ class TaxRate < ActiveRecord::Base
   end
   
   def name
-    "#{authority}_#{zip_code}"
+    "#{region_name}_#{zip_code}"
   end
   
 end

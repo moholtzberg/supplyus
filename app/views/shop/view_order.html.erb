@@ -78,7 +78,7 @@
 		<td colspan="2" class="text-center"><strong><%= number_to_currency(@order.sub_total) %></strong></td>
 	</tr>
 	<tr>
-		<td colspan="7"><%= @order.order_tax_rate.name unless @order.order_tax_rate.nil? %> - Tax</td>
+		<td colspan="7">Sales Tax</td>
 		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@order.tax_total) %></strong></td>
 	</tr>
 	<tr>

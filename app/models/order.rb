@@ -259,7 +259,7 @@ class Order < ActiveRecord::Base
     Rails.cache.fetch([self, "#{self.class.to_s.downcase}_paid"]) {
       total_paid = 0.0
       self.order_payment_applications.each {|a| total_paid = total_paid + a.applied_amount}
-      total_paid == self.total ? true : false
+      total_paid.to_d == self.total.to_d ? true : false
     }
   end
   
