@@ -3,9 +3,7 @@ class OrderTaxRate < ActiveRecord::Base
   belongs_to :order
   belongs_to :tax_rate
   validates :order, :uniqueness => true
-  
-  delegate :name, :to => :tax_rate
-  
+    
   def calculate
     unless tax_rate.nil?
       effective_rate = tax_rate.rate
@@ -13,6 +11,12 @@ class OrderTaxRate < ActiveRecord::Base
       effective_rate = 0.0
     end
     return order.sub_total * effective_rate
+  end
+  
+  def name
+    if tax_rate
+      tax_rate.name
+    end
   end
   
 end

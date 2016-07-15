@@ -77,11 +77,11 @@
 			<td colspan="2" class="text-center"><strong><%= number_to_currency(@order.sub_total) %></strong></td>
 		</tr>
 		<tr class="line_items">
-			<td colspan="6"><%= "#{@order.order_shipping_method.name} - " unless  @order.order_shipping_method.nil?%>Shipping</td>
+			<td colspan="6"><%= "#{@order.order_shipping_method.name} - " unless  @order.order_shipping_method.nil? %>Shipping</td>
 			<td colspan="2" class="text-center"><strong> <%= number_to_currency(@order.order_shipping_method.amount) unless  @order.order_shipping_method.nil? %></strong></td>
 		</tr>
 		<tr class="line_items">
-			<td colspan="6"><%= "#{@order.order_tax_rate.name} - " unless  @order.order_tax_rate.nil?%>Tax</td>
+			<td colspan="6"><%= "#{@order.order_tax_rate.name}" unless  @order.order_tax_rate.nil? %>Tax</td>
 			<td colspan="2" class="text-center"><strong> <%= number_to_currency(@order.tax_total)%></strong></td>
 		</tr>
 		<tr class="line_items">
