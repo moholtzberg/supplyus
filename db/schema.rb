@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160714024802) do
+ActiveRecord::Schema.define(version: 20160715041156) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -468,12 +468,17 @@ ActiveRecord::Schema.define(version: 20160714024802) do
   end
 
   create_table "tax_rates", force: :cascade do |t|
-    t.integer  "state_id"
-    t.string   "authority"
+    t.string   "state_code"
+    t.string   "region_name"
     t.string   "zip_code"
     t.float    "rate"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.float    "state_rate"
+    t.float    "county_rate"
+    t.float    "city_rate"
+    t.float    "special_rate"
+    t.string   "region_code"
   end
 
   create_table "tracking_numbers", force: :cascade do |t|

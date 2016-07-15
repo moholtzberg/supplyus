@@ -17,6 +17,7 @@
 			<a href="#settings_menu" data-toggle="collapse">Settings <i class="fa fa-caret-down"></i></a>
 			<ul id="settings_menu" class="sub-menu list-group collapse">
 				<li class="<% if current_page?(:settings) %>active<% end %>"><%= link_to "General Settings", settings_path %></li>
+				<li class="<% if current_page?(:tax_rates) %>active<% end %>"><%= link_to "Tax Rates", tax_rates_path %></li>
 			</ul>
 		</li>
 	<% end %>

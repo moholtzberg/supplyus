@@ -74,6 +74,7 @@ Rails.application.routes.draw do
       resources :brand_imports
       resources :categories
       resources :credit_cards
+      resources :tax_rates
       resources :users do
         get :edit_password
         get :reset_password
