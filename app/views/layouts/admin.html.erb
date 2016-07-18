@@ -32,7 +32,7 @@
 					<span class="icon-bar"></span>
 				</button>
 					
-				<a class="navbar-brand" href="/"><i class="fa fa-circle-o text-danger"></i> Welcome <%= current_user.first_name %></a>
+				<a class="navbar-brand" href="/">Welcome <%= current_user.first_name %></a>
 			</div>
 
 			<a href="<%= destroy_user_session_path %>" id="logout" class="btn btn-warning pull-right hidden-xs hidden-sm" data-method="delete">
