@@ -16,8 +16,8 @@ class Order < ActiveRecord::Base
   
   belongs_to :account
   belongs_to :user
-  has_one :order_shipping_method
-  has_one :order_tax_rate
+  has_one :order_shipping_method, :dependent => :destroy, :inverse_of => :order
+  has_one :order_tax_rate, :dependent => :destroy, :inverse_of => :order
   has_many :order_line_items, :dependent => :destroy, :inverse_of => :order
   has_many :items, :through => :order_line_items
   has_many :order_payment_applications
@@ -29,6 +29,11 @@ class Order < ActiveRecord::Base
   before_save :make_record_number
   
   after_commit :flush_cache
+  after_commit :update_order_tax_rate
+  
+  def update_order_tax_rate
+    
+  end
   
   def self.lookup(term)
     includes({:account => [:group]}, {:order_line_items => [:item]}).where("lower(orders.number) like (?) or lower(orders.po_number) like (?) or lower(items.number) like (?) or lower(items.name) like (?) or lower(items.description) like (?) or lower(groups.name) like (?)", "%#{term.downcase}%", "%#{term.downcase}%", "%#{term.downcase}%", "%#{term.downcase}%", "%#{term.downcase}%", "%#{term.downcase}%").references({:account => [:group]}, {:order_line_items => [:item]})
