@@ -14,7 +14,7 @@
 				(888) 247-8775
 			</td>
 			<td>
-				<%= @order.ship_to_account_name %><br/>
+				<%= @order.ship_to_account_name %> &nbsp;<% if @order.account != nil and @order.account.group_id != nil %><small>(<%= @order.account.group.name %>)</small><% end %><br/>
 				<% unless @order.ship_to_attention.blank? %><%= @order.ship_to_attention %><br/><% end %>
 				<%= @order.ship_to_address_1 %><br/>
 				<% unless @order.ship_to_address_2.blank? %><%= @order.ship_to_address_2 %><br/><% end %>

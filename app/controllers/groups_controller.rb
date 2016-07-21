@@ -56,8 +56,8 @@ class GroupsController < ApplicationController
   end
 
   def sort_column
-    puts Account.column_names[0]
-    Account.column_names.include?(params[:sort]) ? params[:sort] : "name"
+    puts Group.column_names[0]
+    Group.column_names.include?(params[:sort]) ? params[:sort] : "name"
   end
   
   def sort_direction

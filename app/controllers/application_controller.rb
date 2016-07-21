@@ -60,7 +60,7 @@ class ApplicationController < ActionController::Base
   private
 
   def miniprofiler
-    if current_user and current_user.email == "admin@247officesupply.com"
+    if current_user and current_user.has_role?(:super_admin)
       Rack::MiniProfiler.authorize_request 
     end
   end

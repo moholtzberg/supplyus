@@ -60,7 +60,7 @@
 	</tr>
 	
 	<% @invoice.order_line_items.active.each_with_index do |li, idx| %>
-		<% if li.fulfilled %>
+		<% if li.actual_quantity.to_i > 0 and li.fulfilled %>
 		<tr>
 			<td class="text-center"><%= li.order_line_number %></td>
 			<td><%= li.item.number unless li.item.nil? %> / <%= li.item.name unless li.item.nil? %></td>

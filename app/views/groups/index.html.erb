@@ -4,10 +4,10 @@
 	<table class="table table-bordered table-condensed table-responsive">
 
 		<tr>
-			<th class="hidden-xs">ID</th>
+			<th class="hidden-xs"><%= sortable "id", "ID" %></th>
 			<td>Type</td>
-			<th>Name</th>
-			<th>Description</th>
+			<th><%= sortable "groups.name", "Name" %></th>
+			<th><%= sortable "groups.description", "Description" %></th>
 			<th>Members</th>
 			<th>&nbsp;</th>
 		</tr>
