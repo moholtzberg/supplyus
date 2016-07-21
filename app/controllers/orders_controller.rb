@@ -4,7 +4,7 @@ class OrdersController < ApplicationController
   
   def index
     authorize! :read, Order
-    @orders = Order.is_complete.includes(:account, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}).unshipped
+    @orders = Order.is_complete.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate).unshipped
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
     end
@@ -14,7 +14,7 @@ class OrdersController < ApplicationController
   
   def shipped
     authorize! :read, Order
-    @orders = Order.is_complete.includes(:account, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}).shipped
+    @orders = Order.is_complete.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate).shipped
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
     end
@@ -25,7 +25,7 @@ class OrdersController < ApplicationController
   
   def fulfilled
     authorize! :read, Order
-    @orders = Order.is_complete.includes(:account, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}).fulfilled
+    @orders = Order.is_complete.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate).fulfilled
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
     end
@@ -36,7 +36,7 @@ class OrdersController < ApplicationController
   
   def unfulfilled
     authorize! :read, Order
-    @orders = Order.is_complete.includes(:account, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}).unfulfilled
+    @orders = Order.is_complete.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate).unfulfilled
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
     end
@@ -47,7 +47,7 @@ class OrdersController < ApplicationController
   
   def locked
     authorize! :read, Order
-    @orders = Order.is_complete.is_locked.includes(:account, :order_line_items)
+    @orders = Order.is_complete.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate).is_locked
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
     end
@@ -57,7 +57,7 @@ class OrdersController < ApplicationController
   
   def incomplete
     authorize! :read, Order
-    @orders = Order.is_incomplete.includes(:account, :order_line_items)
+    @orders = Order.is_incomplete.includes(:account, :order_line_items, :order_tax_rate)
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
     end
@@ -152,7 +152,7 @@ class OrdersController < ApplicationController
   private
 
   def order_params
-    params.require(:order).permit(:account_id, :number, :po_number, :bill_to_attention, :bill_to_address_1, :bill_to_address_2, :bill_to_city, :bill_to_state, :bill_to_zip, :bill_to_phone, :ship_to_attention, :ship_to_address_1, :ship_to_address_2, :ship_to_city, :ship_to_state, :ship_to_zip, :ship_to_phone)
+    params.require(:order).permit(:account_id, :number, :email, :po_number, :notes, :bill_to_attention, :bill_to_address_1, :bill_to_address_2, :bill_to_city, :bill_to_state, :bill_to_zip, :bill_to_phone, :ship_to_attention, :ship_to_address_1, :ship_to_address_2, :ship_to_city, :ship_to_state, :ship_to_zip, :ship_to_phone)
   end
 
   def sort_column

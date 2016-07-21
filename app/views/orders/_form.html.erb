@@ -13,12 +13,12 @@
 	
 			<script>
 				$("select#order_account_id").change(function(e){
-					var address_1 = $(this).find("option:selected").attr("address_1")
-					var address_2 = $(this).find("option:selected").attr("address_2")
-					var city = $(this).find("option:selected").attr("city")
-					var state = $(this).find("option:selected").attr("state")
-					var zip = $(this).find("option:selected").attr("zip")
-					var phone = $(this).find("option:selected").attr("phone")
+					var address_1 = $(this).find("option:selected").attr("ship_to_address_1")
+					var address_2 = $(this).find("option:selected").attr("ship_to_address_2")
+					var city = $(this).find("option:selected").attr("ship_to_city")
+					var state = $(this).find("option:selected").attr("ship_to_state")
+					var zip = $(this).find("option:selected").attr("ship_to_zip")
+					var phone = $(this).find("option:selected").attr("ship_to_phone")
 					$("input#order_bill_to_address_1").val(address_1)
 					$("input#order_bill_to_address_2").val(address_2)
 					$("input#order_bill_to_city").val(city)
@@ -47,6 +47,11 @@
 			<div class="col-md-3">
 				<%= f.label :email %>
 				<%= f.text_field(:email, :class => "form-control") %>
+			</div>
+			
+			<div class="col-md-12">
+				<%= f.label :notes %>
+				<%= f.text_area(:notes, :class => "form-control") %>
 			</div>
 			
 		</div>
