@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160715041156) do
+ActiveRecord::Schema.define(version: 20160802212814) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -157,6 +157,28 @@ ActiveRecord::Schema.define(version: 20160715041156) do
     t.datetime "updated_at",                 null: false
     t.integer  "is_processing", default: 0
     t.text     "failed_lines",  default: ""
+  end
+
+  create_table "inventories", force: :cascade do |t|
+    t.integer  "item_id",         null: false
+    t.integer  "qty_on_hand"
+    t.integer  "qty_sold"
+    t.integer  "qty_shipped"
+    t.integer  "qty_ordered"
+    t.integer  "qty_received"
+    t.integer  "qty_backordered"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "inventory_transactions", force: :cascade do |t|
+    t.integer  "item_id",                          null: false
+    t.integer  "inv_transaction_id",               null: false
+    t.string   "inv_transaction_type",             null: false
+    t.integer  "quantity",             default: 0, null: false
+    t.string   "notes"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "invoice_payment_applications", force: :cascade do |t|
@@ -417,6 +439,61 @@ ActiveRecord::Schema.define(version: 20160715041156) do
   end
 
   add_index "permissions", ["role_id"], name: "index_permissions_on_role_id", using: :btree
+
+  create_table "purchase_order_line_item_receipts", force: :cascade do |t|
+    t.integer  "purchase_order_line_item_id"
+    t.integer  "purchase_order_receipt_id"
+    t.integer  "quantity_received"
+    t.datetime "date"
+  end
+
+  create_table "purchase_order_line_items", force: :cascade do |t|
+    t.integer "purchase_order_id"
+    t.integer "purchase_order_line_number"
+    t.integer "item_id"
+    t.float   "quantity"
+    t.float   "price"
+    t.float   "discount"
+    t.text    "description"
+    t.integer "quantity_received",          default: 0
+  end
+
+  create_table "purchase_order_receipts", force: :cascade do |t|
+    t.integer  "purchase_order_id"
+    t.string   "number"
+    t.datetime "date"
+  end
+
+  create_table "purchase_orders", force: :cascade do |t|
+    t.string   "number"
+    t.integer  "vendor_id"
+    t.integer  "contact_id"
+    t.datetime "date"
+    t.datetime "due_date"
+    t.datetime "completed_at"
+    t.boolean  "canceled"
+    t.boolean  "locked"
+    t.boolean  "drop_ship_order"
+    t.string   "ship_to_account_name"
+    t.string   "ship_to_address_1"
+    t.string   "ship_to_address_2"
+    t.string   "ship_to_attention"
+    t.string   "ship_to_city"
+    t.string   "ship_to_state"
+    t.string   "ship_to_zip"
+    t.string   "ship_to_phone"
+    t.string   "ship_from_vendor_name"
+    t.string   "ship_from_address_1"
+    t.string   "ship_from_address_2"
+    t.string   "ship_from_attention"
+    t.string   "ship_from_city"
+    t.string   "ship_from_state"
+    t.string   "ship_from_zip"
+    t.string   "ship_from_phone"
+    t.text     "notes"
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
+  end
 
   create_table "reciepts", force: :cascade do |t|
     t.integer "payment_plan_id"

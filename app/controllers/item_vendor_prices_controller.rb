@@ -1,5 +1,17 @@
 class ItemVendorPricesController < ApplicationController
   layout "admin"
+  respond_to :html, :json
+  
+  def index
+    item_id = Item.find_by(:number => params[:item_number])
+    @item_price = ItemVendorPrice.where(:item_id => item_id, :vendor_id => params[:vendor_id]).first
+    
+    puts "------------------> #{@item_price.inspect}"
+    
+    respond_to do |format|
+      format.json { render json: @item_price }
+    end
+  end
   
   def new
     authorize! :create, ItemVendorPrice
@@ -22,6 +34,10 @@ class ItemVendorPricesController < ApplicationController
     item_price.vendor_item_number = params[:item_vendor_price][:vendor_item_number] unless params[:item_vendor_price][:vendor_item_number].nil?
     item_price.save
     @item = item
+  end
+  
+  def show
+    
   end
   
 end

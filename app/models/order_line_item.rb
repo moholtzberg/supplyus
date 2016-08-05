@@ -10,8 +10,6 @@ class OrderLineItem < ActiveRecord::Base
   
   scope :by_item, -> (item) { where(:item_id => item) }
   scope :active,  -> () { where(:quantity => 1..Float::INFINITY) }
-  # scope :unfulfilled, -> { where.not(:id => LineItemFulfillment.pluck(:order_line_item_id).uniq) }
-  # scope :fulfilled, -> () { where(:id => LineItemFulfillment.where(:order_line_item_id => self.id).group(:order_line_item_id).sum(:quantity_fulfilled).pluck(:order_line_item_id).uniq) }
   
   before_create :make_line_number, :on => :create
   
@@ -27,6 +25,15 @@ class OrderLineItem < ActiveRecord::Base
   
   after_commit :update_shipped_fulfilled, :if => :persisted?
   after_commit :flush_cache
+  
+  def create_inventory_transactions
+    if InventoryTransaction.find_by(:inv_transaction_id => id, :inv_transaction_type => "OrderLineItem")
+      i = InventoryTransaction.find_by(:inv_transaction_id => id, :inv_transaction_type => "OrderLineItem")
+    else
+      i = InventoryTransaction.new
+    end
+    i.update_attributes(:inv_transaction_id => id, :inv_transaction_type => "OrderLineItem", :item_id => item_id, :quantity => quantity)
+  end
   
   def update_shipped_fulfilled
     qs = calculate_quantity_shipped

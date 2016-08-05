@@ -42,12 +42,15 @@ class Role < ActiveRecord::Base
           :credit_card,
           :shipment,
           :invoice,
+          :inventory,
           :item_import,
           :item_vendor_price,
           :item_vendor_price_import,
           :account_item_price,
           :account_item_price_import,
-          :group_item_price
+          :group_item_price, 
+          :purchase_order,
+          :purchase_order_line_item
   ]
 
 end

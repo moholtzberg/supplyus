@@ -5,8 +5,10 @@
 <ul class="nav nav-pills nav-stacked">
 	<% if a.include?("account") %><li class="<% if current_page?(:accounts) %>active<% end %>"><%= link_to "Accounts", accounts_path %></li><% end %>
 	<% if a.include?("order") %><li class="<% if current_page?(:orders) %>active<% end %>"><%= link_to "Orders", orders_path %></li><% end %>
+	<% if a.include?("purchase_order") %><li class="<% if current_page?(:purchase_orders) %>active<% end %>"><%= link_to "Purchase Orders", purchase_orders_path %></li><% end %>
 	<% if a.include?("SKIP") %><li class="<% if current_page?(:invoices) %>active<% end %>"><%= link_to "Invoices", invoices_path %></li><% end %>
 	<% if a.include?("item") %><li class="<% if current_page?(:items) %>active<% end %>"><%= link_to "Items", items_path %></li><% end %>
+	<% if a.include?("inventory") %><li class="<% if current_page?(:inventories) %>active<% end %>"><%= link_to "Inventory", inventories_path %></li><% end %>
 	<% if a.include?("vendor") %><li class="<% if current_page?(:vendors) %>active<% end %>"><%= link_to "Vendors", vendors_path %></li><% end %>
 	<% if a.include?("brand") %><li class="<% if current_page?(:brands) %>active<% end %>"><%= link_to "Brands", brands_path %></li><% end %>
 	<% if a.include?("category") %><li class="<% if current_page?(:categories) %>active<% end %>"><%= link_to "Categories", categories_path %></li><% end %>

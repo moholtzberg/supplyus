@@ -1,0 +1,44 @@
+<table class="table">
+	<tr class="info">
+		<td colspan="3">Item</td>
+		<td>Quantity Available</td>
+		<td>Quantity Allocated</td>
+		<td>Quantity On Order</td>
+	</tr>
+	<tr class="default">
+		<td>Qty On Hand</td>
+		<td>Qty Sold</td>
+		<td>Qty Ordered</td>
+		<td>Qty Shipped</td>
+		<td>Qty Received</td>
+		<td>Qty Backordered</td>
+	</tr>
+	
+	<% @inventory.each do |i| %>
+	
+	<tr class="info">
+		<td colspan="3"><%= i.item.number %></td>
+		<td><%= i.quantity_available %></td>
+		<td><%= i.quantity_allocated %></td>
+		<td><%= i.quantity_on_order %></td>
+	</tr>
+	
+	<tr>
+		<td><%= i.qty_on_hand %></td>
+		<td><%= i.qty_sold %></td>
+		<td><%= i.qty_ordered %></td>
+		<td><%= i.qty_shipped %></td>
+		<td><%= i.qty_received %></td>
+		<td><%= i.qty_backordered %></td>
+	</tr>
+	
+	<tr class="text-primary">
+		<td colspan="7">
+			<% i.inventory_transactions.each do |tr| %>
+				<%= "#{tr.inv_transaction_type} > #{tr.inv_transaction_id} > #{tr.quantity}"%><br/>
+			<% end %>
+		</td>
+	</tr>
+	
+	<% end %>
+</table>

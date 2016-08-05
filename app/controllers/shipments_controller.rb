@@ -13,7 +13,9 @@ class ShipmentsController < ApplicationController
     shipment = Shipment.new(:date => Time.now, :order_id => params[:order_id], :carrier => params[:shipment][:carrier], :ship_date => params[:shipment][:ship_date])
     
     params[:lines].each do |line|
-      shipment.line_item_shipments.new(:order_line_item_id => line[1]["order_line_item_id"], :quantity_shipped => line[1]["quantity_ship_now"])
+      if line[1]["quantity_ship_now"].to_i > 0
+        shipment.line_item_shipments.new(:order_line_item_id => line[1]["order_line_item_id"], :quantity_shipped => line[1]["quantity_ship_now"])
+      end
     end
     
     params[:tracking_numbers].each do |tracking|

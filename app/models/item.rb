@@ -5,14 +5,10 @@ class Item < ActiveRecord::Base
   has_many :account_item_prices, :dependent => :destroy, :inverse_of => :item
   has_many :group_item_prices, :dependent => :destroy, :inverse_of => :item
   has_many :item_vendor_prices
-  has_many :images
-  # has_attached_file :image, styles: {
-  #   thumb: '100x100>',
-  #   square: '200x200#',
-  #   medium: '400x400>'
-  # }
-  
+  has_many :images  
   has_many :order_line_items
+  has_many :purchase_order_line_items
+  has_many :inventory_transactions
   has_many :item_properties
   has_many :specifications, :class_name => "Specification"
   has_many :features, :class_name => "Feature"
@@ -21,6 +17,7 @@ class Item < ActiveRecord::Base
   has_many :categories, :through => :item_categories
   belongs_to :category
   belongs_to :brand
+  has_one :inventory, :class_name => "Inventory"
   belongs_to :model
   attr_reader :category_tokens
   
@@ -155,34 +152,66 @@ class Item < ActiveRecord::Base
   end
   
   def slugger
-    # puts "we slugging it out"
-    # if self.slug.nil?
-    #   puts "NO SLUG"
     self.slug = number.downcase.tr(" ", "-") unless self.number.nil?
-    #   puts "---> #{self.inspect}"
-    # else
-    #   puts "---> #{self.slug}"
-    # end
   end
   
-  def times_purchased
-    # total = 0.0
-    # OrderLineItem.joins(:item).where(:item_id => id).each {|o| total += o.quantity.to_i}
-    # total
-    OrderLineItem.where(item_id: id).map(&:actual_quantity).sum
+  ####
+  def times_sold
+    order_line_items.where(item_id: id).map(&:actual_quantity).sum
   end
+  
+  def times_ordered
+    purchase_order_line_items.where(item_id: id).map(&:quantity).sum
+  end
+  
+  def times_shipped
+    inventory_transactions.where(:transaction_type => "LineItemShipment", item_id: id).map(&:quantity).sum
+  end
+  
+  def times_received
+    inventory_transactions.where(transaction_type: "PurchaseOrderLineItemReceipt", item_id: id).map(&:quantity).sum
+  end
+  
+  def count_on_hand
+    times_received.to_i - times_shipped.to_i
+  end
+  
+  def negative_count_on_hand
+    if count_on_hand < 0
+      return true
+    else
+      return false
+    end
+  end
+  
+  def positive_count_on_hand
+    if count_on_hand > 0
+      return true
+    else
+      return false
+    end
+  end
+  
+  ####
   
   def times_purchased_by(account_id)
     Account.find(account_id).order_line_items.where(item_id: id).map(&:actual_quantity).sum
   end
   
   def self.times_ordered
-    Item.joins(:order_line_items).group(:item_id).sort_by(&:times_purchased).reverse!
-    # Item.select("items.*, count(order_line_items.quantity) AS times_purchased")
-    # .joins("INNER JOIN order_line_items ON order_line_items.quantiy = docs.sourceid")
-    #  .group("docs.id")
-    # .order("denotations_count DESC")
+    joins(:order_line_items).group(:id, :item_id).sort_by(&:times_sold).reverse!
   end
+  
+  def self.negative_inventory
+    ids = joins(:inventory_transactions).group(:id, :item_id).sort_by(&:negative_count_on_hand).map(&:id)
+    where(id: ids)
+  end
+  
+  def self.positive_inventory
+    ids = joins(:inventory_transactions).group(:id, :item_id).sort_by(&:positive_count_on_hand).map(&:id)
+    where(id: ids)
+  end
+  
   
   def import_xml_new
     current_item_id = self.id

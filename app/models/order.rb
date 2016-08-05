@@ -30,6 +30,13 @@ class Order < ActiveRecord::Base
   
   after_commit :flush_cache
   after_commit :update_order_tax_rate
+  after_commit :create_inventory_transactions_for_line_items
+  
+  def create_inventory_transactions_for_line_items
+    unless completed_at.blank?
+      order_line_items.each {|a| a.create_inventory_transactions }
+    end
+  end
   
   def update_order_tax_rate
     
@@ -192,13 +199,6 @@ class Order < ActiveRecord::Base
   end
   
   def amount_shipped
-    # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_amount_shipped"]) {
-    #   if self.order_line_items
-    #     total = 0
-    #     self.order_line_items.each {|i| total += (i.quantity_shipped.to_f * i.price.to_f) }
-    #     total
-    #   end
-    # }
     Rails.cache.fetch([self, "#{self.class.to_s.downcase}_amount_shipped"]) {
       order_line_items.map(&:amount_shipped).sum
     }
@@ -320,26 +320,5 @@ class Order < ActiveRecord::Base
     # fulfilled.unpaid.map {|o| if (o.past_due_days >= 90) then o end }
     fulfilled.unpaid.where("due_date <= ?", 90.days.ago)
   end
-  
-  # Order.joins(:order_line_items => :line_item_shipments).group(:order_id, :order_line_item_id).sum("line_item_shipments.quantity_shipped").sum("order_line_items.quantity").inject(0) {|k, v| (k + v[1]) != 0 ? true : false }
-  # Order.joins(:order_line_items).joins(:line_item_shipments).group(:order_id, :order_line_item_id).sum("line_item_shipments.quantity_shipped").inject(0) {|k, v| (k + v[1]) != 0 ? true : false }
-  # Order.joins(:order_line_items => :line_item_shipments).group(:order_id, :order_line_item_id, :quantity, :quantity_canceled, :quantity_shipped).sum(:quantity).inject(0) {|sum, k| sum + (k[0][1].to_f - k[0][2].to_f)}
-  # sql = "SELECT o.id, o.number, oli.order_line_number, 
-  # SUM(IFNULL(oli.quantity,0)) - SUM(IFNULL(oli.quantity_canceled,0)) AS qty,
-  # ls.order_line_item_id, ls.quantity_shipped
-  # FROM orders o
-  # LEFT JOIN order_line_items  oli ON o.id = oli.order_id
-  # LEFT JOIN line_item_shipments ls ON oli.id = ls.order_line_item_id
-  # GROUP BY o.id, o.number, oli.order_line_number, ls.order_line_item_id, ls.quantity_shipped
-  # HAVING  SUM(IFNULL(oli.quantity,0)) - SUM(IFNULL(oli.quantity_canceled,0)) = ls.quantity_shipped AND ls.quantity_shipped >= 1"
-  # # Order.connection.execute(sql)
-  # # Arel::Nodes::SqlLiteral.new(sql)
-  # orders = Arel::Table.new(:orders)
-  # order_line_items = Arel::Table.new(:order_line_items)
-  # line_item_shipments = Arel::Table.new(:line_item_shipments)
-  # orders.join(:order_line_items).on(orders[:id].eq(order_line_items[:order_id]))
-  # .join(:line_item_shipments).on(order_line_items[:id].eq(line_item_shipments[:order_line_item_id]))
-  # # .group_by
-  # .having(order_line_items[:quantity].eq(line_item_shipments[:quantity_shipped]))
   
 end

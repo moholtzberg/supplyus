@@ -79,6 +79,16 @@ Rails.application.routes.draw do
         get :edit_password
         get :reset_password
       end
+      resources :purchase_orders do
+        member do
+          put :lock
+          put :resend_invoice
+          put :resend_order
+        end
+        resources :purchase_order_receipts, :only => [:new, :create]
+      end
+      resources :purchase_order_line_items
+      resources :inventories
       resources :vendors
       resources :settings
       resources :roles do
