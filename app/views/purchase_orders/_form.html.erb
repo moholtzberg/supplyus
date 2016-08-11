@@ -117,6 +117,16 @@
 				<%= f.text_field(:ship_to_zip, :class => "form-control col-md-12 input-sm")%>
 			</div>
 			
+			<div class="col-md-6">
+				<%= f.label :shipping_method %>
+				<%= f.select(:shipping_method, ShippingMethod.all.collect {|a| [a.name, a.id]}, {:include_blank => "Select Shipping Method"}, {:class => "form-control col-md-12 input-sm"}) %>
+			</div>
+			
+			<div class="col-md-6">
+				<%= f.label :shipping_amount %>
+				<%= f.text_field(:shipping_amount, :class => "form-control col-md-12 input-sm")%>
+			</div>
+			
 		</div>
 	
 	</fieldset>
@@ -149,6 +159,6 @@
 		
 	</table>
 	
-	<% end %>	
+	<% end %>
 	
 </fieldset>

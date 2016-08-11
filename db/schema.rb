@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160802212814) do
+ActiveRecord::Schema.define(version: 20160810172300) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,7 +28,7 @@ ActiveRecord::Schema.define(version: 20160802212814) do
     t.integer "user_id"
     t.string  "account_type"
     t.string  "name"
-    t.string  "stripe_customer_id"
+    t.string  "quickbooks_id"
     t.string  "number"
     t.string  "email"
     t.string  "ship_to_address_1"
@@ -47,9 +47,9 @@ ActiveRecord::Schema.define(version: 20160802212814) do
     t.string  "bill_to_fax"
     t.boolean "active"
     t.integer "group_id"
-    t.float   "credit_limit",       default: 0.0
+    t.float   "credit_limit",      default: 0.0
     t.integer "credit_terms"
-    t.boolean "credit_hold",        default: true
+    t.boolean "credit_hold",       default: true
   end
 
   create_table "assets", force: :cascade do |t|
@@ -462,6 +462,14 @@ ActiveRecord::Schema.define(version: 20160802212814) do
     t.integer  "purchase_order_id"
     t.string   "number"
     t.datetime "date"
+  end
+
+  create_table "purchase_order_shipping_methods", force: :cascade do |t|
+    t.integer  "purchase_order_id"
+    t.integer  "shipping_method_id"
+    t.float    "amount"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "purchase_orders", force: :cascade do |t|

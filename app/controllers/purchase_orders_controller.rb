@@ -12,6 +12,14 @@ class PurchaseOrdersController < ApplicationController
   
   def show
     @purchase_order = PurchaseOrder.find(params[:id])
+    @purchase_order_line_items = @purchase_order.purchase_order_line_items.includes(:item)
+    @receipts = PurchaseOrderReceipt.where(:purchase_order_id => @purchase_order.id)
+    respond_to do |format|
+      format.html
+      format.pdf do
+        render :pdf => "#{@purchase_order.number}", :title => "#{@purchase_order.number}", :layout => 'admin_print.html.erb', :page_size => 'Letter', :background => false, :template => 'orders/show.html.erb', :print_media_type => true, :show_as_html => params[:debug].present?
+      end
+    end
   end
 
   def new
@@ -85,7 +93,7 @@ class PurchaseOrdersController < ApplicationController
   private
 
   def purchase_order_params
-    params.require(:purchase_order).permit(:vendor_id, :number, :email, :po_number, :completed_at, :notes, :ship_from_attention, :ship_from_address_1, :ship_from_address_2, :ship_from_city, :ship_from_state, :ship_from_zip, :ship_to_attention, :ship_to_address_1, :ship_to_address_2, :ship_to_city, :ship_to_state, :ship_to_zip, :ship_to_phone)
+    params.require(:purchase_order).permit(:vendor_id, :number, :email, :po_number, :completed_at, :notes, :ship_from_attention, :ship_from_address_1, :ship_from_address_2, :ship_from_city, :ship_from_state, :ship_from_zip, :ship_to_attention, :ship_to_address_1, :ship_to_address_2, :ship_to_city, :ship_to_state, :ship_to_zip, :ship_to_phone, :shipping_method, :shipping_amount)
   end
   
 end

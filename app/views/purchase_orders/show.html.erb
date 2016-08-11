@@ -1,4 +1,110 @@
-<p id="notice"><%= notice %></p>
+<div id="order" class="col-md-12">
+		
+	<table class="table table-bordered table-condensed thead">
+		<tr class="bg-primary">
+			<th width="33.3%">Remit To</th>
+			<th width="33.4%">Shipping Address</th>
+			<th width="33.3%">Billing Address</th>
+		</tr>
+		<tr>
+			<td>
+				24/7 Office Supply, Inc.<br/>
+				2957 NW 27th Street<br/>
+				Fort Lauderdale, FL 33311<br/>
+				(888) 247-8775
+			</td>
+			<td>
+				<%= @purchase_order.ship_to_account_name %> &nbsp;<% if @purchase_order.vendor != nil and @purchase_order.vendor.group_id != nil %><small>(<%= @purchase_order.vendor.group.name %>)</small><% end %><br/>
+				<% unless @purchase_order.ship_to_attention.blank? %><%= @purchase_order.ship_to_attention %><br/><% end %>
+				<%= @purchase_order.ship_to_address_1 %><br/>
+				<% unless @purchase_order.ship_to_address_2.blank? %><%= @purchase_order.ship_to_address_2 %><br/><% end %>
+				<%= @purchase_order.ship_to_city %>, <%= @purchase_order.ship_to_state %> <%= @purchase_order.ship_to_zip %><br/>
+				<%= @purchase_order.ship_to_phone %>
+			</td>
+			<td>
+				<% unless @purchase_order.ship_from_vendor_name.blank? %><%= @purchase_order.ship_from_vendor_name %><br/><% end %>
+				<% unless @purchase_order.ship_from_attention.blank? %><%= @purchase_order.ship_from_attention %><br/><% end %>
+				<% unless @purchase_order.ship_from_address_1.blank? %><%= @purchase_order.ship_from_address_1 %><br/><% end %>
+				<% unless @purchase_order.ship_from_address_2.blank? %><%= @purchase_order.ship_from_address_2 %><br/><% end %>
+				<%= @purchase_order.ship_from_city unless @purchase_order.ship_from_city.blank? %>, <%= @purchase_order.ship_from_state unless @purchase_order.ship_from_state.blank?%> <%= @purchase_order.ship_from_zip unless @purchase_order.ship_from_zip.blank? %><br/>
+				<%= @purchase_order.ship_from_phone unless @purchase_order.ship_from_phone.blank? %>
+			</td>
+		</tr>
+	</table>
+	
+	<table class="table table-bordered table-condensed">
+		<tr class="bg-primary">
+			<th width="25%">Order Number</th>
+			<th width="25%">Order Date</th>
+			<th width="25%">Locked</th>
+		</tr>
+		<tr>
+			<td><%= @purchase_order.number %></td>
+			<td><%= @purchase_order.completed_at.strftime("%m/%d/%Y %I:%M %p") unless @purchase_order.completed_at.nil? %></td>
+			<td><%= @purchase_order.locked ? "Yes" : "No" %></td>
+		</tr>
+	</table>
+	
+	<table class="table table-bordered table-condensed">
+		<tr class="bg-primary">
+			<th width="100%">Notes</th>
+		</tr>
+		<tr>
+			<td><%= @purchase_order.notes.to_s %></td>
+		</tr>
+	</table>
+	
+	<table class="table table-bordered table-condensed">
 
-<%= link_to 'Edit', edit_purchase_order_path(@purchase_order) %> |
-<%= link_to 'Back', purchase_orders_path %>
+		<tr class="bg-primary">
+			<th width="64%" class="text-left" colspan="2">Item Name/Description</th>
+			<th width="6%" class="text-center">Qty</th>
+			<th width="6%" class="text-center">Received</th>
+			<th width="6%" class="text-center">Price</th>
+			<th width="6%" class="text-center">Subtotal</th>
+		</tr>
+
+		<% @purchase_order_line_items.active.each_with_index do |li, idx| %>
+		<tr class="line_items">
+			<td class="text-center"><%= li.purchase_order_line_number %></td>
+			<td><%= li.item.number unless li.item.nil? %> / <%= li.item.name unless li.item.nil? %></td>
+			<td class="text-center"><%= li.quantity.to_i %></td>
+			<td class="text-center"><%= li.quantity_received  %></td>
+			<td class="text-center"><%= number_to_currency(li.price) %></td>
+			<td class="text-center"><%= number_to_currency(li.sub_total) %></td>
+		<tr>
+		<% end %>
+
+		<tr class="line_items">
+			<td colspan="4">Sub Total</td>
+			<td colspan="2" class="text-center"><strong><%= number_to_currency(@purchase_order.sub_total) %></strong></td>
+		</tr>
+		<tr class="line_items">
+			<td colspan="4"><%= "#{@purchase_order.purchase_order_shipping_method.name} - " unless  @purchase_order.purchase_order_shipping_method.nil? %>Shipping</td>
+			<td colspan="2" class="text-center"><strong> <%= number_to_currency(@purchase_order.purchase_order_shipping_method.amount) unless  @purchase_order.purchase_order_shipping_method.nil? %></strong></td>
+		</tr>
+		<tr class="line_items">
+			<td colspan="4">Purchase Order Total</td>
+			<td colspan="2" class="text-center"><strong> <%= number_to_currency(@purchase_order.total) %></strong></td>
+		</tr>
+		
+	</table>
+	
+	<table class="table table-bordered table-condensed">
+		
+		<tr class="line_items">
+			<th width="25%" class="bg-primary">Order ID</th>
+			<th width="25%" class="bg-primary">Created At</th>
+			<th width="25%" class="bg-primary">Updated At</th>
+			<th width="25%" class="bg-primary">Locked</th>
+		</tr>
+		
+		<tr>
+			<td><%= @purchase_order.id %></td>
+			<td><%= @purchase_order.created_at.strftime("%m/%d/%y %I:%M:%S %p") unless @purchase_order.created_at.nil? %></td>
+			<td><%= @purchase_order.updated_at.strftime("%m/%d/%y %I:%M:%S %p") unless @purchase_order.updated_at.nil? %></td>
+			<td><%= @purchase_order.locked ? "Yes" : "No" %></td>
+		</tr>
+	</table>
+	
+</div>

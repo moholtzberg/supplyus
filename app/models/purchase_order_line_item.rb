@@ -5,6 +5,7 @@ class PurchaseOrderLineItem < ActiveRecord::Base
   belongs_to :purchase_order, :touch => true
   belongs_to :item
   has_many :inventory_transactions, :class_name => "InventoryTransaction", :dependent => :destroy
+  has_many :purchase_order_line_item_receipts
   
   scope :by_item, -> (item) { where(:item_id => item) }
   scope :active,  -> () { where(:quantity => 1..Float::INFINITY) }

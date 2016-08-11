@@ -15,7 +15,7 @@
 			<% if !@account.phone.nil? %><br/><%= number_to_phone(@account.phone) %><% end %>
 			<% if !@account.fax.nil? %><br/><%= number_to_phone(@account.fax) %><% end %>
 			<hr/>
-			<% if !@account.stripe_customer_id.nil? %><%= @account.stripe_customer_id %><% end %>
+			<% if !@account.quickbooks_id.nil? %>QuickBooks Id: <%= @account.quickbooks_id %><% end %>
 			
 
 		</div>

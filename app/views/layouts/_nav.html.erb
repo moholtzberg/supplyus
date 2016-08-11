@@ -26,4 +26,17 @@
 	<% if a.include?("role") %><li class="<% if current_page?(:roles) %>active<% end %>"><%= link_to "Roles", roles_path %></li><% end %>
 	<% if a.include?("payment") %><li class="<% if current_page?(:payments) %>active<% end %>"><%= link_to "Payments", payments_path %></li><% end %>
 	<!-- <li class="<%# if current_page?(:path => :charges) %>active<%# end %>"><%= link_to "Charges", charges_path %></li> -->
+	<li>
+		<%# session[:token] = nil %>
+		<% unless session[:token] %>
+		    <ipp:connectToIntuit></ipp:connectToIntuit>
+		<% else %>
+			<% if Setting.find_by(:key => "qb_token").nil? %>
+				<%# Setting.create(:key => "qb_token", :value => session[:token]) %>
+			<% end %>
+			<div class="alert alert-info alert-sm">
+				Your QucikBooks account is connnected!
+			</div>
+		<% end %>
+	</i>
 </ul>

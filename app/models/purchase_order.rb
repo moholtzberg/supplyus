@@ -4,6 +4,7 @@ class PurchaseOrder < ActiveRecord::Base
   
   belongs_to :vendor, :class_name => "Account"
   has_many :purchase_order_line_items, :inverse_of => :purchase_order, :dependent => :destroy
+  has_one :purchase_order_shipping_method, :dependent => :destroy, :inverse_of => :purchase_order
   
   before_save :make_record_number
   after_commit :create_inventory_transactions_for_line_items
@@ -14,13 +15,32 @@ class PurchaseOrder < ActiveRecord::Base
     end
   end
   
+  def shipping_method
+    purchase_order_shipping_method.try(:shipping_method_id)
+  end
+  
+  def shipping_method=(method)
+    purchase_order_shipping_method = PurchaseOrderShippingMethod.find_or_create_by(:purchase_order_id => id) if method.present?
+    puts purchase_order_shipping_method.inspect
+    purchase_order_shipping_method.shipping_method_id = method if method.present?
+    purchase_order_shipping_method.save
+  end
+  
+  def shipping_amount
+    purchase_order_shipping_method.try(:amount)
+  end
+  
+  def shipping_amount=(name)
+    purchase_order_shipping_method.amount = name if name.present?
+    purchase_order_shipping_method.save
+  end
+  
   def sub_total
     purchase_order_line_items.map(&:sub_total).sum
   end
   
   def shipping_total
-    0
-    #purchase_order_shipping_method.amount unless purchase_order_shipping_method.nil?
+    purchase_order_shipping_method.amount unless purchase_order_shipping_method.nil?
   end
   
   def total
