@@ -7,12 +7,13 @@
 			<div class="col-md-3">
 				<%= f.label :account %>
 				<%= f.select :account_id, @accounts.collect {|p| [p.name, p.id, 
-					:ship_to_address_1 => p.ship_to_address_1, :ship_to_address_2 => p.ship_to_address_2, :ship_to_city => p.ship_to_city, :ship_to_state => p.ship_to_state, :ship_to_zip => p.ship_to_zip, :ship_to_phone => p.ship_to_phone
+					:account_name => p.name, :ship_to_address_1 => p.ship_to_address_1, :ship_to_address_2 => p.ship_to_address_2, :ship_to_city => p.ship_to_city, :ship_to_state => p.ship_to_state, :ship_to_zip => p.ship_to_zip, :ship_to_phone => p.ship_to_phone
 					]}, {:include_blank => "Select Account"}, {:class => "form-control"} %>
 			</div>
 	
 			<script>
 				$("select#order_account_id").change(function(e){
+					var account_name = $(this).find("option:selected").attr("account_name")
 					var address_1 = $(this).find("option:selected").attr("ship_to_address_1")
 					var address_2 = $(this).find("option:selected").attr("ship_to_address_2")
 					var city = $(this).find("option:selected").attr("ship_to_city")
@@ -61,6 +62,10 @@
 		
 		<div class="col-md-6 address">
 			<div class="col-md-12">
+				<%= f.label :bill_to_account_name %>
+				<%= f.text_field(:bill_to_account_name, :class => " form-control col-md-12 input-sm")%>
+			</div>
+			<div class="col-md-12">
 				<%= f.label :bill_to_attention %>
 				<%= f.text_field(:bill_to_attention, :class => " form-control col-md-12 input-sm")%>
 			</div>
@@ -88,6 +93,10 @@
 		</div>
 		
 		<div class="col-md-6 address">
+			<div class="col-md-12">
+				<%= f.label :ship_to_account_name %>
+				<%= f.text_field(:ship_to_account_name, :class => " form-control col-md-12 input-sm")%>
+			</div>
 			<div class="col-md-12">
 				<%= f.label :ship_to_attention %>
 				<%= f.text_field(:ship_to_attention, :class => " form-control col-md-12 input-sm")%>

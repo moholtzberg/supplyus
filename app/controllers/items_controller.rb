@@ -43,7 +43,8 @@ class ItemsController < ApplicationController
     search_term = params[:term] if params[:term].present?
     @results = @results.search(search_term).paginate(:page => params[:page], :per_page => 25)
     respond_to do |format|
-      format.json { render json: @results }
+      # format.json { render :json => @results.map {|a| [{:number => a.number}, {:name => a.name}] }}
+      format.json {render :json => @results.map(&:number)}
     end
   end
   
