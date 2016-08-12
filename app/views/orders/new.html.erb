@@ -12,7 +12,7 @@
 	<% end %>
 	
 	
-	<%= form_for @order, :method => :patch, :remote => true, :html => {:class => "form-horizontal"} do |f| %>
+	<%= form_for @order, :method => :patch, :remote => false, :html => {:class => "form-horizontal"} do |f| %>
 		<%= render :partial => "orders/form", :locals => {:f => f}%>
 	<% end %>
 	
