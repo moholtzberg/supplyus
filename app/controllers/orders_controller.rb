@@ -29,9 +29,20 @@ class OrdersController < ApplicationController
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
     end
-    @orders = @orders.order(sort_column + " " + sort_direction)
-    @orders = @orders.paginate(:page => params[:page], :per_page => 20)
-    render "index"
+   
+    respond_to do |format|
+      format.html do 
+        @orders = @orders.order(sort_column + " " + sort_direction)
+        @orders = @orders.paginate(:page => params[:page], :per_page => 20)
+        render "index.html.erb"
+      end
+      format.csv do 
+        # @orders = @orders.map(&:order_line_items)
+        render "index.csv.erb"
+      end
+      format.xls { send_data @orders.to_csv(col_sep: "\t") }
+    end
+    
   end
   
   def unfulfilled
@@ -138,7 +149,6 @@ class OrdersController < ApplicationController
   
   def create
     authorize! :create, Order
-    
   end
   
   def lock
@@ -152,7 +162,7 @@ class OrdersController < ApplicationController
   private
 
   def order_params
-    params.require(:order).permit(:account_id, :number, :email, :po_number, :notes, :bill_to_attention, :bill_to_address_1, :bill_to_address_2, :bill_to_city, :bill_to_state, :bill_to_zip, :bill_to_phone, :ship_to_attention, :ship_to_address_1, :ship_to_address_2, :ship_to_city, :ship_to_state, :ship_to_zip, :ship_to_phone)
+    params.require(:order).permit(:account_id, :number, :email, :po_number, :notes, :bill_to_account_name, :bill_to_attention, :bill_to_address_1, :bill_to_address_2, :bill_to_city, :bill_to_state, :bill_to_zip, :bill_to_phone, :ship_to_account_name, :ship_to_attention, :ship_to_address_1, :ship_to_address_2, :ship_to_city, :ship_to_state, :ship_to_zip, :ship_to_phone)
   end
 
   def sort_column

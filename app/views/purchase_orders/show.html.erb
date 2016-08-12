@@ -14,7 +14,7 @@
 				(888) 247-8775
 			</td>
 			<td>
-				<%= @purchase_order.ship_to_account_name %> &nbsp;<% if @purchase_order.vendor != nil and @purchase_order.vendor.group_id != nil %><small>(<%= @purchase_order.vendor.group.name %>)</small><% end %><br/>
+				<%= @purchase_order.ship_to_account_name %><br/>
 				<% unless @purchase_order.ship_to_attention.blank? %><%= @purchase_order.ship_to_attention %><br/><% end %>
 				<%= @purchase_order.ship_to_address_1 %><br/>
 				<% unless @purchase_order.ship_to_address_2.blank? %><%= @purchase_order.ship_to_address_2 %><br/><% end %>
