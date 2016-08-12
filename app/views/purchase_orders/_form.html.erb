@@ -14,6 +14,7 @@
 			<script>
 				$("select#purchase_order_vendor_id").change(function(e){
 					var vendor = $(this).find("option:selected").attr("vendor_name")
+					var address_1 = $(this).find("option:selected").attr("ship_to_address_1")
 					var address_2 = $(this).find("option:selected").attr("ship_to_address_2")
 					var city = $(this).find("option:selected").attr("ship_to_city")
 					var state = $(this).find("option:selected").attr("ship_to_state")

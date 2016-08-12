@@ -20,10 +20,10 @@ class PurchaseOrderLineItemsController < ApplicationController
   end
   
   def update
-    authorize! :update, PuchaseOrderLineItem
-    @line_item = PuchaseOrderLineItem.find_by(:id => params[:id])
-    if @line_item.update_attributes(order_line_item_params)
-      flash[:notice] = "\"#{@line_item.order_line_number}\" has been updated"
+    authorize! :update, PurchaseOrderLineItem
+    @line_item = PurchaseOrderLineItem.find_by(:id => params[:id])
+    if @line_item.update_attributes(purchase_order_line_item_params)
+      flash[:notice] = "\"#{@line_item.purchase_order_line_number}\" has been updated"
     else
       flash[:error] = "There were some problems with the form you submitted"
     end
