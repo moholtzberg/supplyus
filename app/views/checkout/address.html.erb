@@ -17,7 +17,9 @@
 				
 				<div id="address" class="col-md-12 shipping">
 					<%= f.label :class => "control-label" do %>Company Name
-						<% if @checkout.errors[:ship_to_account_name] %>(<%= @checkout.errors.full_messages_for(:ship_to_account_name).first %>)<% end %>
+						<% unless @checkout.errors[:ship_to_account_name].blank? %>
+							<span class="text text-danger">(<%= "#{@checkout.errors.full_messages_for(:ship_to_account_name).first}" %>)</span>
+						<% end %>
 					<% end %>
 					<%= f.text_field :ship_to_account_name, :class => "form-control", :value => @checkout.ship_to_account_name %>
 				</div>
@@ -29,8 +31,10 @@
 
 				<div id="address" class="col-md-12 shipping">
 					<%= f.label :class => "control-label" do %>Address
-						<% if @checkout.errors[:ship_to_address_1] %>(<%= @checkout.errors.full_messages_for(:ship_to_address_1).first %>)<% end %>
-					<% end %>
+						<% unless @checkout.errors[:ship_to_address_1].blank? %>
+							<span class="text text-danger">(<%= "#{@checkout.errors.full_messages_for(:ship_to_address_1).first}" %>)</span>
+						<% end %>
+					<% end %>	
 					<%= f.text_field :ship_to_address_1, :class => "form-control", :value => @checkout.ship_to_address_1 %>
 				</div>
 
@@ -39,18 +43,30 @@
 					<%= f.text_field :ship_to_address_2, :class => "form-control", :value => @checkout.ship_to_address_2 %>
 				</div>
 
-				<div id="city" class="col-sm-6 col-xs-6 shipping">
-					<%= f.label :city, :class => "control-label" %>
+				<div id="city" class="col-md-12 shipping">
+					<%= f.label :class => "control-label" do %>City
+						<% unless @checkout.errors[:ship_to_city].blank? %>
+							<span class="text text-danger">(<%= "#{@checkout.errors.full_messages_for(:ship_to_city).first}" %>)</span>
+						<% end %>
+					<% end %>	
 					<%= f.text_field :ship_to_city, :class => "form-control", :value => @checkout.ship_to_city %>
 				</div>
-
-				<div id="state" class="col-sm-2 col-xs-3 shipping">
-					<%= f.label :state, :class => "control-label" %>
+				
+				<div id="state" class="col-md-6 shipping">
+					<%= f.label :class => "control-label" do %>State
+						<% unless @checkout.errors[:ship_to_state].blank? %>
+							<span class="text text-danger">(<%= "#{@checkout.errors.full_messages_for(:ship_to_state).first}" %>)</span>
+						<% end %>
+					<% end %>	
 					<%= f.text_field :ship_to_state, :class => "form-control", :value => @checkout.ship_to_state %>
 				</div>
-
-				<div id="zip" class="col-sm-4 col-xs-3 shipping">
-					<%= f.label :zip, :class => "control-label" %>
+				
+				<div id="zip" class="col-md-6 shipping">
+					<%= f.label :class => "control-label" do %>State
+						<% unless @checkout.errors[:ship_to_zip].blank? %>
+							<span class="text text-danger">(<%= "#{@checkout.errors.full_messages_for(:ship_to_zip).first}" %>)</span>
+						<% end %>
+					<% end %>	
 					<%= f.text_field :ship_to_zip, :class => "form-control", :value => @checkout.ship_to_zip %>
 				</div>
 
@@ -59,8 +75,12 @@
 					<%= f.text_field :ship_to_phone, :class => "form-control", :value => @checkout.ship_to_phone %>
 				</div>
 				
-				<div id="email" class="col-xs-12 shipping">
-					<%= f.label :email, :class => "control-label" %>
+				<div id="email" class="col-md-12 shipping">
+					<%= f.label :class => "control-label" do %>Email
+						<% unless @checkout.errors[:email].blank? %>
+							<span class="text text-danger">(<%= "#{@checkout.errors.full_messages_for(:email).first}" %>)</span>
+						<% end %>
+					<% end %>	
 					<%= f.text_field :email, :class => "form-control", :value => @checkout.email %>
 				</div>
 
@@ -90,17 +110,17 @@
 					<%= f.text_field :bill_to_address_2, :class => "form-control bill_to" %>
 				</div>
 
-				<div id="city" class="col-sm-6 col-xs-6 shipping">
+				<div id="city" class="col-sm-12 col-xs-12 shipping">
 					<%= f.label :city, :class => "control-label" %>
 					<%= f.text_field :bill_to_city, :class => "form-control bill_to" %>
 				</div>
 
-				<div id="state" class="col-sm-2 col-xs-3 shipping">
+				<div id="state" class="col-sm-6 col-xs-6 shipping">
 					<%= f.label :state, :class => "control-label" %>
 					<%= f.text_field :bill_to_state, :class => "form-control bill_to" %>
 				</div>
 
-				<div id="zip" class="col-sm-4 col-xs-3 shipping">
+				<div id="zip" class="col-sm-6 col-xs-6 shipping">
 					<%= f.label :zip, :class => "control-label" %>
 					<%= f.text_field :bill_to_zip, :class => "form-control bill_to" %>
 				</div>
@@ -110,11 +130,18 @@
 					<%= f.text_field :bill_to_phone, :class => "form-control bill_to" %>
 				</div>
 				
+				<div id="email" class="col-xs-12 shipping">
+					<%= f.label :bill_to_email, :class => "control-label" %>
+					<%= f.text_field :bill_to_email, :class => "form-control", :value => @checkout.bill_to_email %>
+				</div>
+				
 				<div id="use_ship_to" class="col-xs-12 shipping">
 					<%= label_tag :use_ship_to_address do %>
 						<%= check_box_tag :use_ship_to_address, :checked, :class => "form-control" %>
 					<% end %>
 				</div>
+				
+				
 				
 				<script>
 					$(document).ready(function() {
@@ -138,7 +165,14 @@
 	</tr>
 	
 	<tr>
-		<td colspan="2"><%= f.label :po_number, :class => "control-label" %><%= f.text_field :po_number, :class => "form-control col-md-6" %></td>
+		<td colspan="2">
+			<fieldset>
+				<div id="po_number" class="col-xs-12 shipping">
+					<%= f.label :po_number, :class => "control-label" %>
+					<%= f.text_field :po_number, :class => "form-control col-md-6" %>
+				</div>
+			</fieldset>
+		</td>
 	</tr>
 	
 	<tr>

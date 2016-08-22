@@ -33,8 +33,10 @@ class OrderMailer < ApplicationMailer
       render_to_string(:pdf => "INV_#{@order.number}", :template => 'shop/view_invoice.html.erb', :layout => "admin_print")
     )
     # self.instance_variable_set(:@lookup_context, nil)
+    bill_to_address = @order.bill_to_email.nil? ? nil : @order.bill_to_email
     mail(
          :to => @order.email,
+         :cc => bill_to_address,
          :bcc => "sales@247officesupply.com",
          :subject => "Invoice Notification #{@order.number}", 
          :text => render_to_string("order_mailer/invoice_notification").to_str

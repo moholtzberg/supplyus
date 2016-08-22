@@ -19,7 +19,9 @@
 				<%= @order.ship_to_address_1 %><br/>
 				<% unless @order.ship_to_address_2.blank? %><%= @order.ship_to_address_2 %><br/><% end %>
 				<%= @order.ship_to_city %>, <%= @order.ship_to_state %> <%= @order.ship_to_zip %><br/>
-				<%= @order.ship_to_phone %>
+				<%= @order.ship_to_phone %><br/>
+				<%= @order.email %>
+				
 			</td>
 			<td>
 				<% unless @order.bill_to_account_name.blank? %><%= @order.bill_to_account_name %><br/><% end %>
@@ -27,7 +29,8 @@
 				<% unless @order.bill_to_address_1.blank? %><%= @order.bill_to_address_1 %><br/><% end %>
 				<% unless @order.bill_to_address_2.blank? %><%= @order.bill_to_address_2 %><br/><% end %>
 				<%= @order.bill_to_city unless @order.bill_to_city.blank? %>, <%= @order.bill_to_state unless @order.bill_to_state.blank?%> <%= @order.bill_to_zip unless @order.bill_to_zip.blank? %><br/>
-				<%= @order.bill_to_phone unless @order.bill_to_phone.blank? %>
+				<%= @order.bill_to_phone unless @order.bill_to_phone.blank? %><br/>
+				<%= @order.bill_to_email %>
 			</td>
 		</tr>
 	</table>

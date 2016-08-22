@@ -21,7 +21,7 @@ class CheckoutController < ApplicationController
       @checkout.ship_to_state     = a.state if @checkout.ship_to_state.nil?
       @checkout.ship_to_zip       = a.zip if @checkout.ship_to_zip.nil?
       @checkout.ship_to_phone     = a.phone if @checkout.ship_to_phone.nil?
-      # @checkout.account_id        = a.id
+      @checkout.bill_to_email     = a.bill_to_email if @checkout.bill_to_email.nil?
     end
     @checkout.ship_to_attention = "#{current_user.first_name} #{current_user.last_name}" if @checkout.ship_to_attention.nil?
     @checkout.email             = current_user.email if @checkout.email.nil?
@@ -36,6 +36,7 @@ class CheckoutController < ApplicationController
     params[:checkout][:bill_to_state] = params[:checkout][:ship_to_state] unless !params[:checkout][:bill_to_state].blank?
     params[:checkout][:bill_to_zip] = params[:checkout][:ship_to_zip] unless !params[:checkout][:bill_to_zip].blank?
     params[:checkout][:bill_to_phone] = params[:checkout][:ship_to_phone] unless !params[:checkout][:bill_to_phone].blank?
+    params[:checkout][:bill_to_email] = params[:checkout][:email] unless !params[:checkout][:bill_to_email].blank?
     
     cart = Checkout.find_by(:id => cookies.permanent.signed[:cart_id])
     if current_user.has_account
@@ -157,7 +158,7 @@ class CheckoutController < ApplicationController
   
   def checkout_params
     params.require(:checkout).permit(
-    :bill_to_account_name, :bill_to_attention, :bill_to_address_1, :bill_to_address_2, :bill_to_city, :bill_to_state, :bill_to_zip, :bill_to_phone, 
+    :bill_to_account_name, :bill_to_attention, :bill_to_address_1, :bill_to_address_2, :bill_to_city, :bill_to_state, :bill_to_zip, :bill_to_phone, :bill_to_email,
     :ship_to_account_name, :ship_to_attention, :ship_to_address_1, :ship_to_address_2, :ship_to_city, :ship_to_state, :ship_to_zip, :ship_to_phone, :po_number, :email
     )
   end

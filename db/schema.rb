@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160810172300) do
+ActiveRecord::Schema.define(version: 20160822191220) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -50,6 +50,7 @@ ActiveRecord::Schema.define(version: 20160810172300) do
     t.float   "credit_limit",      default: 0.0
     t.integer "credit_terms"
     t.boolean "credit_hold",       default: true
+    t.string  "bill_to_email"
   end
 
   create_table "assets", force: :cascade do |t|
@@ -382,6 +383,7 @@ ActiveRecord::Schema.define(version: 20160810172300) do
     t.datetime "updated_at",           null: false
     t.string   "email"
     t.integer  "user_id"
+    t.string   "bill_to_email"
   end
 
   add_index "orders", ["account_id"], name: "order_customer_id_ix", using: :btree

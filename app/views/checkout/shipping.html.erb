@@ -43,7 +43,8 @@
 			<%= @cart.ship_to_address_1 %><br/>
 			<% unless @cart.ship_to_address_2.blank? %><%= @cart.ship_to_address_2 %><br/><% end %>
 			<%= @cart.ship_to_city %>, <%= @cart.ship_to_state %> <%= @cart.ship_to_zip %><br/>
-			<%= @cart.ship_to_phone %>
+			<% unless @cart.ship_to_phone.blank? %><%= @cart.ship_to_phone %><br/><% end %>
+			<% unless @cart.email.blank? %><%= @cart.email %><br/><% end %>
 		</td>
 		<td>
 			<%= @cart.bill_to_account_name %><br/>
@@ -51,7 +52,8 @@
 			<%= @cart.bill_to_address_1 %><br/>
 			<% unless @cart.bill_to_address_2.blank? %><%= @cart.bill_to_address_2 %><br/><% end %>
 			<%= @cart.bill_to_city %>, <%= @cart.bill_to_state %> <%= @cart.bill_to_zip %><br/>
-			<%= @cart.bill_to_phone %>
+			<% unless @cart.bill_to_phone.blank? %><%= @cart.bill_to_phone %><br/><% end %>
+			<% unless @cart.bill_to_email.blank? %><%= @cart.bill_to_email %><br/><% end %>
 		</td>
 	</tr>
 </table>

@@ -20,6 +20,7 @@
 					var state = $(this).find("option:selected").attr("ship_to_state")
 					var zip = $(this).find("option:selected").attr("ship_to_zip")
 					var phone = $(this).find("option:selected").attr("ship_to_phone")
+					
 					$("input#order_bill_to_account_name").val(account_name)
 					$("input#order_bill_to_address_1").val(address_1)
 					$("input#order_bill_to_address_2").val(address_2)
@@ -27,6 +28,8 @@
 					$("input#order_bill_to_state").val(state)
 					$("input#order_bill_to_zip").val(zip)
 					$("input#order_bill_to_phone").val(phone)
+					$("input#order_bill_to_email").val(email)
+					
 					$("input#order_ship_to_account_name").val(account_name)
 					$("input#order_ship_to_address_1").val(address_1)
 					$("input#order_ship_to_address_2").val(address_2)
@@ -37,12 +40,12 @@
 				})
 			</script>
 	
-			<div class="col-md-3">
+			<div class="col-md-2">
 				<%= f.label :number %>
 				<%= f.text_field(:number, :class => "form-control") %>
 			</div>
 	
-			<div class="col-md-3">
+			<div class="col-md-2">
 				<%= f.label "PO Number" %>
 				<%= f.text_field(:po_number, :class => "form-control") %>
 			</div>
@@ -51,6 +54,21 @@
 				<%= f.label :email %>
 				<%= f.text_field(:email, :class => "form-control") %>
 			</div>
+			
+			<div class="col-md-2">
+				<%= f.label :completed_at %>
+				
+				<% if @order.completed_at.blank? %>
+	
+				<%= f.date_field(:completed_at, :class => "form-control") %>
+				
+				<% else %>
+				
+				<%= f.datetime_field(:completed_at, :disabled => true, :class => "form-control", :value => @order.completed_at.strftime("%m/%d/%Y %I:%M %p")) %>
+				
+				<% end %>
+			</div>
+
 			
 			<div class="col-md-12">
 				<%= f.label :notes %>
@@ -62,7 +80,7 @@
 	</fieldset>
 	<fieldset>
 		
-		<div class="col-md-6 address">
+		<div class="col-md-6 address well">
 			<div class="col-md-12">
 				<%= f.label :bill_to_account_name %>
 				<%= f.text_field(:bill_to_account_name, :class => " form-control col-md-12 input-sm")%>
@@ -90,6 +108,10 @@
 			<div class="col-md-3">
 				<%= f.label :bill_to_zip %>
 				<%= f.text_field(:bill_to_zip, :class => "form-control col-md-12 input-sm")%>
+			</div>
+			<div class="col-md-12">
+				<%= f.label :bill_to_email %>
+				<%= f.text_field(:bill_to_email, :class => "form-control") %>
 			</div>
 			
 		</div>

@@ -136,15 +136,16 @@ class OrdersController < ApplicationController
   
   def update
     authorize! :update, Order
-    @order = Order.find_by(:id => params[:id])
-    puts "----------> #{params[:id]}"
-    puts "----------> #{@order.inspect}"
-    @order.update_attributes(order_params)
-    @orders = Order.all
-    # if @order.save
-    #   render
-    # end
-    
+    @order = Order.find(params[:id])
+    respond_to do |format|
+      if @order.update_attributes(order_params)
+        format.html { redirect_to @order, notice: "Order #{@order.number} was successfully updated!" }
+        format.json { render :show, status: :ok, location: @order }
+      else
+        format.html { render :edit }
+        format.json { render json: @order.errors, status: :unprocessable_entity }
+      end
+    end
   end
   
   def create
@@ -162,7 +163,7 @@ class OrdersController < ApplicationController
   private
 
   def order_params
-    params.require(:order).permit(:account_id, :number, :email, :po_number, :notes, :bill_to_account_name, :bill_to_attention, :bill_to_address_1, :bill_to_address_2, :bill_to_city, :bill_to_state, :bill_to_zip, :bill_to_phone, :ship_to_account_name, :ship_to_attention, :ship_to_address_1, :ship_to_address_2, :ship_to_city, :ship_to_state, :ship_to_zip, :ship_to_phone)
+    params.require(:order).permit(:account_id, :number, :email, :po_number, :completed_at, :notes, :bill_to_account_name, :bill_to_attention, :bill_to_address_1, :bill_to_address_2, :bill_to_city, :bill_to_state, :bill_to_zip, :bill_to_phone, :bill_to_email, :ship_to_account_name, :ship_to_attention, :ship_to_address_1, :ship_to_address_2, :ship_to_city, :ship_to_state, :ship_to_zip, :ship_to_phone)
   end
 
   def sort_column

@@ -77,7 +77,7 @@ class OrderLineItem < ActiveRecord::Base
   
   def profit
     if item.cost_price.nil?
-      item.cost_price = item.cost_price.to_f.to_d
+      item.cost_price = 0.00
     end
     tc = actual_quantity.to_i * item.cost_price
     sub_total - tc

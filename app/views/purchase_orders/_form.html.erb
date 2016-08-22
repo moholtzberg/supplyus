@@ -44,7 +44,7 @@
 				
 				<% else %>
 				
-				<%= f.datetime_field(:completed_at, :disabled => true, :class => "form-control") %>
+				<%= f.datetime_field(:completed_at, :disabled => true, :class => "form-control", :value => @purchase_order.completed_at.strftime("%m/%d/%Y %I:%M %p")) %>
 				
 				<% end %>
 			</div>

@@ -13,12 +13,12 @@
 		
 		<tr>
 			
-			<th witdh="5%">Number</th>
+			<th witdh="5%"><%= sortable "purchase_orders.number", "Number" %></th>
 			<th>Vendor</th>
 			<th width="10%">Sub Total</th>
 			<th width="10%" class="hidden-xs">Recieved</th>
-			<th width="13%" class="text-center hidden-xs">Completed At</th>
-			<th width="4%" class="hidden-xs">Locked</th>
+			<th width="13%" class="text-center hidden-xs"><%= sortable "purchase_orders.completed_at", "Completed At" %></th>
+			<th width="4%" class="hidden-xs"><%= sortable "purchase_orders.locked", "Locked" %></th>
 			<th width="2%">&nbsp;</th>
 		</tr>
 		

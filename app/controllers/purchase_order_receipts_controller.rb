@@ -10,7 +10,7 @@ class PurchaseOrderReceiptsController < ApplicationController
   
   def create
     authorize! :create, PurchaseOrderReceipt
-    shipment = PurchaseOrderReceipt.new(:date => Time.now, :purchase_order_id => params[:purchase_order_id], :date => params["purchase_order_receipt"]["ship_date"])
+    shipment = PurchaseOrderReceipt.new(:purchase_order_id => params[:purchase_order_id], :date => params["purchase_order_receipt"]["ship_date"])
     
     params[:lines].each do |line|
       if line[1]["quantity_receive_now"].to_i > 0

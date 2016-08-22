@@ -1,12 +1,14 @@
 class PurchaseOrdersController < ApplicationController
   layout "admin"
-    
+  helper_method :sort_column, :sort_direction
+  
   def index
     authorize! :read, PurchaseOrder
     @purchase_orders = PurchaseOrder.all
     unless params[:term].blank?
       @purchase_orders = @purchase_orders.lookup(params[:term]) if params[:term].present?
     end
+    @purchase_orders = @purchase_orders.order(sort_column + " " + sort_direction)
     @purchase_orders = @purchase_orders.paginate(:page => params[:page], :per_page => 25)
   end
   
@@ -94,6 +96,17 @@ class PurchaseOrdersController < ApplicationController
 
   def purchase_order_params
     params.require(:purchase_order).permit(:vendor_id, :number, :email, :po_number, :completed_at, :notes, :ship_from_vendor_name, :ship_from_attention, :ship_from_address_1, :ship_from_address_2, :ship_from_city, :ship_from_state, :ship_from_zip, :ship_to_account_name, :ship_to_attention, :ship_to_address_1, :ship_to_address_2, :ship_to_city, :ship_to_state, :ship_to_zip, :ship_to_phone, :shipping_method, :shipping_amount)
+  end
+  
+  def sort_column
+    related_columns = PurchaseOrder.reflect_on_all_associations(:belongs_to).map {|a| a.klass.column_names.map {|col| "#{a.klass.table_name}.#{col}"}}
+    columns = PurchaseOrder.column_names.map {|a| "purchase_orders.#{a}" }
+    columns.push(related_columns).flatten!.uniq!
+    columns.include?(params[:sort]) ? params[:sort] : "purchase_orders.id"
+  end
+
+  def sort_direction
+    %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
   end
   
 end
