@@ -41,8 +41,8 @@
 			<th>Pst Due Days</th>
 		</tr>
 		<% total = 0 %>
-		<% orders = Order.where(:account_id => @accounts.ids) %>
-		<% orders.by_date_range(@from, @to).unpaid.each do |o| %>
+		<% orders = @orders %>
+		<% orders.by_date_range(@from, @to).each do |o| %>
 			<% if o.fulfilled %>
 			<tr>
 				<% total += o.balance_due %>

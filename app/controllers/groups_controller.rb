@@ -38,6 +38,8 @@ class GroupsController < ApplicationController
     @accounts = @group.accounts
     @from = Date.strptime(params[:from_date], '%m/%d/%y').kind_of?(Date) ? Date.strptime(params[:from_date], '%m/%d/%y') : Date.today
     @to = Date.strptime(params[:to_date], '%m/%d/%y').kind_of?(Date) ? Date.strptime(params[:to_date], '%m/%d/%y') : Date.today
+    @orders = Order.includes(:order_payment_applications, :payments).where(:account_id => @accounts.ids).unpaid
+    
     respond_to do |format|
       format.html
       format.pdf do

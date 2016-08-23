@@ -4,7 +4,7 @@ class OrdersController < ApplicationController
   
   def index
     authorize! :read, Order
-    @orders = Order.is_complete.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate).unshipped
+    @orders = Order.is_complete.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).unshipped
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
     end
@@ -14,7 +14,7 @@ class OrdersController < ApplicationController
   
   def shipped
     authorize! :read, Order
-    @orders = Order.is_complete.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate).shipped
+    @orders = Order.is_complete.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).shipped
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
     end
@@ -25,24 +25,18 @@ class OrdersController < ApplicationController
   
   def fulfilled
     authorize! :read, Order
-    @orders = Order.is_complete.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate).fulfilled
+    @orders = Order.is_complete.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).fulfilled
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
     end
-   
-    respond_to do |format|
-      format.html do 
-        @orders = @orders.order(sort_column + " " + sort_direction)
-        @orders = @orders.paginate(:page => params[:page], :per_page => 20)
-        render "index.html.erb"
-      end
-    end
-    
+    @orders = @orders.order(sort_column + " " + sort_direction)
+    @orders = @orders.paginate(:page => params[:page], :per_page => 20)
+    render "index"
   end
   
   def unfulfilled
     authorize! :read, Order
-    @orders = Order.is_complete.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate).unfulfilled
+    @orders = Order.is_complete.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).unfulfilled
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
     end
@@ -53,7 +47,7 @@ class OrdersController < ApplicationController
   
   def locked
     authorize! :read, Order
-    @orders = Order.is_complete.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate).is_locked
+    @orders = Order.is_complete.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).is_locked
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
     end
@@ -67,7 +61,7 @@ class OrdersController < ApplicationController
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
     end
-    @orders = @orders.paginate(:page => params[:page], :per_page => 10)
+    @orders = @orders.paginate(:page => params[:page], :per_page => 20)
     render "index"
   end
   

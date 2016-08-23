@@ -76,11 +76,14 @@ class OrderLineItem < ActiveRecord::Base
   end
   
   def profit
-    if item.cost_price.nil?
-      item.cost_price = 0.00
-    end
-    tc = actual_quantity.to_i * item.cost_price
-    sub_total - tc
+    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_profit"]) {
+      if !item.nil? and !item.cost_price.nil?
+        tc = actual_quantity.to_i * item.cost_price
+        sub_total - tc
+      else
+        0.00
+      end
+    }
   end
   
   def shipped
