@@ -32,6 +32,8 @@ class Order < ActiveRecord::Base
   after_commit :update_order_tax_rate
   after_commit :create_inventory_transactions_for_line_items
   
+  # after_commit :sync_with_quickbooks if :persisted
+      
   def create_inventory_transactions_for_line_items
     unless completed_at.blank?
       order_line_items.each {|a| a.create_inventory_transactions }
@@ -133,9 +135,9 @@ class Order < ActiveRecord::Base
     # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_quantity"]) {
     # OrderLineItem.where(order_id: id).group(:order_line_number, :quantity, :quantity_canceled).sum(:quantity).inject(0) {|sum, k| sum + (k[0][1].to_f - k[0][2].to_f)}
     # }
-    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_quantity"]) {
+    # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_quantity"]) {
       order_line_items.map(&:actual_quantity).sum
-    }
+    # }
   end
   
   def shipped
@@ -205,6 +207,7 @@ class Order < ActiveRecord::Base
   end
   
   def fulfilled
+    puts "ARE WE FULFILLED"
     # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_fulfilled"]) {
     #   if self.order_line_items
     #     total = 0
@@ -215,7 +218,10 @@ class Order < ActiveRecord::Base
     #   end
     # }
     # order_line_items.each {|l| l.fulfilled(l.actual_qunatity)}
-    quantity_fulfilled == quantity
+    puts quantity_fulfilled
+    puts quantity
+    puts  "#{quantity_fulfilled == quantity}"
+    quantity_fulfilled.to_i == quantity.to_i
   end
   
   def fulfilled_id
@@ -234,9 +240,9 @@ class Order < ActiveRecord::Base
     #     total
     #   end
     # }
-    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_quantity_fulfilled"]) {
-      order_line_items.map(&:quantity_fulfilled).sum
-    }
+    # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_quantity_fulfilled"]) {
+    order_line_items.map(&:quantity_fulfilled).sum
+    # }
   end
   
   def amount_fulfilled
@@ -321,4 +327,86 @@ class Order < ActiveRecord::Base
     fulfilled.unpaid.where("due_date <= ?", 90.days.ago)
   end
   
+  def sync_with_quickbooks
+    set_qb_service
+    unless completed_at.blank?
+    puts "--------> STARTING TO SYNC INVOICE WITH  QB #{fulfilled}"
+      if fulfilled
+        puts "--------> INVOICE IS FULFILLED"
+        invoice = set_payload
+        puts "--------> INVOICE PAYLOAD IS LOADED #{invoice}"
+        if self.qb_invoice == nil
+          response = $qbo_api.create(:invoice, payload: invoice)
+        else
+          response = $qbo_api.update(:invoice, :id => qb_invoice, payload: invoice)
+        end
+      end
+    end
+  end
+  
+  def set_payload
+    puts "--------> INVOICE SETTING THE PAYLOAD"
+    line_items_array = []
+    order_line_items.each do |li|
+      line_items_array << {
+        Amount: li.sub_total.to_s,
+        Description: li.item.name,
+        DetailType: "SalesItemLineDetail",
+        SalesItemLineDetail: {
+          ItemRef: {
+            value: li.item.sync_with_quickbooks,
+            name: li.item.name
+          },
+          UnitPrice: li.price.to_s,
+          Qty: li.actual_quantity.to_i,
+          TaxCodeRef: {
+            value: "TAX"
+          }
+        }
+      }
+    end
+    
+    invoice = {
+      DueDate: due_date.to_s,
+      TxnDate: completed_at.to_s,
+      DocNumber: number,
+      Line: line_items_array,
+      CustomerRef: {
+        value: account.qb_customer
+      },
+      TxnTaxDetail: {
+        # TxnTaxCodeRef: {
+        #   value: 90
+        # },
+        TotalTax: tax_total.to_s,
+        TaxLine: [{
+          Amount: "#{order_tax_rate.amount if order_tax_rate}",
+          DetailType: "TaxLineDetail",
+          TaxLineDetail: {
+            PercentBased: true,
+            TaxPercent: "#{order_tax_rate.tax_rate.rate if (order_tax_rate and order_tax_rate.tax_rate)}",
+            NetAmountTaxable: sub_total.to_s
+          }
+        }]
+      }
+    }
+    return invoice
+  end
+  
+  def qb_invoice
+    a = $qbo_api.query(%{SELECT DocNumber, Id FROM Invoice WHERE DocNumber = '#{number}'})
+    if !a.nil?
+      return a[0]["Id"]
+    else
+      return nil
+    end
+  end
+  
+  def set_qb_service
+    token = Setting.find_by(:key => "qb_token").value
+    secret = Setting.find_by(:key => "qb_secret").value
+    realm_id = Setting.find_by(:key => "qb_realm").value
+    $qbo_api = QboApi.new(token: token, token_secret: secret, realm_id: realm_id, consumer_key: QB_KEY, consumer_secret: QB_SECRET)
+  end
+   
 end

@@ -36,11 +36,6 @@ class OrdersController < ApplicationController
         @orders = @orders.paginate(:page => params[:page], :per_page => 20)
         render "index.html.erb"
       end
-      format.csv do 
-        # @orders = @orders.map(&:order_line_items)
-        render "index.csv.erb"
-      end
-      format.xls { send_data @orders.to_csv(col_sep: "\t") }
     end
     
   end
