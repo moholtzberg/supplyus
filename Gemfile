@@ -51,7 +51,7 @@ gem 'braintree'
 gem 'qbo_api'
 gem 'oauth-plugin'
 
-gem 'newrelic_rpm', :group => "production"
+gem 'newrelic_rpm'
 
 gem 'ransack'
 
