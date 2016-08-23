@@ -22,6 +22,8 @@ class AccountsController < ApplicationController
   def show
     authorize! :read, Account
     @account = Account.find(params[:id])
+    puts @account.inspect
+    @orders = Order.where(account_id: @account.id).includes(:order_line_items).order(:completed_at)
     @item_prices = AccountItemPrice.where(account_id: @account.id).includes(:item)
   end
   

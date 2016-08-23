@@ -19,7 +19,7 @@
 				<%= @order.ship_to_address_1 %><br/>
 				<% unless @order.ship_to_address_2.blank? %><%= @order.ship_to_address_2 %><br/><% end %>
 				<%= @order.ship_to_city %>, <%= @order.ship_to_state %> <%= @order.ship_to_zip %><br/>
-				<%= @order.ship_to_phone %><br/>
+				<%= @order.ship_to_phone unless @order.ship_to_phone.blank? %><br/>
 				<%= @order.email %>
 				
 			</td>

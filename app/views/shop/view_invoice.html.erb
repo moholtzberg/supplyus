@@ -20,7 +20,8 @@
 			<%= @invoice.ship_to_address_1 %><br/>
 			<% unless @invoice.ship_to_address_2.blank? %><%= @invoice.ship_to_address_2 %><br/><% end %>
 			<%= @invoice.ship_to_city %>, <%= @invoice.ship_to_state %> <%= @invoice.ship_to_zip %><br/>
-			<%= @invoice.ship_to_phone %>
+			<% unless @invoice.ship_to_phone.blank? %><%= @invoice.ship_to_phone %><br/><% end %>
+			<%= @invoice.email %>
 		</td>
 		<td>
 			<%= @invoice.bill_to_account_name %><br/>
@@ -28,7 +29,8 @@
 			<%= @invoice.bill_to_address_1 %><br/>
 			<% unless @invoice.bill_to_address_2.blank? %><%= @invoice.bill_to_address_2 %><br/><% end %>
 			<%= @invoice.bill_to_city %>, <%= @invoice.bill_to_state %> <%= @invoice.bill_to_zip %><br/>
-			<%= @invoice.bill_to_phone %>
+			<% unless @invoice.bill_to_phone.blank? %><%= @invoice.bill_to_phone %><br/><% end %>
+			<%= @invoice.bill_to_email %>
 		</td>
 	</tr>
 	</thead>
@@ -46,6 +48,15 @@
 		<td><%= @invoice.completed_at.strftime("%m/%d/%Y") %></td>
 		<td><%= @invoice.due_on.strftime("%m/%d/%Y") %></td>
 		<td><%= @invoice.number %></td>
+	</tr>
+</table>
+
+<table class="table table-bordered">
+	<tr>
+		<th width="25%">Notes / Comments</th>
+	</tr>
+	<tr>
+		<td><%= @invoice.notes%></td>
 	</tr>
 </table>
 

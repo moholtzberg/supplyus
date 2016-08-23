@@ -48,6 +48,11 @@ gem 'dalli'
 gem 'activemerchant', '~> 1.46.0'
 gem 'braintree'
 
+gem 'qbo_api'
+gem 'oauth-plugin'
+
+gem 'newrelic_rpm', :group => "production"
+
 gem 'ransack'
 
 gem 'sidekiq', '~> 4.1', '>= 4.1.1'
@@ -67,7 +72,7 @@ group :development, :test do
   gem 'capistrano-bundler'
   gem 'capistrano-rvm'
   gem 'byebug'
-  gem 'jazz_hands', github: 'nixme/jazz_hands', branch: 'bring-your-own-debugger'
+  # gem 'jazz_hands', github: 'nixme/jazz_hands', branch: 'bring-your-own-debugger'
   gem 'pry-byebug'
   gem 'web-console', '~> 2.0'
 end

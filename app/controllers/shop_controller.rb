@@ -141,6 +141,7 @@ class ShopController < ApplicationController
       format.pdf do
         render :pdf => "#{@invoice.number}", :title => "#{@invoice.number}", :layout => 'admin_print.html.erb', :page_size => 'Letter', :background => false, :template => 'shop/view_invoice.html.erb', :print_media_type => true
       end
+      format.xls
     end
   end
   

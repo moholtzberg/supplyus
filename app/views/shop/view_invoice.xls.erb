@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+	<Worksheet ss:Name="Sheet1">
+		<Table>
+			<Row>
+				<Cell><Data ss:Type="String">Order Number</Data></Cell>
+				<Cell><Data ss:Type="String">PO Number</Data></Cell>
+				<Cell><Data ss:Type="String">Store</Data></Cell>
+				<Cell><Data ss:Type="String">Customer</Data></Cell>
+				<Cell><Data ss:Type="String">Business Name</Data></Cell>
+				<Cell><Data ss:Type="String">Ship To Address</Data></Cell>
+				<Cell><Data ss:Type="String">Ship To City</Data></Cell>
+				<Cell><Data ss:Type="String">Ship To State</Data></Cell>
+				<Cell><Data ss:Type="String">Ship To Zip</Data></Cell>
+				<Cell><Data ss:Type="String">Invoice Date</Data></Cell>
+				<Cell><Data ss:Type="String">Item Number</Data></Cell>
+				<Cell><Data ss:Type="String">Description</Data></Cell>
+				<Cell><Data ss:Type="String">UOM</Data></Cell>
+				<Cell><Data ss:Type="String">Price</Data></Cell>
+				<Cell><Data ss:Type="String">Qty Shipped</Data></Cell>
+				<Cell><Data ss:Type="String">Extended Price</Data></Cell>
+				<Cell><Data ss:Type="String">Freight</Data></Cell>
+				<Cell><Data ss:Type="String">Total Order Amount</Data></Cell>
+				<Cell><Data ss:Type="String">Total Order Tax</Data></Cell>
+				<Cell><Data ss:Type="String">Total Miscellaneous Charge</Data></Cell>
+			</Row>
+    		<% @invoice.order_line_items.each do |line| %>
+			<Row>
+				<Cell><Data ss:Type="String"><%= @invoice.number %></Data></Cell>
+				<Cell><Data ss:Type="String"><%= @invoice.po_number %></Data></Cell>
+				<Cell><Data ss:Type="String">24/7 Office Supply, Inc.</Data></Cell>
+				<Cell><Data ss:Type="String"><%= @invoice.account.group.name if (!@invoice.account.nil? and !@invoice.account.group.nil?) %></Data></Cell>
+				<Cell><Data ss:Type="String"><%= @invoice.ship_to_account_name %></Data></Cell>
+				<Cell><Data ss:Type="String"><%= @invoice.ship_to_address_1 %></Data></Cell>
+				<Cell><Data ss:Type="String"><%= @invoice.ship_to_city %></Data></Cell>
+				<Cell><Data ss:Type="String"><%= @invoice.ship_to_state %></Data></Cell>
+				<Cell><Data ss:Type="String"><%= @invoice.ship_to_zip %></Data></Cell>
+				<Cell><Data ss:Type="String"><%= @invoice.due_date %></Data></Cell>
+				<Cell><Data ss:Type="String"><%= line.item.number %></Data></Cell>
+				<Cell><Data ss:Type="String"><%= line.item.name %></Data></Cell>
+				<Cell><Data ss:Type="String">EA</Data></Cell>
+				<Cell><Data ss:Type="String"><%= line.price %></Data></Cell>
+				<Cell><Data ss:Type="String"><%= line.quantity_fulfilled %></Data></Cell>
+				<Cell><Data ss:Type="String"><%= line.sub_total %></Data></Cell>
+				<Cell><Data ss:Type="String"> </Data></Cell>
+				<Cell><Data ss:Type="String"> </Data></Cell>
+				<Cell><Data ss:Type="String"> </Data></Cell>
+				<Cell><Data ss:Type="String"> </Data></Cell>
+			</Row>
+	    	<% end %>
+			<Row>
+				<Cell><Data ss:Type="String"><%= @invoice.number %> Total</Data></Cell>
+				<Cell><Data ss:Type="String"> </Data></Cell>
+				<Cell><Data ss:Type="String"> </Data></Cell>
+				<Cell><Data ss:Type="String"> </Data></Cell>
+				<Cell><Data ss:Type="String"> </Data></Cell>
+		  		<Cell><Data ss:Type="String"> </Data></Cell>
+		  		<Cell><Data ss:Type="String"> </Data></Cell>
+		  		<Cell><Data ss:Type="String"> </Data></Cell>
+		  		<Cell><Data ss:Type="String"> </Data></Cell>
+		  		<Cell><Data ss:Type="String"> </Data></Cell>
+		  		<Cell><Data ss:Type="String"> </Data></Cell>
+		  		<Cell><Data ss:Type="String"> </Data></Cell>
+		  		<Cell><Data ss:Type="String"> </Data></Cell>
+		  		<Cell><Data ss:Type="String"> </Data></Cell>
+		  		<Cell><Data ss:Type="String"> </Data></Cell>
+		  		<Cell><Data ss:Type="String"> </Data></Cell>
+		  		<Cell><Data ss:Type="String"><%= @invoice.shipping_total.to_s %></Data></Cell>
+		  		<Cell><Data ss:Type="String"><%= @invoice.sub_total.to_s %></Data></Cell>
+		  		<Cell><Data ss:Type="String"><%= @invoice.tax_total.to_s %></Data></Cell>
+		  		<Cell><Data ss:Type="String"> </Data></Cell>
+			</Row>
+		</Table>
+	</Worksheet>
+</Workbook>
