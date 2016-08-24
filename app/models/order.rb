@@ -65,11 +65,11 @@ class Order < ActiveRecord::Base
   end
   
   def self.unshipped
-    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_unshipped_orders"]) {
-      Rails.cache.delete("#{self.class.to_s.downcase}_unshipped_orders")
+    # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_unshipped_orders"]) {
+      # Rails.cache.delete("#{self.class.to_s.downcase}_unshipped_orders")
       ids = Order.is_complete.where(:id => OrderLineItem.all.map {|a| if a.unshipped then a.order_id end}).map(&:unshipped_id)
       Order.where(id: ids)
-    }
+    # }
   end
   
   def self.unfulfilled
@@ -77,19 +77,19 @@ class Order < ActiveRecord::Base
     #   ids = Order.joins(:order_line_items).distinct(:order_id).map {|o| if o.fulfilled == true then o.id end }
     #   Order.where(id: ids)
     # }
-    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_unfulfilled_orders"]) {
-      Rails.cache.delete("#{self.class.to_s.downcase}_unfulfilled_orders")
+    # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_unfulfilled_orders"]) {
+      # Rails.cache.delete("#{self.class.to_s.downcase}_unfulfilled_orders")
       ids = Order.is_complete.where(:id => OrderLineItem.all.map {|a| if a.unfulfilled then a.order_id end}).map(&:unfulfilled_id)
       Order.where(id: ids)
-    }
+    # }
   end
   
   def self.shipped
-    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_shipped_orders"]) {
-      Rails.cache.delete("#{self.class.to_s.downcase}_shipped_orders")
+    # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_shipped_orders"]) {
+      # Rails.cache.delete("#{self.class.to_s.downcase}_shipped_orders")
       ids = Order.is_complete.where(:id => OrderLineItem.all.map {|a| if a.shipped then a.order_id end}).map(&:shipped_id)
       Order.where(id: ids)
-    }
+    # }
   end
   
   def self.unpaid
