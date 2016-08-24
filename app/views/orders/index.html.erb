@@ -1,13 +1,13 @@
 <% content_for :app_location do %>Admin / Orders / Index<% end %>
 <div id="orders" class="col-md-12">
-	
+	<% orders = Order.is_complete.includes(:account, {:order_line_items => [:line_item_shipments, :line_item_fulfillments], :order_payment_applications => [:payment]}) %>
 	<ul class="nav nav-pills">
-		<li><%= link_to "Completed Orders", orders_url %></li>
-		<li><%= link_to "Locked Orders", locked_orders_url %></li>
-		<li><%= link_to "Shipped Orders", shipped_orders_url %></li>
-		<li><%= link_to "Fulfilled Orders", fulfilled_orders_url %></li>
-		<li><%= link_to "UnFulfilled Orders", unfulfilled_orders_url %></li>
-		<li><%= link_to "Incomplete Orders", incomplete_orders_url %></li>
+		<li><%= link_to orders_url do %>Completed Orders <span class="badge"><%= orders.unshipped.count %></span><% end %></li>
+		<li><%= link_to locked_orders_url do %>Locked Orders <span class="badge"><%# orders.locked.count %></span><% end %></li>
+		<li><%= link_to shipped_orders_url do %>Shipped Orders <span class="badge"><%= orders.shipped.count %></span><% end %></li>
+		<li><%= link_to fulfilled_orders_url do %>Fulfilled Orders <span class="badge"><%= orders.fulfilled.count %></span><% end %></li>
+		<li><%= link_to unfulfilled_orders_url do %>UnFulfilled Orders <span class="badge"><%= orders.unfulfilled.count %></span><% end %></li>
+		<li><%= link_to incomplete_orders_url do %>Incomplete Orders <span class="badge"></span><% end %></li>
 	</ul>
 
 	<table class="table table-bordered table-condensed">
