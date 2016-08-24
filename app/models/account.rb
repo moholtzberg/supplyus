@@ -34,7 +34,18 @@ class Account < ActiveRecord::Base
   # after_commit :sync_with_quickbooks if :persisted
   
   # validates_presence_of :creator, :on => :create, :message => "creator can't be blank"
-   
+  
+  
+  def use_bill_to_address
+    ["address_1", "address_2", "city", "state", "zip", "email", "phone", "fax"].each do |prop|
+      # puts prop
+      # puts eval(prop)
+      if eval(prop) != eval("bill_to_#{prop}")
+        return false
+      end
+    end
+  end
+  
   def bill_address_1
     ship_to_address_1 if bill_to_address_1.blank?
   end
