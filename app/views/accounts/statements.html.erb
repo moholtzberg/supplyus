@@ -46,7 +46,7 @@
 			<th>Pst Due Days</th>
 		</tr>
 		<% total = 0 %>
-		<% @account.orders.by_date_range(@from, @to).unpaid.each do |o| %>
+		<% @account.orders.includes(:order_line_items).by_date_range(@from, @to).unpaid.each do |o| %>
 			<% if o.fulfilled %>
 			<tr>
 				<% total += o.balance_due %>
@@ -79,19 +79,19 @@
 		<tr>
 			
 			<td>
-				<%= number_to_currency(@account.orders.past_due_up_to_30.map(&:balance_due).sum) %>
+				<%= number_to_currency(@account.orders.includes(:order_line_items).past_due_up_to_30.map(&:balance_due).sum) %>
 			</td>
 			
 			<td>
-				<%= number_to_currency(@account.orders.past_due_up_to_60.map(&:balance_due).sum) %>
+				<%= number_to_currency(@account.orders.includes(:order_line_items).past_due_up_to_60.map(&:balance_due).sum) %>
 			</td>
 			
 			<td>
-				<%= number_to_currency(@account.orders.past_due_up_to_90.map(&:balance_due).sum) %>
+				<%= number_to_currency(@account.orders.includes(:order_line_items).past_due_up_to_90.map(&:balance_due).sum) %>
 			</td>
 			
 			<td>
-				<%= number_to_currency(@account.orders.past_due_over_90.map(&:balance_due).sum) %>
+				<%= number_to_currency(@account.orders.includes(:order_line_items).past_due_over_90.map(&:balance_due).sum) %>
 			</td>
 			
 		</tr>

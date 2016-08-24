@@ -1,0 +1,66 @@
+
+
+	<tr id="add_lines_form">
+		
+		<%= f.hidden_field :purchase_order_id, :value => @purchase_order.id %>
+
+		<td colspan="2">
+			<%= f.text_field :item_number, :class => "form-control", data: {autocomplete_source: search_items_path} %>
+		</td>
+		
+		<td>
+			<%= f.text_field :quantity, :class => "form-control", :value => 1 %>
+		</td>
+		
+	
+		<td>
+			<%= f.text_field :price, :class => "form-control" %>
+		</td>
+		
+		<td colspan="2">
+			<%= f.button :class => "btn btn-primary btn-sm", :type => :submit do %>Add<% end %>
+		</td>
+		<script>
+		jQuery(function() {
+			return $('#purchase_order_line_item_item_number').autocomplete({
+				source: $('#purchase_order_line_item_item_number').data('autocomplete-source')
+			});
+		});
+		</script>
+		
+		<script>
+		
+		$("input#purchase_order_line_item_item_number").on("blur", function(e){
+			var item_number = $("input#purchase_order_line_item_item_number").val()
+			var vendor_id = $("#purchase_order_vendor_id").find(":selected").val()
+			
+			var request = $.ajax({
+				url : '/admin/item_vendor_prices?item_number=' + item_number + '&vendor_id=' + vendor_id,
+				dataType : "json"
+			});
+
+			request.success(function(data) {
+				console.log(data)
+				if (data == null) {
+					
+				} else {
+					success_action(data)
+				}
+				
+			});
+
+			request.error(function(httpObj, textStatus) {       
+				if(httpObj.status == 200)
+				success_action(data)
+				else
+				alert("Failed")
+			});
+
+			function success_action(data) {
+				
+				$("input#purchase_order_line_item_price").val(parseFloat(data.price).toFixed(2))
+			}
+		});
+		</script>
+		
+	</tr>

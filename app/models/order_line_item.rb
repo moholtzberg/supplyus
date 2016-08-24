@@ -10,8 +10,6 @@ class OrderLineItem < ActiveRecord::Base
   
   scope :by_item, -> (item) { where(:item_id => item) }
   scope :active,  -> () { where(:quantity => 1..Float::INFINITY) }
-  # scope :unfulfilled, -> { where.not(:id => LineItemFulfillment.pluck(:order_line_item_id).uniq) }
-  # scope :fulfilled, -> () { where(:id => LineItemFulfillment.where(:order_line_item_id => self.id).group(:order_line_item_id).sum(:quantity_fulfilled).pluck(:order_line_item_id).uniq) }
   
   before_create :make_line_number, :on => :create
   
@@ -25,8 +23,17 @@ class OrderLineItem < ActiveRecord::Base
   
   validates :item_id, :presence => true
   
-  after_commit :update_shipped_fulfilled
+  after_commit :update_shipped_fulfilled, :if => :persisted?
   after_commit :flush_cache
+  
+  def create_inventory_transactions
+    if InventoryTransaction.find_by(:inv_transaction_id => id, :inv_transaction_type => "OrderLineItem")
+      i = InventoryTransaction.find_by(:inv_transaction_id => id, :inv_transaction_type => "OrderLineItem")
+    else
+      i = InventoryTransaction.new
+    end
+    i.update_attributes(:inv_transaction_id => id, :inv_transaction_type => "OrderLineItem", :item_id => item_id, :quantity => quantity)
+  end
   
   def update_shipped_fulfilled
     qs = calculate_quantity_shipped
@@ -51,7 +58,8 @@ class OrderLineItem < ActiveRecord::Base
   def make_line_number
     if self.order_id.blank?
     else
-      self.order_line_number = self.order.order_line_items.count + 1
+      max = [self.order.order_line_items.count, (self.order.order_line_items.last.nil? ? 0 : self.order.order_line_items.last.order_line_number)].max
+      self.order_line_number = max + 1
     end
   end
   
@@ -63,7 +71,18 @@ class OrderLineItem < ActiveRecord::Base
   
   def sub_total
     Rails.cache.fetch([self, "#{self.class.to_s.downcase}_sub_total"]) {
-      actual_quantity.to_f * price.to_f
+      actual_quantity * price
+    }
+  end
+  
+  def profit
+    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_profit"]) {
+      if !item.nil? and !item.cost_price.nil?
+        tc = actual_quantity.to_i * item.cost_price
+        sub_total - tc
+      else
+        0.00
+      end
     }
   end
   
@@ -79,31 +98,37 @@ class OrderLineItem < ActiveRecord::Base
     # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_shipped"]) {
     #   LineItemShipment.where(:order_line_item_id => self.id).group(:order_line_item_id).sum(:quantity_shipped).inject(0) {|k, v| (k + v[1]) != 0 ? true : false }
     # }
-    quantity_shipped == actual_quantity
+    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_shipped"]) {
+      quantity_shipped == actual_quantity
+    }
   end
   
   def unshipped
-    quantity_shipped != actual_quantity
+    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_unshipped"]) {
+      quantity_shipped != actual_quantity
+    }
   end
   
   def shipped_id
-    id if shipped
+    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_shipped_id"]) {
+      id if shipped
+    }
   end
   
   def amount_shipped
-    puts "----> Amount Shipped #{quantity_shipped.to_f} * #{price.to_f} = #{quantity_shipped.to_f * price.to_f}"
-    quantity_shipped.to_f * price.to_f
+    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_amount_shipped"]) {
+      quantity_shipped.to_i * price.to_f.to_d
+    }
   end
   
   def calculate_quantity_shipped
-    if self.line_item_shipments
-      total = 0
-      self.line_item_shipments.each {|i| total += i.quantity_shipped.to_f }
-      total
-    end
-    # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_quantity_shipped"]) {
-      # LineItemShipment.where(:order_line_item_id => self.id).group(:order_line_item_id).sum(:quantity_shipped).inject(0) {|sum, k| sum + k[1] }
-    # }
+    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_calculate_quantity_shipped"]) {
+      if self.line_item_shipments
+        total = 0
+        self.line_item_shipments.each {|i| total += i.quantity_shipped.to_f }
+        total
+      end
+    }
   end
   
   def fulfilled
@@ -117,19 +142,27 @@ class OrderLineItem < ActiveRecord::Base
     #   end
     #    # LineItemFulfillment.where(:order_line_item_id => self.id).group(:order_line_item_id).sum(:quantity_fulfilled).inject(0) {|k, v| (k + v[1]) != 0 ? true : false }
     #  }
-    quantity_fulfilled == actual_quantity
+    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_fulfilled"]) {
+      quantity_fulfilled == actual_quantity
+    }
   end
   
   def unfulfilled
-    quantity_fulfilled != actual_quantity
+    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_unfulfilled"]) {
+      quantity_fulfilled != actual_quantity
+    }
   end
   
   def fulfilled_id
-    id if fulfilled
+    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_fulfilled_id"]) {
+      id if fulfilled
+    }
   end
   
   def amount_fulfilled
-    quantity_fulfilled.to_f * price.to_f
+    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_amount_fulfilled"]) {
+      quantity_fulfilled.to_d * price.to_d
+    }
   end
   
   def calculate_quantity_fulfilled
@@ -139,8 +172,15 @@ class OrderLineItem < ActiveRecord::Base
       #   self.line_item_fulfillments.each {|i| total += i.quantity_fulfilled }
       #   total
       # end
-      LineItemFulfillment.where(:order_line_item_id => self.id).group(:order_line_item_id).sum(:quantity_fulfilled).inject(0) {|sum, k| sum + k[1] }
+     #--> last used method LineItemFulfillment.where(:order_line_item_id => self.id).group(:order_line_item_id).sum(:quantity_fulfilled).inject(0) {|sum, k| sum + k[1] }
     # }
+    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_calculate_quantity_fulfilled"]) {
+      if self.line_item_fulfillments
+        total = 0
+        self.line_item_fulfillments.each {|i| total += i.quantity_fulfilled.to_i }
+        total
+      end
+    }
   end
   
 end

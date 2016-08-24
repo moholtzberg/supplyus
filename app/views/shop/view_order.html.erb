@@ -78,12 +78,16 @@
 		<td colspan="2" class="text-center"><strong><%= number_to_currency(@order.sub_total) %></strong></td>
 	</tr>
 	<tr>
+		<td colspan="7">Sales Tax</td>
+		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@order.tax_total) %></strong></td>
+	</tr>
+	<tr>
 		<td colspan="7"><%= @order.order_shipping_method.name unless @order.order_shipping_method.nil? %> - Shipping</td>
 		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@order.shipping_total) %></strong></td>
 	</tr>
 	<tr>
 		<td colspan="7">Order Total</td>
-		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@order.shipping_total.to_f + @order.sub_total.to_f) %></strong></td>
+		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@order.total) %></strong></td>
 	</tr>
 	<tr>
 		<td colspan="7">Payments</td>

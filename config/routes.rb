@@ -15,7 +15,7 @@ Rails.application.routes.draw do
           end
         end
         resources :invoices, :shallow => true do
-          resources :payments, :shallow => true
+          # resources :payments, :shallow => true
         end
         resources :payment_plan_templates do
           resources :payment_plans
@@ -38,7 +38,7 @@ Rails.application.routes.draw do
           put :resend_order
         end
         resources :shipments, :only => [:new, :create]
-        resources :payments, :shallow => true
+        # resources :payments, :shallow => true
         resources :invoices
       end
       resources :order_line_items
@@ -74,12 +74,29 @@ Rails.application.routes.draw do
       resources :brand_imports
       resources :categories
       resources :credit_cards
+      resources :tax_rates
       resources :users do
         get :edit_password
         get :reset_password
       end
+      resources :purchase_orders do
+        member do
+          put :lock
+          put :resend_invoice
+          put :resend_order
+        end
+        resources :purchase_order_receipts, :only => [:new, :create]
+      end
+      resources :purchase_order_line_items
+      resources :inventories
       resources :vendors
       resources :settings
+      resources :roles do
+        collection do
+          post :add_role_to_user
+          delete :remove_role_from_user
+        end
+      end
       get "equipment/delete/:id" => "equipment#delete"
       get "items/delete/:id" => "items#delete"
       get "/" => "home#show"
@@ -100,6 +117,7 @@ Rails.application.routes.draw do
   get   "checkout/shipping" => "checkout#shipping"
   patch "checkout/shipping" => "checkout#update_shipping"
   get   "checkout/payment" => "checkout#payment"
+  patch "checkout/payment" => "checkout#update_payment"
   get   "checkout/confirm" => "checkout#confirm"
   patch "checkout/complete"=> "checkout#complete"
   

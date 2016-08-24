@@ -385,7 +385,7 @@ div.well-break {
 }
 .toner-finder {
 	margin: 0;
-	height: 285px;
+/*	height: 285px;*/
 }
 .home-text {
 	margin-top: 20px;
@@ -561,6 +561,20 @@ ul#account_links {
 	}
 }
 
+#flashes {
+	.alert {
+		padding: 15px;
+	}
+}
+
+.everyday-essentials {
+	padding-right: 0;
+	@media (max-width: 991px) {
+		padding-left: 0;
+		margin-top: 10px;
+	}
+}
+
 .featured-items {
 	.col-md-2 {
 		padding: 0;
@@ -568,9 +582,9 @@ ul#account_links {
 	.panel-heading {
 		min-height: 125px;
 	}
-	.panel-body {
+/*	.panel-body {
 		height: 150px;
-	}
+	}*/
 	.panel-footer {
 		height: 50px;
 	}

@@ -3,6 +3,7 @@ class GroupsController < ApplicationController
   helper_method :sort_column, :sort_direction
   
   def index
+    authorize! :read, Group
     @groups = Group.order(sort_column + " " + sort_direction)
     unless params[:term].blank?
       @groups = @groups.lookup(params[:term]) if params[:term].present?
@@ -14,15 +15,18 @@ class GroupsController < ApplicationController
   end
   
   def new
+    authorize! :create, Group
     @group = Group.new
   end
   
   def show
+    authorize! :read, Group
     @group = Group.find(params[:id])
   end
 
   
   def create
+    authorize! :create, Group
     @group = Group.new(group_params)
     if @group.save
       @groups = Group.order(sort_column + " " + sort_direction)
@@ -34,6 +38,8 @@ class GroupsController < ApplicationController
     @accounts = @group.accounts
     @from = Date.strptime(params[:from_date], '%m/%d/%y').kind_of?(Date) ? Date.strptime(params[:from_date], '%m/%d/%y') : Date.today
     @to = Date.strptime(params[:to_date], '%m/%d/%y').kind_of?(Date) ? Date.strptime(params[:to_date], '%m/%d/%y') : Date.today
+    @orders = Order.includes(:order_payment_applications, :payments).where(:account_id => @accounts.ids).unpaid
+    
     respond_to do |format|
       format.html
       format.pdf do
@@ -52,8 +58,8 @@ class GroupsController < ApplicationController
   end
 
   def sort_column
-    puts Account.column_names[0]
-    Account.column_names.include?(params[:sort]) ? params[:sort] : "name"
+    puts Group.column_names[0]
+    Group.column_names.include?(params[:sort]) ? params[:sort] : "name"
   end
   
   def sort_direction

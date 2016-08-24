@@ -32,7 +32,7 @@
 					<span class="icon-bar"></span>
 				</button>
 					
-				<a class="navbar-brand" href="/"><i class="fa fa-circle-o text-danger"></i> Recurring Billing</a>
+				<a class="navbar-brand" href="/">Welcome <%= current_user.first_name %></a>
 			</div>
 
 			<a href="<%= destroy_user_session_path %>" id="logout" class="btn btn-warning pull-right hidden-xs hidden-sm" data-method="delete">
@@ -44,6 +44,11 @@
 		<div id="clearTop" class="clearfix hidden-xs hidden-sm hidden-md"></div>
 		
 		<div id="main-panel">
+			
+			<div id="flashes">
+				<%= bootstrap_flash %>
+			</div>
+			
 			<% if !ImportHistory.last.nil? and ImportHistory.last.is_processing == 1 %>
 				<div class="col-md-offset-1 col-md-10">
 					<br>
@@ -58,6 +63,7 @@
 					</div>
 				</div>
 			<% end %>
+			
 			<%= yield %>
 		</div>
 		
@@ -69,7 +75,19 @@
 		
 	</body>
 	
+	<% if Rails.env.production? %>
+	<script type='text/javascript'>
+	window.__lo_site_id = 60729;
+	(function() {
+		var wa = document.createElement('script'); wa.type = 'text/javascript'; wa.async = true;
+		wa.src = 'https://d10lpsik1i8c69.cloudfront.net/w.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(wa, s);
+	})();
+	</script>
+	<% end %>
+	
 </html>
+
 
 <% if !ImportHistory.last.nil? and ImportHistory.last.is_processing == 1 %>
 	<script>

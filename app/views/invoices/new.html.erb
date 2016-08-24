@@ -39,9 +39,9 @@
 			<tr>
 				<td><%= li.id %></td>
 				<td><%= "#{li.item.number} / #{li.item.name}" unless li.item.nil? %></td>
-				<td><%= li.quantity %></td>
+				<td><%= li.actual_quantity %></td>
 				<td><%= li.quantity_fulfilled %></td>
-				<td><%= text_field_tag "lines[#{idx}][quantity_fulfill_now]", (li.quantity.to_i - li.quantity_fulfilled.to_i), :class => "form-control" %></td>
+				<td><%= text_field_tag "lines[#{idx}][quantity_fulfill_now]", (li.actual_quantity.to_i - li.quantity_fulfilled.to_i), :class => "form-control" %></td>
 			<tr>
 			<% end %>
 		<% end %>

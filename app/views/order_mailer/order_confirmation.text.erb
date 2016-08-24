@@ -1,7 +1,7 @@
 ORDER CONFIRMATION - 24/7 Office Supply
 ===============================================
 
-Dear <%= @order.account.name %>,
+Dear <%= @order.user.display_name %>,
 
 Thank you for your order, you will be notified when your order is ready to ship.
 
@@ -14,12 +14,12 @@ ORDER DETAILS:
 ================
 NUMBER:		<%= @order.number %>
 DATE:		<%= @order.completed_at.strftime("%m/%d/%Y %I:%M %p") %>
-ACCOUNT:	<%= @order.account.name %>
+ACCOUNT:	<%= @order.account.name unless @order.account.nil? %>
 PO NUMBER:	<%= @order.po_number %>
 
 SHIP TO ADDRESS:
 ================
-<%= @order.account.name %>
+<%= @order.ship_to_account_name %>
 <%= @order.ship_to_attention %>
 <%= @order.ship_to_address_1 %>
 <%= @order.ship_to_address_2 %>
@@ -30,7 +30,7 @@ ORDER LINE ITEMS:
 ================
 <% @order.order_line_items.order(:order_line_number).each do |o| %>
 	<% if o.quantity > 0 %>
-<%= o.order_line_number %>.	<%= o.quantity %> x <%= "#{o.item.number} / #{o.item.name}" %> @ <%= number_to_currency(o.price) %>/Each. = <%= number_to_currency(o.sub_total) %>
+<%= o.order_line_number %>.	<%= o.quantity.to_i %> x <%= "#{o.item.number} / #{o.item.name}" %> @ <%= number_to_currency(o.price) %>/Each. = <%= number_to_currency(o.sub_total) %>
 	<% end %>
 <% end %>
 

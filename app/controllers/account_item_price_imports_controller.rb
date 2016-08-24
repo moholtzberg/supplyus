@@ -1,10 +1,12 @@
 class AccountItemPriceImportsController < ApplicationController
   layout "admin"
   def new
+    authorize! :create, AccountItemPriceImport
     @item_import = AccountItemPriceImport.new
   end
 
   def create
+    authorize! :create, AccountItemPriceImport
     @item_import = AccountItemPriceImport.new(params[:account_item_price_import])
     if @item_import.save
       redirect_to new_account_item_price_import_path, notice: "Imported items successfully."

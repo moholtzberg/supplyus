@@ -50,3 +50,16 @@ body > .navmenu {
 .navbar-fixed-bottom {
 	z-index: 1 !important;
 }
+
+.sub-menu {
+	padding: 10px;
+	margin-bottom: 0 !important;
+	background-color: rgb(240, 240, 240);
+	list-style: none;
+	border-top: 1px solid rgb(231,231,231);
+	border-bottom: 1px solid rgb(231,231,231);
+}
+
+.sub-menu > li {
+	padding-left: 15px;
+}

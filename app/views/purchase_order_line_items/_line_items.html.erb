@@ -1,0 +1,68 @@
+<table class="table table-bordered table-condensed table-striped table-hover table-responsive">
+	
+	
+	<thead>
+		
+		<th>
+			
+			<td width="43%">Item</td>
+			<td width="12%">Qty.</td>
+			<td width="12%">Quantity Canceled</td>
+			<td width="12%">Actual Quantity</td>
+			<td width="10%">Price</td>
+			<td width="10%">Subtotal</td>
+			<td width="1%">&nbsp;</td>
+			
+		</th>
+		
+	</thead>
+	
+	<tbody id="line_items">
+		
+		<% @purchase_order.purchase_order_line_items.each do |ol| %>
+		
+		<tr class="line_item" data-order_line_item_id="<%= ol.id %>">
+			
+			<td>
+				<%= ol.purchase_order_line_number %>
+			</td>
+			
+			<td>
+				<%= ol.item.number unless ol.item.nil? %>
+			</td>
+			<td class="quantity">
+				<%= best_in_place ol, :quantity %>
+			</td>
+			
+			<td class="quantity_canceled">
+				<%# best_in_place ol, :quantity_canceled %>
+			</td>
+			
+			<td class="actual_quantity">
+				<%# ol.actual_quantity %>
+			</td>
+			
+			<td lass="price">
+				<%= best_in_place ol, :price, :value => number_to_currency(ol.price.to_f) %>
+			</td>
+			
+			<td lass="sub_total">
+				<%= number_to_currency(ol.sub_total) %>
+			</td>
+			
+			<td span="10%" class="text-center">
+				<%= link_to purchase_order_line_item_path(ol), :method => :delete, :remote => true do %><i class="fa fa-trash"></i><% end %>
+			</td>
+			
+		</tr>
+		
+		<% end %>
+		
+		<tr>
+			<td colspan="7">Subtotal</td>
+			<td colspan="2"><%= number_to_currency(@purchase_order.sub_total) %></td>
+		</tr>
+		
+	</tbody>
+		
+</table>

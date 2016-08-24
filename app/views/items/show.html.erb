@@ -110,7 +110,7 @@
 					</tr>
 					<% @item.order_line_items.each do |it| %>
 					<tr>
-						<td><%= it.order.number %></td>
+						<td><%= link_to it.order.number, it.order %></td>
 						<td><%= it.order.ship_to_account_name %></td>
 						<td><%= it.actual_quantity %></td>
 						<td><%= it.price %></td>
@@ -139,11 +139,6 @@
 		</div>
 		
 	</div>
-	
-	
-	
-
-	
 	
 </div>
 

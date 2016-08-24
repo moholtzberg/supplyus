@@ -11,7 +11,7 @@ Rails.application.configure do
   config.eager_load = true
 
   # Full error reports are disabled and caching is turned on.
-  config.consider_all_requests_local       = true
+  config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true
 
   # Enable Rack::Cache to put a simple HTTP cache in front of your application
@@ -59,7 +59,7 @@ Rails.application.configure do
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   
-  config.action_controller.asset_host = "http://www.247officesupply.com/"
+  config.action_controller.asset_host = "www.247officesupply.com/"
   config.action_mailer.default_url_options = { :host => "http://www.247officesupply.com" }
 
   # Ignore bad email addresses and do not raise email delivery errors.

@@ -1,6 +1,7 @@
 class Group < ActiveRecord::Base
   
   has_many :accounts
+  has_many :orders, :through => :accounts
   has_many :users
   has_many :group_item_prices
   

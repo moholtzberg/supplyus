@@ -4,14 +4,17 @@ class CustomersController < ApplicationController
   respond_to :html, :json
   
   def index
+    authorize! :read, Customer
     @customers = Customer.order(sort_column + " " + sort_direction)
   end
   
   def new
+    authorize! :create, Customer
     @customer = Customer.new
   end
   
   def show
+    authorize! :read, Customer
     @customer = Customer.find(params[:id])
   end
   

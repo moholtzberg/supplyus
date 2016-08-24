@@ -6,11 +6,13 @@ class CreditCardsController < ApplicationController
   # end
   
   def new
+    authorize! :create, CreditCard
     @credit_card = CreditCard.new
     @account_id = params[:account_id]
   end
   
   def create
+    authorize! :create, CreditCard
     a = Account.find_by_id(params[:credit_card][:account_id])
     puts a.stripe_customer_id
     customer = Stripe::Customer.retrieve(a.stripe_customer_id)

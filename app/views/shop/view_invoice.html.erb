@@ -15,20 +15,22 @@
 			(888) 247-8775
 		</td>
 		<td>
-			<%= @order.ship_to_account_name %><br/>
-			<% unless @order.ship_to_attention.blank? %><%= @order.ship_to_attention %><br/><% end %>
-			<%= @order.ship_to_address_1 %><br/>
-			<% unless @order.ship_to_address_2.blank? %><%= @order.ship_to_address_2 %><br/><% end %>
-			<%= @order.ship_to_city %>, <%= @order.ship_to_state %> <%= @order.ship_to_zip %><br/>
-			<%= @order.ship_to_phone %>
+			<%= @invoice.ship_to_account_name %><br/>
+			<% unless @invoice.ship_to_attention.blank? %><%= @invoice.ship_to_attention %><br/><% end %>
+			<%= @invoice.ship_to_address_1 %><br/>
+			<% unless @invoice.ship_to_address_2.blank? %><%= @invoice.ship_to_address_2 %><br/><% end %>
+			<%= @invoice.ship_to_city %>, <%= @invoice.ship_to_state %> <%= @invoice.ship_to_zip %><br/>
+			<% unless @invoice.ship_to_phone.blank? %><%= @invoice.ship_to_phone %><br/><% end %>
+			<%= @invoice.email %>
 		</td>
 		<td>
-			<%= @order.bill_to_account_name %><br/>
-			<% unless @order.bill_to_attention.blank? %><%= @order.bill_to_attention %><br/><% end %>
-			<%= @order.bill_to_address_1 %><br/>
-			<% unless @order.bill_to_address_2.blank? %><%= @order.bill_to_address_2 %><br/><% end %>
-			<%= @order.bill_to_city %>, <%= @order.bill_to_state %> <%= @order.bill_to_zip %><br/>
-			<%= @order.bill_to_phone %>
+			<%= @invoice.bill_to_account_name %><br/>
+			<% unless @invoice.bill_to_attention.blank? %><%= @invoice.bill_to_attention %><br/><% end %>
+			<%= @invoice.bill_to_address_1 %><br/>
+			<% unless @invoice.bill_to_address_2.blank? %><%= @invoice.bill_to_address_2 %><br/><% end %>
+			<%= @invoice.bill_to_city %>, <%= @invoice.bill_to_state %> <%= @invoice.bill_to_zip %><br/>
+			<% unless @invoice.bill_to_phone.blank? %><%= @invoice.bill_to_phone %><br/><% end %>
+			<%= @invoice.bill_to_email %>
 		</td>
 	</tr>
 	</thead>
@@ -50,6 +52,15 @@
 </table>
 
 <table class="table table-bordered">
+	<tr>
+		<th width="25%">Notes / Comments</th>
+	</tr>
+	<tr>
+		<td><%= @invoice.notes%></td>
+	</tr>
+</table>
+
+<table class="table table-bordered">
 	
 	<tr>
 		<th width="5%" class="text-center"></th>
@@ -60,7 +71,7 @@
 	</tr>
 	
 	<% @invoice.order_line_items.active.each_with_index do |li, idx| %>
-		<% if li.fulfilled %>
+		<% if li.actual_quantity.to_i > 0 and li.fulfilled %>
 		<tr>
 			<td class="text-center"><%= li.order_line_number %></td>
 			<td><%= li.item.number unless li.item.nil? %> / <%= li.item.name unless li.item.nil? %></td>
@@ -76,20 +87,24 @@
 		<td colspan="2" class="text-center"><strong><%= number_to_currency(@invoice.sub_total) %></strong></td>
 	</tr>
 	<tr>
+		<td colspan="3">Sales Tax</td>
+		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@invoice.tax_total) %></strong></td>
+	</tr>
+	<tr>
 		<td colspan="3"><%= @invoice.order_shipping_method.name unless @invoice.order_shipping_method.nil? %> - Shipping</td>
 		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@invoice.shipping_total) %></strong></td>
 	</tr>
 	<tr>
 		<td colspan="3">Invoice Total</td>
-		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@invoice.shipping_total.to_f + @invoice.sub_total.to_f) %></strong></td>
+		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@invoice.total) %></strong></td>
 	</tr>
 	<tr>
 		<td colspan="3">Payments Total</td>
-		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@invoice.payments_total.to_f) %></strong></td>
+		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@invoice.payments_total) %></strong></td>
 	</tr>
 	<tr>
 		<td colspan="3">Balance Due</td>
-		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@invoice.balance_due.to_f) %></strong></td>
+		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@invoice.balance_due) %></strong></td>
 	</tr>
 	<% unless @invoice.paid %>
 		<% if Setting.find_by(:key => "enable_credit_card_payments") and Setting.find_by(:key => "enable_credit_card_payments").value == "t" %>

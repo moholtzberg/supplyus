@@ -1,7 +1,7 @@
 SHIPMENT CONFIRMATION - 24/7 Office Supply
 ===============================================
 
-Dear <%= @shipment.orders.first.account.name %>,
+Dear <%= @shipment.orders.first.ship_to_account_name %>,
 
 Thank you for your order, the following items have shipped.
 
@@ -13,13 +13,13 @@ The 24/7 Office Supply Team.
 ORDER DETAILS:
 ================
 NUMBER:		<%= @shipment.orders.first.number %>
-DATE:		<%= @shipment.ship_date %>
-ACCOUNT:	<%= @shipment.orders.first.account.name %>
+DATE:		<%= @shipment.ship_date.strftime("%m/%d/%Y") %>
+ACCOUNT:	<%= @shipment.orders.first.account.name unless @shipment.orders.first.account.nil? %>
 PO NUMBER:	<%= @shipment.orders.first.po_number %>
 
 SHIP TO ADDRESS:
 ================
-<%= @shipment.orders.first.account.name %>
+<%= @shipment.orders.first.ship_to_account_name %>
 <%= @shipment.orders.first.ship_to_attention %>
 <%= @shipment.orders.first.ship_to_address_1 %>
 <%= @shipment.orders.first.ship_to_address_2 %>
@@ -30,7 +30,7 @@ THE FOLLOWING ITEMS HAVE SHIPPED:
 ================
 <% @shipment.order_line_items.order(:order_line_number).each do |o| %>
 	<% if o.quantity_shipped > 0 %>
-<%= o.order_line_number %>.	<%= o.quantity_shipped %> x <%= "#{o.item.number} / #{o.item.name}" %>
+<%= o.order_line_number %>.	<%= o.quantity_shipped.to_i %> x <%= "#{o.item.number} / #{o.item.name}" %>
 	<% end %>
 <% end %>
 

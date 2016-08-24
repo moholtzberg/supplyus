@@ -15,7 +15,7 @@ class ItemsController < ApplicationController
     # end
     # @items
     # ====
-    
+    authorize! :read, Item
     @items = Item.all
     unless params[:term].blank?
       @items = @items.lookup(params[:term]) if params[:term].present?
@@ -25,26 +25,31 @@ class ItemsController < ApplicationController
   end
   
   def new
+    authorize! :create, Item
     @item = Item.new
     # @brands = Brand.active
     # @categories = Category.all
   end
   
   def show
+    authorize! :read, Item
     @item = Item.find_by(:id => params[:id])
   end
   
   def search
+    authorize! :read, Item
     @results = Item.where(nil)
     search_term = params[:keywords] if params[:keywords].present?
     search_term = params[:term] if params[:term].present?
     @results = @results.search(search_term).paginate(:page => params[:page], :per_page => 25)
     respond_to do |format|
-      format.json { render json: @results }
+      # format.json { render :json => @results.map {|a| [{:number => a.number}, {:name => a.name}] }}
+      format.json {render :json => @results.map(&:number)}
     end
   end
   
   def create
+    authorize! :create, Item
     @item = Item.create(registration_params)
     @items = Item.all
     @items = @items.paginate(:page => params[:page], :per_page => 25)
@@ -55,12 +60,14 @@ class ItemsController < ApplicationController
   end
   
   def edit
+    authorize! :update, Item
     @item = Item.find_by(:id => params[:id])
     # @brands = Brand.active
     # @categories = Category.all
   end
   
   def update
+    authorize! :update, Item
     @item = Item.find_by(:id => params[:id])
     puts params[:item][:category_tokens]
     if @item.update_attributes(registration_params)
@@ -81,10 +88,12 @@ class ItemsController < ApplicationController
   end
   
   def delete
+    authorize! :destroy, Item
     @item = Item.find_by(:id => params[:id])
   end
   
   def destroy
+    authorize! :destroy, Item
     e = Item.find_by(:id => params[:id])
     e.destroy!
     respond_to do |format|

@@ -1,0 +1,24 @@
+<td><%= order.number %></td>
+<td><%= order.vendor.name unless order.vendor.blank? %>&nbsp;<% if order.vendor != nil and order.vendor.group_id != nil %><small>(<%= order.vendor.group.name %>)</small><% end %></td>
+<td><%= number_to_currency(order.total) %><%# number_to_currency(order.sum) unless order.sum.nil? %></td>
+<td class="hidden-xs"><%= number_to_currency(order.amount_received) %></td>
+<td class="text-center hidden-xs"><%= order.completed_at.strftime("%m/%d/%y %I:%M %p") unless order.completed_at.nil? %></td>
+<td class="locked hidden-xs"><%= order.locked ? "Yes" : "No" %></td>
+<td>
+
+	<div class="dropdown">
+		<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+			<span class="caret"></span>
+		</button>
+		<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+			<li><%= link_to("View", purchase_order_path(order.id))  %></li>
+			<% unless order.locked %>
+			<li><%= link_to("Edit", edit_purchase_order_path(order.id)) %></li>
+			<li><%= link_to("Lock", lock_purchase_order_path(order.id), :remote => true, :method => "put") %></li>
+			<% else %>
+				<% unless order.received %><li><%= link_to("Receive", new_purchase_order_purchase_order_receipt_path(order.id))  %></li><% end %>
+			<% end %>
+		</ul>
+	</div>
+
+</td>

@@ -14,12 +14,14 @@
 				(888) 247-8775
 			</td>
 			<td>
-				<%= @order.ship_to_account_name %><br/>
+				<%= @order.ship_to_account_name %> &nbsp;<% if @order.account != nil and @order.account.group_id != nil %><small>(<%= @order.account.group.name %>)</small><% end %><br/>
 				<% unless @order.ship_to_attention.blank? %><%= @order.ship_to_attention %><br/><% end %>
 				<%= @order.ship_to_address_1 %><br/>
 				<% unless @order.ship_to_address_2.blank? %><%= @order.ship_to_address_2 %><br/><% end %>
 				<%= @order.ship_to_city %>, <%= @order.ship_to_state %> <%= @order.ship_to_zip %><br/>
-				<%= @order.ship_to_phone %>
+				<%= @order.ship_to_phone unless @order.ship_to_phone.blank? %><br/>
+				<%= @order.email %>
+				
 			</td>
 			<td>
 				<% unless @order.bill_to_account_name.blank? %><%= @order.bill_to_account_name %><br/><% end %>
@@ -27,7 +29,8 @@
 				<% unless @order.bill_to_address_1.blank? %><%= @order.bill_to_address_1 %><br/><% end %>
 				<% unless @order.bill_to_address_2.blank? %><%= @order.bill_to_address_2 %><br/><% end %>
 				<%= @order.bill_to_city unless @order.bill_to_city.blank? %>, <%= @order.bill_to_state unless @order.bill_to_state.blank?%> <%= @order.bill_to_zip unless @order.bill_to_zip.blank? %><br/>
-				<%= @order.bill_to_phone unless @order.bill_to_phone.blank? %>
+				<%= @order.bill_to_phone unless @order.bill_to_phone.blank? %><br/>
+				<%= @order.bill_to_email %>
 			</td>
 		</tr>
 	</table>
@@ -77,8 +80,12 @@
 			<td colspan="2" class="text-center"><strong><%= number_to_currency(@order.sub_total) %></strong></td>
 		</tr>
 		<tr class="line_items">
-			<td colspan="6"><%= "#{@order.order_shipping_method.name} - " unless  @order.order_shipping_method.nil?%>Shipping</td>
+			<td colspan="6"><%= "#{@order.order_shipping_method.name} - " unless  @order.order_shipping_method.nil? %>Shipping</td>
 			<td colspan="2" class="text-center"><strong> <%= number_to_currency(@order.order_shipping_method.amount) unless  @order.order_shipping_method.nil? %></strong></td>
+		</tr>
+		<tr class="line_items">
+			<td colspan="6"><%= "#{@order.order_tax_rate.name}" unless  @order.order_tax_rate.nil? %>Tax</td>
+			<td colspan="2" class="text-center"><strong> <%= number_to_currency(@order.tax_total)%></strong></td>
 		</tr>
 		<tr class="line_items">
 			<td colspan="6">Order Total</td>
@@ -87,7 +94,7 @@
 		
 		<tr>
 			<td colspan="6">Payments</td>
-			<td colspan="2" class="text-center"><strong> <%= @order.payments.blank? ? number_to_currency(0) : number_to_currency(@order.payments_total) %></strong></td>
+			<td colspan="2" class="text-center"><strong> <%= @order.payments.blank? ? number_to_currency(0) : number_to_currency(@order.payments_total.to_d) %></strong></td>
 		</tr>
 		<tr>
 			<td colspan="6">Balance Due</th>

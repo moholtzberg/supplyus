@@ -12,11 +12,20 @@ class CheckoutController < ApplicationController
   
   def address
     @checkout = Checkout.find_by(:id => cookies.permanent.signed[:cart_id])
-    if current_user.account.nil?
-      @address = Account.new
-    else
-      @address = current_user.account
+    if current_user.account
+      a = current_user.account
+      @checkout.ship_to_account_name = a.name if @checkout.ship_to_account_name.nil?
+      @checkout.ship_to_address_1 = a.address_1 if @checkout.ship_to_address_1.nil?
+      @checkout.ship_to_address_2 = a.address_2 if @checkout.ship_to_address_2.nil?
+      @checkout.ship_to_city      = a.city if @checkout.ship_to_city.nil?
+      @checkout.ship_to_state     = a.state if @checkout.ship_to_state.nil?
+      @checkout.ship_to_zip       = a.zip if @checkout.ship_to_zip.nil?
+      @checkout.ship_to_phone     = a.phone if @checkout.ship_to_phone.nil?
+      @checkout.bill_to_email     = a.bill_to_email if @checkout.bill_to_email.nil?
     end
+    @checkout.ship_to_attention = "#{current_user.first_name} #{current_user.last_name}" if @checkout.ship_to_attention.nil?
+    @checkout.email             = current_user.email if @checkout.email.nil?
+    @checkout.user_id           = current_user.id if @checkout.user_id.nil?
   end
   
   def update_address
@@ -27,14 +36,35 @@ class CheckoutController < ApplicationController
     params[:checkout][:bill_to_state] = params[:checkout][:ship_to_state] unless !params[:checkout][:bill_to_state].blank?
     params[:checkout][:bill_to_zip] = params[:checkout][:ship_to_zip] unless !params[:checkout][:bill_to_zip].blank?
     params[:checkout][:bill_to_phone] = params[:checkout][:ship_to_phone] unless !params[:checkout][:bill_to_phone].blank?
+    params[:checkout][:bill_to_email] = params[:checkout][:email] unless !params[:checkout][:bill_to_email].blank?
+    
     cart = Checkout.find_by(:id => cookies.permanent.signed[:cart_id])
     if current_user.has_account
       cart.account_id = current_user.account.id
       cart.order_line_items.each {|c| c.price = c.item.actual_price(cart.account_id)}
     end
     cart.update_attributes(checkout_params)
+
+    unless OrderTaxRate.find_by(:order_id => cookies.permanent.signed[:cart_id]).nil?
+      o = OrderTaxRate.find_by(:order_id => cookies.permanent.signed[:cart_id])
+    else
+      o = OrderTaxRate.new(:order_id => cookies.permanent.signed[:cart_id])
+    end
+    
+    tax_rate = TaxRate.find_by(:zip_code => cart.ship_to_zip)
+    o.update_attributes(:tax_rate => tax_rate)
+    o.update_attributes(:amount => o.calculate)
+    
     if cart.save
       redirect_to checkout_shipping_path
+    else
+      @checkout = cart
+      if current_user.account.nil?
+        @address = Account.new
+      else
+        @address = current_user.account
+      end
+      render "address"
     end
   end
   
@@ -44,25 +74,46 @@ class CheckoutController < ApplicationController
   
   def update_shipping
     shipping = ShippingMethod.find_by(:id => params[:order_shipping_method][:shipping_method_id])
-    puts "---> #{shipping.inspect}"
     unless OrderShippingMethod.find_by(:order_id => cookies.permanent.signed[:cart_id]).nil?
       "WE HAVE AND ID"
       o = OrderShippingMethod.find_by(:order_id => cookies.permanent.signed[:cart_id])
     else
       o = OrderShippingMethod.new(:order_id => cookies.permanent.signed[:cart_id])
     end
-    puts "-----> #{o.inspect}"
     o.update_attributes(:shipping_method_id => shipping.id, :amount => shipping.calculate(@cart.sub_total))
-    
-    # if o.save
-      redirect_to checkout_payment_path
-    # end
+    redirect_to checkout_confirm_path
   end
   
   def payment
     @checkout = Checkout.find_by(:id => cookies.permanent.signed[:cart_id])
-    if current_user.has_account
-      redirect_to checkout_confirm_path
+    @payment = Payment.new
+    @order = @checkout
+    # if current_user.has_account
+    #   redirect_to checkout_confirm_path
+    # end
+  end
+  
+  def update_payment
+    if (params[:payment_method] == "terms" || params[:payment_method] == "check")
+      confirm
+    else
+      if params[:payment_method] == "credit_card"
+        a = Order.find_by(:id => cookies.permanent.signed[:cart_id]).credit_card_payments.new
+        a.first_name = params[:first_name]
+        a.last_name = params[:last_name]
+        a.credit_card_number = params[:credit_card_number]
+        a.card_security_code = params[:card_security_code]
+        a.expiration_month = params[:expiration_month]
+        a.expiration_year = params[:expiration_year]
+        a.amount = Order.find_by(:id => cookies.permanent.signed[:cart_id]).total
+        if a.authorize
+          a.save
+          complete
+        else
+          puts "-----XXX---> #{a.errors.messages}"
+          render "payment"
+        end
+      end
     end
   end
   
@@ -72,6 +123,8 @@ class CheckoutController < ApplicationController
   
   def complete
     c = Checkout.find_by(:id => cookies.permanent.signed[:cart_id])
+    c.email             = current_user.email if c.email.nil?
+    c.user_id           = current_user.id if c.user_id.nil?
     c.completed_at = Time.now
     if c.save
       if c.complete
@@ -105,8 +158,8 @@ class CheckoutController < ApplicationController
   
   def checkout_params
     params.require(:checkout).permit(
-    :bill_to_account_name, :bill_to_attention, :bill_to_address_1, :bill_to_address_2, :bill_to_city, :bill_to_state, :bill_to_zip, :bill_to_phone, 
-    :ship_to_account_name, :ship_to_attention, :ship_to_address_1, :ship_to_address_2, :ship_to_city, :ship_to_state, :ship_to_zip, :ship_to_phone, :po_number
+    :bill_to_account_name, :bill_to_attention, :bill_to_address_1, :bill_to_address_2, :bill_to_city, :bill_to_state, :bill_to_zip, :bill_to_phone, :bill_to_email,
+    :ship_to_account_name, :ship_to_attention, :ship_to_address_1, :ship_to_address_2, :ship_to_city, :ship_to_state, :ship_to_zip, :ship_to_phone, :po_number, :email
     )
   end
   

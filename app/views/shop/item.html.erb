@@ -44,7 +44,7 @@
 				<span class="label label-primary"><%= cat.name %></span>
 			<% end %>
 			<br/>
-			<strong><% @item.item_properties.where(:key => "summary_selling_statement") %></strong>
+			<h4><%= @item.features.where(:key => "summary_selling_statement").first.value unless @item.features.find_by(:key => "summary_selling_statement").nil? %></h4>
 		</div>
 	</div>
 
@@ -59,21 +59,38 @@
 	<div class="row add-to-cart">
 		<%= form_for @cart, url: add_to_cart_path, :remote => true do |f| %>
 		<div class="col-md-5 product-qty">
-				<span class="btn btn-default btn-lg btn-qty">
-					<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-				</span>
-				<%= f.hidden_field :item_id, :value => @item.id %>
-				<%= f.text_field :quantity, :value => 1, :class => "btn btn-default btn-lg btn-qty" %>
-				<span class="btn btn-default btn-lg btn-qty">
-					<span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-				</span>
+			<span id="add_qty" class="btn btn-default btn-lg btn-qty">
+				<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+			</span>
+			<%= f.hidden_field :item_id, :value => @item.id %>
+			<%= f.text_field :quantity, :value => 1, :class => "btn btn-default btn-lg btn-qty" %>
+			<span id="subtract_qty" class="btn btn-default btn-lg btn-qty">
+				<span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+			</span>
 		</div>
+		
+		<script>
+		$("#add_qty").click(function(e){
+			var a = Number($("#cart_quantity").val());
+			console.log(a)
+			$("#cart_quantity").val(a + 1);
+		})
+		$("#subtract_qty").click(function(e){
+			var a = Number($("#cart_quantity").val());
+			console.log(a)
+			if (a > 1) {
+				$("#cart_quantity").val(a - 1);
+			};
+		})
+		
+		</script>
+		
 		<div class="col-md-4">
 			<button type="submit" class="btn btn-lg btn-brand btn-full-width">Add to Cart</button>
 		</div>
 		<% end %>
 	</div><!-- end row -->
-
+	
 	<div class="row">
 		<div class="col-md-12 bottom-rule top-10"></div>
 	</div><!-- end row -->
@@ -100,7 +117,7 @@
 				<div class="col-md-12">
 					<br/>
 					<ul>
-						<% @item.item_properties.where("key LIKE ?", "%selling_point_%").each do |feat| %>
+						<% @item.features.where("key LIKE ?", "%selling_point_%").each do |feat| %>
 							<% unless feat.value.blank? %>
 							<li><%= feat.value %></li>
 							<% end %>
@@ -122,13 +139,13 @@
 				<div class="col-md-12">
 					<p>
 						<table class="table table-bordered table-condensed table-striped">
-						<% @item.item_properties.each do |pr| %>
-							<% unless pr.key =~ /(selling_point_|summary_selling_statement)/ %>
+						<% @item.specifications.each do |pr| %>
+							<%# unless pr.key =~ /(selling_point_|summary_selling_statement)/ %>
 							<tr>
 								<td><strong><%= pr.key%></strong></td>
 								<td><%= pr.value %></td>
 							</tr>
-							<% end %>
+							<%# end %>
 						<% end %>
 						</table>
 					</p>

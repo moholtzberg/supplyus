@@ -1,0 +1,6 @@
+<% if @account.credit_cards.active.count >= 1 %>
+$("#modal-content").html("<%= j render :template => 'shop/pay_invoice.html', :format => 'html' %>");
+<% else %>
+$("#modal-content").html("<%= j render :template => 'credit_cards/new.html', :format => 'html' %>");
+<% end %>
+$('#myModal').modal("show");

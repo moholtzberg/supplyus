@@ -1,0 +1,57 @@
+<% content_for :app_location do %>Purchase Order Receipts / New<% end %>
+<div id="orders" class="col-md-12">
+	
+	<%= form_for @purchase_order_receipt, url: purchase_order_purchase_order_receipts_path(:purchase_order_id => @purchase_order.id), :remote => false do |f| %>
+	
+	<table class="table table-bordered">
+		
+		<tr>
+			<th>Purchase Order Number</th>
+			<th>Ship To Account Name</th>
+			<th>Ship Date</th>
+			<th>Carrier</th>
+		</tr>
+		
+		<tr>
+			<td><%= @purchase_order.number %></td>
+			<td><%= @purchase_order.ship_to_account_name %></td>
+			<td><%= f.date_field :ship_date, :class => "form-control", :value => Date.today %></td>
+		</tr>
+		
+	</table>
+	
+	<table class="table table-bordered">
+		
+		<tr>
+			<th>ID</th>
+			<th>Item Name/Description</th>
+			<th>Quantity Ordered</th>
+			<th>Quantity Shipped</th>
+			<th>Quantity To Ship Now</th>
+		<tr>
+		
+		<%= hidden_field_tag :purchase_order_id, params[:purchase_order_id].to_i %>
+		
+		<% @line_items.each_with_index do |li, idx| %>
+			<% if li.quantity_received.to_i != li.quantity and li.quantity != 0 %>
+				<%= hidden_field_tag "lines[#{idx}][purchase_order_line_item_id]", li.id.to_i %>
+				<tr>
+					<td><%= li.id %></td>
+					<td><%= "#{li.item.number} / #{li.item.name}" unless li.item.nil? %></td>
+					<td><%= li.quantity %></td>
+					<td><%= li.quantity_received %></td>
+					<td><%= text_field_tag "lines[#{idx}][quantity_receive_now]", (li.quantity.to_i - li.quantity_received.to_i), :class => "form-control" %></td>
+				<tr>
+			<% end %>
+		<% end %>
+		
+	</talbe>
+	
+	<table>
+		<tr>
+			<td colspan="5"><%= f.submit "Create Shipment", :class => "btn btn-primary pull-right" %></td>
+		</tr>
+	</table>
+	<% end %>
+	
+</div>

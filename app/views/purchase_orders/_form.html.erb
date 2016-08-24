@@ -1,0 +1,158 @@
+<%= form_for @purchase_order, :method => :patch, :html => {:class => "form-horizontal"} do |f| %>
+
+	<fieldset>
+		
+		<div class="col-md-12">
+			
+			<div class="col-md-4">
+				<%= f.label :vendor %>
+				<%= f.select :vendor_id, @vendors.collect {|p| [p.name, p.id, 
+					:vendor_name => p.name, :ship_to_address_1 => p.ship_to_address_1, :ship_to_address_2 => p.ship_to_address_2, :ship_to_city => p.ship_to_city, :ship_to_state => p.ship_to_state, :ship_to_zip => p.ship_to_zip, :ship_to_phone => p.ship_to_phone
+					]}, {:include_blank => "Select Vendor"}, {:class => "form-control"} %>
+			</div>
+	
+			<script>
+				$("select#purchase_order_vendor_id").change(function(e){
+					var vendor = $(this).find("option:selected").attr("vendor_name")
+					var address_1 = $(this).find("option:selected").attr("ship_to_address_1")
+					var address_2 = $(this).find("option:selected").attr("ship_to_address_2")
+					var city = $(this).find("option:selected").attr("ship_to_city")
+					var state = $(this).find("option:selected").attr("ship_to_state")
+					var zip = $(this).find("option:selected").attr("ship_to_zip")
+					var phone = $(this).find("option:selected").attr("ship_to_phone")
+					$("input#purchase_order_ship_from_vendor_name").val(vendor)
+					$("input#purchase_order_ship_from_address_1").val(address_1)
+					$("input#purchase_order_ship_from_address_2").val(address_2)
+					$("input#purchase_order_ship_from_city").val(city)
+					$("input#purchase_order_ship_from_state").val(state)
+					$("input#purchase_order_ship_from_zip").val(zip)
+					$("input#purchase_order_ship_from_phone").val(phone)
+				})
+			</script>
+	
+			<div class="col-md-4">
+				<%= f.label :number %>
+				<%= f.text_field(:number, :class => "form-control") %>
+			</div>
+		
+			<div class="col-md-4">
+				<%= f.label :completed_at %>
+				
+				<% if @purchase_order.completed_at.blank? %>
+	
+				<%= f.date_field(:completed_at, :class => "form-control") %>
+				
+				<% else %>
+				
+				<%= f.datetime_field(:completed_at, :disabled => true, :class => "form-control", :value => @purchase_order.completed_at.strftime("%m/%d/%Y %I:%M %p")) %>
+				
+				<% end %>
+			</div>
+			
+			<div class="col-md-12">
+				<%= f.label :notes %>
+				<%= f.text_area(:notes, :class => "form-control") %>
+			</div>
+			
+		</div>
+		
+	</fieldset>
+	<fieldset>
+		
+		<div class="col-md-6 address">
+			<div class="col-md-12">
+				<%= f.label :ship_from_vendor_name %>
+				<%= f.text_field(:ship_from_vendor_name, :class => " form-control col-md-12 input-sm")%>
+			</div>
+			<div class="col-md-12">
+				<%= f.label :ship_from_attention %>
+				<%= f.text_field(:ship_from_attention, :class => " form-control col-md-12 input-sm")%>
+			</div>
+			<div class="col-md-12">
+				<%= f.label :ship_from_address_1 %>
+				<%= f.text_field(:ship_from_address_1, :class => "form-control col-md-12 input-sm")%>
+			</div>
+			<div class="col-md-12">
+				<%= f.label :ship_from_address_2 %>
+				<%= f.text_field(:ship_from_address_2, :class => "form-control col-md-12 input-sm")%>
+			</div>
+			<div class="col-md-6">
+				<%= f.label :ship_from_city %>
+				<%= f.text_field(:ship_from_city, :class => "form-control col-md-12 input-sm")%>
+			</div>
+			<div class="col-md-3">
+				<%= f.label :ship_from_state %>
+				<%= f.text_field(:ship_from_state, :class => "form-control col-md-12 input-sm")%>
+			</div>
+			<div class="col-md-3">
+				<%= f.label :ship_from_zip %>
+				<%= f.text_field(:ship_from_zip, :class => "form-control col-md-12 input-sm")%>
+			</div>
+			
+		</div>
+		
+		<div class="col-md-6 address">
+			<div class="col-md-12">
+				<%= f.label :ship_to_account_name %>
+				<%= f.text_field(:ship_to_account_name, :class => " form-control col-md-12 input-sm")%>
+			</div>
+			<div class="col-md-12">
+				<%= f.label :ship_to_attention %>
+				<%= f.text_field(:ship_to_attention, :class => " form-control col-md-12 input-sm")%>
+			</div>
+			<div class="col-md-12">
+				<%= f.label :ship_to_address_1 %>
+				<%= f.text_field(:ship_to_address_1, :class => "form-control col-md-12 input-sm")%>
+			</div>
+			<div class="col-md-12">
+				<%= f.label :ship_to_address_2 %>
+				<%= f.text_field(:ship_to_address_2, :class => "form-control col-md-12 input-sm")%>
+			</div>
+			<div class="col-md-6">
+				<%= f.label :ship_to_city %>
+				<%= f.text_field(:ship_to_city, :class => "form-control col-md-12 input-sm")%>
+			</div>
+			<div class="col-md-3">
+				<%= f.label :ship_to_state %>
+				<%= f.text_field(:ship_to_state, :class => "form-control col-md-12 input-sm")%>
+			</div>
+			<div class="col-md-3">
+				<%= f.label :ship_to_zip %>
+				<%= f.text_field(:ship_to_zip, :class => "form-control col-md-12 input-sm")%>
+			</div>
+			
+			<div class="col-md-6">
+				<%= f.label :shipping_method %>
+				<%= f.select(:shipping_method, ShippingMethod.all.collect {|a| [a.name, a.id]}, {:include_blank => "Select Shipping Method"}, {:class => "form-control col-md-12 input-sm"}) %>
+			</div>
+			
+			<div class="col-md-6">
+				<%= f.label :shipping_amount %>
+				<%= f.text_field(:shipping_amount, :class => "form-control col-md-12 input-sm")%>
+			</div>
+			
+		</div>
+	
+	</fieldset>
+	
+<% end %>
+
+<hr/>
+
+<fieldset>
+	
+	<div id="line_items">
+		<%= render "purchase_order_line_items/line_items" %>
+	</div>
+	
+	<%= form_for @order_line_item, :remote => true do |form| %>
+	
+	<table class="table table-bordered table-condensed">
+	
+		<%= render "purchase_order_line_items/form", f: form %>
+		
+	</table>
+	
+	<% end %>
+	
+</fieldset>

@@ -7,7 +7,7 @@ class ShipmentMailer < ApplicationMailer
     @shipment = Shipment.find_by(:id => shipment_id)
     
     mail(
-         :to => @shipment.orders.first.account.user.email,
+         :to => @shipment.orders.first.email,
          :bcc => "sales@247officesupply.com",
          :subject => "Shipment Notification #{@shipment.orders.first.number}", 
          :text => render_to_string("shipment_mailer/shipment_confirmation").to_str

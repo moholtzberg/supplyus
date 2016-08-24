@@ -19,6 +19,9 @@
 //= require turbolinks
 //= require_tree .
 
+// Create Recurring object first.
+Recurring = {};
+
 jQuery(function() {
 	return $('.best_in_place').best_in_place();
 });

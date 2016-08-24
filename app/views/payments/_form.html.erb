@@ -1,0 +1,44 @@
+<fieldset>	
+
+	<div id="name" class="col-md-12">
+		<%= f.label :payment_method, :class => "control-label" %>
+		<%= f.select :payment_method, PaymentMethod.all.collect {|a| [a.name, a.id]}, {}, {:class => "form-control"}%>
+	</div>
+	
+	<script>
+	jQuery(function(){
+		$("select#payment_payment_method").change(function(){
+			console.log()
+			if ($("select#payment_payment_method option:selected").text() == "Credit Card") {
+				$("#credit_card_info").show();
+			} else {
+				$("#credit_card_info").hide();
+			}
+		})
+	});
+	</script>
+
+	<div id="address" class="col-md-12">
+		<%= f.label :amount, :class => "control-label" %>
+		<%= f.text_field :amount, :class => "form-control" %>
+	</div>
+	
+	<div id="account_name" class="col-md-12">
+		<%= f.label :account_name, :class => "control-label" %>
+		<%= f.text_field :account_name, :class => "form-control", data: {autocomplete_source: accounts_path} %>
+	</div>
+	
+	<script>
+	jQuery(function() {
+		return $('#payment_account_name').autocomplete({
+			source: $('#payment_account_name').data('autocomplete-source')
+		})
+	});
+	</script>
+	
+	<div id="credit_card_info" class="col-md-12" hidden="false">
+		<%= render :partial => 'payments/credit_card.html', :format => 'html', :locals => {:f => f} %>
+	</div>
+	
+	
+</fieldset>

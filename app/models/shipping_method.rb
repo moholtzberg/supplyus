@@ -5,31 +5,32 @@ class ShippingMethod < ActiveRecord::Base
   def calculate(order_amount)
     calculation = self.shipping_calculator.calculation_method
     puts "------> #{calculation}"
-    if calculation == "flat"
-      amount = (rate.to_f >= self.minimum_amount.to_f) ? rate.to_f : self.minimum_amount.to_f
-      puts "1-------> #{amount}"
-      amount = determine_free_shipping(amount)
+    if calculation.downcase == "flat"
+      shipping_amount = (rate.to_f >= self.minimum_amount.to_f) ? rate.to_f : self.minimum_amount.to_f
+      puts "1-------> #{shipping_amount}"
+      amount = determine_free_shipping(order_amount, shipping_amount)
       puts "2-------> #{amount}"
       amount.to_f
-    elsif calculation == "percentage"
+    elsif calculation.downcase == "percentage"
       amount = (rate/100) * order_amount
       puts "1-------> #{amount}"
       amount = (rate.to_f >= self.minimum_amount.to_f) ? rate.to_f : self.minimum_amount.to_f
       puts "2-------> #{amount}"
-      amount = determine_free_shipping(amount)
+      amount = determine_free_shipping(order_amount)
       puts "3-------> #{amount}"
       amount.to_f
     end
     
   end
   
-  def determine_free_shipping(amount)
-    puts "XXX-------> #{amount}"
-    if self.free_at_amount.to_f < amount.to_f
-      puts "-------> #{self.free_at_amount}  =>  #{amount}"
+  def determine_free_shipping(order_amount, shipping_amount)
+    puts "Order Amount-------> #{order_amount}"
+    puts "Shipping Amount-------> #{shipping_amount}"
+    if self.free_at_amount.to_f < order_amount.to_f
+      puts "-------> #{self.free_at_amount}  =>  #{order_amount}"
       0
     else
-      amount.to_f
+      shipping_amount.to_f
     end
   end
   

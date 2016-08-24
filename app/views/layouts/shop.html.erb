@@ -20,7 +20,9 @@
 			<header id="header" data-hook>
 				
 				<%= render :partial => "shop/header" %>
-				
+        <div id="flashes">
+          <%= bootstrap_flash %>
+        </div>
 			</header>
 
 			<div id="content" class="row" data-hook>
@@ -47,6 +49,7 @@
 
 		<%# render :partial => 'spree/shared/google_analytics.js' %>
 		
+		<% if Rails.env.production? %>
 		<script type='text/javascript'>
 		window.__lo_site_id = 39251;
 		(function() {
@@ -55,6 +58,7 @@
 			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(wa, s);
 		})();
 		</script>
+		<% end %>
 		
 		<div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel">
 			<div class="modal-dialog" role="document">

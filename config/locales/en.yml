@@ -22,6 +22,7 @@
 en:
   hello: "Hello world"
   my_account: "My Account"
+  my_items: "My Items"
   logout: "Sign Out"
   login: "Sign In"
   create_a_new_account: "Create Account" 

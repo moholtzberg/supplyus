@@ -2,6 +2,7 @@ class AccountItemPricesController < ApplicationController
   layout "admin"
   
   def new
+    authorize! :create, AccountItemPrice
     @account_item_price = AccountItemPrice.new(:item_id => params[:item_id])
     if params["copy"] && params["copy"] == "true"
       @account = Account.find_by(:id => params[:account_id])
@@ -9,6 +10,7 @@ class AccountItemPricesController < ApplicationController
   end
   
   def create
+    authorize! :create, AccountItemPrice
     if params[:copy]
       copy
     else
@@ -27,6 +29,7 @@ class AccountItemPricesController < ApplicationController
   end
   
   def copy
+    authorize! :create, AccountItemPrice
     puts "WE ARE IN THE COPY ACTION"
     from_acct = Account.find_by(name: params[:account_item_price][:copy_from])
     to_acct = Account.find_by(id: params[:account_id])
@@ -38,6 +41,7 @@ class AccountItemPricesController < ApplicationController
   end
   
   def destroy
+    authorize! :destroy, AccountItemPrice
     AccountItemPrice.where(id: params[:id]).destroy!
   end
   

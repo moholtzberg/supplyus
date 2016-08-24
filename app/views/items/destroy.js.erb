@@ -1,2 +1,5 @@
-$("#items").html("<%= j render :partial => 'items/index.html', :format => 'html', :locals => {:items => @items} %>")
-$("#confirmModal").modal("hide")
+// fix partial -> template
+$("#items").html("<%= j render :template => 'items/index.html', :format => 'html', :locals => {:items => @items} %>");
+$("#confirmModal").modal("hide");
+// flash example
+Recurring.flash.showMsg('notice', "Item was deleted.");

@@ -1,13 +1,11 @@
-
-
-
-
-
-<div class="col-md-5">
-	
-	<div class="col-md-12">
-
-		<div class="widget panel">
+<div class="col-md-12">
+		
+	<div class="col-md-4">
+		<div class="panel panel-default">
+			
+			<div class="panel-heading text-center">
+				Customer Info
+			</div>
 			
 			<div class="panel-body">
 				<% if !@account.name.nil? %><%= @account.name %><% end %>
@@ -16,59 +14,220 @@
 				<%= @account.city %>, <%= @account.state %> <%= @account.zip %><br/>
 				<% if !@account.phone.nil? %><br/><%= number_to_phone(@account.phone) %><% end %>
 				<% if !@account.fax.nil? %><br/><%= number_to_phone(@account.fax) %><% end %>
-				<hr/>
-				<% if !@account.stripe_customer_id.nil? %><%= @account.stripe_customer_id %><% end %>
 			</div>
 		</div>
 	</div>
 	
-	<div id="contacts" class="col-md-12">
-		<%= render :partial => "home/contacts", :locals => {:account => @account} %>
-	</div>
-	
-	<div id="credit_cards" class="col-md-12">
-		<%= render :partial => "home/credit_cards", :locals => {:account => @account} %>
-	</div>
-	
-</div>
-
-<div class="col-md-7">
-	
-	<div id="payment_plans" class="col-md-12">
-		<%= render :partial => "home/payment_plans", :locals => {:account => @account} %>
-	</div>
-	
-	<div id="equipment" class="col-md-12">
-		<%= render :partial => "home/equipment", :locals => {:account => @account} %>
-	</div>
-	
-	<div id="invoices" class="col-md-12">
-		<%= render :partial => "home/invoices", :locals => {:account => @account} %>
-	</div>
-	
-</div>
-
-<div id="account_item_prices" class="col-md-12">
-	<%= link_to "Copy Price Catalogue", new_account_item_price_path(:copy => true, :account_id => @account.id), :class => "btn btn-primary", :remote => true  %>
-	<table class="table table-bordered table-condensed table-hover">
-		<tr>
-			<th>Item Number</th>
-			<th>Description</th>
-			<th width="10%">Contract Price</th>
-			<th width="10%">Cost Price</th>
-		</tr>
-		
-		<% @item_prices.each do |a| %>
-		<tr <% if a.item && (a.price.to_f < a.item.cost_price.to_f) %>class="danger" <% end %>>
-			<td><%= a.item.number unless a.item.nil? %></td>
-			<td><%= a.item.name unless a.item.nil? %></td>
-			<td><%= number_to_currency(a.price) %></td>
-			<td><%= number_to_currency(a.item.cost_price) unless a.item.nil? %></td>
-			<td><%= link_to "Delete", account_item_price_path(a.id), :method => :delete, :remote => true %></td>
+	<div class="col-md-4">
+		<div class="panel panel-default">
 			
-		</tr>
-		<% end %>
-	</table>
+			<div class="panel-heading text-center">
+				Billing Info
+			</div>
+			
+			<div class="panel-body">
+				<% if !@account.name.nil? %><%= @account.name %><% end %>
+				<% if !@account.bill_to_address_1.nil? %><br/><%= @account.bill_to_address_1 %><% end %>
+				<% if !@account.bill_to_address_2.nil? %><br/><%= @account.bill_to_address_2 %><% end %>
+				<%= @account.bill_to_city %>, <%= @account.bill_to_state %> <%= @account.bill_to_zip %><br/>
+				<% if !@account.bill_to_phone.nil? %><br/><%= number_to_phone(@account.bill_to_phone) %><% end %>
+				<% if !@account.bill_to_fax.nil? %><br/><%= number_to_phone(@account.bill_to_fax) %><% end %>
+			</div>
+		</div>
+	</div>
+	
+	<div class="col-md-4">
+		<div class="panel panel-default">
+			
+			<div class="panel-heading text-center">
+				Misc Info
+			</div>
+			
+			<div class="panel-body">
+				<% if !@account.quickbooks_id.nil? %>QuickBooks Id: <%= @account.quickbooks_id %><% end %>
+				Credit Hold: <%= @account.credit_hold ? "Yes" : "No" %><br/>
+				Credit Limit: <%= number_to_currency(@account.credit_limit) %><br/>
+				Credit Terms: <%= @account.credit_terms %>
+			</div>
+		</div>
+	</div>
+	
+</div>
+
+<div class="col-md-12">
+		
+	<div class="col-md-4">
+		<div class="panel panel-default">
+			<div class="panel-heading text-center">
+				Total Sales
+			</div>
+			<div class="panel-body text-center">
+				<%= number_to_currency(@orders.includes(:order_line_items).is_complete.map(&:sub_total).sum) %>
+			</div>
+		</div>
+	</div>
+	
+	<div class="col-md-4">
+		<div class="panel panel-primary">
+			<div class="panel-heading text-center">
+				Total Orders
+			</div>
+			<div class="panel-body text-center">
+				<%= number_to_human(@orders.is_complete.count) %>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-4">
+		<div class="panel panel-danger">
+			<div class="panel-heading text-center">
+				Total Outstanding Balance
+			</div>
+			<div class="panel-body text-center">
+				<%= number_to_currency(@orders.includes(:order_line_items).is_complete.map(&:balance_due).sum) %>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-12">
+		<div class="panel panel-info">
+			<div class="panel-heading text-center">
+				Key Month over Month Stats
+			</div>
+			<div class="panel-body text-center">
+				<table class="table">
+					<tr>
+						<th span="10%">&nbsp;</th>
+						<th span="15%">Month to Date</th>
+						<th span="15%">Same Time Last Month</th>
+						<th span="15%">Last Month</th>
+						<th span="15%">2 Months Ago</th>
+						<th span="15%">3 Months Ago</th>
+						<th span="15%">Year to date</th>
+					</tr>
+					<tr>
+						<td>Revenue</td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(Date.today.beginning_of_month, Date.today).map(&:sub_total).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(1.month.ago, 1.day.ago).map(&:sub_total).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(1.month.ago.beginning_of_month, 1.month.ago.end_of_month).map(&:sub_total).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(2.month.ago.beginning_of_month, 2.month.ago.end_of_month).map(&:sub_total).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(3.month.ago.beginning_of_month, 3.month.ago.end_of_month).map(&:sub_total).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(Date.today.beginning_of_year, Date.today).map(&:sub_total).sum) %></td>
+					</tr>
+					<tr>
+						<td>Orders</td>
+						<td><%= @orders.includes(:order_line_items => [:item]).is_complete.by_date_range(Date.today.beginning_of_month, Date.today).count %></td>
+						<td><%= @orders.includes(:order_line_items => [:item]).is_complete.by_date_range(1.month.ago, 1.day.ago).count %></td>
+						<td><%= @orders.includes(:order_line_items => [:item]).is_complete.by_date_range(1.month.ago.beginning_of_month, 1.month.ago.end_of_month).count %></td>
+						<td><%= @orders.includes(:order_line_items => [:item]).is_complete.by_date_range(2.month.ago.beginning_of_month, 2.month.ago.end_of_month).count %></td>
+						<td><%= @orders.includes(:order_line_items => [:item]).is_complete.by_date_range(3.month.ago.beginning_of_month, 3.month.ago.end_of_month).count %></td>
+						<td><%= @orders.includes(:order_line_items => [:item]).is_complete.by_date_range(Date.today.beginning_of_year, Date.today).count %></td>
+					</tr>
+					<tr>
+						<td>Profit</td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(Date.today.beginning_of_month, Date.today).map(&:profit).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(1.month.ago, 1.day.ago).map(&:profit).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(1.month.ago.beginning_of_month, 1.month.ago.end_of_month).map(&:profit).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(2.month.ago.beginning_of_month, 2.month.ago.end_of_month).map(&:profit).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(3.month.ago.beginning_of_month, 3.month.ago.end_of_month).map(&:profit).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(Date.today.beginning_of_year, Date.today).map(&:profit).sum) %></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+	
+</div>
+
+	<ul class="nav nav-tabs nav-justified">
+		<li role="presentation" class="active"><a href="#orders" aria-controls="orders" role="tab" data-toggle="tab">Orders</a></li>
+		<li role="presentation"><a href="#account_item_prices" aria-controls="account_item_prices" role="tab" data-toggle="tab">Account Item Prices</a></li>
+		<li role="presentation"><a href="#users" aria-controls="users" role="tab" data-toggle="tab">Users</a></li>
+	</ul>
+	
+	<div class="tab-content">
+	
+		<br/>
+	
+		<div role="tabpanel" class="tab-pane active" id="orders">
+		
+			<table class="table table-bordered table-condensed table-striped">
+				<tr>
+					<th>Complete</th>
+					<th>Completed At</th>
+					<th>Last Update</th>
+					<th>Number</th>
+					<th width="7%">Sub Total</th>
+					<th width="7%">Shipping</th>
+					<th width="7%">Sales Tax</th>
+					<th width="7%">Total</th>
+					<th width="7%">Amount Shipped</th>
+					<th width="7%">Amount Fulfilled</th>
+					<th width="7%">Balance Due</th>
+				</tr>
+				<% @orders.each do |it| %>
+				<tr>
+					<td><%= it.completed_at.nil? ? "No" : "Yes" %></td>
+					<td><%= it.completed_at.strftime("%m/%d/%Y %I:%M %p") unless it.completed_at.nil? %>
+					<td><%= it.updated_at.strftime("%m/%d/%Y %I:%M %p") %>
+					<td><%= link_to it.number, it %></td>
+					<td><%= number_to_currency(it.sub_total) %></td>
+					<td><%= number_to_currency(it.shipping_total) %></td>
+					<td><%= number_to_currency(it.tax_total) %></td>
+					<td><%= number_to_currency(it.total) %></td>
+					<td><%= number_to_currency(it.amount_shipped) %></td>
+					<td><%= number_to_currency(it.amount_fulfilled) %></td>
+					<td><%= number_to_currency(it.balance_due) %></td>
+				</tr>
+				<% end %>
+			</table>
+		
+		</div>
+	
+		<div id="account_item_prices" class="tab-pane" role="tabpanel">
+			<%= link_to "Copy Price Catalogue", new_account_item_price_path(:copy => true, :account_id => @account.id), :class => "btn btn-primary", :remote => true  %>
+			<table class="table table-bordered table-condensed table-hover">
+				<tr>
+					<th>Item Number</th>
+					<th>Description</th>
+					<th width="10%">Contract Price</th>
+					<th width="10%">Cost Price</th>
+				</tr>
+
+				<% @item_prices.limit(50).each do |a| %>
+				<tr <% if a.item && (a.price.to_f < a.item.cost_price.to_f) %>class="danger" <% end %>>
+					<td><%= a.item.number unless a.item.nil? %></td>
+					<td><%= a.item.name unless a.item.nil? %></td>
+					<td><%= number_to_currency(a.price) %></td>
+					<td><%= number_to_currency(a.item.cost_price) unless a.item.nil? %></td>
+					<td><%= link_to "Delete", account_item_price_path(a.id), :method => :delete, :remote => true %></td>
+
+				</tr>
+				<% end %>
+			</table>
+		</div>
+		
+		<div role="tabpanel" class="tab-pane" id="users">
+		
+			<table class="table table-bordered table-condensed table-striped">
+				<tr>
+					<th>Email</th>
+					<th>First Name</th>
+					<th>Last Update</th>
+				</tr>
+				<% @account.users.each do |it| %>
+				<tr>
+					<td><%= it.email %></td>
+					<td><%= it.first_name %>
+					<td><%= it.last_name %>
+				</tr>
+				<% end %>
+			</table>
+		
+		</div>
+	
+	</div>
+
 </div>
 
 <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -85,6 +244,4 @@
 		
 		</div>
 	</div>
-</div>		
-
-<%= javascript_include_tag "https://js.stripe.com/v2/" %>
+</div>

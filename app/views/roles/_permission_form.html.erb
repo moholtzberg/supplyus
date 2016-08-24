@@ -1,0 +1,20 @@
+<div class="permission_block">
+
+  <%= f.input :mdl_name, as: :select, collection: Role::MODELS_LIST, selected: (perm.mdl_name if perm.mdl_name.present?), :include_blank => true,
+              input_html: {name: "permission[#{index}]mdl_name", id: "mdl_name_#{index}"}, label: 'Model:' %>
+
+  <%= f.input :can_create, as: :boolean, input_html: {name: "permission[#{index}]can_create", id: "can_create_#{index}", checked: perm.can_create} %>
+  <%= f.input :can_read,   as: :boolean, input_html: {name: "permission[#{index}]can_read", id: "can_read_#{index}",     checked: perm.can_read} %>
+  <%= f.input :can_update, as: :boolean, input_html: {name: "permission[#{index}]can_update", id: "can_update_#{index}", checked: perm.can_update} %>
+  <%= f.input :can_destroy, as: :boolean, input_html: {name: "permission[#{index}]can_destroy", id: "can_destroy_#{index}", checked: perm.can_destroy} %>
+
+  <div class="form-group optional">
+    <a class="delete-permisson" data-id="<%= perm.id if perm.persisted? %>" onclick="Recurring.roles.deletePermissionBlock($(this)); " href="javascript: void(0);">
+      <i class="fa fa-minus-circle" aria-hidden="true"></i>
+    </a>
+  </div>
+
+  <br>
+  <br>
+
+</div>

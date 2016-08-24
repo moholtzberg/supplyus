@@ -4,7 +4,20 @@
 <td class="visible-xs"><%= "#{user.first_name} #{user.last_name}" %></td>
 <td class="hidden-xs"><%= user.email %></td>
 <td><%= user.account.name unless user.account.blank? %></td>
-<td class="hidden-xs"><%= user.phone_number %></td>
+
+<% if current_user.roles.map(&:name).include?("super_admin") %>
+<td>
+
+  <% if user.roles.any? %>
+    <% user.roles.each do |role| %>
+      <%= render 'role_select', user: user, role: role %>
+    <% end %>
+  <% else %>
+      <%= render 'role_select', user: user, role: nil %>
+  <% end %>
+
+</td>
+<% end %>
 <td class="hidden-xs"><%= user.current_sign_in_at.strftime("%m/%d/%y") unless user.current_sign_in_at.nil? %></td>
 <td class="hidden-xs"><%= user.last_sign_in_ip %></td>
 <td>
@@ -15,10 +28,10 @@
 		</button>
 		<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
 			<li><%= link_to("Edit", edit_user_path(user.id), :remote => true)  %></li>
-		<% if current_user.email == "admin@247officesupply.com" %><li><%= link_to("Change Password", user_edit_password_path(user.id), :remote => true) %></li><% end %>
-			<li><%= link_to("Reset Password", user_reset_password_path(user.id), :remote => true) %>
-
-			</li>
+			<% if current_user.roles.map(&:name).include?("super_admin") %>
+				<li><%= link_to("Change Password", user_edit_password_path(user.id), :remote => true) %></li>
+			<% end %>
+			<li><%= link_to("Reset Password", user_reset_password_path(user.id), :remote => true) %></li>
 		</ul>
 	</div>
 

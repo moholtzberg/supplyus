@@ -1,46 +1,123 @@
-<ul>
-	<li>Cart Items
-		<ul>
-			<% @cart.contents.each do |stuff| %>
-			<li><%= stuff.item.name %> <%= stuff.quantity %> <%= stuff.price %> <%= stuff.sub_total %></li>
-			<% end %>
-		</ul>
-	</li>
-	<li>Shipping Address
-		<ul>
-			<li><%= @cart.ship_to_account_name %></li>
-			<% unless @cart.ship_to_attention.blank? %><li><%= @cart.ship_to_attention %></li><% end %>
-			<li><%= @cart.ship_to_address_1 %></li>
-			<% unless @cart.ship_to_address_2.blank? %><li><%= @cart.ship_to_address_2 %></li><% end %>
-			<li><%= @cart.ship_to_city %>, <%= @cart.ship_to_state %> <%= @cart.ship_to_zip %></li>
-			<li><%= @cart.ship_to_phone %></li>
-		</ul>
-	</li>
-	<li>Billing Address
-		<ul>
-			<li><%= @cart.bill_to_account_name %></li>
-			<% unless @cart.bill_to_attention.blank? %><li><%= @cart.bill_to_attention %></li><% end %>
-			<li><%= @cart.bill_to_address_1 %></li>
-			<% unless @cart.bill_to_address_2.blank? %><li><%= @cart.bill_to_address_2 %></li><% end %>
-			<li><%= @cart.bill_to_city %>, <%= @cart.bill_to_state %> <%= @cart.bill_to_zip %></li>
-			<li><%= @cart.bill_to_phone %></li>
-		</ul>
-	</li>
+<table class="table table-bordered">
 	
-	<li>Shipping
-		<ul>
-			<li><%= @checkout.order_shipping_method.name %> <%= number_to_currency(@checkout.order_shipping_method.amount) %>
-		</ul>
-	</li>
+	<tr>
+		<th width="5%" class="text-center"></th>
+		<th>Item Name/Description</th>
+		<th width="10%" class="text-center">Quantity</th>
+		<th width="10%" class="text-center">Price</th>
+		<th width="10%" class="text-center">Subtotal</th>
+	</tr>
 	
-	<li>
-		<ul>
-			<% if current_user.has_account %>
-				Net 30
-			<% else %>
-				Credit Card
-			<% end %>
-		</ul>
-	</li>
+	<% @cart.contents.active.each_with_index do |li, idx| %>
+	<tr>
+		<td class="text-center"><%= li.order_line_number %></td>
+		<td><%= li.item.name %></td>
+		<td class="text-center">
+			<%= li.quantity.to_i %>
+		</td>
+		<td class="text-center"><%= number_to_currency(li.price) %></td>
+		<td class="text-center"><%= number_to_currency(li.sub_total) %></td>
+	<tr>
+	<% end %>
 	
-</ul>
+	<tr>
+		<td colspan="3">Sub Total</td>
+		<td colspan="2" class="text-center"><strong><%= number_to_currency(@cart.sub_total) %></strong></td>
+	</tr>
+	
+</table>
+
+<table class="table table-bordered">
+	<tr>
+		<th>Shipping Address</th>
+		<th>Billing Address</th>
+	</tr>
+	<tr>
+		<td>
+			<%= @cart.ship_to_account_name %><br/>
+			<% unless @cart.ship_to_attention.blank? %><%= @cart.ship_to_attention %><br/><% end %>
+			<%= @cart.ship_to_address_1 %><br/>
+			<% unless @cart.ship_to_address_2.blank? %><%= @cart.ship_to_address_2 %><br/><% end %>
+			<%= @cart.ship_to_city %>, <%= @cart.ship_to_state %> <%= @cart.ship_to_zip %><br/>
+			<%= @cart.ship_to_phone %>
+		</td>
+		<td>
+			<%= @cart.bill_to_account_name %><br/>
+			<% unless @cart.bill_to_attention.blank? %><%= @cart.bill_to_attention %><br/><% end %>
+			<%= @cart.bill_to_address_1 %><br/>
+			<% unless @cart.bill_to_address_2.blank? %><%= @cart.bill_to_address_2 %><br/><% end %>
+			<%= @cart.bill_to_city %>, <%= @cart.bill_to_state %> <%= @cart.bill_to_zip %><br/>
+			<%= @cart.bill_to_phone %>
+		</td>
+	</tr>
+</table>
+
+<table class="table table-bordered">
+	<tr>
+		<td colspan="2">Shipping</td>
+	</tr>
+	<tr>
+		<td><%= @cart.order_shipping_method.name %></td>
+		<td><%= number_to_currency(@cart.shipping_total) %></td>
+	</tr>
+</table>
+
+<table class="table table-bordered">
+	<tr>
+		<%= form_for @checkout, :url => checkout_payment_path, :method => :patch do |f| %>
+		<td>
+			<select id="payment_type" class="form-control">
+				<option value="credit_card">Credit Card</option>
+				<option value="check">Check</option>
+				<% if current_user.account and current_user.account.has_credit %>
+				<option value="terms">Net <%= current_user.account.credit_terms %></option>
+				<% end %>
+			</select>
+			
+			<script>
+			$("select#payment_type").change(function(){
+				var m = this.value;
+				$("#payment_method").val(m);
+			})
+			</script>
+			<div id="credit_card">
+				<input type="hidden" id="payment_method" name="payment_method" value="credit_card" />
+				<input type="hidden" id="order_id" name="order_id" value="<%= @order.id %>" />
+				<div class="form-inline col-md-6">
+					<input type="text" id="first_name" name="first_name" class="form-control" placeholder="First Name"/>
+				<div>
+				<div class="form-inline col-md-6">
+					<input type="text" id="last_name" name="last_name" class="form-control" placeholder="Last Name"/>
+				</div>
+				
+				
+				<input type="text" id="credit_card_number" name="credit_card_number" class="form-control col-md-9" placeholder="Enter Credit Card Number"/>
+				<input type="text" id="card_security_code" name="card_security_code" class="form-control col-md-3" placeholder="Enter CVV"/>
+				
+				<select id="expiration_month" name="expiration_month" class="form-control">
+					<% Date::MONTHNAMES.compact.each do |month| %>
+					<option value="<%= Date::MONTHNAMES.index(month) %>"><%= month %></option>
+					<% end %>
+				</select>
+				
+				<select id="expiration_year" name="expiration_year" class="form-control">
+					<option value="2016">2016</option>
+					<option value="2017">2017</option>
+					<option value="2018">2018</option>
+					<option value="2019">2019</option>
+					<option value="2020">2020</option>
+					<option value="2021">2021</option>
+					<option value="2022">2022</option>
+					<option value="2023">2023</option>
+					<option value="2024">2024</option>
+				</select>
+			</div>
+			<div id="check">
+				<input type="hidden" id="payment_method" name="payment_method" value="check" />
+			</div>
+		</td>
+		<td><%= f.submit "Continue", :class => "btn btn-primary pull-right" %></td>
+		<% end %>
+	</tr>
+</table>
+	

@@ -7,7 +7,7 @@ class OrderMailer < ApplicationMailer
     @order = Order.find_by(:id => order_id)
     
     mail(
-         :to => @order.account.user.email,
+         :to => @order.email,
          :bcc => "sales@247officesupply.com",
          :subject => "Order Notification #{@order.number}", 
          :text => render_to_string("order_mailer/order_confirmation").to_str
@@ -33,11 +33,13 @@ class OrderMailer < ApplicationMailer
       render_to_string(:pdf => "INV_#{@order.number}", :template => 'shop/view_invoice.html.erb', :layout => "admin_print")
     )
     # self.instance_variable_set(:@lookup_context, nil)
+    bill_to_address = @order.bill_to_email.nil? ? nil : @order.bill_to_email
     mail(
-         :to => @order.account.user.email,
+         :to => @order.email,
+         :cc => bill_to_address,
          :bcc => "sales@247officesupply.com",
          :subject => "Invoice Notification #{@order.number}", 
-         :text => render_to_string("order_mailer/order_confirmation").to_str
+         :text => render_to_string("order_mailer/invoice_notification").to_str
     )
   end
   

@@ -1,0 +1,50 @@
+<% content_for :app_location do %>Admin / Payments / Index<% end %>
+<div id="orders" class="col-md-12">
+
+	<table class="table table-bordered table-condensed">
+		
+		<tr>
+			<th>Payment Type</th>
+			<th>Payent Amount</th>
+			<th>Applied Amount</th>
+			<th>Unapplied amount</th>
+			<th>Authorization Code</th>
+			<th>View Applications</th
+		</tr>
+		
+	<% @payments.each do |pmt| %>
+		<tr>
+			<td><%= pmt.payment_type %></td>
+			<td><%= number_to_currency(pmt.amount) %></td>
+			<td><%= number_to_currency(pmt.applied_amount) %></td>
+			<td><%= number_to_currency(pmt.unapplied_amount) %></td>
+			<td><%= pmt.authorization_code %></td>
+			<td>
+				<div class="dropdown">
+					<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+						<% pmt.order_payment_applications.each do |app| %>
+						<li><a><%= "#{app.order.number} - #{number_to_currency(app.applied_amount)}" %></a></li>
+						<% end %>
+					</ul>
+				</div>
+			</td>
+		</tr>
+	<% end %>
+	</table>
+
+	<%# will_paginate @payments, renderer: BootstrapPagination::Rails %>
+
+	<%= link_to new_payment_path, :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
+		
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div>

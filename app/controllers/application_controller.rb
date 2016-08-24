@@ -16,9 +16,23 @@ class ApplicationController < ActionController::Base
       rescue_from ActiveRecord::RecordNotFound, with: :render_404
     end
   end
+
+  # CanCanCan: Permission error handler
+  rescue_from CanCan::AccessDenied do |exception|
+    # if you want change msg you should know about checks in js (app/assets/javascripts/ajax_setup.js),
+    #   where responseText compares with 'You need permission to perform this action.' If it's ok we show flash message from js about permission error.
+    msg = 'You need permission to perform this action.'
+    respond_to do |format|
+      format.html {render text: msg}
+      format.json {render :json => {permission_error: msg}}
+      format.js   {render :json => {permission_error: msg}}
+    end
+
+  end
   
   def check_authorization
-    unless current_user.email.in?(["admin@247officesupply.com", "mjbustamante@247officesupply.com"])
+    # it seems this is bug: when user signed in we can check his email (current_user.email), if not current_user === nil and it will fall anyway. Maybe it will be better hide sign up link for unauthorized users.
+    if !current_user || !current_user.roles.any? || current_user.has_role?(:customer) || current_user.has_role?(:public)
       redirect_to "/"
     end
   end
@@ -42,7 +56,7 @@ class ApplicationController < ActionController::Base
   private
 
   def miniprofiler
-    if current_user and current_user.email == "admin@247officesupply.com"
+    if current_user and current_user.has_role?(:super_admin)
       Rack::MiniProfiler.authorize_request 
     end
   end

@@ -1,19 +1,35 @@
-<%= form_for @payment  do |f| %>
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	<h4 class="modal-title" id="myModalLabel">New Payment</h4>
+</div>
+
+<div class="modal-body" id="modal-body">
 	
-	<%= @order.id %>
-	<%= @order.number %>
-	<hr/>
-	<% @order.account.credit_cards.each do |cc| %>
-		<% c = Stripe::Customer.retrieve(@order.account.stripe_customer_id).sources.retrieve(cc.stripe_card_id) %>
-		<%= c.brand %> <%= c.last4 %> - <%= c.exp_month %>/<%= c.exp_year %>
+	<% if flash[:error] %>
+	<div id="flash_messages" class="aelrt alert-danger" role="alert">
+		<strong><%= flash[:error] %></strong>
+	</div>
 	<% end %>
 	
-	<%= f.select :payment_method, PaymentMethod.all.collect {|a| [a.name, a.id]} %>
-	<%= f.select :credit_card_id, @order.account.credit_cards.collect {|c| ["#{Stripe::Customer.retrieve(@order.account.stripe_customer_id).sources.retrieve(c.stripe_card_id).last4}", c.id]} %>
-	<%= f.hidden_field :account_id, :value => @order.account_id %>
-	<%= f.hidden_field :order_id, :value => @order.id %>
-	<%= f.text_field :amount, :value => @order.balance_due %>
 	
-	<%= f.submit %>
+	<%= form_for @payment, :remote => true, :html => {:class => "form-horizontal"} do |f| %>
+		<%= render :partial => "form", :locals => {:f => f} %>
+	<% end %>
 	
-<% end %>
+</div>
+
+<div class="modal-footer">
+	<%= button_tag(:name => :commit, :type => :submit, :class => "btn btn-primary", :form => "new_payment") do %>
+	Create Payment 
+	<% end %>
+</div>
+
+<%# @order.id %>
+<%# @order.number %>
+<%# @order.account.credit_cards.each do |cc| %>
+	<%# c = Stripe::Customer.retrieve(@order.account.stripe_customer_id).sources.retrieve(cc.stripe_card_id) %>
+	<%# c.brand %> <%# c.last4 %><%# c.exp_month %><%# c.exp_year %>
+<%# end %>
+<%# f.select :credit_card_id, @order.account.credit_cards.collect {|c| ["#{Stripe::Customer.retrieve(@order.account.stripe_customer_id).sources.retrieve(c.stripe_card_id).last4}", c.id]} %>
+<%# f.hidden_field :account_id, :value => @order.account_id %>
+<%# f.hidden_field :order_id, :value => @order.id %>

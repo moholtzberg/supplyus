@@ -1,0 +1,66 @@
+<% content_for :app_location do %>Tax Rates/Index<% end %>
+<div id="users" class="col-md-12">
+	
+	<table class="table table-bordered table-condensed">
+		
+		<tr>
+			<td colspan="11">
+				<form id="searchBox" accept-charset="UTF-8" action="/admin/tax_rates" method="get" role="search">
+					<input type="text" class="form-control" id="term" name="term" placeholder="Enter region name, region code, zip code or state." value="<%= params[:term] %>">
+				</form>
+			</td>
+		</tr>
+		
+		<tr>
+			<th width="5%" class="hidden-xs"><%= sortable "id", "ID" %></th>
+			<th width="5%" class="hidden-xs"><%= sortable "state_code", "State" %></th>
+			<th witdh="30%" class="hidden-xs"><%= sortable "region_name", "Region" %></th>
+			<th witdh="5%" class="hidden-xs"><%= sortable "region_code", "Code" %></th>
+			<th witdh="5%" class="hidden-xs"><%= sortable "zip_code", "Zip" %></th>
+			<th witdh="9%" class="hidden-xs"><%= sortable "rate", "Rate" %></th>
+			<th witdh="9%" class="hidden-xs"><%= sortable "state_rate", "State Rate" %></th>
+			<th witdh="9%" class="hidden-xs"><%= sortable "county_rate", "County Rate" %></th>
+			<th witdh="9%" class="hidden-xs"><%= sortable "city_rate", "City Rate" %></th>
+			<th witdh="9%" class="hidden-xs"><%= sortable "special_rate", "Special Rate" %></th>
+			<th width="5%">&nbsp;</th>
+		</tr>
+		
+		<% @tax_rates.each do |rate| %>
+		<tr id="tax_rate_<%= rate.id %>">
+			<td><%= rate.id %></td>
+			<td><%= rate.state_code %></td>
+			<td><%= rate.region_name %></td>
+			<td><%= rate.region_code %></td>
+			<td><%= rate.zip_code %></td>
+			<td><%= rate.rate %></td>
+			<td><%= rate.state_rate %></td>
+			<td><%= rate.county_rate %></td>
+			<td><%= rate.city_rate %></td>
+			<td><%= rate.special_rate %></td>
+			<td class="text-center">
+				<div class="dropdown">
+					<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+						<li><%= link_to("View", tax_rate_path(rate.id))  %></li>
+						<li><%= link_to("Edit", edit_tax_rate_path(rate.id), :remote => true)  %></li>
+					</ul>
+				</div>
+			</td>
+		<tr>
+		<% end %>
+
+	</table>
+	
+	<%= will_paginate @tax_rates, renderer: BootstrapPagination::Rails %>
+	
+</div>
+
+<div id="myModal" class="modal fade" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div>

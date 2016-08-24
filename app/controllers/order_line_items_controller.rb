@@ -1,6 +1,7 @@
 class OrderLineItemsController < ApplicationController
   
   def new
+    authorize! :create, OrderLineItem
     puts params.inspect
     if params[:line_number].blank?
       @line_number = 1
@@ -13,6 +14,7 @@ class OrderLineItemsController < ApplicationController
   end
   
   def create
+    authorize! :create, OrderLineItem
     # line_number = Order.find_by(params[:order_id]).order_line_items.last.order_line_number + 1
     OrderLineItem.create(order_line_item_params)
     @order = Order.find_by(:id => params[:order_line_item][:order_id])
@@ -20,6 +22,7 @@ class OrderLineItemsController < ApplicationController
   end
   
   def update
+    authorize! :update, OrderLineItem
     @line_item = OrderLineItem.find_by(:id => params[:id])
     if @line_item.update_attributes(order_line_item_params)
       flash[:notice] = "\"#{@line_item.order_line_number}\" has been updated"
@@ -35,6 +38,7 @@ class OrderLineItemsController < ApplicationController
   end
   
   def destroy
+    authorize! :destroy, OrderLineItem
     @order = OrderLineItem.find_by(:id => params[:id]).order
     OrderLineItem.destroy(params[:id])
   end
