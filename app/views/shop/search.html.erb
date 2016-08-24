@@ -12,4 +12,6 @@
 <p>Sorry, No items were found!</p>
 <% end %>	  
 
-<%= will_paginate @items, renderer: BootstrapPagination::Rails %>
+<% if @items and @items.size > 0 %>
+	<%= will_paginate @items, renderer: BootstrapPagination::Rails %>
+<% end %> 

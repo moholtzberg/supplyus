@@ -1,3 +1,6 @@
+
+<script text="text/javascript" src="/jquery.auto-complete.js"></script>
+
 <div id="main_nav_bar" class="row">
 
 	<div id="header_banner" class="container">
@@ -12,7 +15,7 @@
 
 			<div class="input-group input-group-lg">
 				<form id="searchBox" accept-charset="UTF-8" action="/search" method="get" role="search">
-					<input type="text" class="form-control input-group" id="keywords" name="keywords" placeholder="Search Over 5,000 Products" value="">
+					<input type="text" class="form-control input-group js-autocomplete" id="keywords" name="keywords" placeholder="Search Over 5,000 Products" value="<%=params['keywords']%>" >
 					<div class="input-group-btn">
 						<button type="submit" class="btn btn-default"><i class="icon-shopping-search"></i> Go</button>
 					</div>
@@ -43,7 +46,8 @@
 				<div id="mobile-search" class="col-xs-10 hidden-sm hidden-md hidden-lg hidden-xl">
 					<form id="searchBox" accept-charset="UTF-8" action="/search" method="get" role="search" class="navbar-form">
 						<div class="input-group">
-							<input type="text" class="form-control" id="keywords" name="keywords" placeholder="Search Over 5,000 Products">
+							<input type="text" class="form-control js-autocomplete" id="keywords" name="keywords" placeholder="Search Over 5,000 Products" value="<%=params['keywords']%>">
+							
 							<div class="input-group-btn">
 								<button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
 							</div>
@@ -119,3 +123,21 @@
 	</nav>
 
 </div>
+
+<script>
+
+	$(document).ready(function() {
+		$(".js-autocomplete").autoComplete({
+			delay: 1000,
+			source: function(term, response){
+				console.log(term);
+				$.getJSON('/search_autocomplete', { q: term }, function(data){ 
+					response(data);
+					console.log(data);
+				 });
+			}
+		});
+	});
+
+	
+</script>
