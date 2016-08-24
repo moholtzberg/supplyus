@@ -36,13 +36,13 @@ class ShopController < ApplicationController
     if Item.where("slug = lower(?)", params[:item].downcase).take.nil?
       raise ActionController::RoutingError.new('Not Found')
     end
-    @item = Item.where("slug = lower(?)", params[:item].downcase).take
+    @item = Item.where("slug = lower(?)", params[:item].downcase).includes(:group_item_prices, :account_item_prices, :item_properties, :item_categories => [:category]).take
   end
   
   def search
     @items = Item.where(nil).active
     @items = @items.search(params[:keywords]) if params[:keywords].present?
-    @items = @items.paginate(:page => params[:page])
+    @items = @items.paginate(:page => params[:page]).includes(:group_item_prices, :account_item_prices, :brand, :category, :images, :item_categories => [:category])
   end
   
   def add_to_cart
@@ -157,32 +157,10 @@ class ShopController < ApplicationController
   end
   
   def find_categories
-    @menu = Category.is_parent.is_active.show_in_menu
+    @menu = Category.is_parent.is_active.show_in_menu.includes(:children)
   end
   
   def find_cart
-    # if session[:cart_id].blank?
-    #   if current_user
-    #     session[:cart_id] = Cart.open.find_or_create_by(:account_id => current_user.account.id).id
-    #   else
-    #     session[:cart_id] = Cart.create.id
-    #   end
-    # end
-    # puts "......---->> #{session[:cart_id]}"
-    # @cart = Cart.find_by(:id => session[:cart_id]) unless @cart.nil? else @cart = Cart.create.id
-    
-    ###############
-    
-    # if !session[:cart_id].blank? and session[:cart_id].is_a? Numeric
-    #   unless !Cart.find_by(:id => session[:cart_id]).nil?
-    #     session[:cart_id] = nil
-    #     @cart = nil
-    #   end
-    # else
-    #   @cart = Cart.find_by(:id => session[:cart_id])
-    # end
-    
-    ###############
     
     if params[:debug_cart_id]
       cookies.permanent.signed[:cart_id] = params[:debug_cart_id].to_i
