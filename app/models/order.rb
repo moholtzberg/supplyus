@@ -33,7 +33,53 @@ class Order < ActiveRecord::Base
   after_commit :create_inventory_transactions_for_line_items
   
   # after_commit :sync_with_quickbooks if :persisted
-      
+  
+  
+  def shipping_method
+    order_shipping_method.try(:shipping_method_id)
+  end
+  
+  def shipping_method=(method)
+    order_shipping_method = OrderShippingMethod.find_or_create_by(:order_id => id) if method.present?
+    puts order_shipping_method.inspect
+    order_shipping_method.shipping_method_id = method if method.present?
+    order_shipping_method.save
+  end
+  
+  def shipping_amount
+    order_shipping_method.try(:amount)
+  end
+  
+  def shipping_amount=(name)
+    order_shipping_method.amount = name if name.present?
+    order_shipping_method.save
+  end
+  
+  ######
+  
+  def tax_rate
+    order_tax_rate.try(:tax_rate_id)
+  end
+  
+  def tax_rate=(method)
+    puts "--------->  tax_rate.method #{method} -----------> #{method.inspect}"
+    order_tax_rate = OrderTaxRate.find_or_create_by(:order_id => id) if method.present?
+    puts order_tax_rate.inspect
+    order_tax_rate.tax_rate = TaxRate.find_by(zip_code: method) if method.present?
+    order_tax_rate.save
+  end
+  
+  def tax_amount
+    order_tax_rate.try(:amount)
+  end
+  
+  def tax_amount=(name)
+    order_tax_rate.amount = name if name.present?
+    order_tax_rate.save
+  end
+  
+  #####
+  
   def create_inventory_transactions_for_line_items
     unless completed_at.blank?
       order_line_items.each {|a| a.create_inventory_transactions }
@@ -318,20 +364,20 @@ class Order < ActiveRecord::Base
   end
   
   def sync_with_quickbooks
-    set_qb_service
-    unless completed_at.blank?
-    puts "--------> STARTING TO SYNC INVOICE WITH  QB #{fulfilled}"
-      if fulfilled
-        puts "--------> INVOICE IS FULFILLED"
-        invoice = set_payload
-        puts "--------> INVOICE PAYLOAD IS LOADED #{invoice}"
-        if self.qb_invoice == nil
-          response = $qbo_api.create(:invoice, payload: invoice)
-        else
-          response = $qbo_api.update(:invoice, :id => qb_invoice, payload: invoice)
-        end
-      end
-    end
+    # set_qb_service
+    # unless completed_at.blank?
+    # puts "--------> STARTING TO SYNC INVOICE WITH  QB #{fulfilled}"
+    #   if fulfilled
+    #     puts "--------> INVOICE IS FULFILLED"
+    #     invoice = set_payload
+    #     puts "--------> INVOICE PAYLOAD IS LOADED #{invoice}"
+    #     if self.qb_invoice == nil
+    #       response = $qbo_api.create(:invoice, payload: invoice)
+    #     else
+    #       response = $qbo_api.update(:invoice, :id => qb_invoice, payload: invoice)
+    #     end
+    #   end
+    # end
   end
   
   def set_payload

@@ -40,22 +40,17 @@
 				})
 			</script>
 	
-			<div class="col-md-2">
+			<div class="col-md-3">
 				<%= f.label :number %>
 				<%= f.text_field(:number, :class => "form-control") %>
 			</div>
 	
-			<div class="col-md-2">
+			<div class="col-md-3">
 				<%= f.label "PO Number" %>
 				<%= f.text_field(:po_number, :class => "form-control") %>
 			</div>
-		
-			<div class="col-md-3">
-				<%= f.label :email %>
-				<%= f.text_field(:email, :class => "form-control") %>
-			</div>
 			
-			<div class="col-md-2">
+			<div class="col-md-3">
 				<%= f.label :completed_at %>
 				
 				<% if @order.completed_at.blank? %>
@@ -80,7 +75,7 @@
 	</fieldset>
 	<fieldset>
 		
-		<div class="col-md-6 address well">
+		<div class="col-md-6 address">
 			<div class="col-md-12">
 				<%= f.label :bill_to_account_name %>
 				<%= f.text_field(:bill_to_account_name, :class => " form-control col-md-12 input-sm")%>
@@ -146,8 +141,44 @@
 				<%= f.text_field(:ship_to_zip, :class => "form-control col-md-12 input-sm")%>
 			</div>
 			
+			<div class="col-md-12">
+				<%= f.label :email %>
+				<%= f.text_field(:email, :class => "form-control") %>
+			</div>
+			
+		</div>
+			
+	</fieldset>
+	
+	<fieldset class="well">
+		<div class="col-md-6">
+			<%= f.label :shipping_method %>
+			<%= f.select(:shipping_method, ShippingMethod.all.collect {|a| [a.name, a.id]}, {:include_blank => "Select Shipping Method"}, {:class => "form-control col-md-12 input-sm"}) %>
 		</div>
 	
+		<div class="col-md-6">
+			<%= f.label :shipping_amount %>
+			<%= f.text_field(:shipping_amount, :class => "form-control col-md-12 input-sm")%>
+		</div>
+		
+		<div class="col-md-6">
+			<%= f.label :tax_rate %>
+			<%= f.text_field :tax_rate, :class => "form-control", data: {autocomplete_source: tax_rates_path} %>
+		</div>
+		
+		<div class="col-md-6">
+			<%= f.label :tax_amount %>
+			<%= f.text_field(:tax_amount, :class => "form-control col-md-12 input-sm")%>
+		</div>
+		
+		<script>
+		jQuery(function() {
+			return $('#order_tax_rate').autocomplete({
+				source: $('#order_tax_rate').data('autocomplete-source')
+			});
+		});
+		</script>
+		
 	</fieldset>
 	
 <% end %>
@@ -168,5 +199,6 @@
 		
 	</table>
 	<% end %>
+	
 	
 </fieldset>
