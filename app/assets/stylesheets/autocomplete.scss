@@ -35,8 +35,8 @@
     line-height: 18px;
     color: #555555;
     white-space: nowrap;
-
-    &.ui-state-hover, &.ui-state-active {
+	
+    &:hover, &:active {
       color: #ffffff;
       text-decoration: none;
       background-color: #0088cc;
