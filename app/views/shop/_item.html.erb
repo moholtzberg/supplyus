@@ -7,10 +7,15 @@
 			</a>
 		</div>
 		<div class="media-body">
-			<% name = i.name.gsub(params["keywords"], "<span class='hlt'>#{params["keywords"]}</span>") if params["keywords"] %>
-			<% number = i.number.gsub(params["keywords"], "<span class='hlt'>#{params["keywords"]}</span>") if params["keywords"]%>
-			<% description = i.description.gsub(params["keywords"], "<span class='hlt'>#{params["keywords"]}</span>")if params["keywords"] %>
-			
+			<% if params["keywords"] %>
+				<% name = i.name.gsub(params["keywords"], "<span class='hlt'>#{params["keywords"]}</span>")  %>
+				<% number = i.number.gsub(params["keywords"], "<span class='hlt'>#{params["keywords"]}</span>") %>
+				<% description = i.description.gsub(params["keywords"], "<span class='hlt'>#{params["keywords"]}</span>")if params["keywords"] %>
+			<% else %>
+				<% name = i.name  %>
+				<% number = i.number %>
+				<% description = i.description %>
+			<% end %>
 			<h4 class="media-heading"><strong><%= "#{number}".html_safe %></strong> - <%= "#{name}".html_safe %></h4>
 			
 			<p class="hidden-xs"><%= description.html_safe unless description.nil? %></p>
