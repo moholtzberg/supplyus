@@ -7,11 +7,13 @@
 			</a>
 		</div>
 		<div class="media-body">
-			<h4 class="media-heading">
-				<strong><% if i.slug.blank? or i.default_category.slug.blank? %><%= "#{i.number}" %><% else %><%= link_to "#{i.number}", "#{i.default_category.slug}/#{i.slug}" %> <% end %></strong> - 
-				<%= "#{i.name}" %>
-			</h4>
-			<p class="hidden-xs"><%= i.description.truncate_words(36, omission: '...') unless i.description.nil? %></p>
+			<% name = i.name.gsub(params["keywords"], "<span class='hlt'>#{params["keywords"]}</span>") if params["keywords"] %>
+			<% number = i.number.gsub(params["keywords"], "<span class='hlt'>#{params["keywords"]}</span>") if params["keywords"]%>
+			<% description = i.description.gsub(params["keywords"], "<span class='hlt'>#{params["keywords"]}</span>")if params["keywords"] %>
+			
+			<h4 class="media-heading"><strong><%= "#{number}".html_safe %></strong> - <%= "#{name}".html_safe %></h4>
+			
+			<p class="hidden-xs"><%= description.html_safe unless description.nil? %></p>
 			<p>
 				<% unless i.brand.nil? %><span class="label label-warning"><%= i.brand.name %></span><% end %>
 				<%# unless i.category.nil? %><span class="label label-info"><%# i.category.name %></span><%# end %>

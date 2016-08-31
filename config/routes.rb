@@ -136,6 +136,8 @@ Rails.application.routes.draw do
   
   get "/cart" => "shop#cart"
   get "/search" => "shop#search"
+  get "/search_autocomplete" => "shop#search_autocomplete"
+  
   get "/categories/:parent_id" => "shop#categories"
   get "/:category/:item" => "shop#item"
   get "/:category" => "shop#category"

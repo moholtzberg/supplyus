@@ -40,9 +40,14 @@ class ShopController < ApplicationController
   end
   
   def search
-    @items = Item.where(nil).active
-    @items = @items.search(params[:keywords]) if params[:keywords].present?
-    @items = @items.paginate(:page => params[:page]).includes(:group_item_prices, :account_item_prices, :brand, :category, :images, :item_categories => [:category])
+    # @items = Item.where(nil).active
+    @items = []
+    @items = Item.search_fulltext(params[:keywords], params[:page]) if params[:keywords].present?
+  end
+  
+  def search_autocomplete
+   @occurences = Item.render_auto(params[:q])
+   render json: @occurences
   end
   
   def add_to_cart
