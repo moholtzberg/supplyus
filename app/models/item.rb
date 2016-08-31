@@ -1,5 +1,7 @@
 class Item < ActiveRecord::Base
   
+  include ApplicationHelper
+  
   scope :active, -> { where(:active => true)}
   
   has_many :account_item_prices, :dependent => :destroy, :inverse_of => :item
@@ -31,15 +33,15 @@ class Item < ActiveRecord::Base
     text :name, :stored => true
     text :description, :stored => true
     text :slug, :stored => true
-    
+
     text :category do
       category.name if category
     end
-    
+
     text :brand do
       brand.name if brand
     end
-    
+
     text :item_properties do
       item_properties.map { |item_property| item_property.key }
     end
@@ -47,8 +49,8 @@ class Item < ActiveRecord::Base
     text :item_properties do
       item_properties.map { |item_property| item_property.value }
     end
- end
-  
+  end
+ 
   def brand_name
     brand.try(:name)
   end
@@ -192,7 +194,6 @@ class Item < ActiveRecord::Base
     self.slug = number.downcase.tr(" ", "-") unless self.number.nil?
   end
   
-  ####
   def times_sold
     order_line_items.where(item_id: id).map(&:actual_quantity).sum
   end
@@ -229,8 +230,6 @@ class Item < ActiveRecord::Base
     end
   end
   
-  ####
-  
   def times_purchased_by(account_id)
     Account.find(account_id).order_line_items.where(item_id: id).map(&:actual_quantity).sum
   end
@@ -248,7 +247,6 @@ class Item < ActiveRecord::Base
     ids = joins(:inventory_transactions).group(:id, :item_id).sort_by(&:positive_count_on_hand).map(&:id)
     where(id: ids)
   end
-  
   
   def import_xml_new
     current_item_id = self.id
