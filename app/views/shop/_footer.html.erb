@@ -40,9 +40,9 @@
 	
 	<div id="address" class="address text-center">
 		<p>
-			&copy; <%= Time.new.strftime("%Y") %> <%= link_to '247OfficeSupply.com', 'http://www.247officesupply.com/' %> • 2957 NW 27th Street, Building 12 Fort Lauderdale, FL 33311
+			&copy; <%= Time.new.strftime("%Y") %> <%= link_to '247OfficeSupply.com', 'http://www.247officesupply.com/' %> • <%= @store_address %>, <%= @store_city %>, <%= @store_state %> <%= @store_zip %>
 			<br/>
-			(888) 247-8775 • M-F 9:00am - 6:00pm EST
+			<%= @store_phone_number %> • M-F 9:00am - 6:00pm EST
 		</p>
 	</div>
 

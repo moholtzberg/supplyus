@@ -7,7 +7,7 @@
 
 		<div id="MainLogo" class="col-xs-12 col-sm-4 col-md-3">
 
-			<a href="/"><h4><strong>24/7 Office Supply</strong></h4><%# image_tag("copiersflorida_logo.png", width: "300", class: "logo") %></a>
+			<a href="/"><h4><strong><%= @store_name %></strong></h4><%# image_tag("copiersflorida_logo.png", width: "300", class: "logo") %></a>
 
 		</div>
 
@@ -25,7 +25,7 @@
 		</div>
 
 		<div id="MainPhoneNumber" class="hidden-xs col-xs-12 col-sm-3 col-md-3 text-right">
-			<phone>(888) 247-SUPPLY</phone>
+			<phone><%= @store_phone_number %></phone>
 		</div>
 
 	</div>

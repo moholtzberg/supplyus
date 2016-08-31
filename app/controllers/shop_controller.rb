@@ -162,6 +162,12 @@ class ShopController < ApplicationController
   end
   
   def find_categories
+    @store_name = StoreSetting.store_name
+    @store_phone_number = StoreSetting.store_phone_number
+    @store_address = StoreSetting.store_address
+    @store_city = StoreSetting.store_city
+    @store_state = StoreSetting.store_state
+    @store_zip = StoreSetting.store_zip
     @menu = Category.is_parent.is_active.show_in_menu.includes(:children)
   end
   

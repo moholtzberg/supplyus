@@ -8,6 +8,7 @@ class User < ActiveRecord::Base
   validate :account_is_valid
   
   belongs_to :account
+  belongs_to :customer
   has_many :user_accounts
   has_many :orders, :through => :account
   belongs_to :contact
@@ -32,6 +33,7 @@ class User < ActiveRecord::Base
   
   def account_is_valid
     puts "check if the account is valid"
+    return true
   end
   
   def self.lookup(term)
