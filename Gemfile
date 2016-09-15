@@ -23,11 +23,12 @@ gem 'jbuilder', '~> 2.0'
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.0', group: :doc
   
-gem 'elasticsearch-model'
-gem 'elasticsearch-rails'
+# gem 'elasticsearch-model'
+# gem 'elasticsearch-rails'
+# gem 'searchkick'
 gem 'progress_bar'
 gem 'sunspot_rails'
-gem 'sunspot_solr'
+gem 'sunspot_solr', :group => "development"
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
@@ -58,7 +59,7 @@ gem 'oauth-plugin'
 
 gem 'newrelic_rpm'
 
-gem 'ransack'
+# gem 'ransack'
 
 gem 'sidekiq', '~> 4.1', '>= 4.1.1'
 gem 'shrimp'
@@ -83,6 +84,6 @@ group :development, :test do
 end
 
 gem 'quiet_assets', '~> 1.1', group: :development
-
+gem "letter_opener", :group => :development
 gem 'raindrops', '~> 0.15.0'
 
