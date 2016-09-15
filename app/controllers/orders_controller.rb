@@ -118,7 +118,7 @@ class OrdersController < ApplicationController
   def edit
     authorize! :update, Order
     @order = Order.find(params[:id])
-    @accounts = Account.all
+    @accounts = Account.all.order(:name)
     @order_line_item = OrderLineItem.new
     @items = Item.all
   end

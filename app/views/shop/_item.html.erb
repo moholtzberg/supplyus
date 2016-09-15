@@ -10,7 +10,7 @@
 			<% if params["keywords"] %>
 				<% name = i.name.gsub(params["keywords"], "<span class='hlt'>#{params["keywords"]}</span>")  %>
 				<% number = i.number.gsub(params["keywords"], "<span class='hlt'>#{params["keywords"]}</span>") %>
-				<% description = i.description.gsub(params["keywords"], "<span class='hlt'>#{params["keywords"]}</span>")if params["keywords"] %>
+				<% description = i.description.gsub(params["keywords"], "<span class='hlt'>#{params["keywords"]}</span>")if params["keywords"] and i.description %>
 			<% else %>
 				<% name = i.name  %>
 				<% number = i.number %>

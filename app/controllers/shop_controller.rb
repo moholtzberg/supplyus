@@ -42,7 +42,19 @@ class ShopController < ApplicationController
   def search
     # @items = Item.where(nil).active
     @items = []
-    @items = Item.search_fulltext(params[:keywords], params[:page]) if params[:keywords].present?
+    @items = Item.search do 
+      fulltext params[:keywords] if params[:keywords].present?
+      facet :brand, :item_properties, :item_categories
+      with(:brand, params[:brand]) if params[:brand].present?
+      # with(:price, params[:min_price]).greater_than_or_equal_to(params[:min_price]) if params[:min_price].present?
+      # with(:price, params[:max_price]).greater_than_or_equal_to(params[:max_price]) if params[:max_price].present?
+      facet :price, :range => 0..1000, :range_interval => 100
+      price_range = params[:price].split("..").map(&:to_i) if params[:price].present?
+      with(:price, Range.new(price_range[0], price_range[1])) if params[:price].present?
+      with(:item_properties, params[:item_properties]) if params[:item_properties].present?
+      with(:item_categories, params[:item_categories]) if params[:item_categories].present?
+    end
+    # @item.paginate(:page => params[:page])
   end
   
   def search_autocomplete

@@ -29,19 +29,19 @@ class Item < ActiveRecord::Base
   before_validation :slugger
   
   searchable do
-    text :number, :stored => true
-    text :name, :stored => true
-    text :description, :stored => true
-    text :slug, :stored => true
-
-    text :category do
-      category.name if category
-    end
-
-    text :brand do
+    text :number, :stored => true, :boost => 32
+    text :name, :stored => true, :boost => 16
+    text :slug, :stored => true, :boost => 12
+    text :description, :stored => true, :boost => 8
+    
+    text :brand, :boost => 4 do
       brand.name if brand
     end
-
+    
+    text :item_categories, :boost => 4 do
+      item_categories.map { |item_category| item_category.category.name }
+    end
+    
     text :item_properties do
       item_properties.map { |item_property| item_property.key }
     end
@@ -49,6 +49,21 @@ class Item < ActiveRecord::Base
     text :item_properties do
       item_properties.map { |item_property| item_property.value }
     end
+    
+    float :price, :trie => true
+    
+    string :brand, :stored => true do
+      brand.name if brand
+    end
+    
+    string :item_categories, :multiple => true, :stored => true do
+      item_categories.map { |item_category| item_category.category.name }
+    end
+    
+    string :item_properties, :multiple => true, :stored => true do
+      item_properties.where("lower(key) like ?", "%selling_point%").map { |item_property| item_property.value unless item_property.value.nil? }
+    end
+    
   end
  
   def brand_name
@@ -96,32 +111,29 @@ class Item < ActiveRecord::Base
     
   end
   
-  def self.search_fulltext(word, page)
+  def self.search_fulltext(word, brand)
     res = Sunspot.search( Item ) do
       fulltext word
-      paginate :page => page, :per_page => 10
     end
-    
     res.results
   end
 
   def self.render_auto(word)
-    
     res = Sunspot.search( Item ) do
       fulltext word
     end
 
     occurence = []
     res.results.each do |item|
-      occurence << item.number if item.number.include?(word)
-      occurence << item.name if item.name.include?(word)
-      occurence << item.description if item.description.include?(word)
-      occurence << item.number if item.number.include?(word)
-      occurence << item.slug if item.slug.include?(word)
-      occurence << item.category.name if item.category and item.category.name.include?(word)
-      occurence << item.brand.name if item.brand and item.brand.name.include?(word)
+      it = {}
+      it["id"] = item.id
+      it["name"] = item.name
+      it["number"] = item.number
+      it["description"] = item.description
+      it["image_path"] = item.default_image_path unless item.images.nil?
+      occurence << it
     end
-    occurence.uniq
+    occurence
   end
   
   self.per_page = 10

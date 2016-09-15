@@ -161,10 +161,32 @@
         cache: 1,
         menuClass: '',
         renderItem: function (item, search){
+			console.log(item)
             // escape special characters
             search = search.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
             var re = new RegExp("(" + search.split(' ').join('|') + ")", "gi");
-            return '<div class="autocomplete-suggestion" data-val="' + item + '">' + item.replace(re, "<b>$1</b>") + '</div>';
+			
+			html  = '<div class="autocomplete-suggestion" data-val="' + item.number + '">'
+			html += '<div class="media-item-listing search-result">'
+			html +=	'<div class="media-left">'
+			html += '<a href="#">'
+			html += '<img src="https://s3.amazonaws.com/247officesuppy/400/400/' + item.image_path +'" class="media-object" height="60px"/>'
+			html += '</a>'
+			html += '</div>'
+			html += '<div class="media-body">'
+			html += '<div class="media-heading">'
+			html += item.number.replace(re, "<strong>$1</strong>")
+			html += ' - '
+			html += item.name.replace(re, "<strong>$1</strong>")
+			html += '</div>'
+			//html += '<p>'
+			//html += item.description
+			//html += '</p>'
+			html += '</div>'
+			html += '</div>'
+			html += '</div>'
+			
+            return html;
         },
         onSelect: function(e, term, item){}
     };

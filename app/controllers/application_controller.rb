@@ -56,7 +56,7 @@ class ApplicationController < ActionController::Base
   private
 
   def miniprofiler
-    if current_user and current_user.has_role?(:super_admin)
+    if current_user and current_user.has_role?(:super_admin) and (params[:miniprofiler] == true)
       Rack::MiniProfiler.authorize_request 
     end
   end
