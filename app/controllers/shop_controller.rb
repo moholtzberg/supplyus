@@ -28,7 +28,21 @@ class ShopController < ApplicationController
       raise ActionController::RoutingError.new('Not Found')
     end
     # @items = Item.where(:category_id => @category.id).paginate(:page => params[:page])
-    @items = ItemCategory.where(:category_id => [@category.id, @category.children.map(&:id)]).includes(:item => [:brand, :category, :images]).paginate(:page => params[:page])
+    # @items = ItemCategory.where(:category_id => [@category.id, @category.children.map(&:id)]).includes(:item => [:brand, :category, :images]).paginate(:page => params[:page])
+    @items = Item.search do 
+      # fulltext params[:keywords] if params[:keywords].present?
+      with(:item_categories, @category)
+      
+      facet :brand, :item_properties, :item_categories
+      facet :price, :range => 0..1000, :range_interval => 100
+      with(:brand, params[:brand]) if params[:brand].present?
+      # with(:price, params[:min_price]).greater_than_or_equal_to(params[:min_price]) if params[:min_price].present?
+      # with(:price, params[:max_price]).greater_than_or_equal_to(params[:max_price]) if params[:max_price].present? 
+      price_range = params[:price].split("..").map(&:to_i) if params[:price].present?
+      with(:price, Range.new(price_range[0], price_range[1])) if params[:price].present?
+      with(:item_properties, params[:item_properties]) if params[:item_properties].present?
+      
+    end
   end
   
   def item
@@ -45,10 +59,10 @@ class ShopController < ApplicationController
     @items = Item.search do 
       fulltext params[:keywords] if params[:keywords].present?
       facet :brand, :item_properties, :item_categories
+      facet :price, :range => 0..1000, :range_interval => 100
       with(:brand, params[:brand]) if params[:brand].present?
       # with(:price, params[:min_price]).greater_than_or_equal_to(params[:min_price]) if params[:min_price].present?
-      # with(:price, params[:max_price]).greater_than_or_equal_to(params[:max_price]) if params[:max_price].present?
-      facet :price, :range => 0..1000, :range_interval => 100
+      # with(:price, params[:max_price]).greater_than_or_equal_to(params[:max_price]) if params[:max_price].present? 
       price_range = params[:price].split("..").map(&:to_i) if params[:price].present?
       with(:price, Range.new(price_range[0], price_range[1])) if params[:price].present?
       with(:item_properties, params[:item_properties]) if params[:item_properties].present?
