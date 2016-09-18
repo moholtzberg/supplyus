@@ -23,25 +23,36 @@ class ShopController < ApplicationController
   end
   
   def category
-    @category = Category.where("slug = lower(?)", params[:category].downcase).take
-    if Category.where("slug = lower(?)", params[:category].downcase).take.nil?
+    @params = params
+    @category = Category.where("slug = lower(?)", @params[:category].downcase).take
+    if Category.where("slug = lower(?)", @params[:category].downcase).take.nil?
       raise ActionController::RoutingError.new('Not Found')
     end
     # @items = Item.where(:category_id => @category.id).paginate(:page => params[:page])
     # @items = ItemCategory.where(:category_id => [@category.id, @category.children.map(&:id)]).includes(:item => [:brand, :category, :images]).paginate(:page => params[:page])
+    
+    categories = []
+    categories.push(@category.id)
+    categories.push(@category.children.map(&:id))
+    categories = categories.flatten.compact
     @items = Item.search do 
-      # fulltext params[:keywords] if params[:keywords].present?
-      with(:item_categories, @category)
       
-      facet :brand, :item_properties, :item_categories
-      facet :price, :range => 0..1000, :range_interval => 100
-      with(:brand, params[:brand]) if params[:brand].present?
+      with(:category_ids, categories)
+      with(:category_ids, params[:category_ids]) if params[:category_ids].present?
+      facet :category_ids
+      
+      brand = with(:brand, params[:brand]) if params[:brand].present?
+      facet :brand
+      
+      # facet :price, :range => 0..1000, :range_interval => 100
+      
       # with(:price, params[:min_price]).greater_than_or_equal_to(params[:min_price]) if params[:min_price].present?
       # with(:price, params[:max_price]).greater_than_or_equal_to(params[:max_price]) if params[:max_price].present? 
-      price_range = params[:price].split("..").map(&:to_i) if params[:price].present?
-      with(:price, Range.new(price_range[0], price_range[1])) if params[:price].present?
-      with(:item_properties, params[:item_properties]) if params[:item_properties].present?
-      
+      # price_range = params[:price].split("..").map(&:to_i) if params[:price].present?
+      # with(:price, Range.new(price_range[0], price_range[1])) if params[:price].present?
+      # with(:item_properties, params[:item_properties]) if params[:item_properties].present?
+      order_by(:score, :desc)
+      paginate(:page => params[:page])
     end
   end
   
@@ -56,19 +67,31 @@ class ShopController < ApplicationController
   def search
     # @items = Item.where(nil).active
     @items = []
-    @items = Item.search do 
+    @items = Item.search do
       fulltext params[:keywords] if params[:keywords].present?
-      facet :brand, :item_properties, :item_categories
       facet :price, :range => 0..1000, :range_interval => 100
       with(:brand, params[:brand]) if params[:brand].present?
+      with(:color, params[:color]) if params[:color].present?
+      with(:size, params[:size]) if params[:size].present?
+      with(:format, params[:format]) if params[:format].present?
+      with(:recycled, params[:recycled]) if params[:recycled].present?
+      with(:material, params[:material]) if params[:material].present?
+      with(:application, params[:application]) if params[:application].present?
+      facet :brand, :color, :size, :format, :recycled, :material, :application
+      facet :property_ids, :specification_ids
+      category_ids = with(:category_ids, params[:category_ids]) if params[:category_ids].present?
+      facet :category_ids, :exclude => [category_ids].compact
+      # with(:scent, params[:scent]) if params[:scent].present?
       # with(:price, params[:min_price]).greater_than_or_equal_to(params[:min_price]) if params[:min_price].present?
-      # with(:price, params[:max_price]).greater_than_or_equal_to(params[:max_price]) if params[:max_price].present? 
-      price_range = params[:price].split("..").map(&:to_i) if params[:price].present?
-      with(:price, Range.new(price_range[0], price_range[1])) if params[:price].present?
-      with(:item_properties, params[:item_properties]) if params[:item_properties].present?
-      with(:item_categories, params[:item_categories]) if params[:item_categories].present?
+      # with(:price, params[:max_price]).greater_than_or_equal_to(params[:max_price]) if params[:max_price].present?
+      # price_range = params[:price].split("..").map(&:to_i) if params[:price].present?
+      # with(:price, Range.new(price_range[0], price_range[1])) if params[:price].present?
+      # with(:property_ids, params[:property_ids]) if params[:property_ids].present?
+      # 
+      # with(:specification_ids, params[:specification_ids]) if params[:specification_ids].present?
+      order_by(:score, :desc)
+      paginate(:page => params[:page])
     end
-    # @item.paginate(:page => params[:page])
   end
   
   def search_autocomplete

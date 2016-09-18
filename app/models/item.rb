@@ -11,7 +11,7 @@ class Item < ActiveRecord::Base
   has_many :order_line_items
   has_many :purchase_order_line_items
   has_many :inventory_transactions
-  has_many :item_properties
+  has_many :item_properties, :inverse_of => :item
   has_many :specifications, :class_name => "Specification"
   has_many :features, :class_name => "Feature"
   has_many :properties, :class_name => "Property"
@@ -56,12 +56,40 @@ class Item < ActiveRecord::Base
       brand.name if brand
     end
     
-    string :item_categories, :multiple => true, :stored => true do
-      item_categories.map { |item_category| item_category.category.name }
+    integer :category_ids, :multiple => true, :references => Category
+    integer :property_ids, :multiple => true, :references => ItemProperty
+    integer :specification_ids, :multiple => true, :references => Specification
+    
+    string :color, :multiple => true, :stored => true do
+      specifications.where("lower(key) like ?", "%color%").map {|color| color.value unless color.nil?}
     end
     
-    string :item_properties, :multiple => true, :stored => true do
-      item_properties.where("lower(key) like ?", "%selling_point%").map { |item_property| item_property.value unless item_property.value.nil? }
+    string :size, :multiple => true, :stored => true do
+      specifications.where("lower(key) like ?", "%size%").map {|color| color.value unless color.nil?}
+    end
+    
+    boolean :recycled, :multiple => true, :stored => true do
+      specifications.where("lower(key) like ?", "%toal recycled content%").map {|color| (color.value.to_i >= 30) unless color.nil?}
+    end
+    
+    string :grade, :multiple => true, :stored => true do
+      specifications.where("lower(key) like ?", "%grade%").map {|color| color.value unless color.nil?}
+    end
+    
+    string :format, :multiple => true, :stored => true do
+      specifications.where("lower(key) like ?", "%format%").map {|color| color.value unless color.nil?}
+    end
+    
+    string :material, :multiple => true, :stored => true do
+      specifications.where("lower(key) like ?", "%material%").map {|color| color.value unless color.nil?}
+    end
+    
+    string :application, :multiple => true, :stored => true do
+      specifications.where("lower(key) like ?", "%application%").map {|color| color.value unless color.nil?}
+    end
+    
+    string :scent, :multiple => true, :stored => true do
+      specifications.where("lower(key) like ?", "%scent%").map {|color| color.value unless color.nil?}
     end
     
   end

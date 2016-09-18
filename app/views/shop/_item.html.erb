@@ -10,15 +10,20 @@
 			<% if params["keywords"] %>
 				<% name = i.name.gsub(params["keywords"], "<span class='hlt'>#{params["keywords"]}</span>")  %>
 				<% number = i.number.gsub(params["keywords"], "<span class='hlt'>#{params["keywords"]}</span>") %>
-				<% description = i.description.gsub(params["keywords"], "<span class='hlt'>#{params["keywords"]}</span>")if params["keywords"] and i.description %>
+				<%# description = i.description.gsub(params["keywords"], "<span class='hlt'>#{params["keywords"]}</span>")if params["keywords"] and i.description %>
 			<% else %>
 				<% name = i.name  %>
 				<% number = i.number %>
-				<% description = i.description %>
+				<%# description = i.description %>
 			<% end %>
 			<h4 class="media-heading"><strong><%= "#{number}".html_safe %></strong> - <%= "#{name}".html_safe %></h4>
 			
-			<p class="hidden-xs"><%= description.html_safe unless description.nil? %></p>
+			<p class="hidden-xs">
+				<%# description.html_safe unless description.nil? %>
+				<% i.features.limit(3).each do |feature| %>
+				<li><%= feature.value %></li>
+				<% end %>
+			</p>
 			<p>
 				<% unless i.brand.nil? %><span class="label label-warning"><%= i.brand.name %></span><% end %>
 				<%# unless i.category.nil? %><span class="label label-info"><%# i.category.name %></span><%# end %>

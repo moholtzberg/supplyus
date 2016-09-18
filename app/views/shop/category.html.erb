@@ -1,69 +1,38 @@
 <% content_for :title do %><%= @category.name %><% end %>
 
-<% for brand in @items.facet(:brand).rows %>
-<li>
-	<% if params[:brand].blank? %>
-	<%= link_to brand.value, :brand => brand.value %> (<%= brand.count%>)
-	<% else %>
-	<strong><%= brand.value %></strong> (<%= link_to "remove", :brand => nil %>)
-	<% end %>
-</li>
-<% end %>
-
-<hr/>
-<% for prop in @items.facet(:item_properties).rows %>
-<li>
-	<% if params[:item_properties].blank? %>
-	<%= link_to prop.value, :item_properties => prop.value %> (<%= prop.count%>)
-	<% else %>
-	<strong><%= prop.value %></strong> (<%= link_to "remove", :item_properties => nil %>)
-	<% end %>
-</li>
-<% end %>
-
-<hr/>
-<% for prop in @items.facet(:item_categories).rows %>
-<li>
-	<% if params[:item_categories].blank? %>
-	<%= link_to prop.value, :item_categories => prop.value %> (<%= prop.count%>)
-	<% else %>
-	<strong><%= prop.value %></strong> (<%= link_to "remove", :item_categories => nil %>)
-	<% end %>
-</li>
-<% end %>
-
-<hr/>
-<% for prop in @items.facet(:price).rows %>
-<li>
-	<% if params[:price].blank? and !prop.value.blank? %>
-	<%= link_to (prop.value).to_s.gsub(/\.0\.\./," - ").gsub(/\.0/,""), :price => prop.value %> (<%= prop.count%>)
-	<% elsif !prop.value.blank? %>
-	<strong><%= prop.value %></strong> (<%= link_to "remove", :price => nil %>)
-	<% end %>
-</li>
-<% end %>
-
 <div class="page-header">
 	<h1><%= @category.name %></h1>
 </div>
 
-<% if @category.children.count > 0 %>
-<div class="col-md-2">
-	<ul class="nav nav-pills">
-	<% @category.children.each do |cat| %>
-		<li><%= link_to "#{cat.name} (#{cat.items.count})", "#{cat.slug}" %></li>
-	<% end %>
-	</ul>
+<% if (@category.children.count > 0) || (@items.facets.count > 0) %>
+	<% col = 9 %>
+	<div class="col-md-3 row">
 	
-</div>
+		<ul class="nav nav-pills">
+		<% @category.children.each do |cat| %>
+			<li><%= link_to "#{cat.name} (#{cat.items.count})", "#{cat.slug}" %></li>
+		<% end %>
+		</ul>
+	
+		<%= render :partial => "facets", :locals => {:items => @items} %>
+	
+	</div>
+<% else %>
+	<% col = 12 %>
 <% end %>
 
-<div class="col-md-10">
-	<% @items.results.each do |i| %>
-		<% if i && i.active? %>
-			<%= render :partial => "shop/item", :locals => {:i => i} unless i.nil? %>
+<div class="col-md-<%= col %>">
+	<% unless @items.results.nil? %>
+		<% @items.results.each do |i| %>
+			<% if i && i.active? %>
+				<%= render :partial => "shop/item", :locals => {:i => i} unless i.nil? %>
+			<% end %>
 		<% end %>
+	<% else %>
+	<p>Sorry, No items were found!</p>
 	<% end %>
-
-	<%= will_paginate @items.results, renderer: BootstrapPagination::Rails %>
 </div>
+
+<% if @items and @items.results.size > 0 %>
+	<%= will_paginate @items.results, renderer: BootstrapPagination::Rails %>
+<% end %> 
