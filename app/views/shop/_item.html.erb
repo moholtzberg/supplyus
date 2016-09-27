@@ -16,7 +16,7 @@
 				<% number = i.number %>
 				<%# description = i.description %>
 			<% end %>
-			<h4 class="media-heading"><strong><%= "#{number}".html_safe %></strong> - <%= "#{name}".html_safe %></h4>
+			<h4 class="media-heading"><strong><% if i.slug.blank? or i.default_category.slug.blank? %><%= "#{i.number}" %><% else %><%= link_to "#{number}".html_safe, "#{i.default_category.slug}/#{i.slug}".html_safe %> <% end %></strong> - <%= "#{name}".html_safe %></h4>
 			
 			<p class="hidden-xs">
 				<%# description.html_safe unless description.nil? %>

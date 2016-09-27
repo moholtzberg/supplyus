@@ -36,15 +36,3 @@ end
 # end
 
 # scheduler.join
-
-scheduler.every '1m' do
-  last_indexed_item_id = Setting.find_or_create_by(:key => "last_indexed_item_id")
-  start_id = last_indexed_item_id.value.to_i
-  end_id = start_id + 10
-  Item.order(:id).where(id: start_id..end_id).each do |cust|
-    puts "#{cust.id} -> #{cust.name}"
-    last_indexed_item_id.value = cust.id
-    last_indexed_item_id.save!
-    cust.solr_index
-  end
-end

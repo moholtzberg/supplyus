@@ -85,7 +85,7 @@
                 if (!over_sb) {
                     that.last_val = that.val();
                     that.sc.hide();
-                    setTimeout(function(){ that.sc.hide(); }, 350); // hide suggestions on fast input
+                    setTimeout(function(){ that.sc.hide(); }, 250); // hide suggestions on fast input
                 } else if (!that.is(':focus')) setTimeout(function(){ that.focus(); }, 20);
             });
 
