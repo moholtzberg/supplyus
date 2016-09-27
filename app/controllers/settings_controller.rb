@@ -7,4 +7,9 @@ class SettingsController < ApplicationController
     @settings = Setting.all
   end
   
+  def new
+    authorize! :create, Setting
+    @setting = Setting.new
+  end
+  
 end

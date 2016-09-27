@@ -12,10 +12,10 @@ class Item < ActiveRecord::Base
   has_many :purchase_order_line_items
   has_many :inventory_transactions
   has_many :item_properties, :inverse_of => :item
-  has_many :specifications, :class_name => "Specification"
-  has_many :features, :class_name => "Feature"
-  has_many :properties, :class_name => "Property"
-  has_many :item_categories
+  has_many :specifications, :class_name => "Specification", :inverse_of => :item
+  has_many :features, :class_name => "Feature", :inverse_of => :item
+  has_many :properties, :class_name => "Property", :inverse_of => :item
+  has_many :item_categories, :inverse_of => :item
   has_many :categories, :through => :item_categories
   belongs_to :category
   belongs_to :brand

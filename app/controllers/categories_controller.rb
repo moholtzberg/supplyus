@@ -4,11 +4,14 @@ class CategoriesController < ApplicationController
   def index
     authorize! :read, Category
     term = params[:keywords]
-    @categories = Category.includes(:parent).order(:parent_id).where("lower(name) like ?", "%#{term}%")
+    @categories = Category.includes(:parent).order(:parent_id)
+    unless params[:term].blank?
+      @categories = @categories.lookup(params[:term]) if params[:term].present?
+    end
     @categories = @categories.paginate(:page => params[:page], :per_page => 25)
     respond_to do |format|
       format.html
-      format.json {render :json => @categories.map(&:name)}
+      format.json { render json: @categories }
     end
   end
   
@@ -26,6 +29,7 @@ class CategoriesController < ApplicationController
     authorize! :create, Category
     @category = Category.create(registration_params)
     @categories = Category.all
+    # expire_fragment("categories")
   end
   
   def edit
@@ -37,6 +41,7 @@ class CategoriesController < ApplicationController
     authorize! :update, Category
     @category = Category.find_by(:id => params[:id])
     if @category.update_attributes(registration_params)
+      # expire_fragment("categories")
       flash[:notice] = "\"#{@category.name}\" has been updated"
     else
       flash[:error] = "There were some problems with the form you submitted"

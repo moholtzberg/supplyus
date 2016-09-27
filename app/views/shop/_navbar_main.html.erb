@@ -6,8 +6,12 @@
 	<div id="header_banner" class="container">
 
 		<div id="MainLogo" class="col-xs-12 col-sm-4 col-md-3">
-
-			<a href="/"><h4><strong><%= @store_name %></strong></h4><%# image_tag("copiersflorida_logo.png", width: "300", class: "logo") %></a>
+			
+			<% if @store_logo.nil? %>
+				<%= image_tag("247officesupply_logo.png", width: "250", class: "logo") %></a>
+			<% else %>	
+				<a href="/"><h4><strong><%= @store_name %></strong></h4>
+			<% end %>
 
 		</div>
 

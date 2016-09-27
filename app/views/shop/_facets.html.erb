@@ -1,29 +1,5 @@
 <div class="panel-group" id="facets">
-
-<% if items.facet(:category_ids) and items.facet(:category_ids).rows.count > 0 %>
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h4 class="panel-title">
-				<a data-toggle="collapse" data-parent="#accordion" href="#brandFilter">
-				</span>Category</a>
-			</h4>
-		</div>
-		<div id="brandFilter" class="panel-collapse collapse in">
-				<ul class="list-group">
-				<% for brand in items.facet(:category_ids).rows %>
-				<li class="list-group-item">
-						<% if params[:category_ids].to_i == brand.value.to_i %>
-							<strong><%= brand.instance.name %></strong> (<%= link_to "remove", :category_ids => nil %>)
-						<% else %>
-							<%= link_to brand.instance.name, params.merge(:category_ids => brand.value) %> (<%= brand.count%>)
-						<% end %>
-					</li>
-				<% end %>
-				</ul>
-		</div>
-	</div>
-<% end %>
-
+	
 <% if items.facet(:brand) and items.facet(:brand).rows.count > 0 %>
 	<div class="panel panel-default">
 		<div class="panel-heading">
@@ -39,7 +15,31 @@
 						<% if params[:brand].blank? %>
 							<%= link_to brand.value, params.merge(:brand => [brand.value]) %> (<%= brand.count%>)
 						<% else %>
-						<strong><%= brand.value %></strong> (<%= link_to "remove", :brand => nil %>)
+						<strong><%= brand.value %></strong> (<%= link_to "remove", params.merge(:brand => nil) %>)
+						<% end %>
+					</li>
+				<% end %>
+				</ul>
+		</div>
+	</div>
+<% end %>
+
+<% if items.facet(:category_ids) and items.facet(:category_ids).rows.count > 0 %>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4 class="panel-title">
+				<a data-toggle="collapse" data-parent="#accordion" href="#categoryFilter">
+				</span>Category</a>
+			</h4>
+		</div>
+		<div id="categoryFilter" class="panel-collapse collapse">
+				<ul class="list-group">
+				<% for brand in items.facet(:category_ids).rows %>
+				<li class="list-group-item">
+						<% if params[:category_ids].to_i == brand.value.to_i %>
+							<strong><%= brand.instance.name %></strong> (<%= link_to "remove", params.merge(:category_ids => nil) %>)
+						<% else %>
+							<%= link_to brand.instance.name, params.merge(:category_ids => brand.value) %> (<%= brand.count%>)
 						<% end %>
 					</li>
 				<% end %>
@@ -56,7 +56,7 @@
 				</span>Size</a>
 			</h4>
 		</div>
-		<div id="sizeFilter" class="panel-collapse collapse in">
+		<div id="sizeFilter" class="panel-collapse collapse">
 				<ul class="list-group">
 				<% for brand in items.facet(:size).rows %>
 				<li class="list-group-item">
@@ -80,7 +80,7 @@
 				</span>Format</a>
 			</h4>
 		</div>
-		<div id="formatFilter" class="panel-collapse collapse in">
+		<div id="formatFilter" class="panel-collapse collapse">
 				<ul class="list-group">
 				<% for brand in items.facet(:format).rows %>
 				<li class="list-group-item">
@@ -104,7 +104,7 @@
 				</span>Recycled</a>
 			</h4>
 		</div>
-		<div id="recycledFilter" class="panel-collapse collapse in">
+		<div id="recycledFilter" class="panel-collapse collapse">
 				<ul class="list-group">
 				<% for brand in items.facet(:recylced).rows %>
 				<li class="list-group-item">
@@ -128,7 +128,7 @@
 				</span>Material</a>
 			</h4>
 		</div>
-		<div id="materialFilter" class="panel-collapse collapse in">
+		<div id="materialFilter" class="panel-collapse collapse">
 				<ul class="list-group">
 				<% for brand in items.facet(:material).rows %>
 				<li class="list-group-item">
@@ -152,7 +152,7 @@
 				</span>Application</a>
 			</h4>
 		</div>
-		<div id="applicationFilter" class="panel-collapse collapse in">
+		<div id="applicationFilter" class="panel-collapse collapse">
 				<ul class="list-group">
 				<% for brand in items.facet(:application).rows %>
 				<li class="list-group-item">
@@ -176,7 +176,7 @@
 				</span>Application</a>
 			</h4>
 		</div>
-		<div id="scentFilter" class="panel-collapse collapse in">
+		<div id="scentFilter" class="panel-collapse collapse">
 				<ul class="list-group">
 				<% for brand in items.facet(:scent).rows %>
 				<li class="list-group-item">
