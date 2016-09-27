@@ -11,13 +11,13 @@ class StoreSetting
   end
   
   def self.store_phone_number
-    Rails.cache.fetch("#{self.class.to_s.downcase}_store_phone_number") {
+    # Rails.cache.fetch("#{self.class.to_s.downcase}_store_phone_number") {
       if Setting.find_by(:key => "store_phone_number") == nil
         Setting.create(:key => "store_phone_number", :value => "(888) 888-8888").value
       else
         Setting.find_by(:key => "store_phone_number").value
       end 
-    }
+    # }
   end
   
   def self.store_address
