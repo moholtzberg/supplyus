@@ -85,7 +85,7 @@
                 if (!over_sb) {
                     that.last_val = that.val();
                     that.sc.hide();
-                    setTimeout(function(){ that.sc.hide(); }, 250); // hide suggestions on fast input
+                    setTimeout(function(){ that.sc.hide(); }, 150); // hide suggestions on fast input
                 } else if (!that.is(':focus')) setTimeout(function(){ that.focus(); }, 20);
             });
 
@@ -157,7 +157,7 @@
     $.fn.autoComplete.defaults = {
         source: 0,
         minChars: 3,
-        delay: 150,
+        delay: 75,
         cache: 1,
         menuClass: '',
         renderItem: function (item, search){
@@ -175,9 +175,9 @@
 			html += '</div>'
 			html += '<div class="media-body">'
 			html += '<div class="media-heading">'
-			html += item.number.replace(re, "<strong>$1</strong>")
+			html += item.number.replace(re, "<span class='hlt'>$1</span>")
 			html += ' - '
-			html += item.name.replace(re, "<strong>$1</strong>")
+			html += item.name.replace(re, "<span class='hlt'>$1</span>")
 			html += '</div>'
 			//html += '<p>'
 			//html += item.description
