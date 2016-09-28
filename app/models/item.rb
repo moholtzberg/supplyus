@@ -124,19 +124,6 @@ class Item < ActiveRecord::Base
   
   def self.lookup(word)
     includes(:brand, :categories).where("lower(number) like ? or lower(items.name) like ? or lower(items.description) like ? or lower(brands.name) like ? or lower(categories.name) like ?", "%#{word.downcase}%", "%#{word.downcase}%", "%#{word.downcase}%", "%#{word.downcase}%", "%#{word.downcase}%").references(:brand, :categories)
-    # word = word.downcase.gsub(/[^a-z 0-9]/, " ")
-    # if ransack(:number_cont_all => word.split).result.count > 1
-    #   ransack(:number_cont_all => word.split).result
-    # elsif ransack(:number_or_name_cont_all => word.split).result.count > 1
-    #   ransack(:number_or_name_cont_all => word.split, :name_cont_all => word.split).result
-    # elsif ransack(:number_or_name_or_description_cont_all => word.split).result.count > 1
-    #   ransack(:number_or_name_or_description_cont_all => word.split).result
-    # elsif ransack(:number_or_name_or_description_or_categories_name_cont_all => word.split).result.count > 1
-    #   ransack(:number_or_name_or_description_or_categories_name_cont_all => word.split).result
-    # else
-    #   ransack(:number_or_name_or_description_or_categories_name_cont_all => word.split).result
-    # end
-    
   end
   
   def self.search_fulltext(word, brand)
@@ -235,19 +222,19 @@ class Item < ActiveRecord::Base
   end
   
   def times_sold
-    order_line_items.where(item_id: id).map(&:actual_quantity).sum
+    order_line_items.where(item_id: id).sum("COALESCE(quantity,0) - COALESCE(quantity_canceled,0)")
   end
   
   def times_ordered
-    purchase_order_line_items.where(item_id: id).map(&:quantity).sum
+    purchase_order_line_items.where(item_id: id).sum("COALESCE(quantity,0)")
   end
   
   def times_shipped
-    inventory_transactions.where(:transaction_type => "LineItemShipment", item_id: id).map(&:quantity).sum
+    inventory_transactions.where(:transaction_type => "LineItemShipment", item_id: id).sum("COALESCE(quantity,0)")
   end
   
   def times_received
-    inventory_transactions.where(transaction_type: "PurchaseOrderLineItemReceipt", item_id: id).map(&:quantity).sum
+    inventory_transactions.where(transaction_type: "PurchaseOrderLineItemReceipt", item_id: id).sum("COALESCE(quantity,0)")
   end
   
   def count_on_hand
@@ -275,7 +262,11 @@ class Item < ActiveRecord::Base
   end
   
   def self.times_ordered
-    joins(:order_line_items).group(:id, :item_id).sort_by(&:times_sold).reverse!
+    joins(:order_line_items)
+    .group("items.id, item_id")
+    .select("items.*")
+    .select("SUM(COALESCE(order_line_items.quantity,0) - COALESCE(order_line_items.quantity_canceled,0)) AS times_ordered")
+    .order("times_ordered DESC")
   end
   
   def self.negative_inventory

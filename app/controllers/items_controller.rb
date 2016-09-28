@@ -17,6 +17,9 @@ class ItemsController < ApplicationController
     # ====
     authorize! :read, Item
     @items = Item.all
+    if params[:times_ordered].present?
+      @items = @items.times_ordered
+    end
     unless params[:term].blank?
       @items = @items.lookup(params[:term]) if params[:term].present?
     end
@@ -41,7 +44,7 @@ class ItemsController < ApplicationController
     @results = Item.where(nil)
     search_term = params[:keywords] if params[:keywords].present?
     search_term = params[:term] if params[:term].present?
-    @results = @results.search(search_term).paginate(:page => params[:page], :per_page => 25)
+    @results = @results.lookup(search_term).paginate(:page => params[:page], :per_page => 25)
     respond_to do |format|
       # format.json { render :json => @results.map {|a| [{:number => a.number}, {:name => a.name}] }}
       format.json {render :json => @results.map(&:number)}

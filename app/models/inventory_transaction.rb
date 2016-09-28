@@ -15,19 +15,19 @@ class InventoryTransaction < ActiveRecord::Base
   end
   
   def qty_shipped_by_item
-    InventoryTransaction.where(item_id: self.item_id, inv_transaction_type: "LineItemShipment").map(&:quantity).sum
+    InventoryTransaction.where(item_id: self.item_id, inv_transaction_type: "LineItemShipment").sum("quantity")
   end
   
   def qty_received_by_item
-    InventoryTransaction.where(item_id: self.item_id, inv_transaction_type: "PurchaseOrderLineItemReceipt").map(&:quantity).sum
+    InventoryTransaction.where(item_id: self.item_id, inv_transaction_type: "PurchaseOrderLineItemReceipt").sum("quantity")
   end
   
   def qty_sold_by_item
-    InventoryTransaction.where(item_id: self.item_id, inv_transaction_type: "OrderLineItem").map(&:quantity).sum
+    InventoryTransaction.where(item_id: self.item_id, inv_transaction_type: "OrderLineItem").sum("quantity")
   end
   
   def qty_ordered_by_item
-    InventoryTransaction.where(item_id: self.item_id, inv_transaction_type: "PurchaseOrderLineItem").map(&:quantity).sum
+    InventoryTransaction.where(item_id: self.item_id, inv_transaction_type: "PurchaseOrderLineItem").sum("quantity")
   end
   
 end
