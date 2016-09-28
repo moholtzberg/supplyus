@@ -34,14 +34,12 @@ class Order < ActiveRecord::Base
   
   # after_commit :sync_with_quickbooks if :persisted
   
-  
   def shipping_method
     order_shipping_method.try(:shipping_method_id)
   end
   
   def shipping_method=(method)
     order_shipping_method = OrderShippingMethod.find_or_create_by(:order_id => id) if method.present?
-    puts order_shipping_method.inspect
     order_shipping_method.shipping_method_id = method if method.present?
     order_shipping_method.save
   end
@@ -90,8 +88,11 @@ class Order < ActiveRecord::Base
     
   end
   
-  def self.lookup(term)
-    includes({:account => [:group]}, {:order_line_items => [:item]}).where("lower(orders.number) like (?) or lower(orders.po_number) like (?) or lower(items.number) like (?) or lower(items.name) like (?) or lower(items.description) like (?) or lower(groups.name) like (?)", "%#{term.downcase}%", "%#{term.downcase}%", "%#{term.downcase}%", "%#{term.downcase}%", "%#{term.downcase}%", "%#{term.downcase}%").references({:account => [:group]}, {:order_line_items => [:item]})
+  def self.lookup(q)
+    ids = Order
+    .joins({:account => [:group]}, {:order_line_items => [:item]})
+    .where("lower(orders.number) like (?) or lower(orders.po_number) like (?) or lower(items.number) like (?) or lower(items.name) like (?) or lower(items.description) like (?) or lower(groups.name) like (?)", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%").ids
+    where(id: ids)
   end
   
   def flush_cache
@@ -99,43 +100,35 @@ class Order < ActiveRecord::Base
   end
   
   def self.fulfilled
-    # Rails.cache.fetch([name, "fulfilled_orders"]) {
-    #   ids = Order.joins(:order_line_items).distinct(:order_id).map {|o| if o.fulfilled == true then o.id end }
-    #   Order.where(id: ids)
-    # }
-    # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_fulfilled_orders"]) {
-      # Rails.cache.delete("#{self.class.to_s.downcase}_fulfilled_orders")
-      ids = Order.is_complete.where(:id => OrderLineItem.all.map {|a| if a.fulfilled then a.order_id end}).map(&:fulfilled_id)
-      Order.where(id: ids)
-    # }
+    ids = Order
+    .joins(:order_line_items)
+    .group("orders.id")
+    .having("SUM(order_line_items.quantity_fulfilled) = SUM(COALESCE(order_line_items.quantity,0) - COALESCE(order_line_items.quantity_canceled,0))").ids
+    where(id: ids)
   end
   
   def self.unshipped
-    # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_unshipped_orders"]) {
-      # Rails.cache.delete("#{self.class.to_s.downcase}_unshipped_orders")
-      ids = Order.is_complete.where(:id => OrderLineItem.all.map {|a| if a.unshipped then a.order_id end}).map(&:unshipped_id)
-      Order.where(id: ids)
-    # }
+    ids = Order
+    .joins(:order_line_items)
+    .group("orders.id")
+    .having("SUM(order_line_items.quantity_shipped) <> SUM(COALESCE(order_line_items.quantity,0) - COALESCE(order_line_items.quantity_canceled,0))").ids
+    where(id: ids)
   end
   
   def self.unfulfilled
-    # Rails.cache.fetch([name, "fulfilled_orders"]) {
-    #   ids = Order.joins(:order_line_items).distinct(:order_id).map {|o| if o.fulfilled == true then o.id end }
-    #   Order.where(id: ids)
-    # }
-    # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_unfulfilled_orders"]) {
-      # Rails.cache.delete("#{self.class.to_s.downcase}_unfulfilled_orders")
-      ids = Order.is_complete.where(:id => OrderLineItem.all.map {|a| if a.unfulfilled then a.order_id end}).map(&:unfulfilled_id)
-      Order.where(id: ids)
-    # }
+    ids = Order
+    .joins(:order_line_items)
+    .group("orders.id")
+    .having("SUM(order_line_items.quantity_fulfilled) <> SUM(COALESCE(order_line_items.quantity,0) - COALESCE(order_line_items.quantity_canceled,0))").ids
+    where(id: ids)
   end
   
   def self.shipped
-    # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_shipped_orders"]) {
-      # Rails.cache.delete("#{self.class.to_s.downcase}_shipped_orders")
-      ids = Order.is_complete.where(:id => OrderLineItem.all.map {|a| if a.shipped then a.order_id end}).map(&:shipped_id)
-      Order.where(id: ids)
-    # }
+    ids = Order
+    .joins(:order_line_items)
+    .group("orders.id")
+    .having("SUM(order_line_items.quantity_shipped) = SUM(COALESCE(order_line_items.quantity,0) - COALESCE(order_line_items.quantity_canceled,0))").ids
+    where(id: ids)
   end
   
   def self.unpaid
@@ -152,34 +145,19 @@ class Order < ActiveRecord::Base
   end
   
   def sub_total
-    # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_sub_total"]) {
-    #   OrderLineItem.where(order_id: id).group(:order_line_number, :price, :quantity, :quantity_canceled).sum(:price, :quantity).inject(0) {|sum, k| sum + (k[0][1].to_f * (k[0][2].to_f - k[0][3].to_f))}
-    # }
-    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_sub_total"]) {
-      Rails.cache.delete("#{self.class.to_s.downcase}_sub_total")
-      order_line_items.map(&:sub_total).sum
-    }
+    order_line_items.sum("(COALESCE(quantity,0) - COALESCE(quantity_canceled,0)) * price")
   end
   
   def shipping_total
-    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_shipping_total"]) {
-      Rails.cache.delete("#{self.class.to_s.downcase}_shipping_total")
-      order_shipping_method.amount unless order_shipping_method.nil?
-    }
+    order_shipping_method.amount unless order_shipping_method.nil?
   end
   
   def tax_total
-    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_tax_total"]) {
-      Rails.cache.delete("#{self.class.to_s.downcase}_tax_total")
-      order_tax_rate.amount unless order_tax_rate.nil?
-    }
+    order_tax_rate.amount unless order_tax_rate.nil?
   end
   
   def total
-    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_total"]) {
-      Rails.cache.delete("#{self.class.to_s.downcase}_total")
-      sub_total + shipping_total.to_f.to_d + tax_total.to_f.to_d
-    }
+    sub_total + shipping_total.to_f.to_d + tax_total.to_f.to_d
   end
   
   def profit
@@ -190,17 +168,11 @@ class Order < ActiveRecord::Base
   end
   
   def quantity
-    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_quantity"]) {
-      Rails.cache.delete("#{self.class.to_s.downcase}_quantity")
-      order_line_items.map(&:actual_quantity).sum
-    }
+    order_line_items.sum("COALESCE(quantity,0) - COALESCE(quantity_canceled,0)")
   end
   
   def shipped
-    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_shipped"]) {
-      Rails.cache.delete("#{self.class.to_s.downcase}_shipped")
-      quantity_shipped == quantity
-    }
+    quantity_shipped == quantity
   end
   
   def shipped_id
@@ -208,28 +180,10 @@ class Order < ActiveRecord::Base
   end
   
   def unshipped
-    # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_shipped"]) {
-    #   if self.order_line_items
-    #     total = 0
-    #     self.order_line_items.each {|i| total += i.quantity_shipped.to_i }
-    #     total == quantity
-    #   else
-    #     false
-    #   end
-    # }
     quantity_shipped != quantity
   end
   
   def unfulfilled
-    # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_shipped"]) {
-    #   if self.order_line_items
-    #     total = 0
-    #     self.order_line_items.each {|i| total += i.quantity_shipped.to_i }
-    #     total == quantity
-    #   else
-    #     false
-    #   end
-    # }
     quantity_fulfilled != quantity
   end
   
@@ -238,24 +192,24 @@ class Order < ActiveRecord::Base
   end
   
   def quantity_shipped
-    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_quantity_shipped"]) {
-      Rails.cache.delete("#{self.class.to_s.downcase}_quantity_shipped")
-      order_line_items.map(&:quantity_shipped).sum
-    }
+    # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_quantity_shipped"]) {
+    #   Rails.cache.delete("#{self.class.to_s.downcase}_quantity_shipped")
+    #   order_line_items.map(&:quantity_shipped).sum
+    # }
+    order_line_items.sum("quantity_shipped")
   end
   
   def amount_shipped
-    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_amount_shipped"]) {
-      Rails.cache.delete("#{self.class.to_s.downcase}_amount_shipped")
-      order_line_items.map(&:amount_shipped).sum
-    }
+    # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_amount_shipped"]) {
+    #   Rails.cache.delete("#{self.class.to_s.downcase}_amount_shipped")
+    #   order_line_items.map(&:amount_shipped).sum
+    # }
+    order_line_items.sum("quantity_shipped * price")
   end
   
   def fulfilled
-    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_fulfilled"]) {
-      Rails.cache.delete("#{self.class.to_s.downcase}_fulfilled")
-      quantity_fulfilled.to_i == quantity.to_i
-    }
+    quantity_fulfilled.to_i == quantity.to_i
+    # order_line_items.sum("COALESCE(quantity,0) - COALESCE(quantity_canceled,0)")
   end
   
   def fulfilled_id
@@ -267,29 +221,11 @@ class Order < ActiveRecord::Base
   end
   
   def quantity_fulfilled
-    # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_quantity_fulfilled"]) {
-    #   if self.order_line_items
-    #     total = 0
-    #     self.order_line_items.each {|i| total += i.quantity_fulfilled }
-    #     total
-    #   end
-    # }
-    # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_quantity_fulfilled"]) {
-    order_line_items.map(&:quantity_fulfilled).sum
-    # }
+    order_line_items.sum("quantity_fulfilled")
   end
   
   def amount_fulfilled
-    # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_amount_fulfilled"]) {
-    #   if self.order_line_items
-    #     total = 0
-    #     self.order_line_items.each {|i| total += (i.quantity_fulfilled.to_f * i.price.to_f) }
-    #     total
-    #   end
-    # }
-    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_amount_fulfilled"]) {
-      order_line_items.map(&:amount_fulfilled).sum
-    }
+    order_line_items.sum("quantity_fulfilled * price")
   end
   
   def payments_total

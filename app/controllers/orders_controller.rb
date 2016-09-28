@@ -4,12 +4,47 @@ class OrdersController < ApplicationController
   
   def index
     authorize! :read, Order
+    
     @orders = Order.is_complete.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).unshipped
-    unless params[:term].blank?
+    
+    # if params[:account_name].present?
+    #   puts "ACCOUNTS -"
+    #   account_id = Account.find_by(:name => params[:account_name])
+    #   @orders = @orders.where(account_id: account_id)
+    # end
+    #
+    # if params[:is_complete].present?
+    #    puts "ORDERS - COMPLETE"
+    #    @orders = @orders.is_complete
+    # end
+    #
+    # if params[:shipped].present?
+    #   puts "ORDERS - SHIPPED"
+    #   @orders = @orders.shipped
+    # else
+    #   puts "ORDERS - UNSHIPPED"
+    #   @orders = @orders.unshipped
+    # end
+    #
+    # if params[:fulfilled].present?
+    #   puts "ORDERS - FULFILLED"
+    #   @orders = @orders.fulfilled
+    # else
+    #   puts "ORDERS - UNFULFILLED"
+    #   @orders = @orders.unfulfilled
+    # end
+    #
+    if params[:term].present?
+      puts "ORDERS - LOOKUP"
       @orders = @orders.lookup(params[:term]) if params[:term].present?
     end
+    
     @orders = @orders.order(sort_column + " " + sort_direction)
     @orders = @orders.paginate(:page => params[:page], :per_page => 20)
+    respond_to do |format|
+      format.html
+      format.json { render :json => @orders }
+    end
   end
   
   def shipped

@@ -91,7 +91,7 @@ class AccountsController < ApplicationController
   end
 
   def sort_column
-    Account.column_names.include?(params[:sort]) ? params[:sort] : "name"
+    Account.column_names.include?(params[:sort]) ? params[:sort] : "accounts.name"
   end
   
   def sort_direction
