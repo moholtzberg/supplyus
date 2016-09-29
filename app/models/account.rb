@@ -82,6 +82,14 @@ class Account < ActiveRecord::Base
     90
   end
   
+  def is_taxable?
+    if group.name == "SW"
+      true
+    else
+      false
+    end
+  end
+  
   def self.search(term)
     where("lower(name) like (?)", "%#{term.downcase}%")
   end

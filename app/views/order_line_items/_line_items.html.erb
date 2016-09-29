@@ -1,6 +1,5 @@
 <table class="table table-bordered table-condensed table-striped table-hover table-responsive">
 	
-	
 	<thead>
 		
 		<th>
@@ -28,7 +27,7 @@
 			</td>
 			
 			<td>
-				<%= ol.item.number %>
+				<%= ol.item.number unless ol.item.nil? %>
 			</td>
 			<td class="quantity">
 				<%= best_in_place ol, :quantity %>
@@ -42,12 +41,12 @@
 				<%= ol.actual_quantity %>
 			</td>
 			
-			<td lass="price">
+			<td class="price">
 				<%= best_in_place ol, :price, :value => number_to_currency(ol.price.to_f) %>
 			</td>
 			
-			<td lass="sub_total">
-				<%= number_to_currency(ol.sub_total) %>
+			<td class="sub_total">
+				<%= ol.actual_quantity * ol.price.to_f %>
 			</td>
 			
 			<td span="10%" class="text-center">

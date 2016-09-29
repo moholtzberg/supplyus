@@ -9,6 +9,7 @@ class Order < ActiveRecord::Base
   scope :has_account, -> () { where.not(:account_id => nil) }
   scope :no_account, -> () { where(:account_id => nil) }
   scope :by_date_range, -> (from, to) { where("due_date >= ? AND due_date <= ?", from, to) }
+  scope :lookup, -> (q) { joins({:account => [:group]}, {:order_line_items => [:item]}).where("lower(orders.number) like (?) or lower(orders.po_number) like (?) or lower(accounts.name) like (?) or lower(items.number) like (?) or lower(items.name) like (?) or lower(items.description) like (?) or lower(groups.name) like (?)", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%") }
   # scope :shipped, -> () { where(:id => OrderLineItem.shipped.pluck(:order_id).uniq) }
   # scope :fulfilled, -> () { where(:id => LineItemFulfillment.pluck(:invoice_id).unpaid.uniq) }
   # scope :fulfilled, -> () { where(:id => OrderLineItem.fulfilled.pluck(:order_id).uniq) }
@@ -55,6 +56,15 @@ class Order < ActiveRecord::Base
   
   ######
   
+  def update_order_tax_rate
+    if account.is_taxable?
+      order_tax_rate = OrderTaxRate.find_or_create_by(:order_id => id)
+      order_tax_rate.tax_rate = TaxRate.find_by(zip_code: ship_to_zip)
+      order_tax_rate.amount = order_tax_rate.calculate
+      order_tax_rate.save
+    end
+  end
+  
   def tax_rate
     order_tax_rate.try(:tax_rate_id)
   end
@@ -84,16 +94,14 @@ class Order < ActiveRecord::Base
     end
   end
   
-  def update_order_tax_rate
-    
-  end
+
   
-  def self.lookup(q)
-    ids = Order
-    .joins({:account => [:group]}, {:order_line_items => [:item]})
-    .where("lower(orders.number) like (?) or lower(orders.po_number) like (?) or lower(items.number) like (?) or lower(items.name) like (?) or lower(items.description) like (?) or lower(groups.name) like (?)", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%").ids
-    where(id: ids)
-  end
+  # def self.lookup(q)
+  #   ids = Order
+  #   .joins({:account => [:group]}, {:order_line_items => [:item]})
+  #   .where("lower(orders.number) like (?) or lower(orders.po_number) like (?) or lower(items.number) like (?) or lower(items.name) like (?) or lower(items.description) like (?) or lower(groups.name) like (?)", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%").ids
+  #   where(id: ids)
+  # end
   
   def flush_cache
     Rails.cache.delete([self.class.name,"open_orders"])
