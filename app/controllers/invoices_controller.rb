@@ -35,7 +35,7 @@ class InvoicesController < ApplicationController
     end
     
     if invoice.save
-      OrderMailer.invoice_notification(order.id).deliver_later unless Rails.env == "Development"
+      OrderMailer.invoice_notification(order.id).deliver_later
       redirect_to order_path(order.id)
     end
   end
