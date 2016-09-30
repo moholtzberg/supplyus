@@ -57,7 +57,7 @@ class Order < ActiveRecord::Base
   ######
   
   def update_order_tax_rate
-    if account.is_taxable?
+    if account and account.is_taxable?
       order_tax_rate = OrderTaxRate.find_or_create_by(:order_id => id)
       order_tax_rate.tax_rate = TaxRate.find_by(zip_code: ship_to_zip)
       order_tax_rate.amount = order_tax_rate.calculate
