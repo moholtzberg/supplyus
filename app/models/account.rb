@@ -83,7 +83,7 @@ class Account < ActiveRecord::Base
   end
   
   def is_taxable?
-    if group.name == "SW"
+    if group.name == "SW" or group.nil?
       true
     else
       false

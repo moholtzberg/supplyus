@@ -70,11 +70,13 @@ class Order < ActiveRecord::Base
   end
   
   def tax_rate=(method)
-    puts "--------->  tax_rate.method #{method} -----------> #{method.inspect}"
-    order_tax_rate = OrderTaxRate.find_or_create_by(:order_id => id) if method.present?
-    puts order_tax_rate.inspect
-    order_tax_rate.tax_rate = TaxRate.find_by(zip_code: method) if method.present?
-    order_tax_rate.save
+    if method.present?
+      puts "--------->  tax_rate.method #{method} -----------> #{method.inspect}"
+      order_tax_rate = OrderTaxRate.find_or_create_by(:order_id => id) if method.present?
+      puts order_tax_rate.inspect
+      order_tax_rate.tax_rate = TaxRate.find_by(zip_code: method) if method.present?
+      order_tax_rate.save
+    end
   end
   
   def tax_amount
@@ -82,8 +84,10 @@ class Order < ActiveRecord::Base
   end
   
   def tax_amount=(name)
-    order_tax_rate.amount = name if name.present?
-    order_tax_rate.save
+    if  name.present? and tax_rate.present?
+      order_tax_rate.amount = name if name.present?
+      order_tax_rate.save
+    end
   end
   
   #####
