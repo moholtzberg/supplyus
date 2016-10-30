@@ -16,6 +16,7 @@ NUMBER:		<%= @order.number %>
 DATE:		<%= @order.completed_at.strftime("%m/%d/%Y %I:%M %p") %>
 ACCOUNT:	<%= @order.account.name unless @order.account.nil? %>
 PO NUMBER:	<%= @order.po_number %>
+NOTES:		<%= @order.notes %>
 
 SHIP TO ADDRESS:
 ================
