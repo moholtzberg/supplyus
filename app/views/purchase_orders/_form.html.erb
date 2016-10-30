@@ -54,6 +54,24 @@
 				<%= f.text_area(:notes, :class => "form-control") %>
 			</div>
 			
+			<div class="col-md-12">
+				<select id="order_id">
+					<% Order.is_complete.order(:completed_at).each do |o|%>
+					<option id="<%= o.id %>"><%= o.number %></option>
+					<% end %>
+				</select>
+				
+				<script>
+					$("select#order_id").change(function(e){
+						var order_id = $(this).find("option:selected").attr("id")
+						var request = $.ajax({
+							url : '/admin/purchase_orders/<%= @purchase_order.id.to_i %>/line_items_from_order.js?order_id='+ order_id
+						});
+					})
+				</script>
+				
+			</div>
+			
 		</div>
 		
 	</fieldset>

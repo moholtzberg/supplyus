@@ -7,6 +7,8 @@ class OrderLineItem < ActiveRecord::Base
   belongs_to :cart, :class_name => :order, :foreign_key => :order_id
   has_many :line_item_shipments
   has_many :line_item_fulfillments
+  has_many :purchase_order_line_items
+  has_many :purchase_orders, :through => :purchase_order_line_items
   
   scope :by_item, -> (item) { where(:item_id => item) }
   scope :active,  -> () { where(:quantity => 1..Float::INFINITY) }

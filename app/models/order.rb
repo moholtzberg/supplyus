@@ -24,6 +24,7 @@ class Order < ActiveRecord::Base
   has_many :order_payment_applications
   has_many :payments, :through => :order_payment_applications
   has_many :credit_card_payments, :through => :order_payment_applications
+  has_many :purchase_order_line_items, :through => :order_line_items
   
   accepts_nested_attributes_for :order_line_items, :allow_destroy => true
   

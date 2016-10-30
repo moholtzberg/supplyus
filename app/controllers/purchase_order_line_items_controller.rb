@@ -37,14 +37,14 @@ class PurchaseOrderLineItemsController < ApplicationController
   
   def destroy
     authorize! :destroy, PurchaseOrderLineItem
-    @purchase_order = PurchaseOrderLineItem.find_by(:id => params[:id]).order
+    @purchase_order = PurchaseOrderLineItem.find_by(:id => params[:id]).purchase_order
     PurchaseOrderLineItem.destroy(params[:id])
   end
   
   private
   
   def purchase_order_line_item_params
-    params.require(:purchase_order_line_item).permit(:purchase_order_id, :item_id, :price, :quantity, :quantity_canceled, :item_number)
+    params.require(:purchase_order_line_item).permit(:purchase_order_id, :item_id, :price, :quantity, :quantity_canceled, :item_number, :order_line_item_id)
   end
   
 end

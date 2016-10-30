@@ -57,9 +57,10 @@
 	<table class="table table-bordered table-condensed">
 
 		<tr class="bg-primary">
-			<th width="64%" class="text-left" colspan="2">Item Name/Description</th>
+			<th width="55%" class="text-left" colspan="2">Item Name/Description</th>
 			<th width="6%" class="text-center">Qty</th>
 			<th width="6%" class="text-center">Received</th>
+			<th width="15%" class="text-center">Linked Order/Line</th>
 			<th width="6%" class="text-center">Price</th>
 			<th width="6%" class="text-center">Subtotal</th>
 		</tr>
@@ -70,21 +71,22 @@
 			<td><%= li.item.number unless li.item.nil? %> / <%= li.item.name unless li.item.nil? %></td>
 			<td class="text-center"><%= li.quantity.to_i %></td>
 			<td class="text-center"><%= li.quantity_received  %></td>
+			<td class="text-center"><%= "#{li.order_line_item.order.number unless li.order_line_item.blank?} : #{li.order_line_item.order_line_number unless li.order_line_item.blank?}" %></td>
 			<td class="text-center"><%= number_to_currency(li.price) %></td>
 			<td class="text-center"><%= number_to_currency(li.sub_total) %></td>
 		<tr>
 		<% end %>
 
 		<tr class="line_items">
-			<td colspan="4">Sub Total</td>
+			<td colspan="5">Sub Total</td>
 			<td colspan="2" class="text-center"><strong><%= number_to_currency(@purchase_order.sub_total) %></strong></td>
 		</tr>
 		<tr class="line_items">
-			<td colspan="4"><%= "#{@purchase_order.purchase_order_shipping_method.name} - " unless  @purchase_order.purchase_order_shipping_method.nil? %>Shipping</td>
+			<td colspan="5"><%= "#{@purchase_order.purchase_order_shipping_method.name} - " unless  @purchase_order.purchase_order_shipping_method.nil? %>Shipping</td>
 			<td colspan="2" class="text-center"><strong> <%= number_to_currency(@purchase_order.purchase_order_shipping_method.amount) unless  @purchase_order.purchase_order_shipping_method.nil? %></strong></td>
 		</tr>
 		<tr class="line_items">
-			<td colspan="4">Purchase Order Total</td>
+			<td colspan="5">Purchase Order Total</td>
 			<td colspan="2" class="text-center"><strong> <%= number_to_currency(@purchase_order.total) %></strong></td>
 		</tr>
 		

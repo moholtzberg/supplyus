@@ -4,7 +4,8 @@ class PurchaseOrderLineItem < ActiveRecord::Base
   
   belongs_to :purchase_order, :touch => true
   belongs_to :item
-  has_many :inventory_transactions, :class_name => "InventoryTransaction", :dependent => :destroy
+  belongs_to :order_line_item
+  # has_many :inventory_transactions, :class_name => "InventoryTransaction", :dependent => :destroy
   has_many :purchase_order_line_item_receipts
   
   scope :by_item, -> (item) { where(:item_id => item) }
@@ -19,6 +20,19 @@ class PurchaseOrderLineItem < ActiveRecord::Base
   validates :item_id, :uniqueness => {
     :scope => :purchase_order_id
   }
+  
+  validate :linked_order_line_item_is_correct
+  
+  def linked_order_line_item_is_correct
+    if order_line_item_id.present?
+      if order_line_item.item_id != item_id
+        errors.add(:order_line_item_id, "Item's do not match")
+      end
+      if order_line_item.actual_quantity < (PurchaseOrderLineItem.where(:order_line_item_id => order_line_item_id).map(&:quantity).sum + quantity)
+        errors.add(:order_line_item_id, "quantity + quantity already purchased is greater than the Order quantity needed")
+      end
+    end
+  end
   
   validates :item_id, :presence => true
   
