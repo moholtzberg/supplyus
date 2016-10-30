@@ -31,6 +31,7 @@ Rails.application.routes.draw do
           get :shipped
           get :fulfilled
           get :unfulfilled
+          get :unpaid
         end
         member do
           put :lock
@@ -81,6 +82,7 @@ Rails.application.routes.draw do
       end
       resources :purchase_orders do
         member do
+          get :line_items_from_order
           put :lock
           put :resend_invoice
           put :resend_order
