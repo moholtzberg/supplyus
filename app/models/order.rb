@@ -99,7 +99,20 @@ class Order < ActiveRecord::Base
     end
   end
   
-
+  def quantities_not_linked_to_po
+    order_line_items.map(&:quantities_not_linked_to_po).sum.to_i
+  end
+  
+  def not_linked_to_po
+    puts "not linked to PO -> #{number} -> #{quantities_not_linked_to_po != 0}"
+    quantities_not_linked_to_po != 0
+  end
+  
+  def self.not_linked_to_po
+    ids = Order
+    .includes(:order_line_items => [:purchase_order_line_items]).map {|a| if a.not_linked_to_po == true then a.id end}
+    where(id: ids)
+  end
   
   # def self.lookup(q)
   #   ids = Order

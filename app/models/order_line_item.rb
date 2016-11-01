@@ -53,6 +53,10 @@ class OrderLineItem < ActiveRecord::Base
     puts self.item.number
   end
   
+  def quantities_not_linked_to_po
+    actual_quantity.to_i - purchase_order_line_items.map(&:quantity).sum.to_i
+  end
+  
   def flush_cache
     Rails.cache.delete("open_orders")
   end
@@ -89,17 +93,6 @@ class OrderLineItem < ActiveRecord::Base
   end
   
   def shipped
-    # if self.line_item_shipments
-    #   total = 0
-    #   self.line_item_shipments.each {|i| total += i.quantity_shipped }
-    #   total == quantity
-    # else
-    #   false
-    # end
-    # OrderLineItem.joins(:line_item_shipments).where("line_item_shipments.order_line_item_id = ?", self.id)
-    # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_shipped"]) {
-    #   LineItemShipment.where(:order_line_item_id => self.id).group(:order_line_item_id).sum(:quantity_shipped).inject(0) {|k, v| (k + v[1]) != 0 ? true : false }
-    # }
     Rails.cache.fetch([self, "#{self.class.to_s.downcase}_shipped"]) {
       quantity_shipped == actual_quantity
     }
@@ -134,16 +127,6 @@ class OrderLineItem < ActiveRecord::Base
   end
   
   def fulfilled
-    # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_fulfilled"]) {
-    #   if self.line_item_fulfillments
-    #     total = 0
-    #     self.line_item_fulfillments.each {|i| total += i.quantity_fulfilled }
-    #     total == quantity
-    #   else
-    #     false
-    #   end
-    #    # LineItemFulfillment.where(:order_line_item_id => self.id).group(:order_line_item_id).sum(:quantity_fulfilled).inject(0) {|k, v| (k + v[1]) != 0 ? true : false }
-    #  }
     Rails.cache.fetch([self, "#{self.class.to_s.downcase}_fulfilled"]) {
       quantity_fulfilled == actual_quantity
     }
@@ -168,14 +151,6 @@ class OrderLineItem < ActiveRecord::Base
   end
   
   def calculate_quantity_fulfilled
-    # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_quantity_fulfilled"]) {
-      # if self.line_item_fulfillments
-      #   total = 0
-      #   self.line_item_fulfillments.each {|i| total += i.quantity_fulfilled }
-      #   total
-      # end
-     #--> last used method LineItemFulfillment.where(:order_line_item_id => self.id).group(:order_line_item_id).sum(:quantity_fulfilled).inject(0) {|sum, k| sum + k[1] }
-    # }
     Rails.cache.fetch([self, "#{self.class.to_s.downcase}_calculate_quantity_fulfilled"]) {
       if self.line_item_fulfillments
         total = 0
