@@ -69,6 +69,7 @@
 			<th width="6%" class="text-center">Billed</th>
 			<th width="6%" class="text-center">Price</th>
 			<th width="6%" class="text-center">Subtotal</th>
+			<th>Linked PO's</th>
 		</tr>
 
 		<% @order_line_items.active.each_with_index do |li, idx| %>
@@ -81,33 +82,47 @@
 			<td class="text-center"><%= li.quantity_fulfilled  %></td>
 			<td class="text-center"><%= number_to_currency(li.price) %></td>
 			<td class="text-center"><%= number_to_currency(li.sub_total) %></td>
+			<td>
+				<% if li.purchase_orders.count > 0 %>
+				<div class="dropdown">
+					<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+						<% li.purchase_orders.each do |app| %>
+						<li><a><%= link_to "#{app.number}", app %></a></li>
+						<% end %>
+					</ul>
+				</div>
+				<% end %>
+			</td>
 		<tr>
 		<% end %>
 
 		<tr class="line_items">
 			<td colspan="6">Sub Total</td>
-			<td colspan="2" class="text-center"><strong><%= number_to_currency(@order.sub_total) %></strong></td>
+			<td colspan="3" class="text-center"><strong><%= number_to_currency(@order.sub_total) %></strong></td>
 		</tr>
 		<tr class="line_items">
 			<td colspan="6"><%= "#{@order.order_shipping_method.name} - " unless  @order.order_shipping_method.nil? %>Shipping</td>
-			<td colspan="2" class="text-center"><strong> <%= number_to_currency(@order.order_shipping_method.amount) unless  @order.order_shipping_method.nil? %></strong></td>
+			<td colspan="3" class="text-center"><strong> <%= number_to_currency(@order.order_shipping_method.amount) unless  @order.order_shipping_method.nil? %></strong></td>
 		</tr>
 		<tr class="line_items">
 			<td colspan="6"><%= "#{@order.order_tax_rate.name}" unless  @order.order_tax_rate.nil? %>Tax</td>
-			<td colspan="2" class="text-center"><strong> <%= number_to_currency(@order.tax_total)%></strong></td>
+			<td colspan="3" class="text-center"><strong> <%= number_to_currency(@order.tax_total)%></strong></td>
 		</tr>
 		<tr class="line_items">
 			<td colspan="6">Order Total</td>
-			<td colspan="2" class="text-center"><strong> <%= number_to_currency(@order.total) %></strong></td>
+			<td colspan="3" class="text-center"><strong> <%= number_to_currency(@order.total) %></strong></td>
 		</tr>
 		
 		<tr>
 			<td colspan="6">Payments</td>
-			<td colspan="2" class="text-center"><strong> <%= @order.payments.blank? ? number_to_currency(0) : number_to_currency(@order.payments_total.to_d) %></strong></td>
+			<td colspan="3" class="text-center"><strong> <%= @order.payments.blank? ? number_to_currency(0) : number_to_currency(@order.payments_total.to_d) %></strong></td>
 		</tr>
 		<tr>
 			<td colspan="6">Balance Due</th>
-			<td colspan="2" class="text-center"><strong> <%=  number_to_currency(@order.balance_due) %></strong></td>
+			<td colspan="3" class="text-center"><strong> <%=  number_to_currency(@order.balance_due) %></strong></td>
 		</tr>
 		
 	</table>

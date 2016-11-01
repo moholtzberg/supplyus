@@ -56,7 +56,7 @@
 			
 			<div class="col-md-12">
 				<select id="order_id">
-					<% Order.is_complete.order(:completed_at).each do |o|%>
+					<% Order.is_complete.not_linked_to_po.order(:completed_at).each do |o|%>
 					<option id="<%= o.id %>"><%= o.number %></option>
 					<% end %>
 				</select>
