@@ -46,6 +46,7 @@ Rails.application.routes.draw do
       resources :items do
         collection do
           get :search
+          get :actual_price_by_item_number_and_account_id
         end
       end
       resources :assets
@@ -53,6 +54,7 @@ Rails.application.routes.draw do
       resources :groups do 
         member do 
           get :statements
+          get :items
         end
       end
       resources :group_item_prices
