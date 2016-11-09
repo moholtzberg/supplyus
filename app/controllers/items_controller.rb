@@ -103,7 +103,14 @@ class ItemsController < ApplicationController
       format.js { alert("ITem Detelet") }
     end
   end
-
+  
+  def actual_price_by_item_number_and_account_id
+    @price = Item.find_by(number: params["item_number"]).actual_price(params["account_id"])
+    respond_to do |format|
+      format.json {render :json => @price}
+    end
+  end
+  
   # GET
   # def import_items
   # end

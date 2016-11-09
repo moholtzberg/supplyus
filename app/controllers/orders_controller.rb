@@ -110,7 +110,7 @@ class OrdersController < ApplicationController
       @order = Order.create()
     end
     @items = Item.all
-    @order.order_line_items.build
+    # @order.order_line_items.build
     @order_line_item = OrderLineItem.new
   end
   

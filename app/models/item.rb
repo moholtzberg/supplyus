@@ -153,6 +153,13 @@ class Item < ActiveRecord::Base
   
   self.per_page = 10
   
+  def actual_cost_price
+    prices = item_vendor_prices.map {|a| return a.price unless a.price == 0}
+    prices.push(cost_price)
+    return prices.min
+  end
+  
+  
   def actual_price(account_id={})
     unless account_id.blank?
       unless get_lowest_price(account_id).blank?

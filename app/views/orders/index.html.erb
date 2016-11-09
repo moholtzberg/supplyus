@@ -42,7 +42,7 @@
 	
 	<%= will_paginate @orders, renderer: BootstrapPagination::Rails %>
 	
-	<%= link_to new_order_path, :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
+	<%= link_to new_order_path, :class => "btn btn-default pull-right", :remote => false do %><span class="glyphicon glyphicon-plus"></span><% end %>
 	
 </div>
 
