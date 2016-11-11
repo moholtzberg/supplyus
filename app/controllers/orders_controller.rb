@@ -5,7 +5,7 @@ class OrdersController < ApplicationController
   def index
     authorize! :read, Order
     
-    @orders = Order.is_complete.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).unshipped
+    @orders = Order.is_complete.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).unshipped
     
     # if params[:account_name].present?
     #   puts "ACCOUNTS -"
@@ -49,7 +49,7 @@ class OrdersController < ApplicationController
   
   def shipped
     authorize! :read, Order
-    @orders = Order.is_complete.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).shipped
+    @orders = Order.is_complete.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).shipped
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
     end
@@ -60,7 +60,7 @@ class OrdersController < ApplicationController
   
   def fulfilled
     authorize! :read, Order
-    @orders = Order.is_complete.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).fulfilled
+    @orders = Order.is_complete.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).fulfilled
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
     end
@@ -71,7 +71,7 @@ class OrdersController < ApplicationController
   
   def unfulfilled
     authorize! :read, Order
-    @orders = Order.is_complete.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).unfulfilled
+    @orders = Order.is_complete.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).unfulfilled
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
     end
@@ -82,7 +82,17 @@ class OrdersController < ApplicationController
   
   def locked
     authorize! :read, Order
-    @orders = Order.is_complete.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).is_locked
+    @orders = Order.is_complete.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).is_locked
+    unless params[:term].blank?
+      @orders = @orders.lookup(params[:term]) if params[:term].present?
+    end
+    @orders = @orders.paginate(:page => params[:page], :per_page => 20)
+    render "index"
+  end
+  
+  def canceled
+    authorize! :read, Order
+    @orders = Order.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).is_canceled
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
     end
@@ -92,7 +102,7 @@ class OrdersController < ApplicationController
   
   def incomplete
     authorize! :read, Order
-    @orders = Order.is_incomplete.includes(:account, :order_line_items, :order_tax_rate)
+    @orders = Order.is_incomplete.not_canceled.includes(:account, :order_line_items, :order_tax_rate)
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
     end

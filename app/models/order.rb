@@ -6,6 +6,8 @@ class Order < ActiveRecord::Base
   scope :is_unlocked, -> () { where.not(:locked => true) }
   scope :is_complete, -> () { where.not(:completed_at => nil)}
   scope :is_incomplete, -> () { where(:completed_at => nil)}
+  scope :is_canceled, -> () { where(:canceled => true)}
+  scope :not_canceled, -> () { where(:canceled => nil)}
   scope :has_account, -> () { where.not(:account_id => nil) }
   scope :no_account, -> () { where(:account_id => nil) }
   scope :by_date_range, -> (from, to) { where("due_date >= ? AND due_date <= ?", from, to) }
