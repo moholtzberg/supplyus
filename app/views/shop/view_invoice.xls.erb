@@ -29,28 +29,30 @@
 				<Cell><Data ss:Type="String">Total Miscellaneous Charge</Data></Cell>
 			</Row>
     		<% @invoice.order_line_items.each do |line| %>
-			<Row>
-				<Cell><Data ss:Type="String"><%= @invoice.number %></Data></Cell>
-				<Cell><Data ss:Type="String"><%= @invoice.po_number %></Data></Cell>
-				<Cell><Data ss:Type="String">24/7 Office Supply, Inc.</Data></Cell>
-				<Cell><Data ss:Type="String"><%= @invoice.account.group.name if (!@invoice.account.nil? and !@invoice.account.group.nil?) %></Data></Cell>
-				<Cell><Data ss:Type="String"><%= @invoice.ship_to_account_name %></Data></Cell>
-				<Cell><Data ss:Type="String"><%= @invoice.ship_to_address_1 %></Data></Cell>
-				<Cell><Data ss:Type="String"><%= @invoice.ship_to_city %></Data></Cell>
-				<Cell><Data ss:Type="String"><%= @invoice.ship_to_state %></Data></Cell>
-				<Cell><Data ss:Type="String"><%= @invoice.ship_to_zip %></Data></Cell>
-				<Cell><Data ss:Type="String"><%= @invoice.due_date %></Data></Cell>
-				<Cell><Data ss:Type="String"><%= line.item.number %></Data></Cell>
-				<Cell><Data ss:Type="String"><%= line.item.name %></Data></Cell>
-				<Cell><Data ss:Type="String">EA</Data></Cell>
-				<Cell><Data ss:Type="String"><%= line.price %></Data></Cell>
-				<Cell><Data ss:Type="String"><%= line.quantity_fulfilled %></Data></Cell>
-				<Cell><Data ss:Type="String"><%= line.sub_total %></Data></Cell>
-				<Cell><Data ss:Type="String"> </Data></Cell>
-				<Cell><Data ss:Type="String"> </Data></Cell>
-				<Cell><Data ss:Type="String"> </Data></Cell>
-				<Cell><Data ss:Type="String"> </Data></Cell>
-			</Row>
+				<% if line.actual_quantity.to_i > 0 and line.fulfilled %>
+				<Row>
+					<Cell><Data ss:Type="String"><%= @invoice.number %></Data></Cell>
+					<Cell><Data ss:Type="String"><%= @invoice.po_number %></Data></Cell>
+					<Cell><Data ss:Type="String">24/7 Office Supply, Inc.</Data></Cell>
+					<Cell><Data ss:Type="String"><%= @invoice.account.group.name if (!@invoice.account.nil? and !@invoice.account.group.nil?) %></Data></Cell>
+					<Cell><Data ss:Type="String"><%= @invoice.ship_to_account_name %></Data></Cell>
+					<Cell><Data ss:Type="String"><%= @invoice.ship_to_address_1 %></Data></Cell>
+					<Cell><Data ss:Type="String"><%= @invoice.ship_to_city %></Data></Cell>
+					<Cell><Data ss:Type="String"><%= @invoice.ship_to_state %></Data></Cell>
+					<Cell><Data ss:Type="String"><%= @invoice.ship_to_zip %></Data></Cell>
+					<Cell><Data ss:Type="String"><%= @invoice.due_date %></Data></Cell>
+					<Cell><Data ss:Type="String"><%= line.item.number %></Data></Cell>
+					<Cell><Data ss:Type="String"><%= line.item.name %></Data></Cell>
+					<Cell><Data ss:Type="String">EA</Data></Cell>
+					<Cell><Data ss:Type="String"><%= line.price %></Data></Cell>
+					<Cell><Data ss:Type="String"><%= line.quantity_fulfilled %></Data></Cell>
+					<Cell><Data ss:Type="String"><%= line.sub_total %></Data></Cell>
+					<Cell><Data ss:Type="String"> </Data></Cell>
+					<Cell><Data ss:Type="String"> </Data></Cell>
+					<Cell><Data ss:Type="String"> </Data></Cell>
+					<Cell><Data ss:Type="String"> </Data></Cell>
+				</Row>
+				<% end %>
 	    	<% end %>
 			<Row>
 				<Cell><Data ss:Type="String"><%= @invoice.number %> Total</Data></Cell>
