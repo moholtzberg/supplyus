@@ -1,13 +1,13 @@
 <% content_for :app_location do %>Admin / Orders / Index<% end %>
 <div id="orders" class="col-md-12">
-	<%# orders = Order.unscoped %>
+	<% orders = Order.unscoped %>
 	<ul class="nav nav-pills">
 		<li><%= link_to orders_url do %>Completed Orders <span class="badge"><%# orders.unshipped.count %></span><% end %></li>
 		<li><%= link_to locked_orders_url do %>Locked Orders <span class="badge"><%# orders.locked.count %></span><% end %></li>
 		<li><%= link_to shipped_orders_url do %>Shipped Orders <span class="badge"><%# orders.shipped.count %></span><% end %></li>
 		<li><%= link_to fulfilled_orders_url do %>Fulfilled Orders <span class="badge"><%# Order.is_complete.fulfilled.count %></span><% end %></li>
-		<li><%= link_to unfulfilled_orders_url do %>UnFulfilled Orders <span class="badge"><%# orders.unfulfilled.count %></span><% end %></li>
-		<li><%= link_to incomplete_orders_url do %>Incomplete Orders <span class="badge"></span><% end %></li>
+		<li><%= link_to unfulfilled_orders_url do %>UnFulfilled Orders <span class="badge"><%= orders.unfulfilled.count %></span><% end %></li>
+		<li><%= link_to incomplete_orders_url do %>Incomplete Orders <span class="badge"><%= orders.is_incomplete.not_canceled.count %></span><% end %></li>
 	</ul>
 
 	<table class="table table-bordered table-condensed">
