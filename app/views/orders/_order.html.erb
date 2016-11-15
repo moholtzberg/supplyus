@@ -4,7 +4,14 @@
 <td class="hidden-xs"><%= number_to_currency(order.amount_shipped) %></td>
 <td class="hidden-xs"><%= number_to_currency(order.amount_fulfilled) %></td>
 <td class="text-center hidden-xs"><%= order.completed_at.strftime("%m/%d/%y %I:%M %p") unless order.completed_at.nil? %></td>
-<td class="locked hidden-xs"><%= order.locked ? "Yes" : "No" %></td>
+<td class="locked hidden-xs">
+	<% if order.locked %> 
+	<i class="fa fa-lock" aria-hidden="true"></i>
+	<% end %>
+	
+	<% if order.is_taxable? %> 
+	<i class="fa fa-balance-scale" aria-hidden="true"></i>
+	<% end %>
 <td>
 
 	<div class="dropdown">

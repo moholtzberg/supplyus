@@ -19,7 +19,7 @@
 			<th class="hidden-xs"><%= sortable "ship_to_city", "City" %></th>
 			<th class="hidden-xs"><%= sortable "ship_to_state", "State" %></th>
 			<th class="hidden-xs"><%= sortable "ship_to_zip", "Zip" %></th>
-			<th class="hidden-xs">Phone</th>
+			<th class="hidden-xs">Taxable</th>
 			<th>&nbsp;</th>
 		</tr>
 
@@ -32,7 +32,7 @@
 			<td class="hidden-xs"><%= a.ship_to_city %></td>
 			<td class="hidden-xs"><%= a.ship_to_state %></td>
 			<td class="hidden-xs"><%= a.ship_to_zip %></td>
-			<td class="hidden-xs"><%= number_to_phone(a.ship_to_phone) %></td>
+			<td class="hidden-xs"><% if a.is_taxable? %><i class="fa fa-check-circle-o text-success" aria-hidden="true"></i><% end %></td>
 			<td class="text-center">
 				<div class="dropdown">
 					<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">

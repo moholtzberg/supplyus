@@ -93,7 +93,7 @@
 		</div>
 		
 		<div id="use_ship_to" class="col-xs-12 shipping">
-			<%= label_tag :use_ship_to_address do %>
+			<%= label_tag :use_ship_to_address do %>Use Ship To Address
 				<%= check_box_tag :use_ship_to_address, :checked, :class => "form-control" %>
 			<% end %>
 		</div>
@@ -117,7 +117,11 @@
 	
 	</div>
 	
-
+	<div id="is_taxable" class="col-xs-12">
+		<%= label_tag :is_taxable do %>Is Taxable
+			<%= f.check_box :is_taxable, :value => :is_taxable, :class => "form-control" %>
+		<% end %>
+	</div>
 	
 	<div id="group" class="col-xs-12">
 		<%= f.label :group_name, :class => "control-label" %>

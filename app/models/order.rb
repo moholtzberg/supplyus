@@ -33,8 +33,8 @@ class Order < ActiveRecord::Base
   before_save :make_record_number
   
   after_commit :flush_cache
-  after_commit :update_order_tax_rate
-  after_commit :create_inventory_transactions_for_line_items
+  after_update :update_order_tax_rate
+  after_update :create_inventory_transactions_for_line_items
   
   # after_commit :sync_with_quickbooks if :persisted
   
@@ -60,11 +60,19 @@ class Order < ActiveRecord::Base
   ######
   
   def update_order_tax_rate
-    if account and account.is_taxable?
+    if is_taxable?
       order_tax_rate = OrderTaxRate.find_or_create_by(:order_id => id)
       order_tax_rate.tax_rate = TaxRate.find_by(zip_code: ship_to_zip)
       order_tax_rate.amount = order_tax_rate.calculate
       order_tax_rate.save
+    end
+  end
+  
+  def is_taxable?
+    if is_taxable == nil
+      account.is_taxable?
+    else
+      is_taxable
     end
   end
   
