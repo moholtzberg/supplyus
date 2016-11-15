@@ -20,9 +20,7 @@ class OrderMailer < ApplicationMailer
     attachments["INV_#{@order.number}.pdf"] = WickedPdf.new.pdf_from_string(
       render_to_string(:pdf => "INV_#{@order.number}", :template => 'shop/view_invoice.html.erb', :layout => "admin_print")
     )
-    if @order.account and @order.account.group_id and @order.account.group.name == "Legacy"
-      attachments["INV_#{@order.number}.xls"] = render_to_string(:pdf => "INV_#{@order.number}", :template => 'shop/view_invoice.xls.erb')
-    end
+    attachments["INV_#{@order.number}.xls"] = render_to_string(:pdf => "INV_#{@order.number}", :template => 'shop/view_invoice.xls.erb')
     
     bill_to_address = @order.bill_to_email.nil? ? nil : @order.bill_to_email
     mail(
