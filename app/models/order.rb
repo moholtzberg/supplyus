@@ -74,9 +74,7 @@ class Order < ActiveRecord::Base
   
   def tax_rate=(method)
     if method.present?
-      puts "--------->  tax_rate.method #{method} -----------> #{method.inspect}"
       order_tax_rate = OrderTaxRate.find_or_create_by(:order_id => id) if method.present?
-      puts order_tax_rate.inspect
       order_tax_rate.tax_rate = TaxRate.find_by(zip_code: method) if method.present?
       order_tax_rate.save
     end
@@ -173,7 +171,7 @@ class Order < ActiveRecord::Base
   end
   
   def sub_total
-    order_line_items.sum("(COALESCE(quantity,0) - COALESCE(quantity_canceled,0)) * price")
+    order_line_items.sum("(COALESCE(quantity,0) - COALESCE(quantity_canceled,0)) * price").to_d
   end
   
   def shipping_total
@@ -274,13 +272,14 @@ class Order < ActiveRecord::Base
   end
   
   def balance_due
-    Rails.cache.fetch([self, "#{self.class.to_s.downcase}_balance_due"]) {
-      Rails.cache.delete("#{self.class.to_s.downcase}_balance_due")
+    # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_balance_due"]) {
+      # Rails.cache.delete("#{self.class.to_s.downcase}_balance_due")
       total_paid = 0.0
-      puts self.payments.count
       self.order_payment_applications.each {|a| total_paid = total_paid + a.applied_amount}
+      puts total_paid.to_d.to_s
+      puts self.total.to_d.to_s
       return (self.total.to_d - total_paid.to_d)
-    }
+    # }
   end
   
   def due_on

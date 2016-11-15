@@ -16,6 +16,7 @@ NUMBER:		<%= @shipment.orders.first.number %>
 DATE:		<%= @shipment.ship_date.strftime("%m/%d/%Y") %>
 ACCOUNT:	<%= @shipment.orders.first.account.name unless @shipment.orders.first.account.nil? %>
 PO NUMBER:	<%= @shipment.orders.first.po_number %>
+NOTES: 		<%= @shipment.orders.first.notes %>
 
 SHIP TO ADDRESS:
 ================

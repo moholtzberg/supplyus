@@ -9,7 +9,7 @@ class OrderPaymentApplication < ActiveRecord::Base
   
   
   def total_applied_on_payment
-    payment.total_applications.to_d
+    payment.applied_amount.to_d
   end
   
   def not_over_applying
