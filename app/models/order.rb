@@ -70,7 +70,11 @@ class Order < ActiveRecord::Base
   
   def is_taxable?
     if is_taxable == nil
-      account.is_taxable?
+      if account
+        account.is_taxable?
+      else
+        false
+      end
     else
       is_taxable
     end

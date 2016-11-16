@@ -11,10 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160822191220) do
+ActiveRecord::Schema.define(version: 20161115181149) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "pg_stat_statements"
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -51,6 +52,7 @@ ActiveRecord::Schema.define(version: 20160822191220) do
     t.integer "credit_terms"
     t.boolean "credit_hold",       default: true
     t.string  "bill_to_email"
+    t.boolean "is_taxable"
   end
 
   create_table "assets", force: :cascade do |t|
@@ -328,7 +330,7 @@ ActiveRecord::Schema.define(version: 20160822191220) do
     t.integer  "order_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.float    "applied_amount"
+    t.decimal  "applied_amount", precision: 10, scale: 2
   end
 
   add_index "order_payment_applications", ["order_id"], name: "index_order_payment_applications_on_order_id", using: :btree
@@ -345,7 +347,7 @@ ActiveRecord::Schema.define(version: 20160822191220) do
   create_table "order_tax_rates", force: :cascade do |t|
     t.integer  "order_id"
     t.integer  "tax_rate_id"
-    t.decimal  "amount"
+    t.decimal  "amount",      precision: 10, scale: 2
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -384,6 +386,7 @@ ActiveRecord::Schema.define(version: 20160822191220) do
     t.string   "email"
     t.integer  "user_id"
     t.string   "bill_to_email"
+    t.boolean  "is_taxable"
   end
 
   add_index "orders", ["account_id"], name: "order_customer_id_ix", using: :btree
@@ -458,6 +461,7 @@ ActiveRecord::Schema.define(version: 20160822191220) do
     t.float   "discount"
     t.text    "description"
     t.integer "quantity_received",          default: 0
+    t.integer "order_line_item_id"
   end
 
   create_table "purchase_order_receipts", force: :cascade do |t|
