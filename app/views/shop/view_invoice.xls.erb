@@ -42,7 +42,7 @@
 					<Cell><Data ss:Type="String"><%= @invoice.ship_to_zip %></Data></Cell>
 					<Cell><Data ss:Type="String"><%= @invoice.due_date %></Data></Cell>
 					<Cell><Data ss:Type="String"><%= line.item.number %></Data></Cell>
-					<Cell><Data ss:Type="String"><%= line.item.name %></Data></Cell>
+					<Cell><Data ss:Type="String"><%= line.item.name %><% if li.item.item_id == 99 %><%= li.description %> <% end %></Data></Cell>
 					<Cell><Data ss:Type="String">EA</Data></Cell>
 					<Cell><Data ss:Type="String"><%= line.price %></Data></Cell>
 					<Cell><Data ss:Type="String"><%= line.quantity_fulfilled %></Data></Cell>

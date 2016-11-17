@@ -69,7 +69,10 @@
 	<% @order.order_line_items.active.each_with_index do |li, idx| %>
 	<tr class="line_items">
 		<td class="text-center"><%= li.order_line_number %></td>
-		<td><%= li.item.number unless li.item.nil? %> / <%= li.item.name unless li.item.nil? %></td>
+		<td>
+			<%= li.item.number unless li.item.nil? %> / <%= li.item.name unless li.item.nil? %>
+			<% if li.item.item_type_id == 99 %><br/><%= li.description %> <% end %>
+		</td>
 		<td class="text-center"><%= li.quantity.to_i %></td>
 		<td class="text-center"><%= li.quantity_canceled.to_i %></td>
 		<td class="text-center"><%= li.actual_quantity.to_i %></td>

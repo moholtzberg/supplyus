@@ -32,6 +32,7 @@ THE FOLLOWING ITEMS HAVE SHIPPED:
 <% @shipment.order_line_items.order(:order_line_number).each do |o| %>
 	<% if o.quantity_shipped > 0 %>
 <%= o.order_line_number %>.	<%= o.quantity_shipped.to_i %> x <%= "#{o.item.number} / #{o.item.name}" %>
+	<% if li.item.item_type_id == 99 %>---> <%= li.description %> <% end %>
 	<% end %>
 <% end %>
 

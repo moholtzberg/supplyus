@@ -13,15 +13,10 @@ class OrderLineItem < ActiveRecord::Base
   scope :by_item, -> (item) { where(:item_id => item) }
   scope :active,  -> () { where(:quantity => 1..Float::INFINITY) }
   
-  before_create :make_line_number, :on => :create
+  before_create :make_line_number, :on => :create  
   
-  validates :order_line_number, :uniqueness => {
-    :scope => :order_id
-  }
-  
-  validates :item_id, :uniqueness => {
-    :scope => :order_id
-  }
+  validates_uniqueness_of :order_line_number, :scope => :order_id
+  validates_uniqueness_of :item_id, :scope => :order_id, unless: Proc.new {|line| line.item.item_type_id == 99}
   
   validates :item_id, :presence => true
   

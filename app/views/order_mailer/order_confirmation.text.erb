@@ -32,6 +32,7 @@ ORDER LINE ITEMS:
 <% @order.order_line_items.order(:order_line_number).each do |o| %>
 	<% if o.quantity > 0 %>
 <%= o.order_line_number %>.	<%= o.quantity.to_i %> x <%= "#{o.item.number} / #{o.item.name}" %> @ <%= number_to_currency(o.price) %>/Each. = <%= number_to_currency(o.sub_total) %>
+	<% if li.item.item_type_id == 99 %>---> <%= li.description %> <% end %>
 	<% end %>
 <% end %>
 
