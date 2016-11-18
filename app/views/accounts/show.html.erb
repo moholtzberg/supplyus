@@ -164,6 +164,7 @@
 					<th width="7%">Amount Shipped</th>
 					<th width="7%">Amount Fulfilled</th>
 					<th width="7%">Balance Due</th>
+					<th>&nbsp;</th>
 				</tr>
 				<% @orders.each do |it| %>
 				<tr>
@@ -178,6 +179,26 @@
 					<td><%= number_to_currency(it.amount_shipped) %></td>
 					<td><%= number_to_currency(it.amount_fulfilled) %></td>
 					<td><%= number_to_currency(it.balance_due) %></td>
+					<td>
+						<div class="dropdown">
+							<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+								<% unless it.locked %>
+								<li><%= link_to("Edit", edit_order_path(it.id)) %></li>
+								<li><%= link_to("Lock", lock_order_path(it.id), :remote => true, :method => "put") %></li>
+								<% else %>
+									<% unless it.shipped %><li><%= link_to("Ship", new_order_shipment_path(it.id))  %></li><% end %>
+									<% unless it.fulfilled %>
+									<li><%= link_to("Fulfill", new_order_invoice_path(it.id))  %></li>
+									<% else %>
+									<li><%= link_to("Resend Invoice Notification", resend_invoice_order_path(:id => it.id), :remote => true, :method => "put") %></li>
+									<% end %>
+								<% end %>
+							</ul>
+						</div>
+					</td>
 				</tr>
 				<% end %>
 			</table>
