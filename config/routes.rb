@@ -2,6 +2,12 @@ Rails.application.routes.draw do
   
   authenticate :user do
     scope "/admin" do
+      resource :home, :controller => :home do 
+        member do
+          get :authenticate
+          get :oauth_callback
+        end
+      end
       resources :accounts do
         member do
           get :statements
@@ -31,12 +37,15 @@ Rails.application.routes.draw do
           get :shipped
           get :fulfilled
           get :unfulfilled
+          get :canceled
           get :unpaid
         end
         member do
           put :lock
           put :resend_invoice
+          post :resend_invoice_notification
           put :resend_order
+          post :resend_order_confirmation
         end
         resources :shipments, :only => [:new, :create]
         # resources :payments, :shallow => true

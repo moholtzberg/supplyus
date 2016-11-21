@@ -27,6 +27,7 @@
 				<% unless order.shipped %><li><%= link_to("Ship", new_order_shipment_path(order.id))  %></li><% end %>
 				<% unless order.fulfilled %>
 				<li><%= link_to("Fulfill", new_order_invoice_path(order.id))  %></li>
+				<li><%= link_to("Resend Order Notification", resend_order_order_path(:id => order.id), :remote => true, :method => "put") %></li>
 				<% else %>
 				<li><%= link_to("Resend Invoice Notification", resend_invoice_order_path(:id => order.id), :remote => true, :method => "put") %></li>
 				<% end %>

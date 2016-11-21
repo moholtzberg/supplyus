@@ -151,13 +151,19 @@ class OrdersController < ApplicationController
   end
   
   def resend_order
-    order = Order.find_by(:id => params[:id])
-    OrderMailer.order_notification(order.id).deliver_later
+    @order = Order.find_by(:id => params[:id])
+  end
+  
+  def resend_order_confirmation
+    OrderMailer.order_confirmation(params["id"], :to => params["to"]).deliver_later
   end
   
   def resend_invoice
-    order = Order.find_by(:id => params[:id])
-    OrderMailer.invoice_notification(order.id).deliver_later
+    @order = Order.find_by(:id => params[:id])
+  end
+  
+  def resend_invoice_notification
+    OrderMailer.invoice_notification(params["id"], :to => params["to"], :cc => params["cc"]).deliver_later
   end
   
   def edit
