@@ -23,6 +23,7 @@ class Order < ActiveRecord::Base
   has_one :order_tax_rate, :dependent => :destroy, :inverse_of => :order
   has_many :order_line_items, :dependent => :destroy, :inverse_of => :order
   has_many :items, :through => :order_line_items
+  has_many :shipments, :through => :order_line_items
   has_many :order_payment_applications
   has_many :payments, :through => :order_payment_applications
   has_many :credit_card_payments, :through => :order_payment_applications
@@ -37,6 +38,14 @@ class Order < ActiveRecord::Base
   after_update :create_inventory_transactions_for_line_items
   
   # after_commit :sync_with_quickbooks if :persisted
+  
+  def account_name
+    account.try(:name)
+  end
+  
+  def account_name=(name)
+    self.account = Account.find_by(:name => name) if name.present?
+  end
   
   def shipping_method
     order_shipping_method.try(:shipping_method_id)

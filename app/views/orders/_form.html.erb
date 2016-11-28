@@ -5,49 +5,41 @@
 		<div class="col-md-12">
 			
 			<div class="col-md-3">
-				<%= f.label :account %>
-				<%= f.select :account_id, @accounts.collect {|p| [p.name, p.id, 
-					:account_name => p.name, :ship_to_address_1 => p.ship_to_address_1, :ship_to_address_2 => p.ship_to_address_2, :ship_to_city => p.ship_to_city, :ship_to_state => p.ship_to_state, :ship_to_zip => p.ship_to_zip, :ship_to_phone => p.ship_to_phone, :ship_to_email => p.email, :bill_to_address_1 => p.bill_to_address_1, :bill_to_address_2 => p.bill_to_address_2, :bill_to_city => p.bill_to_city, :bill_to_state => p.bill_to_state, :bill_to_zip => p.bill_to_zip, :bill_to_phone => p.bill_to_phone, :bill_to_email => p.bill_to_email
-					]}, {:include_blank => "Select Account"}, {:class => "form-control"} %>
+				<%= f.label :account_name, :class => "control-label" %>
+				<%= f.text_field :account_name, :class => "form-control", data: {autocomplete_source: accounts_path} %>
 			</div>
 	
 			<script>
-				$("select#order_account_id").change(function(e){
-					var ship_to_account_name = $(this).find("option:selected").attr("account_name")
-					var ship_to_address_1 = $(this).find("option:selected").attr("ship_to_address_1")
-					var ship_to_address_2 = $(this).find("option:selected").attr("ship_to_address_2")
-					var ship_to_city = $(this).find("option:selected").attr("ship_to_city")
-					var ship_to_state = $(this).find("option:selected").attr("ship_to_state")
-					var ship_to_zip = $(this).find("option:selected").attr("ship_to_zip")
-					var ship_to_phone = $(this).find("option:selected").attr("ship_to_phone")
-					var ship_to_email = $(this).find("option:selected").attr("ship_to_email")
-					var bill_to_account_name = $(this).find("option:selected").attr("account_name")
-					var bill_to_address_1 = $(this).find("option:selected").attr("bill_to_address_1")
-					var bill_to_address_2 = $(this).find("option:selected").attr("bill_to_address_2")
-					var bill_to_city = $(this).find("option:selected").attr("bill_to_city")
-					var bill_to_state = $(this).find("option:selected").attr("bill_to_state")
-					var bill_to_zip = $(this).find("option:selected").attr("bill_to_zip")
-					var bill_to_phone = $(this).find("option:selected").attr("bill_to_phone")
-					var bill_to_email = $(this).find("option:selected").attr("bill_to_email")
+			jQuery(function() {
+				return $('#order_account_name').autocomplete({
+					source: $('#order_account_name').data('autocomplete-source'),
+					focus: function( event, ui ) {
+						$("#order_account_name" ).val( ui.item.value );
+						$(".ui-helper-hidden-accessible").remove()
+						return false;
+					},
+					select: function( event, ui ) {
+						$("input#order_bill_to_account_name").val(ui.item.name)
+						$("input#order_bill_to_address_1").val(ui.item.bill_to_address_1)
+						$("input#order_bill_to_address_2").val(ui.item.bill_to_address_2)
+						$("input#order_bill_to_city").val(ui.item.bill_to_city)
+						$("input#order_bill_to_state").val(ui.item.bill_to_state)
+						$("input#order_bill_to_zip").val(ui.item.bill_to_zip)
+						$("input#order_bill_to_phone").val(ui.item.bill_to_phone)
+						$("input#order_bill_to_email").val(ui.item.bill_to_email)
 					
-					$("input#order_bill_to_account_name").val(bill_to_account_name)
-					$("input#order_bill_to_address_1").val(bill_to_address_1)
-					$("input#order_bill_to_address_2").val(bill_to_address_2)
-					$("input#order_bill_to_city").val(bill_to_city)
-					$("input#order_bill_to_state").val(bill_to_state)
-					$("input#order_bill_to_zip").val(bill_to_zip)
-					$("input#order_bill_to_phone").val(bill_to_phone)
-					$("input#order_bill_to_email").val(bill_to_email)
-					
-					$("input#order_ship_to_account_name").val(ship_to_account_name)
-					$("input#order_ship_to_address_1").val(ship_to_address_1)
-					$("input#order_ship_to_address_2").val(ship_to_address_2)
-					$("input#order_ship_to_city").val(ship_to_city)
-					$("input#order_ship_to_state").val(ship_to_state)
-					$("input#order_ship_to_zip").val(ship_to_zip)
-					$("input#order_ship_to_phone").val(ship_to_phone)
-					$("input#order_email").val(ship_to_email)
+						$("input#order_ship_to_account_name").val(ui.item.name)
+						$("input#order_ship_to_address_1").val(ui.item.ship_to_address_1)
+						$("input#order_ship_to_address_2").val(ui.item.ship_to_address_2)
+						$("input#order_ship_to_city").val(ui.item.ship_to_city)
+						$("input#order_ship_to_state").val(ui.item.ship_to_state)
+						$("input#order_ship_to_zip").val(ui.item.ship_to_zip)
+						$("input#order_ship_to_phone").val(ui.item.ship_to_phone)
+						$("input#order_email").val(ui.item.ship_to_email)
+						return false;
+					}
 				})
+			});
 			</script>
 	
 			<div class="col-md-3">
@@ -73,7 +65,6 @@
 				
 				<% end %>
 			</div>
-
 			
 			<div class="col-md-12">
 				<%= f.label :notes %>

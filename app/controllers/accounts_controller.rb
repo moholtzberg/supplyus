@@ -10,7 +10,18 @@ class AccountsController < ApplicationController
     end
     respond_to do |format|
       format.html
-      format.json {render :json => @accounts.map(&:name)}
+      msg = @accounts.map {|a| 
+        {
+          :label => "#{a.name} #{a.group_name.present? ? "(" + a.group_name + ")" : nil}", :value => "#{a.name}",
+          :name => "#{a.name}",
+          :ship_to_address_1 => "#{a.ship_to_address_1}", :ship_to_address_2 => "#{a.ship_to_address_2}", :ship_to_city => "#{a.ship_to_city}", 
+          :ship_to_state => "#{a.ship_to_state}", :ship_to_zip => "#{a.ship_to_zip}", :ship_to_phone => "#{a.ship_to_phone}", :ship_to_email => "#{a.email}",
+          :bill_to_address_1 => "#{a.bill_to_address_1}", :bill_to_address_2 => "#{a.bill_to_address_2}", :bill_to_city => "#{a.bill_to_city}", 
+          :bill_to_state => "#{a.bill_to_state}", :bill_to_zip => "#{a.bill_to_zip}", :bill_to_phone => "#{a.bill_to_phone}", :bill_to_email => "#{a.bill_to_email}"
+        } 
+      }
+      format.json {render :json => msg}
+      
     end
   end
   
