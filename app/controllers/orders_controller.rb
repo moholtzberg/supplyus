@@ -203,7 +203,7 @@ class OrdersController < ApplicationController
   private
 
   def order_params
-    params.require(:order).permit(:account_id, :number, :email, :po_number, :completed_at, :notes, :shipping_method, :shipping_amount, :tax_rate, :tax_amount, :bill_to_account_name, :bill_to_attention, :bill_to_address_1, :bill_to_address_2, :bill_to_city, :bill_to_state, :bill_to_zip, :bill_to_phone, :bill_to_email, :ship_to_account_name, :ship_to_attention, :ship_to_address_1, :ship_to_address_2, :ship_to_city, :ship_to_state, :ship_to_zip, :ship_to_phone)
+    params.require(:order).permit(:account_name, :number, :email, :po_number, :completed_at, :notes, :shipping_method, :shipping_amount, :tax_rate, :tax_amount, :bill_to_account_name, :bill_to_attention, :bill_to_address_1, :bill_to_address_2, :bill_to_city, :bill_to_state, :bill_to_zip, :bill_to_phone, :bill_to_email, :ship_to_account_name, :ship_to_attention, :ship_to_address_1, :ship_to_address_2, :ship_to_city, :ship_to_state, :ship_to_zip, :ship_to_phone)
   end
 
   def sort_column
