@@ -43,10 +43,10 @@
 		
 		$("input#order_line_item_item_number").on("blur", function(e){
 			var item_number = $("input#order_line_item_item_number").val()
-			var vendor_id = $("#order_account_id").find(":selected").val()
+			var account_name = $("#order_account_name").val()
 			
 			var request = $.ajax({
-				url : '/admin/items/actual_price_by_item_number_and_account_id?item_number=' + item_number + '&account_id=' + vendor_id,
+				url : '/admin/items/actual_price_by_item_number_and_account_id?item_number=' + item_number + '&account_name=' + account_name,
 				dataType : "json"
 			});
 
