@@ -2,8 +2,6 @@
 <td><%= order.account.name unless order.account.blank? %>&nbsp;<% if order.account != nil and order.account.group_id != nil %><small>(<%= order.account.group.name %>)</small><% end %></td>
 <td><%= number_to_currency(order.total) %></td>
 <td><%= number_to_currency(order.sub_total) %></td>
-<td><%= number_to_currency(order.shipping_total) %></td>
-<td><%= number_to_currency(order.tax_total) %></td>
 <td class="hidden-xs"><%= number_to_currency(order.amount_shipped) %></td>
 <td class="hidden-xs"><%= number_to_currency(order.amount_fulfilled) %></td>
 <td><%= number_to_currency(order.balance_due) %></td>

@@ -19,6 +19,7 @@ class Order < ActiveRecord::Base
   
   belongs_to :account
   belongs_to :user
+  belongs_to :sales_rep, :class_name => "User"
   has_one :order_shipping_method, :dependent => :destroy, :inverse_of => :order
   has_one :order_tax_rate, :dependent => :destroy, :inverse_of => :order
   has_many :order_line_items, :dependent => :destroy, :inverse_of => :order
@@ -34,7 +35,7 @@ class Order < ActiveRecord::Base
   before_save :make_record_number
   
   after_commit :flush_cache
-  # after_update :update_order_tax_rate
+  after_update :update_order_tax_rate
   after_commit :update_totals, :if => :persisted?
   after_update :create_inventory_transactions_for_line_items
   
@@ -46,6 +47,14 @@ class Order < ActiveRecord::Base
   
   def account_name=(name)
     self.account = Account.find_by(:name => name) if name.present?
+  end
+  
+  def sales_rep_name
+    sales_rep.try(:email)
+  end
+  
+  def sales_rep_name=(name)
+    self.sales_rep = User.find_by(:email => name) if name.present?
   end
   
   def shipping_method
@@ -75,6 +84,12 @@ class Order < ActiveRecord::Base
       order_tax_rate.tax_rate = TaxRate.find_by(zip_code: ship_to_zip)
       order_tax_rate.amount = order_tax_rate.calculate
       order_tax_rate.save
+    else
+      order_tax_rate = OrderTaxRate.find_by(:order_id => id)
+      if order_tax_rate.present?
+        order_tax_rate.amount = 0.0
+        order_tax_rate.save
+      end
     end
   end
   

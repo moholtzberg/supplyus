@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161201165111) do
+ActiveRecord::Schema.define(version: 20161202051400) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -53,6 +53,7 @@ ActiveRecord::Schema.define(version: 20161201165111) do
     t.boolean "credit_hold",       default: true
     t.string  "bill_to_email"
     t.boolean "is_taxable"
+    t.integer "sales_rep_id"
   end
 
   create_table "assets", force: :cascade do |t|

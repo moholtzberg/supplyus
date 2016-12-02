@@ -8,6 +8,7 @@ Rails.application.routes.draw do
           get :oauth_callback
         end
       end
+      resources :sales_reps
       resources :accounts do
         member do
           get :statements
@@ -116,7 +117,6 @@ Rails.application.routes.draw do
       
       get "/check_for_import" => "item_imports#check_for_import"
 
-
     end
   end
   
@@ -124,7 +124,7 @@ Rails.application.routes.draw do
         sessions: "users/sessions",
         passwords: "users/passwords",
         registrations: "users/registrations"}
-        
+  
   get   "checkout/address" => "checkout#address"
   patch "checkout/address" => "checkout#update_address"
   get   "checkout/shipping" => "checkout#shipping"

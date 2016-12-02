@@ -13,6 +13,7 @@ class Account < ActiveRecord::Base
   
   belongs_to :user
   belongs_to :group
+  belongs_to :sales_rep, :class_name => "User"
   has_many :users
   has_many :contacts
   has_many :equipment, :class_name => "Equipment"
@@ -92,6 +93,14 @@ class Account < ActiveRecord::Base
   
   def self.search(term)
     where("lower(name) like (?)", "%#{term.downcase}%")
+  end
+  
+  def sales_rep_name
+    sales_rep.try(:email)
+  end
+  
+  def sales_rep_name=(name)
+    self.sales_rep = User.find_by(:email => name) if name.present?
   end
   
   def group_name

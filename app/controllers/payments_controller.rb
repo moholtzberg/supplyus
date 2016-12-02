@@ -16,19 +16,7 @@ class PaymentsController < ApplicationController
   
   def new
     authorize! :create, Payment
-    #if params[:payment_type] == "check"
-      @payment = Payment.new
-    # else
-      # @payment = Payment.new
-    # end
-    # puts "===================> #{params[:order_id]}"
-    # @order = Order.find_by_id(params[:order_id])
-    # puts @order.inspect
-    # @account_id = @order.account_id
-    # respond_to do |format|
-    #   format.html {render :new}
-    #   format.js { }
-    # end
+    @payment = Payment.new
   end
   
   def create

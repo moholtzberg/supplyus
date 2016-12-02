@@ -53,7 +53,8 @@ class AccountsController < ApplicationController
       params[:account][:bill_to_zip] = params[:account][:zip] unless !params[:account][:bill_to_zip].blank?
       params[:account][:bill_to_phone] = params[:account][:phone] unless !params[:account][:bill_to_phone].blank?
       params[:account][:bill_to_email] = params[:account][:email] unless !params[:account][:bill_to_email].blank?
-      params[:account][:is_taxable] = true unless params[:account][:is_taxable].blank?
+      params[:account][:is_taxable] = true unless params[:account][:is_taxable] != 1
+      params[:account][:sales_rep_name] = current_user.email unless !params[:account][:sales_rep_name].blank?
     # end
     @account = Account.new(account_params)
     if @account.save
@@ -71,7 +72,7 @@ class AccountsController < ApplicationController
     params[:account][:bill_to_zip] = params[:account][:zip] unless !params[:account][:bill_to_zip].blank?
     params[:account][:bill_to_phone] = params[:account][:phone] unless !params[:account][:bill_to_phone].blank?
     params[:account][:bill_to_email] = params[:account][:email] unless !params[:account][:bill_to_email].blank?
-    params[:account][:is_taxable] = true unless params[:account][:is_taxable].blank?
+    params[:account][:is_taxable] = true unless params[:account][:is_taxable] != 1
     @account = Account.find_by(:id => params[:id])
     if @account.update_attributes(account_params)
       @accounts = Account.order(sort_column + " " + sort_direction).includes(:group)
@@ -100,7 +101,7 @@ class AccountsController < ApplicationController
   private
 
   def account_params
-    params.require(:account).permit(:name, :email, :address_1, :address_2, :city, :state, :zip, :phone, :fax, :email, :group_name, :credit_terms, :credit_limit, :quickbooks_id, :bill_to_address_1, :bill_to_address_2, :bill_to_city, :bill_to_state, :bill_to_zip, :bill_to_phone, :bill_to_email, :is_taxable)
+    params.require(:account).permit(:name, :sales_rep_name, :email, :address_1, :address_2, :city, :state, :zip, :phone, :fax, :email, :group_name, :credit_terms, :credit_limit, :quickbooks_id, :bill_to_address_1, :bill_to_address_2, :bill_to_city, :bill_to_state, :bill_to_zip, :bill_to_phone, :bill_to_email, :is_taxable)
   end
 
   def sort_column
