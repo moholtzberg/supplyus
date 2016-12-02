@@ -48,7 +48,7 @@
 			<td><%= @order.completed_at.strftime("%m/%d/%Y %I:%M %p") unless @order.completed_at.nil? %></td>
 			<td><%= @order.locked ? "Yes" : "No" %></td>
 			<td><%= @order.po_number %></td>
-			<td><%= "#{@order.sales_rep.first_name} #{@order.sales_rep.last_name}" %></td>
+			<td><%= "#{@order.sales_rep.first_name} #{@order.sales_rep.last_name}" unless @order.sales_rep.blank? %></td>
 		</tr>
 	</table>
 	
