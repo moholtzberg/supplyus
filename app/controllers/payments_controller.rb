@@ -4,7 +4,7 @@ class PaymentsController < ApplicationController
   
   def index
     authorize! :read, Payment
-    @payments = Payment.order(sort_column + " " + sort_direction)
+    @payments = Payment.order(sort_column + " " + sort_direction).includes(:order_payment_applications => [:order])
     unless params[:term].blank?
       @payments = @payments.lookup(params[:term]) if params[:term].present?
     end
@@ -16,11 +16,11 @@ class PaymentsController < ApplicationController
   
   def new
     authorize! :create, Payment
-    if params[:payment_type] == "check"
+    #if params[:payment_type] == "check"
       @payment = Payment.new
-    else
-      @payment = CreditCardPayment.new
-    end
+    # else
+      # @payment = Payment.new
+    # end
     # puts "===================> #{params[:order_id]}"
     # @order = Order.find_by_id(params[:order_id])
     # puts @order.inspect
@@ -33,66 +33,53 @@ class PaymentsController < ApplicationController
   
   def create
     authorize! :create, Payment
-    puts params
     if PaymentMethod.find(params[:payment][:payment_method]).name == "CreditCard"
-      a = CreditCardPayment.new()
-      a.first_name = params[:payment][:first_name]
-      a.last_name = params[:payment][:last_name]
-      a.credit_card_number = params[:payment][:credit_card_number]
-      a.card_security_code = params[:payment][:card_security_code]
-      a.expiration_month = params[:payment][:expiration_month]
-      a.expiration_year = params[:payment][:expiration_year]
-      a.amount = params[:payment][:amount]
-      if a.authorize
-        a.save
+      payment = CreditCardPayment.new(
+        :first_name => params[:payment][:first_name],
+        :last_name => params[:payment][:last_name],
+        :credit_card_number => params[:payment][:credit_card_number],
+        :card_security_code => params[:payment][:card_security_code],
+        :expiration_month => params[:payment][:expiration_month],
+        :expiration_year => params[:payment][:expiration_year],
+        :amount => params[:payment][:amount]
+      )
+      
+      if payment.authorize
+        payment.save
         complete
       else
         puts "-----XXX---> #{a.errors.messages}"
         render "payment"
       end
-    elsif PaymentMethod.find(params[:payment][:payment_method]).name == "Check"
-      c = Payment.new(params[:payment])
-      c.payment_type = "CheckPayment"
-      c.save
+    else
+      payment = Payment.new(
+        :amount => params[:payment][:amount],
+        :account_name => params[:payment][:account_name],
+        :payment_method => PaymentMethod.find_by(:name => params[:payment][:payment_method]),
+        :check_number => params[:payment][:check_number],
+        :date => params[:payment][:date],
+      )
+      payment.payment_type = "CheckPayment"
+      payment.save
+    end
+    
+    params[:order_payment_applications].each do |line|
+      if line[1]["applied_amount"].to_d > 0
+        payment.order_payment_applications.new(:order_id => line[1]["order_id"], :applied_amount => line[1]["applied_amount"].to_d.to_s)
+      end
+    end
+    
+    if payment.save
+      @payments = Payment.order(sort_column + " " + sort_direction).includes(:order_payment_applications => [:order])
+      flash[:notice] = "Payment saved successfully!"
     end
   end
   
-  # def create
-  #   authorize! :create, Payment
-  #   puts params[:payment][:account_id]
-  #
-  #   unless PaymentMethod.find(params[:payment][:payment_method]).name == "CreditCard"
-  #     amount = params[:payment][:amount].to_i
-  #     approved = true
-  #   else
-  #     a = Stripe::Charge.create(:amount => (params[:payment][:amount].to_i * 100), :currency => "usd", :customer => Account.find(params[:payment][:account_id]).stripe_customer_id)
-  #     puts a.inspect
-  #     if a.failure_code == nil
-  #       amount = (a.amount/100).to_f
-  #       approved = true
-  #     end
-  #   end
-  #
-  #   if approved == true
-  #     p = Payment.new(:account_id => params[:payment][:account_id], :payment_method_id => params[:payment][:payment_method], :credit_card_id => params[:payment][:credit_card_id], :amount => amount)
-  #     p.build_order_payment_application(:order_id => params[:payment][:order_id])
-  #     p.save
-  #   end
-  #   redirect_to order_path(params[:payment][:order_id])
-  # end
+  private
   
-  # def show
-  #   @payment = Payment.find(params[:id])
-  # end
-  
-  # def capture
-  #   p = CreditCardPayment.find(params[:id])
-  #   if p.capture
-  #     p.build_order_payment_application(:order_id => params[:payment][:order_id])
-  #     p.save
-  #   end
-  #   redirect_to orders_path(params[:payment][:order_id])
-  # end
+  def payment_params
+    params.require(:payment).permit(:amount, :account_name, :payment_method_id, :check_number, :date)
+  end
   
   def sort_column
     puts Payment.column_names[0]
