@@ -34,7 +34,8 @@ class Order < ActiveRecord::Base
   before_save :make_record_number
   
   after_commit :flush_cache
-  after_update :update_order_tax_rate
+  # after_update :update_order_tax_rate
+  after_commit :update_totals, :if => :persisted?
   after_update :create_inventory_transactions_for_line_items
   
   # after_commit :sync_with_quickbooks if :persisted
@@ -75,6 +76,13 @@ class Order < ActiveRecord::Base
       order_tax_rate.amount = order_tax_rate.calculate
       order_tax_rate.save
     end
+  end
+  
+  def update_totals
+    subtotal = sub_total_sum
+    shippingtotal = shipping_total_sum
+    taxtotal = tax_total_sum
+    self.update_columns(:sub_total => subtotal, :shipping_total => shippingtotal, :tax_total => taxtotal)
   end
   
   def is_taxable?
@@ -183,28 +191,40 @@ class Order < ActiveRecord::Base
     #   Rails.cache.delete("#{self.class.to_s.downcase}_unpaid_orders")
     #   Order.is_complete.where.not(:id => OrderPaymentApplication.select(:order_id).uniq).order(:due_date)
     # }
-    order_ids = OrderPaymentApplication.select(:order_id).uniq
-    Order.is_complete.where.not(:id => order_ids).order(:due_date)
+    # order_ids = OrderPaymentApplication.select(:order_id).uniq
+    ids = Order.is_complete
+    .joins("LEFT OUTER JOIN order_payment_applications ON order_payment_applications.order_id = orders.id")
+    .group("orders.id")
+    .having("SUM(COALESCE(sub_total,0) + COALESCE(shipping_total,0) + COALESCE(tax_total,0)) > SUM(COALESCE(order_payment_applications.applied_amount,0))").ids
+    where(id: ids)
   end
   
   def self.empty
     Order.includes(:order_line_items).where(:order_line_items => {:order_id => nil})
   end
   
-  def sub_total
+  def sub_total_sum
     order_line_items.sum("(COALESCE(quantity,0) - COALESCE(quantity_canceled,0)) * price").to_d
   end
   
-  def shipping_total
-    order_shipping_method.amount unless order_shipping_method.nil?
+  def shipping_total_sum
+    if order_shipping_method.nil?
+      0
+    else
+      order_shipping_method.amount
+    end
   end
   
-  def tax_total
-    order_tax_rate.amount unless order_tax_rate.nil?
+  def tax_total_sum
+    if order_tax_rate.nil?
+      0
+    else
+      order_tax_rate.amount
+    end
   end
   
   def total
-    sub_total + shipping_total.to_f.to_d + tax_total.to_f.to_d
+    sub_total + shipping_total + tax_total
   end
   
   def profit

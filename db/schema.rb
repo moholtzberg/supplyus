@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161115181149) do
+ActiveRecord::Schema.define(version: 20161201165111) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -330,7 +330,7 @@ ActiveRecord::Schema.define(version: 20161115181149) do
     t.integer  "order_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.decimal  "applied_amount", precision: 10, scale: 2
+    t.decimal  "applied_amount", precision: 10, scale: 2, default: 0.0
   end
 
   add_index "order_payment_applications", ["order_id"], name: "index_order_payment_applications_on_order_id", using: :btree
@@ -381,12 +381,15 @@ ActiveRecord::Schema.define(version: 20161115181149) do
     t.string   "bill_to_zip"
     t.string   "bill_to_phone"
     t.text     "notes"
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
+    t.datetime "created_at",                                                  null: false
+    t.datetime "updated_at",                                                  null: false
     t.string   "email"
     t.integer  "user_id"
     t.string   "bill_to_email"
     t.boolean  "is_taxable"
+    t.decimal  "sub_total",            precision: 10, scale: 2, default: 0.0
+    t.decimal  "shipping_total",       precision: 10, scale: 2, default: 0.0
+    t.decimal  "tax_total",            precision: 10, scale: 2, default: 0.0
   end
 
   add_index "orders", ["account_id"], name: "order_customer_id_ix", using: :btree

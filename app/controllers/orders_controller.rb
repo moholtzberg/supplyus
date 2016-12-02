@@ -200,6 +200,17 @@ class OrdersController < ApplicationController
     @order.save
   end
 
+  def unpaid
+    @unpaid_orders = Order.unpaid
+    if params[:account_name].present?
+      a = Account.find_by(name: params[:account_name])
+      unless a.blank?
+        @unpaid_orders = @unpaid_orders.where(:account_id => a.id)
+      end
+    end
+    @unpaid_orders.includes(:payments, :accounts)
+  end
+
   private
 
   def order_params

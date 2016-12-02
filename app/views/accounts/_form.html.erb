@@ -123,9 +123,22 @@
 		<% end %>
 	</div>
 	
-	<div id="group" class="col-xs-12">
+	<div id="group" class="col-xs-6">
 		<%= f.label :group_name, :class => "control-label" %>
 		<%= f.text_field :group_name, :class => "form-control", data: {autocomplete_source: groups_path} %>
+	</div>
+	
+	<script>
+	jQuery(function() {
+		return $('#account_group_name').autocomplete({
+			source: $('#account_group_name').data('autocomplete-source')
+		})
+	});
+	</script>
+	
+	<div id="sales_rep" class="col-xs-6">
+		<%= f.label :sales_rep_name, :class => "control-label" %>
+		<%= f.text_field :sales_rep_name, :class => "form-control", data: {autocomplete_source: sales_reps_path} %>
 	</div>
 	
 	<script>
