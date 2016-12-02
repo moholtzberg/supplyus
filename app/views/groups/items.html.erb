@@ -1,0 +1,39 @@
+<% content_for :app_location do %>Admin / Payments / Index<% end %>
+<div id="payments" class="col-md-12">
+
+	<table class="table table-bordered table-condensed">
+		
+		<tr>
+			<th>Index</th>
+			<th>Item Id</th>
+			<th>QTY Ordered</th>
+			<th>Item Number</th>
+			<th>Current Price</th>
+			<th>New Price</th>
+			<th>Differnce %</th>
+			<th>Differnce $</th>
+			<th>Total Difference</th>
+		</tr>
+		
+		<% order_ids = Order.where(account_id: @ids).ids %>
+		<% start = 0 %>
+	<% @items.each do |i|%>
+	<% group_item_price = i.item.group_item_prices.where(group_id: @group.id).last %>
+	<% if i.qty > 0 %>
+	<% start = start + 1  %>
+	<tr>
+		<td><%= start %></td>
+		<td><%= i.item_id %></td>
+		<td><%= number_with_delimiter(i.qty) %></td>
+		<td><%= i.number %></td>
+		<td><% prc = group_item_price.nil? ? 0 : group_item_price.price %>
+			<%= number_to_currency([prc, i.item.price].min) %></td>
+		<td><%= number_to_currency(i.item.actual_cost_price.to_s.to_d * 1.1416) %></td>
+		<td><%= number_to_percentage((([prc, i.item.price].min) - (i.item.actual_cost_price.to_s.to_d * 1.1416)) / ([prc, i.item.price].min) * 100.ceil)  %></td>
+		<td><%= number_to_currency(([prc, i.item.price].min) - (i.item.actual_cost_price.to_s.to_d * 1.1416)) %></td>
+		<td><%= number_to_currency((([prc, i.item.price].min) - (i.item.actual_cost_price.to_s.to_d * 1.1416)) * i.qty) %></td>
+	</tr>
+	<% end %>
+	<% end %>
+	</table>
+

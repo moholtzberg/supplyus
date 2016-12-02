@@ -38,7 +38,7 @@ class GroupsController < ApplicationController
     @accounts = @group.accounts
     @from = Date.strptime(params[:from_date], '%m/%d/%y').kind_of?(Date) ? Date.strptime(params[:from_date], '%m/%d/%y') : Date.today
     @to = Date.strptime(params[:to_date], '%m/%d/%y').kind_of?(Date) ? Date.strptime(params[:to_date], '%m/%d/%y') : Date.today
-    @orders = Order.includes(:order_payment_applications, :payments).where(:account_id => @accounts.ids).unpaid
+    @orders = Order.where(:account_id => @accounts.ids).unpaid
     
     respond_to do |format|
       format.html
@@ -49,6 +49,23 @@ class GroupsController < ApplicationController
     if params[:deliver_notification]
       GroupMailer::statement_notification(@group.id, params[:from_date], params[:to_date]).deliver_later
     end
+  end
+  
+  def items
+    @group = Group.find(params[:id])
+    @ids = Account.where(group_id: @group.id).ids
+    @items = OrderLineItem
+    .unscoped
+    .joins("INNER JOIN orders ON orders.id = order_line_items.order_id")
+    .joins("RIGHT OUTER JOIN items ON items.id = order_line_items.item_id")
+    .where("orders.account_id IN (?)", @ids)
+    .where("completed_at < ?", params[:to_date])
+    .where("quantity_fulfilled >= 0")
+    .group("item_id, items.number")
+    .select("SUM(COALESCE(quantity, 0) - COALESCE(quantity_canceled, 0)) AS qty, item_id AS item_id, items.number AS number")
+    .having("item_id = item_id")
+    .order("qty DESC")
+    .includes(:item => [:group_item_prices, :item_vendor_prices])
   end
 
   private
