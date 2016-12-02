@@ -59,7 +59,7 @@ class GroupsController < ApplicationController
     .joins("INNER JOIN orders ON orders.id = order_line_items.order_id")
     .joins("RIGHT OUTER JOIN items ON items.id = order_line_items.item_id")
     .where("orders.account_id IN (?)", @ids)
-    .where("completed_at < ?", params[:to_date])
+    .where("completed_at < ?", Date.strptime(params[:to_date], '%m/%d/%y'))
     .where("quantity_fulfilled >= 0")
     .group("item_id, items.number")
     .select("SUM(COALESCE(quantity, 0) - COALESCE(quantity_canceled, 0)) AS qty, item_id AS item_id, items.number AS number")
