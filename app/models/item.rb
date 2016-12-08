@@ -3,6 +3,7 @@ class Item < ActiveRecord::Base
   include ApplicationHelper
   
   scope :active, -> { where(:active => true)}
+  scope :inactive, -> { where(:active => false)}
   
   has_many :account_item_prices, :dependent => :destroy, :inverse_of => :item
   has_many :group_item_prices, :dependent => :destroy, :inverse_of => :item
@@ -159,7 +160,6 @@ class Item < ActiveRecord::Base
     return prices.min
   end
   
-  
   def actual_price(account_id={})
     unless account_id.blank?
       unless get_lowest_price(account_id).blank?
@@ -286,12 +286,18 @@ class Item < ActiveRecord::Base
     where(id: ids)
   end
   
-  def import_xml_new
+  def essendant_xml_import
     current_item_id = self.id
+    path = "Users/Moshe/Documents/ecdb/xml/individual_items/ecdb.individual_items"
     
     begin
-      noko = File.open("#{Rails.root}/app/assets/images/ecdb.individual_items/#{self.number}.xml") { |f| Nokogiri::XML(f) }
+      noko = File.open("/#{path}/#{self.number}.xml") { |f| Nokogiri::XML(f) }
     rescue
+      
+      unless self.number.ends_with? "COMP"
+        update_attributes(:active => false)
+      end
+      
       puts "No such file #{self.number}.xml"
     else
       
@@ -405,15 +411,14 @@ class Item < ActiveRecord::Base
       width = noko.xpath("//us:Packaging//us:Dimensions//oa:WidthMeasure").text
       length = noko.xpath("//us:Packaging//us:Dimensions//oa:LengthMeasure").text
       wieght = noko.xpath("//us:Packaging//us:Dimensions//us:WeightMeasure").text
-        
+      
+      active = noko.xpath("//oa:ItemStatus//oa:Code").text
+      active = (active == "Y" )? true : false
+      
       name = noko.css("[type=Long_Item_Description]").text
       description = noko.css("[type=Item_Consolidated_Copy]").text
     
-      update_attributes(:brand_id => brand, :slug => self.number.downcase, :height => height, :width => width, :length => length, :weight => weight, :name => name, :description => description)
-    
-      bucket_name = '247officesuppy/400/400'
-      s3 = AWS::S3.new()
-      bucket = s3.buckets[bucket_name]
+      update_attributes(:brand_id => brand, :slug => self.number.downcase, :height => height, :width => width, :length => length, :weight => weight, :name => name, :description => description, :active => active)
       
       self.images.map(&:destroy)
       
@@ -427,14 +432,9 @@ class Item < ActiveRecord::Base
       
       image_array.each_with_index do |single_image, pos|
         
-        single_image = single_image.tr(" ", "")
-        if AWS::S3.new.buckets["247officesuppy"].objects["400/400/#{single_image}"].exists?
-          image = single_image
-          puts "----> SINGLE IMAGE = #{image}"
-          bucket.objects["#{image}"].acl = :public_read unless bucket.objects["#{image}"].nil?
-        else
-          image = nil
-        end
+        image = single_image.tr(" ", "")
+        
+        image = upload_image_to_s3
                    
         if image
           puts "----> IMAGE #{image}"

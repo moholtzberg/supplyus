@@ -11,55 +11,47 @@
 		</tr>
 		
 		<tr>
-			<td width="60%">
-				<%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/#{@item.default_image_path}", :class => "media-object", :height => "250", :width => "250" %>
-			</td>
-			<td width="40%">
-				<% @item.item_categories.each do |cat| %>
-					<span class="label label-default"><%= cat.category.name %></span>
-				<% end %>
-				<%= form_for ItemCategory.new, :method => :post, :remote => true do |f| %>
-					<%= f.select :category_name, {}, {} %>
-				<% end %>
+			<td width="50%" rowspan="<%= @item.item_properties.size + 1 %>">
+				
+				<div class="col-md-3">
+					<% @item.images.each do |img| %>
+					<a><%= image_tag "http://content.oppictures.com/Master_Images/Master_Variants/Variant_500/#{img.attachment_file_name}", :height => "100", :class => "thumbnail", :id => "#{img.id}"%></a>
+					<% end %>	
+				</div>
+				<div class="col-md-9">
+					<%= image_tag "http://content.oppictures.com/Master_Images/Master_Variants/Variant_500/#{@item.default_image_path}", :width => "400", :id => "main_image" %>
+				</div>
 				<script>
-				$('#item_category_category_name').select2({
-					ajax: {
-						url: '<%= categories_path %>',
-						dataType:'json',
-						quietMillis: 300,
-						processResults: function (data) {
-							console.log(data)
-							return {
-								results: data
-							};
-						}
-					}
-				});
-				// jQuery(function() {
-					// return $('#item_category_category_name')
-					// .bind( "keydown", function( event ) {
-					// 	if ( event.keyCode === $.ui.keyCode.TAB && $( this ).autocomplete( "instance" ).menu.active ) {
-					// 		event.preventDefault();
-					// 	}
-					// })
-					// .autocomplete({
-					// 	source: $('#item_category_category_name').data('autocomplete-source')
-					// })
-				// });
+					$(".thumbnail").click(function(event){
+						var src = $("#"+ event.currentTarget.id).attr("src")
+						$("#main_image").attr("src", src)
+					})
 				</script>
+					
 			</td>
+			
+			
+			
+			
+			<th width="25%">Item Status</th>
+			<th width="25%"><span class="label label-<%= (@item.active == true) ? "success" : "danger"  %>"><%= (@item.active == true) ? "Active" : "Inactive"  %></span></th>
 		</tr>
+		
 		<tr>
-			<td>Key</td>
-			<td>Value</td>
-		</tr>
+			<th width="25%">Key</th>
+			<th width="25%">Value</th>
+		</tr>	
 		<% @item.item_properties.each  do |ip| %>
 		<tr>
 			<td><%= ip.key %></td>
 			<td><%= ip.value %></td>
 		</tr>
 		<% end %>
-		
+			
+			</td>
+		</tr>
+
+
 		
 	</table>
 	
