@@ -4,11 +4,11 @@
 		
 		<th>
 			
-			<td width="43%">Item</td>
-			<td width="12%">Qty.</td>
-			<td width="12%">Quantity Canceled</td>
-			<td width="12%">Actual Quantity</td>
-			<td width="10%">Price</td>
+			<td width="50%">Item</td>
+			<td width="10%">Qty.</td>
+			<td width="10%">Quantity Canceled</td>
+			<td width="10%">Actual Quantity</td>
+			<td width="9%">Price</td>
 			<td width="10%">Subtotal</td>
 			<td width="1%">&nbsp;</td>
 			
@@ -27,7 +27,12 @@
 			</td>
 			
 			<td>
-				<%= ol.item.number unless ol.item.nil? %>
+				<%= ol.item.number unless ol.item.nil? %> / <%= ol.item.name unless ol.item.nil? %>
+				<% if ol.description.present? %>
+					<br/>
+				 (<%= ol.description %>)
+				<% end %>
+				
 			</td>
 			<td class="quantity">
 				<%= best_in_place ol, :quantity %>
