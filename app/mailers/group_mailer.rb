@@ -7,9 +7,9 @@ class GroupMailer < ApplicationMailer
     @accounts = @group.accounts
     @from = DateTime.strptime(from, '%m/%d/%y').kind_of?(Date) ? DateTime.strptime(from, '%m/%d/%y') : DateTime.current
     @to = DateTime.strptime(to, '%m/%d/%y').kind_of?(Date) ? DateTime.strptime(to, '%m/%d/%y') : DateTime.current
-    @orders = Order.includes(:order_payment_applications, :payments).where(:account_id => @accounts.ids)
+    @orders = Order.where(:account_id => @accounts.ids).unpaid
     
-    attachments["#{@group.name}_Statement_#{@from}_to_#{@to}.pdf"] = WickedPdf.new.pdf_from_string(
+    attachments["#{@group.name}_Statement_#{@from.strftime("%Y_%m_%d")}_to_#{@to.strftime("%Y_%m_%d")}.pdf"] = WickedPdf.new.pdf_from_string(
       render_to_string(:title => "#{@group.name} statement #{@from}-#{@to}", :layout => 'admin_print.html.erb', :orientation => 'Landscape', :template => 'groups/statements.html.erb', :print_media_type => true)
     )
     

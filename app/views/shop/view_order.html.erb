@@ -71,7 +71,7 @@
 		<td class="text-center"><%= li.order_line_number %></td>
 		<td>
 			<%= li.item.number unless li.item.nil? %> / <%= li.item.name unless li.item.nil? %>
-			<% if li.item.item_type_id == 99 %><br/><%= li.description %> <% end %>
+			<% if li.item.item_type_id == 99 || li.description.present? %><br/><%= li.description %> <% end %>
 		</td>
 		<td class="text-center"><%= li.quantity.to_i %></td>
 		<td class="text-center"><%= li.quantity_canceled.to_i %></td>

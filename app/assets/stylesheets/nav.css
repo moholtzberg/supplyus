@@ -6,7 +6,7 @@ body {
 }
 
 body > .navmenu {
-	width: 250px;
+	width: 200px;
 }
 
 .navmenu {
@@ -39,11 +39,11 @@ body > .navmenu {
 
 @media (min-width: 768px) {
   body {
-    padding: 0 0 0 250px;
+    padding: 0 0 0 200px;
   }
 	.navbar-fixed-bottom {
 		margin-top: 20px;
-		padding: 0 0 0 250px;
+		padding: 0 0 0 200px;
 	}
 }
 
