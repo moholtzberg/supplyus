@@ -12,7 +12,7 @@
 			<% unless order.balance_due == 0 %>
 		<tr>
 			<td><%= order.number %></td>
-			<td><%= order.due_date.strftime("%m/%d/%Y") %></td>
+			<td><%= order.due_date.strftime("%m/%d/%Y") unless order.due_date.blank? %></td>
 			<td>
 				<%= number_to_currency(order.balance_due) %>
 				<%= hidden_field_tag "order_payment_applications[#{idx}][order_id]", order.id.to_i %>
