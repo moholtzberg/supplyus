@@ -9,6 +9,7 @@ Rails.application.routes.draw do
         end
       end
       resources :sales_reps
+      resources :equipment_alerts
       resources :accounts do
         member do
           get :statements
