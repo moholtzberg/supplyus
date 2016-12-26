@@ -1,0 +1,42 @@
+<% content_for :app_location do %>Admin / Equipment Alerts / Index<% end %>
+<div id="equipment-alerts" class="col-md-12">
+
+	<table class="table table-bordered table-condensed table-responsive">
+		
+		<tr>
+			<th class="hidden-xs">ID</th>
+			<th>Serial</th>
+			<th>Asset</th>
+			<th>Type</th>
+			<th>Color</th>
+			<th>Level</th>
+			<th>Location</th>
+			<th>Supply Part Number</th>
+		</tr>
+		
+		<% @equipment_alerts.each do |a| %>
+		<tr>
+			<td class="hidden-xs"><%= a.alert_identification %></td>
+			<td><%= a.equipment_serial %></td>
+			<td><%= a.equipment_asset_number %></td>
+			<td><%= a.supply_type %></td>
+			<td><%= a.supply_color %></td>
+			<td><%= a.supply_level %></td>
+			<td><%= a.equipment_location %></td>
+			<td><%= a.supply_part_number %></td>
+		</tr>
+		<% end %>
+
+	</table>
+	
+	<%= will_paginate @equipment_alerts, renderer: BootstrapPagination::Rails %>
+	
+</div>
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div>

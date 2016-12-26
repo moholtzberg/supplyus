@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161202051400) do
+ActiveRecord::Schema.define(version: 20161226020339) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -132,6 +132,24 @@ ActiveRecord::Schema.define(version: 20161202051400) do
     t.string  "model"
   end
 
+  create_table "equipment_alerts", force: :cascade do |t|
+    t.integer "equipment_id"
+    t.integer "order_line_item_id"
+    t.string  "alert_identification"
+    t.string  "alert_type"
+    t.string  "supply_type"
+    t.string  "supply_color"
+    t.string  "supply_part_number"
+    t.integer "supply_level"
+    t.string  "equipment_serial"
+    t.string  "equipment_asset_id"
+    t.string  "equipmnet_make_model"
+    t.string  "equipment_mac_address"
+    t.string  "equipment_ip_address"
+    t.string  "equipment_group_name"
+    t.string  "equipment_location"
+  end
+
   create_table "group_item_prices", force: :cascade do |t|
     t.integer  "group_id"
     t.integer  "item_id"
@@ -161,6 +179,7 @@ ActiveRecord::Schema.define(version: 20161202051400) do
     t.datetime "updated_at",                 null: false
     t.integer  "is_processing", default: 0
     t.text     "failed_lines",  default: ""
+    t.integer  "nb_last_id"
   end
 
   create_table "inventories", force: :cascade do |t|
@@ -253,6 +272,7 @@ ActiveRecord::Schema.define(version: 20161202051400) do
     t.datetime "updated_at",                                            null: false
     t.integer  "brand_id"
     t.boolean  "active",                                 default: true, null: false
+    t.decimal  "list_price",    precision: 10, scale: 2
   end
 
   add_index "items", ["id"], name: "item_id_ix", using: :btree
