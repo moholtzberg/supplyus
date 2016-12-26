@@ -16,6 +16,7 @@ class CreateEquipmentAlerts < ActiveRecord::Migration
       t.string :equipment_ip_address
       t.string :equipment_group_name
       t.string :equipment_location
+      t.timestamps
     end
   end
 end

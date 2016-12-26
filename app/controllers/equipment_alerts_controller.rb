@@ -37,4 +37,12 @@ class EquipmentAlertsController < ApplicationController
     params.require(:equipment_alert).permit(:account_id, :alert_identification, :alert_type, :supply_type, :supply_color, :supply_part_number, :supply_level, :equipment_serial, :equipment_asset_id, :equipmnet_make_model, :equipment_mac_address, :equipment_ip_address, :equipment_group_name, :equipment_location)
   end
   
+  def sort_column
+    EquipmentAlert.column_names.include?(params[:sort]) ? params[:sort] : "equipment_alerts.created_at"
+  end
+  
+  def sort_direction
+    %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
+  end
+  
 end
