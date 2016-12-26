@@ -1,4 +1,4 @@
-class EquipmentAlerts < ApplicationController
+class EquipmentAlertsController < ApplicationController
   layout "admin"
   respond_to :html, :json
   
