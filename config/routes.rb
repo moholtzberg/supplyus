@@ -115,16 +115,15 @@ Rails.application.routes.draw do
       get "equipment/delete/:id" => "equipment#delete"
       get "items/delete/:id" => "items#delete"
       get "/" => "home#show"
-      
       get "/check_for_import" => "item_imports#check_for_import"
-
     end
   end
   
   devise_for :users, :controllers => { 
         sessions: "users/sessions",
         passwords: "users/passwords",
-        registrations: "users/registrations"}
+        registrations: "users/registrations"
+  }
   
   get   "checkout/address" => "checkout#address"
   patch "checkout/address" => "checkout#update_address"
@@ -156,5 +155,8 @@ Rails.application.routes.draw do
   get "/:category/:item" => "shop#item"
   get "/:category" => "shop#category"
   get "/" => "shop#index"
+  
+  namespace :api, defaults: {format: :json} do
+    scope :v1 do
 
 end

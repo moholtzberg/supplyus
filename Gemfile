@@ -1,4 +1,4 @@
-source 'https://rubygems.org'
+source 'http://rubygems.org'
 
 gem 'rails', '4.2.3'
 
@@ -41,6 +41,9 @@ gem 'paperclip'
 gem 'aws-sdk', '< 2.0'
 
 gem 'devise'
+# gem 'devise_token_auth'
+gem 'simple_token_authentication', '~> 1.0'
+
 gem 'roo'
 gem 'will_paginate-bootstrap'
 gem 'twitter-typeahead-rails', :git => "git://github.com/yourabi/twitter-typeahead-rails.git"
