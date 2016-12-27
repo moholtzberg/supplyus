@@ -158,5 +158,8 @@ Rails.application.routes.draw do
   
   namespace :api, defaults: {format: :json} do
     scope :v1 do
+      resources :equipment_alerts, only: [:index, :show, :create, :update]
+    end
+  end
 
 end
