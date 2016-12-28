@@ -1,20 +1,48 @@
 <fieldset id="password-credentials">
+	
 	<div class="form-group">
-	<%= f.email_field :email, :class => 'form-control', :placeholder => I18n.t(:email) %>
+		<%= f.email_field :email, :class => 'form-control', :placeholder => I18n.t(:email) %>
 	</div>
-	<div class="form-group">
-	<%= f.text_field :first_name, :class => 'form-control', :placeholder => I18n.t("devise.registrations.first_name") %>
+	
+	<hr/>
+	
+	<div class="row">
+		
+		<div class="form-group col-md-6">
+		
+			<div class="first_name ">
+				<%= f.text_field :first_name, :class => 'form-control', :placeholder => I18n.t("devise.registrations.first_name") %>
+			</div>
+		
+		</div>
+	
+		<div class="form-group col-md-6">	
+		
+			<div class="last_name ">
+				<%= f.text_field :last_name, :class => 'form-control', :placeholder => I18n.t("devise.registrations.last_name") %>
+			</div>
+		
+		</div>	
+
+		<%= fields_for :account, resource.account do |a| %>
+			<%= render :partial => 'customer_form', :locals => { :f => a } %>
+		<% end %>
+	
 	</div>
+	
+	
+	
+	<hr/>
+	
 	<div class="form-group">
-	<%= f.text_field :last_name, :class => 'form-control', :placeholder => I18n.t("devise.registrations.last_name") %>
-	</div>
-	<div class="form-group">
-	<% if @minimum_password_length %>
-	<em>(<%= @minimum_password_length %> characters minimum)</em>
-	<% end %>
-	<%= f.password_field :password, :class => 'form-control', :placeholder => I18n.t(:password) %>
+		<% if @minimum_password_length %>
+		<em>(<%= @minimum_password_length %> characters minimum)</em>
+		<% end %>
+		<%= f.password_field :password, :class => 'form-control', :placeholder => I18n.t(:password) %>
 	</div> 
+	
 	<div class="form-group">
 	<%= f.password_field :password_confirmation, :class => 'form-control', :placeholder => I18n.t(:confirm_password) %>
-	</div> 
+	</div>
+	 
 </fieldset>

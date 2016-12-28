@@ -1,0 +1,86 @@
+<div id="customer_name" class="form-group col-md-12">
+	<%= f.text_field :name, :class => "form-control", :placeholder => "Customer Name" %>
+</div>
+
+<div class="row">
+	
+	<div class="col-md-6" style="padding-right:0px;">
+
+		<div id="address" class="form-group col-md-12">
+			<%= f.text_field :address_1, :class => "form-control", :placeholder => "Address" %>
+		</div>
+
+		<div id="address_2" class="form-group col-md-12">
+			<%= f.text_field :address_2, :class => "form-control", :placeholder => "Address (contd.)" %>
+		</div>
+
+		<div id="city" class="form-group col-sm-12">
+			<%= f.text_field :city, :class => "form-control", :placeholder => "City" %>
+		</div>
+
+		<div id="state" class="form-group col-sm-6 col-xs-6">
+			<%= f.text_field :state, :class => "form-control", :placeholder => "State" %>
+		</div>
+
+		<div id="zip" class="form-group col-sm-6 col-xs-6">
+			<%= f.text_field :zip, :class => "form-control", :placeholder => "Zip" %>
+		</div>
+
+		<div id="phone" class="form-group col-xs-12">
+			<%= f.text_field :phone, :class => "form-control", :placeholder => "Phone" %>
+		</div>
+
+	</div>
+
+	<div class="col-md-6" style="padding-left:0px;">
+
+		<div id="bill_to_address" class="form-group col-md-12">
+			<%= f.text_field :bill_to_address_1, :class => "form-control bill_to", :placeholder => "Address" %>
+		</div>
+
+		<div id="bill_to_address_2" class="form-group col-md-12">
+			<%= f.text_field :bill_to_address_2, :class => "form-control bill_to", :placeholder => "Address (contd.)" %>
+		</div>
+
+		<div id="bill_to_city" class="form-group col-sm-12">
+			<%= f.text_field :bill_to_city, :class => "form-control bill_to", :placeholder => "City" %>
+		</div>
+
+		<div id="bill_to_state" class="form-group col-sm-6 col-xs-6">
+			<%= f.text_field :bill_to_state, :class => "form-control bill_to", :placeholder => "State" %>
+		</div>
+
+		<div id="bill_to_zip" class="form-group col-sm-6 col-xs-6">
+			<%= f.text_field :bill_to_zip, :class => "form-control bill_to", :placeholder => "Zip" %>
+		</div>
+
+		<div id="bill_to_phone" class="form-group col-xs-12">
+			<%= f.text_field :bill_to_phone, :class => "form-control bill_to", :placeholder => "Phone" %>
+		</div>
+	
+		<div id="use_ship_to" class="form-group col-xs-12 shipping">
+			<%= label_tag :use_ship_to_address do %>Use Ship To Address
+				<%= check_box_tag :use_ship_to_address, :checked, :class => "form-control" %>
+			<% end %>
+		</div>
+	
+		<script>
+			$(document).ready(function() {
+			
+				if ($('#use_ship_to_address').val($(this).is(":checked"))) {
+					$(".bill_to").prop("disabled", true)
+				};
+			
+				$('#use_ship_to_address').change(function(){
+					if ($(this).is(":checked")) {
+						$(".bill_to").prop("disabled", true)
+					} else {
+						$(".bill_to").prop("disabled", false)
+					}
+				});
+			})
+		</script>
+
+	</div>
+	
+</div>
