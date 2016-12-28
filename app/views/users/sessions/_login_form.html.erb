@@ -1,6 +1,9 @@
 <%= form_for(resource, as: resource_name, :url => user_session_path) do |f| %>
 	<fieldset id="password-credentials">
 		<div class="form-group">
+			
+			
+			
 			<%= f.email_field :email, :class => 'form-control', :tabindex => 1, :placeholder => I18n.t(:email) %>
 		</div>
 		<div class="form-group">
@@ -12,6 +15,9 @@
 				<%= f.label :remember_me, I18n.t(:remember_me) %>
 			</label>
 		</div>
+		
+		<%= recaptcha_tags %>
+		
 		<div class="form-group">
 			<%= f.submit I18n.t(:login), :class => 'btn btn-lg btn-success btn-block', :tabindex => 3 %>
 		</div>

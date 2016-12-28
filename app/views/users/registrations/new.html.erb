@@ -13,9 +13,11 @@
 				<fieldset>
 					<legend>Account Info</legend>
 				<%= fields_for :account, resource.account do |a| %>
-					<%= render :partial => 'accounts/form', :locals => { :f => a } %>
+					<%= render :partial => 'customer_form', :locals => { :f => a } %>
 				<% end %>
 				</fieldset>
+				<%= flash[:recaptcha_error] %>
+				<%= recaptcha_tags %>
 				
 				<p><%= f.submit I18n.t(:create), :class => 'btn btn-lg btn-success btn-block' %></p>
 			</div>
@@ -24,7 +26,6 @@
 				<%= I18n.t(:or) %> 
 				<%= link_to I18n.t(:login_as_existing), user_session_path %>
 			</div>
-			<div data-hook="login_extras"></div>
 		</div>
 	</div>
 </div>
