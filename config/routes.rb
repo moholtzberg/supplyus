@@ -8,8 +8,6 @@ Rails.application.routes.draw do
           get :oauth_callback
         end
       end
-      resources :sales_reps
-      resources :equipment_alerts
       resources :accounts do
         member do
           get :statements
@@ -17,7 +15,7 @@ Rails.application.routes.draw do
         resources :contacts
         resources :charges
         resources :credit_cards
-        resources :equipment, :shallow => true do
+        resources :equipment do
           resources :meters, :shallow => true do
             resources :meter_readings, :shallow => true
           end
@@ -32,6 +30,39 @@ Rails.application.routes.draw do
           resources :invoices
         end
       end
+      resources :account_item_prices
+      resources :account_item_price_imports
+      resources :assets
+      resources :brands
+      resources :brand_imports
+      resources :categories
+      resources :charges
+      resources :contacts
+      resources :credit_cards
+      resources :customers
+      resources :equipment
+      resources :equipment_alerts
+      resources :groups do 
+        member do 
+          get :items
+          get :statements
+        end
+      end
+      resources :group_item_prices
+      resources :inventories
+      resources :invoices
+      resources :items do
+        collection do
+          get :search
+          get :actual_price_by_item_number_and_account_id
+        end
+      end
+      resources :item_categories
+      resources :item_imports
+      resources :item_vendor_prices
+      resources :item_vendor_price_imports
+      resources :meters
+      resources :meter_readings
       resources :orders do
         collection do
           get :incomplete
@@ -54,45 +85,9 @@ Rails.application.routes.draw do
         resources :invoices
       end
       resources :order_line_items
-      resources :items do
-        collection do
-          get :search
-          get :actual_price_by_item_number_and_account_id
-        end
-      end
-      resources :assets
-      resources :customers
-      resources :groups do 
-        member do 
-          get :statements
-          get :items
-        end
-      end
-      resources :group_item_prices
-      resources :item_imports
-      resources :account_item_prices
-      resources :account_item_price_imports
-      resources :item_vendor_prices
-      resources :item_categories
-      resources :item_vendor_price_imports
-      resources :meters
-      resources :meter_readings
-      resources :contacts
-      resources :equipment
-      resources :payment_plan_templates
-      resources :payment_plans
       resources :payments
-      resources :charges
-      resources :invoices
-      resources :brands
-      resources :brand_imports
-      resources :categories
-      resources :credit_cards
-      resources :tax_rates
-      resources :users do
-        get :edit_password
-        get :reset_password
-      end
+      resources :payment_plans
+      resources :payment_plan_templates
       resources :purchase_orders do
         member do
           get :line_items_from_order
@@ -103,16 +98,20 @@ Rails.application.routes.draw do
         resources :purchase_order_receipts, :only => [:new, :create]
       end
       resources :purchase_order_line_items
-      resources :inventories
-      resources :vendors
-      resources :settings
       resources :roles do
         collection do
           post :add_role_to_user
           delete :remove_role_from_user
         end
       end
-      get "equipment/delete/:id" => "equipment#delete"
+      resources :sales_reps
+      resources :settings
+      resources :tax_rates
+      resources :users do
+        get :edit_password
+        get :reset_password
+      end
+      resources :vendors
       get "items/delete/:id" => "items#delete"
       get "/" => "home#show"
       get "/check_for_import" => "item_imports#check_for_import"

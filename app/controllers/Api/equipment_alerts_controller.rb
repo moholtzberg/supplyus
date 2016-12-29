@@ -14,13 +14,19 @@ module Api
       @alert.equipment = Equipment.find_by(:serial => params["equipment_serial"])
       @alert.alert_identification = params["alert_idntification"]
       @alert.alert_type = params["alert_type"]
-      @alert.supply_type = params["supply_type"]
-      @alert.supply_color = params["supply_color"]
-      @alert.supply_part_number = params["supply_part_number"]
+      
+      supply_label = params["supply_label"]
+      
+      supply_color = supply_label.scan(/(BLACK|CYAN|MAGENTA|YELLOW)/).flatten[0].downcase
+      supply_type = supply_label.scan(/(TONER|DRUM)/).flatten[0].downcase
+      
+      @alert.supply_type = supply_type
+      @alert.supply_color = supply_color
+      @alert.supply_part_number = params["supply_part_number_#{supply_color}"]
       @alert.supply_level = params["supply_level"]
       @alert.equipment_serial = params["equipment_serial"]
       @alert.equipment_asset_id = params["equipment_asset_id"]
-      @alert.equipmnet_make_model = params["equipmnet_make_model"]
+      @alert.equipment_make_model = params["equipment_make_model"]
       @alert.equipment_mac_address = params["equipment_mac_address"]
       @alert.equipment_ip_address = params["equipment_ip_address"]
       @alert.equipment_location = params["equipment_location"]

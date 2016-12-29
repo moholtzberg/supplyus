@@ -4,7 +4,7 @@
 	<table class="table table-bordered table-condensed table-responsive">
 		
 		<tr>
-			<th class="hidden-xs">ID</th>
+			<th>Alert Type</th>
 			<th>Serial</th>
 			<th>Asset</th>
 			<th>Type</th>
@@ -12,11 +12,12 @@
 			<th>Level</th>
 			<th>Location</th>
 			<th>Supply Part Number</th>
+			<th>Make Model</th>
 		</tr>
 		
 		<% @equipment_alerts.each do |a| %>
 		<tr>
-			<td class="hidden-xs"><%= a.alert_identification %></td>
+			<td><%= a.alert_type %>
 			<td><%= a.equipment_serial %></td>
 			<td><%= a.equipment_asset_id %></td>
 			<td><%= a.supply_type %></td>
@@ -24,6 +25,7 @@
 			<td><%= a.supply_level %></td>
 			<td><%= a.equipment_location %></td>
 			<td><%= a.supply_part_number %></td>
+			<td><%= a.equipment_make_model %></td>
 		</tr>
 		<% end %>
 
