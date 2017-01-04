@@ -72,7 +72,6 @@ class ItemsController < ApplicationController
   def update
     authorize! :update, Item
     @item = Item.find_by(:id => params[:id])
-    puts params[:item][:category_tokens]
     if @item.update_attributes(registration_params)
       flash[:notice] = "\"#{@item.number}\" has been updated"
     else

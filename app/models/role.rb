@@ -50,7 +50,11 @@ class Role < ActiveRecord::Base
           :account_item_price_import,
           :group_item_price, 
           :purchase_order,
-          :purchase_order_line_item
+          :purchase_order_line_item,
+          :equipment,
+          :equipment_alert,
+          :make,
+          :model
   ]
 
 end

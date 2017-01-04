@@ -6,6 +6,10 @@ class CustomersController < ApplicationController
   def index
     authorize! :read, Customer
     @customers = Customer.order(sort_column + " " + sort_direction).includes(:group)
+    if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
+    else
+      @customers = @customers.where(:sales_rep_id => current_user.id)
+    end
     unless params[:term].blank?
       @customers = @customers.lookup(params[:term]) if params[:term].present?
     end
@@ -61,6 +65,12 @@ class CustomersController < ApplicationController
     @customer = Customer.new(account_params)
     if @customer.save
       @customers = Customer.order(sort_column + " " + sort_direction).includes(:group)
+      
+      if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
+      else
+        @customers = @customers.where(:sales_rep_id => current_user.id)
+      end
+      
       @customers = @customers.lookup(@customer.name)
       @customers = @customers.paginate(:page => params[:page], :per_page => 10)
     end
@@ -79,6 +89,12 @@ class CustomersController < ApplicationController
     @customer = Customer.find_by(:id => params[:id])
     if @customer.update_attributes(account_params)
       @customers = Customer.order(sort_column + " " + sort_direction).includes(:group)
+      
+      if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
+      else
+        @customers = @customers.where(:sales_rep_id => current_user.id)
+      end
+      
       @customers = @customers.lookup(@customer.name)
       @customers = @customers.paginate(:page => params[:page], :per_page => 10)
       respond_to do |format|

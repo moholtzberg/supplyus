@@ -34,6 +34,12 @@ class OrdersController < ApplicationController
     #   @orders = @orders.unfulfilled
     # end
     #
+    
+    if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
+    else
+      @orders = @orders.where(:sales_rep_id => current_user.id)
+    end
+    
     if params[:term].present?
       puts "ORDERS - LOOKUP"
       @orders = @orders.lookup(params[:term]) if params[:term].present?
@@ -50,6 +56,12 @@ class OrdersController < ApplicationController
   def shipped
     authorize! :read, Order
     @orders = Order.is_complete.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).shipped
+    
+    if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
+    else
+      @orders = @orders.where(:sales_rep_id => current_user.id)
+    end
+    
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
     end
@@ -61,6 +73,12 @@ class OrdersController < ApplicationController
   def fulfilled
     authorize! :read, Order
     @orders = Order.is_complete.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).fulfilled
+    
+    if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
+    else
+      @orders = @orders.where(:sales_rep_id => current_user.id)
+    end
+    
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
     end
@@ -72,6 +90,12 @@ class OrdersController < ApplicationController
   def unfulfilled
     authorize! :read, Order
     @orders = Order.is_complete.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).unfulfilled
+    
+    if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
+    else
+      @orders = @orders.where(:sales_rep_id => current_user.id)
+    end
+    
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
     end
@@ -83,6 +107,12 @@ class OrdersController < ApplicationController
   def locked
     authorize! :read, Order
     @orders = Order.is_complete.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).is_locked
+    
+    if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
+    else
+      @orders = @orders.where(:sales_rep_id => current_user.id)
+    end
+    
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
     end
@@ -93,6 +123,12 @@ class OrdersController < ApplicationController
   def canceled
     authorize! :read, Order
     @orders = Order.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).is_canceled
+    
+    if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
+    else
+      @orders = @orders.where(:sales_rep_id => current_user.id)
+    end
+    
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
     end
@@ -103,6 +139,12 @@ class OrdersController < ApplicationController
   def incomplete
     authorize! :read, Order
     @orders = Order.is_incomplete.not_canceled.includes(:account, :order_line_items, :order_tax_rate)
+    
+    if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
+    else
+      @orders = @orders.where(:sales_rep_id => current_user.id)
+    end
+    
     unless params[:term].blank?
       @orders = @orders.lookup(params[:term]) if params[:term].present?
     end
@@ -116,7 +158,7 @@ class OrdersController < ApplicationController
       @accounts = Account.find_by(:id => params[:account_id])
       @order = Order.create(:account_id => params[:account_id])
     else
-      @accounts = Account.all
+      @accounts = Customer.all
       @order = Order.create()
     end
     @items = Item.all
@@ -169,7 +211,7 @@ class OrdersController < ApplicationController
   def edit
     authorize! :update, Order
     @order = Order.find(params[:id])
-    @accounts = Account.all.order(:name)
+    @accounts = Customer.all.order(:name)
     @order_line_item = OrderLineItem.new
     @items = Item.all
   end
