@@ -1,18 +1,18 @@
 production:
   solr:
-    hostname: localhost
-    port: 8983
+    hostname: <%= SECRET["WEBSOLR"]["PROD_HOST"] %>
+    port: 80
     log_level: WARNING
-    path: /solr/production
+    path: <%= SECRET["WEBSOLR"]["PROD_PATH"] %>
     # read_timeout: 2
     # open_timeout: 0.5
 
 development:
   solr:
-    hostname: localhost
-    port: 8982
+    hostname: <%= SECRET["WEBSOLR"]["DEV_HOST"] %>
+    port: 80
     log_level: INFO
-    path: /solr/development
+    path: <%= SECRET["WEBSOLR"]["DEV_PATH"] %>
 
 test:
   solr:
