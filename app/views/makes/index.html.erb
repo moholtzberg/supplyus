@@ -1,0 +1,30 @@
+<% content_for :app_location do %>Admin / Makes / Index<% end %>
+<div id="equipment-alerts" class="col-md-12">
+
+	<table class="table table-bordered table-condensed table-responsive">
+		
+		<tr>
+			<th>Name</th>
+			<th>Model Count</th>
+		</tr>
+		
+		<% @makes.each do |a| %>
+		<tr>
+			<td><%= a.name %></td>
+			<td><%= a.machine_models.count %></td>
+		</tr>
+		<% end %>
+
+	</table>
+	
+	<%= will_paginate @makes, renderer: BootstrapPagination::Rails %>
+	
+</div>
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div>

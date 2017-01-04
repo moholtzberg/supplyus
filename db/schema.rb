@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161229180516) do
+ActiveRecord::Schema.define(version: 20170104215754) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -128,8 +128,8 @@ ActiveRecord::Schema.define(version: 20161229180516) do
     t.integer "payment_plan_id"
     t.string  "number"
     t.string  "serial"
-    t.string  "make"
-    t.string  "model"
+    t.integer "make_id"
+    t.integer "model_id"
   end
 
   create_table "equipment_alerts", force: :cascade do |t|

@@ -15,10 +15,10 @@
 		<tr>
 			<th class="hidden-xs">ID</th>
 			<th>Number</th>
-			<th>Name/Description</th>
-			<th>Price</th>
-			<th class="hidden-xs">Active Alerts</th>
+			<th>Make/Model</th>
+			<th>Serial</th>
 			<th class="hidden-xs">Customer Name</th>
+			<th class="hidden-xs">Active Alerts</th>
 			<th>&nbsp;</th>
 		</tr>
 		
@@ -26,7 +26,7 @@
 		<tr>
 			<td class="hidden-xs"><%= a.id %></td>
 			<td><%= a.number %></td>
-			<td><%= a.model %></td>
+			<td><%= a.machine_model.make_name  %> / <%= a.machine_model.number %></td>
 			<td><%= a.serial %></td>
 			<td><%= a.customer.name if a.customer.present? %></td>
 			<td><%= a.alerts.count %></td>
