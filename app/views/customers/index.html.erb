@@ -1,12 +1,12 @@
 <% content_for :app_location do %>Admin / Customers / Index<% end %>
-<div id="accounts" class="col-md-12">
+<div id="customers" class="col-md-12">
 	
 	<table class="table table-bordered table-condensed">
 		
 		<tr>
 			<td colspan="9">
-				<form id="searchBox" accept-charset="UTF-8" action="/admin/accounts" method="get" role="search">
-					<input type="text" class="form-control" id="term" name="term" placeholder="Enter account name" value="<%= params[:term] %>">
+				<form id="searchBox" accept-charset="UTF-8" action="/admin/customers" method="get" role="search">
+					<input type="text" class="form-control" id="term" name="term" placeholder="Enter customer name" value="<%= params[:term] %>">
 				</form>
 			</td>
 		</tr>
@@ -39,8 +39,8 @@
 						<span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-						<li><%= link_to("View", account_path(a.id))  %></li>
-						<li><%= link_to("Edit", edit_account_path(a.id), :remote => true)  %></li>
+						<li><%= link_to("View", customer_path(a.id))  %></li>
+						<li><%= link_to("Edit", edit_customer_path(a.id), :remote => true)  %></li>
 					</ul>
 				</div>
 			</td>
@@ -49,6 +49,7 @@
 
 	</table>
 		
+	<%= will_paginate @customers, renderer: BootstrapPagination::Rails %>
 	
 	<%= link_to new_account_path, :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
 	
