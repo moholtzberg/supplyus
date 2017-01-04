@@ -3,7 +3,7 @@ class EquipmentController < ApplicationController
   
   def index
     authorize! :read, Equipment
-    @equipment = Equipment.order(sort_column + " " + sort_direction).includes(:group)
+    @equipment = Equipment.order(sort_column + " " + sort_direction).includes(:customer)
     unless params[:term].blank?
       @equipment = @equipment.lookup(params[:term]) if params[:term].present?
     end

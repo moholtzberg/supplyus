@@ -12,7 +12,7 @@ module Api
     def create
       @alert = EquipmentAlert.new
       @alert.equipment = Equipment.find_by(:serial => params["equipment_serial"])
-      @alert.alert_identification = params["alert_idntification"]
+      @alert.alert_identification = params["alert_identification"]
       @alert.alert_type = params["alert_type"]
       
       supply_label = params["supply_label"]
