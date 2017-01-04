@@ -4,6 +4,7 @@
 	<table class="table table-bordered table-condensed">
 		
 		<tr>
+			<th>Date</th>
 			<th>Payment Type</th>
 			<th>Payent Amount</th>
 			<th>Applied Amount</th>
@@ -14,11 +15,12 @@
 		
 	<% @payments.each do |pmt| %>
 		<tr>
+			<td><%= pmt.date %></td>
 			<td><%= pmt.payment_type %></td>
 			<td><%= number_to_currency(pmt.amount) %></td>
 			<td><%= number_to_currency(pmt.applied_amount) %></td>
 			<td><%= number_to_currency(pmt.unapplied_amount) %></td>
-			<td><%= pmt.authorization_code %></td>
+			<td><%= pmt.number %></td>
 			<td>
 				<div class="dropdown">
 					<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -35,7 +37,7 @@
 	<% end %>
 	</table>
 
-	<%# will_paginate @payments, renderer: BootstrapPagination::Rails %>
+	<%= will_paginate @payments, renderer: BootstrapPagination::Rails %>
 
 	<%= link_to new_payment_path, :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
 		

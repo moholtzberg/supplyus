@@ -27,5 +27,12 @@ class Payment < ActiveRecord::Base
     amount.to_d - OrderPaymentApplication.where(payment_id: self.id).map(&:applied_amount).sum.to_d
   end
   
+  def number
+    if payment_type == "CheckPayment"
+      "CK# #{check_number}"
+    elsif payment_type == "CreditCardPayment"
+      "AUTH# #{authorization_code}"
+    end
+  end
   
 end

@@ -8,6 +8,7 @@ class PaymentsController < ApplicationController
     unless params[:term].blank?
       @payments = @payments.lookup(params[:term]) if params[:term].present?
     end
+    @payments = @payments.paginate(:page => params[:page], :per_page => 25)
     respond_to do |format|
       format.html
       format.json {render :json => @payments.map(&:number)}
@@ -70,8 +71,7 @@ class PaymentsController < ApplicationController
   end
   
   def sort_column
-    puts Payment.column_names[0]
-    Payment.column_names.include?(params[:sort]) ? params[:sort] : "authorization_code"
+    Payment.column_names.include?(params[:sort]) ? params[:sort] : "id"
   end
   
   def sort_direction
