@@ -41,6 +41,7 @@ Rails.application.routes.draw do
       resources :credit_cards
       resources :customers
       resources :equipment
+      resources :equipment_imports
       resources :equipment_alerts
       resources :groups do 
         member do 

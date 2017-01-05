@@ -26,7 +26,7 @@
 		<tr>
 			<td class="hidden-xs"><%= a.id %></td>
 			<td><%= a.number %></td>
-			<td><%= a.machine_model.make_name  %> / <%= a.machine_model.number %></td>
+			<td><%= a.machine_model.make_name if a.machine_model.present? %> / <%= a.machine_model.number if a.machine_model.present? %></td>
 			<td><%= a.serial %></td>
 			<td><%= a.customer.name if a.customer.present? %></td>
 			<td><%= a.alerts.count %></td>
@@ -52,6 +52,8 @@
 	<%= will_paginate @equipment, renderer: BootstrapPagination::Rails %>
 	
 	<%= link_to new_equipment_path, :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
+	
+	<%= link_to new_equipment_import_path, :class => "btn btn-default pull-right" do %><span class="fa fa-upload"></span><% end %>
 	
 </div>
 
