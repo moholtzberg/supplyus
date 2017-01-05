@@ -17,7 +17,7 @@ class Order < ActiveRecord::Base
   # scope :fulfilled, -> () { where(:id => OrderLineItem.fulfilled.pluck(:order_id).uniq) }
   scope :past_due_90, -> {fulfilled.unpaid.where(due_date: 61.days.ago..90.days.ago) }
   
-  belongs_to :customer
+  belongs_to :customer, :foreign_key => "account_id"
   belongs_to :account
   belongs_to :user
   belongs_to :sales_rep, :class_name => "User"
