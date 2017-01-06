@@ -4,7 +4,7 @@ class EquipmentAlertsController < ApplicationController
   
   def index
     authorize! :read, EquipmentAlert
-    @equipment_alerts = EquipmentAlert.order(sort_column + " " + sort_direction)
+    @equipment_alerts = EquipmentAlert.where(alert_type: "start").order(sort_column + " " + sort_direction)
     @equipment_alerts = @equipment_alerts.paginate(:page => params[:page], :per_page => 25)
   end
   

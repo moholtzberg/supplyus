@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170105193842) do
+ActiveRecord::Schema.define(version: 20170106160752) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -151,6 +151,7 @@ ActiveRecord::Schema.define(version: 20170105193842) do
     t.string   "equipment_location"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "active",                default: true, null: false
   end
 
   create_table "group_item_prices", force: :cascade do |t|

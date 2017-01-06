@@ -1,7 +1,7 @@
 class Equipment < ActiveRecord::Base
   include ApplicationHelper
   
-  before_save :make_record_number
+  # before_save :make_record_number
   
   belongs_to :customer, :foreign_key => "account_id"
   belongs_to :machine_model, :foreign_key => "model_id"
@@ -9,10 +9,15 @@ class Equipment < ActiveRecord::Base
   has_many :meters
   has_many :alerts, :class_name => "EquipmentAlert"
   
+  
   validates :serial, :presence => true, :uniqueness => true
   validates :number, :presence => true, :uniqueness => true
   validates_associated :customer
   validates_associated :machine_model
+  
+  def self.lookup(term)
+    includes(:customer, :machine_model => [:make]).where("lower(equipment.number) like (?) or lower(serial) like (?) or lower(accounts.name) like (?) or lower(models.number) like (?)", "%#{term.downcase}%", "%#{term.downcase}%", "%#{term.downcase}%", "%#{term.downcase}%").references(:customer, :machine_model => [:make])
+  end
   
   def customer_name
     customer.try(:name)

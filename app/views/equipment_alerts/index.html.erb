@@ -13,12 +13,23 @@
 			<th>Location</th>
 			<th>Supply Part Number</th>
 			<th>Make Model</th>
+			<th>Active</th>
 		</tr>
 		
 		<% @equipment_alerts.each do |a| %>
+		
+		<% if a.active == false %>
+			
 		<tr>
+			
 			<td><%= a.alert_type %>
-			<td><%= a.equipment_serial %></td>
+			<td>
+				<% if a.equipment.present? and a.equipment_serial == a.equipment.serial %>
+					<%= link_to "#{a.equipment.serial}", a.equipment %>
+				<% else %>
+					<%= a.equipment_serial %>
+				<% end %>
+			</td>
 			<td><%= a.equipment_asset_id %></td>
 			<td><%= a.supply_type %></td>
 			<td><%= a.supply_color %></td>
@@ -26,7 +37,49 @@
 			<td><%= a.equipment_location %></td>
 			<td><%= a.supply_part_number %></td>
 			<td><%= a.equipment_make_model %></td>
+			<td><a class="btn btn-primary btn-xs" data-toggle="collapse" href="#collapse_<%= a.id %>" aria-expanded="false" aria-controls="collapseExample">Closed</td>
+			</a>
 		</tr>
+	
+			<% EquipmentAlert.where(alert_identification: a.alert_identification, alert_type: "end").each do |b| %>
+			
+			<tr class="collapse" id="collapse_<%= a.id %>">
+				<td><%= b.alert_type %>
+				<td><%= b.equipment_serial %></td>
+				<td><%= b.equipment_asset_id %></td>
+				<td><%= b.supply_type %></td>
+				<td><%= b.supply_color %></td>
+				<td><%= b.supply_level %></td>
+				<td><%= b.equipment_location %></td>
+				<td><%= b.supply_part_number %></td>
+				<td><%= b.equipment_make_model %></td>
+				<td></td>
+			</tr>
+			<% end %>
+		
+		<% else %>
+		
+		<tr>
+			<td><%= a.alert_type %>
+			<td>
+				<% if a.equipment.present? and a.equipment_serial == a.equipment.serial %>
+					<%= link_to "#{a.equipment.serial}", a.equipment %>
+				<% else %>
+					<%= a.equipment_serial %>
+				<% end %>
+			</td>
+			<td><%= a.equipment_asset_id %></td>
+			<td><%= a.supply_type %></td>
+			<td><%= a.supply_color %></td>
+			<td><%= a.supply_level %></td>
+			<td><%= a.equipment_location %></td>
+			<td><%= a.supply_part_number %></td>
+			<td><%= a.equipment_make_model %></td>
+			<td><%= a.active ? "Open" : "Closed" %></td>
+		</tr>
+		
+		<% end %>
+		
 		<% end %>
 
 	</table>

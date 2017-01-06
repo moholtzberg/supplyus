@@ -56,7 +56,7 @@ class Role < ActiveRecord::Base
           :make,
           :machine_model,
           :equipment,
-          :equipment_alerts
+          :equipment_alert
   ]
 
 end
