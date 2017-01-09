@@ -17,7 +17,7 @@ class OrderLineItem < ActiveRecord::Base
   before_create :make_line_number, :on => :create  
   
   validates_uniqueness_of :order_line_number, :scope => :order_id
-  validates_uniqueness_of :item_id, :scope => :order_id, unless: Proc.new {|line| line.item.item_type_id == 99}
+  validates_uniqueness_of :item_id, :scope => :order_id, unless: Proc.new {|line| line.item.item_type_id == 99 || (line.description.match(/ID# Q[0-9]{5}.+/) != nil ) }
   
   validates :item_id, :presence => true
   
@@ -60,7 +60,7 @@ class OrderLineItem < ActiveRecord::Base
   def make_line_number
     if self.order_id.blank?
     else
-      max = [self.order.order_line_items.count, (self.order.order_line_items.last.nil? ? 0 : self.order.order_line_items.last.order_line_number)].max
+      max = [self.order.order_line_items.count, (self.order.order_line_items.last.nil? ? 0 : self.order.order_line_items.last.order_line_number.to_i)].max
       self.order_line_number = max + 1
     end
   end

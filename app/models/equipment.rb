@@ -8,7 +8,8 @@ class Equipment < ActiveRecord::Base
   has_one :contact
   has_many :meters
   has_many :alerts, :class_name => "EquipmentAlert"
-  
+  has_many :machine_model_items, :class_name => "MachineModelItem", :through => :machine_model
+  has_many :equipment_items
   
   validates :serial, :presence => true, :uniqueness => true
   validates :number, :presence => true, :uniqueness => true
@@ -35,4 +36,21 @@ class Equipment < ActiveRecord::Base
     self.machine_model = MachineModel.find_by(:number => number) if number.present?
   end
   
+  def find_supply(type, color)
+    supply = find_supply_for_equipment(type, color)
+    if supply.nil?
+      supply = find_supply_for_machine_model(type, color)
+    end
+    supply
+  end
+  
+  def find_supply_for_equipment(type, color)
+    es = equipment_items.where(:supply_type => type, :supply_color => color).order(:priority).first
+    es unless es.nil?
+  end
+  
+  def find_supply_for_machine_model(type, color)
+    es = machine_model_items.where(:supply_type => type, :supply_color => color).order(:priority).first
+    es unless es.nil?
+  end
 end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170106160752) do
+ActiveRecord::Schema.define(version: 20170109193832) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -152,6 +152,16 @@ ActiveRecord::Schema.define(version: 20170106160752) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "active",                default: true, null: false
+  end
+
+  create_table "equipment_items", force: :cascade do |t|
+    t.integer  "equipment_id"
+    t.integer  "item_id"
+    t.string   "supply_type"
+    t.string   "supply_color"
+    t.integer  "priority"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "group_item_prices", force: :cascade do |t|
@@ -298,6 +308,16 @@ ActiveRecord::Schema.define(version: 20170106160752) do
   add_index "line_item_shipments", ["id"], name: "line_item_shipment_id_ix", using: :btree
   add_index "line_item_shipments", ["order_line_item_id"], name: "line_item_shipment_order_line_item_id_ix", using: :btree
   add_index "line_item_shipments", ["shipment_id"], name: "line_item_shipment_shipment_id_ix", using: :btree
+
+  create_table "machine_model_items", force: :cascade do |t|
+    t.integer  "machine_model_id"
+    t.integer  "item_id"
+    t.string   "supply_type"
+    t.string   "supply_color"
+    t.integer  "priority"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "makes", force: :cascade do |t|
     t.string   "name"

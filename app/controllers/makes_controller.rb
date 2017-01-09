@@ -10,8 +10,6 @@ class MakesController < ApplicationController
     @makes = @makes.paginate(:page => params[:page], :per_page => 10)
   end
   
-  
-  
   private
 
   def make_params
@@ -19,7 +17,10 @@ class MakesController < ApplicationController
   end
 
   def sort_column
-    Make.column_names.include?(params[:sort]) ? params[:sort] : "id"
+    related_columns = Make.reflect_on_all_associations(:belongs_to).map {|a| a.klass.column_names.map {|col| "#{a.klass.table_name}.#{col}"}}
+    columns = Make.column_names.map {|a| "makes.#{a}" }
+    columns.push(related_columns).flatten!.uniq!
+    columns.include?(params[:sort]) ? params[:sort] : "makes.id"
   end
   
   def sort_direction

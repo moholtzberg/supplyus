@@ -13,11 +13,11 @@
 		</tr>
 		
 		<tr>
-			<th class="hidden-xs">ID</th>
-			<th>Number</th>
-			<th>Make/Model</th>
-			<th>Serial</th>
-			<th class="hidden-xs">Customer Name</th>
+			<th class="hidden-xs"><%= sortable "equipment.id", "ID" %></th>
+			<th><%= sortable "equipment.number", "Number" %></th>
+			<th>Make/<%= sortable "models.number", "Model" %></th>
+			<th><%= sortable "serial", "Serial" %></th>
+			<th class="hidden-xs"><%= sortable "customers.name", "Customer Name" %></th>
 			<th class="hidden-xs">Active Alerts</th>
 			<th>&nbsp;</th>
 		</tr>

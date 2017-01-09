@@ -1,9 +1,10 @@
 class EquipmentController < ApplicationController
   layout "admin"
+  helper_method :sort_column, :sort_direction
   
   def index
     authorize! :read, Equipment
-    @equipment = Equipment.order(sort_column + " " + sort_direction).includes(:customer)
+    @equipment = Equipment.order(sort_column + " " + sort_direction).includes(:customer, :machine_model => [:make])
     unless params[:term].blank?
       @equipment = @equipment.lookup(params[:term]) if params[:term].present?
     end
@@ -46,7 +47,10 @@ class EquipmentController < ApplicationController
   end
 
   def sort_column
-    Equipment.column_names.include?(params[:sort]) ? params[:sort] : "equipment.number"
+    related_columns = Equipment.reflect_on_all_associations(:belongs_to).map {|a| a.klass.column_names.map {|col| "#{a.klass.table_name}.#{col}"}}
+    columns = Equipment.column_names.map {|a| "equipment.#{a}" }
+    columns.push(related_columns).flatten!.uniq!
+    columns.include?(params[:sort]) ? params[:sort] : "equipment.id"
   end
   
   def sort_direction

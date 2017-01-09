@@ -1,5 +1,6 @@
 class MachineModelsController < ApplicationController
   layout "admin"
+  helper_method :sort_column, :sort_direction
   
   def index
     # authorize! :read, Model
@@ -19,7 +20,10 @@ class MachineModelsController < ApplicationController
   end
 
   def sort_column
-    MachineModel.column_names.include?(params[:sort]) ? params[:sort] : "number"
+    related_columns = MachineModel.reflect_on_all_associations(:belongs_to).map {|a| a.klass.column_names.map {|col| "#{a.klass.table_name}.#{col}"}}
+    columns = MachineModel.column_names.map {|a| "models.#{a}" }
+    columns.push(related_columns).flatten!.uniq!
+    columns.include?(params[:sort]) ? params[:sort] : "models.id"
   end
   
   def sort_direction

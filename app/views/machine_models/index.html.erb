@@ -1,13 +1,23 @@
 <% content_for :app_location do %>Admin / Models / Index<% end %>
-<div id="equipment-alerts" class="col-md-12">
+<div id="machine_models" class="col-md-12">
 
 	<table class="table table-bordered table-condensed table-responsive">
 		
 		<tr>
-			<th>Make</th>
-			<th>Model Number</th>
+			<td colspan="5">
+				<form id="searchBox" accept-charset="UTF-8" action="/admin/machine_models" method="get" role="search">
+					<input type="text" class="form-control" id="term" name="term" placeholder="Enter Model Number o Make Name" value="<%= params[:term] %>">
+				</form>
+			</td>
+			
+		</tr>
+		
+		<tr>
+			<th><%= sortable "makes.name", "Make" %></th>
+			<th><%= sortable "models.number", "Model Number" %></th>
 			<th>Name</th>
 			<th>Equipment Count</th>
+			<th>&nbsp;</th>
 		</tr>
 		
 		<% @models.each do |a| %>
@@ -16,6 +26,18 @@
 			<td><%= a.number %></td>
 			<td><%= a.name %></td>
 			<td><%= a.equipments.count %></td>
+			<td>
+				<div class="dropdown">
+					<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+						<% a.machine_model_items.each do |app| %>
+						<li><a><%= link_to "#{app.item.number} - #{app.supply_type} / #{app.supply_color}", app.item  %></a></li>
+						<% end %>
+					</ul>
+				</div>
+			</td>
 		</tr>
 		<% end %>
 
