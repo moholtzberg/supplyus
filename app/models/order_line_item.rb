@@ -17,12 +17,21 @@ class OrderLineItem < ActiveRecord::Base
   before_create :make_line_number, :on => :create  
   
   validates_uniqueness_of :order_line_number, :scope => :order_id
-  validates_uniqueness_of :item_id, :scope => :order_id, unless: Proc.new {|line| line.item.item_type_id == 99 || (line.description.match(/ID# Q[0-9]{5}.+/) != nil ) }
+  validates_uniqueness_of :item_id, :scope => :order_id, unless: Proc.new {|line| line.item.item_type_id == 99 || (line.description.match(/ID# Q[0-9]{5}.+/) != nil if line.description.present?)}
   
   validates :item_id, :presence => true
   
   after_commit :update_shipped_fulfilled, :if => :persisted?
   after_commit :flush_cache
+  
+  def line_description_not_same_as_other
+    approve = true
+    other_lines = OrderLineItem.where(order_id: self.order_id).where.not(id: self.id)
+    puts other_lines
+    other_lines.map {|a| approve = (a.description.match(/self.description/) != nil) ? true : false }
+    puts approve
+    approve
+  end
   
   def create_inventory_transactions
     if InventoryTransaction.find_by(:inv_transaction_id => id, :inv_transaction_type => "OrderLineItem")
