@@ -1,6 +1,6 @@
 require 'rufus/scheduler'
 
-if "#{SECRET['RUN_JOBS']}" == "true"
+if "#{SECRET['RUN_JOBS']}".present? and "#{SECRET['RUN_JOBS']}" == "true"
 
   scheduler = Rufus::Scheduler.new
 
