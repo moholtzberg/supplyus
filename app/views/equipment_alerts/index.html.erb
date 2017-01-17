@@ -14,6 +14,7 @@
 			<th>Supply Part Number</th>
 			<th>Make Model</th>
 			<th>Active</th>
+			<th>Linked Order</th>
 		</tr>
 		
 		<% @equipment_alerts.each do |a| %>
@@ -37,8 +38,14 @@
 			<td><%= a.equipment_location %></td>
 			<td><%= a.supply_part_number %></td>
 			<td><%= a.equipment_make_model %></td>
-			<td><a class="btn btn-primary btn-xs" data-toggle="collapse" href="#collapse_<%= a.id %>" aria-expanded="false" aria-controls="collapseExample">Closed</td>
-			</a>
+			<td>
+				<a class="btn btn-primary btn-xs" data-toggle="collapse" href="#collapse_<%= a.id %>" aria-expanded="false" aria-controls="collapseExample">Closed</a>
+			</td>
+			<td>
+				<% unless a.order_line_item_id.nil? %>
+				<%= link_to("#{Order.find(a.order_line_item.order_id).number}", Order.find(a.order_line_item.order_id)) %>
+				<% end %>
+			</td>
 		</tr>
 	
 			<% EquipmentAlert.where(alert_identification: a.alert_identification, alert_type: "end").each do |b| %>
