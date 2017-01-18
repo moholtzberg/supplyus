@@ -78,7 +78,7 @@ if "#{SECRET['RUN_JOBS']}".present? and "#{SECRET['RUN_JOBS']}" == "true"
     puts "********* END *********"
   end
   
-  scheduler.cron '00 16:30 * * *' do
+  scheduler.cron '30 16 * * *' do
     puts "********* Completeting Incomplete Toner Orders from Alerts *********"
     orders = Order.incomplete.where(:notes => "Auto Supply Order")
     orders.each do |ord|
