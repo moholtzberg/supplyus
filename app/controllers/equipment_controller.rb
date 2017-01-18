@@ -20,6 +20,9 @@ class EquipmentController < ApplicationController
   def show
     authorize! :read, Equipment
     @equipment = Equipment.find(params[:id])
+    line_items = EquipmentAlert.where(equipment_id: @equipment.id).map(&:order_line_item_id)
+    orders = OrderLineItem.where(id: line_items).map(&:order_id)
+    @orders = Order.where(id: orders)
   end
   
   def create
