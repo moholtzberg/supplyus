@@ -43,11 +43,11 @@ if "#{SECRET['RUN_JOBS']}".present? and "#{SECRET['RUN_JOBS']}" == "true"
         equipment = alert.equipment
         customer = equipment.customer
         order = Order.where(:locked => nil, :completed_at => nil, :customer => equipment.account_id).first
-        
+
         if order.nil?
           order = Order.new(:customer => equipment.customer)
         end
-        
+
         order.notes = "Auto Supply Order"
         order.sales_rep_id = customer.sales_rep_id
         order.ship_to_address_1 = customer.ship_to_address_1
@@ -78,11 +78,12 @@ if "#{SECRET['RUN_JOBS']}".present? and "#{SECRET['RUN_JOBS']}" == "true"
     puts "********* END *********"
   end
   
-  scheduler.cron '30 16 * * *' do
+  # scheduler.cron '30 16 * * *' do
+  scheduler.every '90m' do
     puts "********* Completeting Incomplete Toner Orders from Alerts *********"
     orders = Order.incomplete.where(:notes => "Auto Supply Order")
     orders.each do |ord|
-      order.update_attributes(:completed_at => DateTime.now)
+      ord.update_attributes(:completed_at => DateTime.now)
     end
     puts "********* END *********"
   end
