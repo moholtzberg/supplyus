@@ -37,6 +37,12 @@
 	
 	<%= link_to new_setting_path, :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
 	
+	<table class="table">
+		<tr>
+			<td>Run Jobs</td>
+			<td><%= SECRET["RUN_JOBS"] %></td>
+		</tr>
+	</table>
 </div>
 
 <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
