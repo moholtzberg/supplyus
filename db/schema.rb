@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170109193832) do
+ActiveRecord::Schema.define(version: 20170122115550) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -290,6 +290,13 @@ ActiveRecord::Schema.define(version: 20170109193832) do
   end
 
   add_index "items", ["id"], name: "item_id_ix", using: :btree
+
+  create_table "jobs", force: :cascade do |t|
+    t.string   "job_name"
+    t.string   "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "line_item_fulfillments", force: :cascade do |t|
     t.integer  "order_line_item_id"

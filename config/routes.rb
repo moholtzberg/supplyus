@@ -62,6 +62,7 @@ Rails.application.routes.draw do
       resources :item_imports
       resources :item_vendor_prices
       resources :item_vendor_price_imports
+      resources :jobs
       resources :makes
       resources :machine_models
       resources :meters
