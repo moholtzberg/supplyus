@@ -8,17 +8,14 @@ if "#{SECRET['RUN_JOBS']}".present? and "#{SECRET['RUN_JOBS']}" == "true"
   # scheduler.every '1m' do
   # scheduler.every '1h' do
   # scheduler.every '1d' do
-  # scheduler.every '1s' do
   
   # scheduler.every '30m' do
-    # puts "--- FROM THE RUFUS"
     # puts "--- #{PaymentPlan.starts_today.count}"
     # puts "--- #{PaymentPlan.bill_date_passed.count}"
     # PaymentPlan.bill_date_passed.each {|p| puts "----> #{p.next_bill_date}"}
   # end
   
   # scheduler.every '1d' do
-  #   # puts 'Hello... Rubu'
   #   last_updated_account_id = Setting.find_or_create_by(:key => "last_updated_account_id")
   #   start_id = last_updated_account_id.value.to_i
   #   end_id = start_id + 10
@@ -45,11 +42,11 @@ if "#{SECRET['RUN_JOBS']}".present? and "#{SECRET['RUN_JOBS']}" == "true"
         equipment = alert.equipment
         customer = equipment.customer
         order = Order.where(:locked => nil, :completed_at => nil, :customer => equipment.account_id).first
-
+        
         if order.nil?
           order = Order.new(:customer => equipment.customer)
         end
-
+  
         order.notes = "Auto Supply Order"
         order.sales_rep_id = customer.sales_rep_id
         order.ship_to_account_name = customer.name
@@ -58,7 +55,7 @@ if "#{SECRET['RUN_JOBS']}".present? and "#{SECRET['RUN_JOBS']}" == "true"
         order.ship_to_city = customer.ship_to_city
         order.ship_to_state = customer.ship_to_state
         order.ship_to_zip = customer.ship_to_zip
-        order.email = customer.ship_to_email
+        order.email = customer.email
         order.bill_to_account_name = customer.name
         order.bill_to_address_1 = customer.bill_to_address_1
         order.bill_to_address_2 = customer.bill_to_address_2

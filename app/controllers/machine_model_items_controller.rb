@@ -70,6 +70,6 @@ class MachineModelItemsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def machine_model_item_params
-      params[:machine_model_item]
+      params.require(:machine_model_item).permit(:machine_model_number, :item_number, :supply_type, :supply_color, :priority)
     end
 end
