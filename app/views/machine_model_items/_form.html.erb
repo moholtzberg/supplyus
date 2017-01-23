@@ -1,0 +1,42 @@
+<fieldset>
+	
+	<div id="group" class="col-xs-6">
+		<%= f.label :machine_model_number, :class => "control-label" %>
+		<%= f.text_field :machine_model_number, :class => "form-control", data: {autocomplete_source: machine_models_path} %>
+	</div>
+	
+	<div id="group" class="col-xs-6">
+		<%= f.label :item_number, :class => "control-label" %>
+		<%= f.text_field :item_number, :class => "form-control", data: {autocomplete_source: search_items_path} %>
+	</div>
+	
+	<script>
+	jQuery(function() {
+		return $('#machine_model_item_machine_model_number').autocomplete({
+			source: $('#machine_model_item_machine_model_number').data('autocomplete-source')
+		})
+	});
+
+	jQuery(function() {
+		return $('#machine_model_item_item_number').autocomplete({
+			source: $('#machine_model_item_item_number').data('autocomplete-source')
+		})
+	});
+	</script>
+	
+	<div id="group" class="col-xs-4">
+		<%= f.label :supply_type, :class => "control-label" %>
+		<%= f.text_field :supply_type, :class => "form-control" %>
+	</div>
+	
+	<div id="group" class="col-xs-4">
+		<%= f.label :supply_color, :class => "control-label" %>
+		<%= f.text_field :supply_color, :class => "form-control" %>
+	</div>
+	
+	<div id="group" class="col-xs-4">
+		<%= f.label :priority, :class => "control-label" %>
+		<%= f.text_field :priority, :class => "form-control" %>
+	</div>
+
+</fieldset>

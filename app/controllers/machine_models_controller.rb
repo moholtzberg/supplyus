@@ -1,6 +1,7 @@
 class MachineModelsController < ApplicationController
   layout "admin"
   helper_method :sort_column, :sort_direction
+  respond_to :html, :json
   
   def index
     # authorize! :read, Model
@@ -9,6 +10,10 @@ class MachineModelsController < ApplicationController
       @models = @models.lookup(params[:term]) if params[:term].present?
     end
     @models = @models.paginate(:page => params[:page], :per_page => 20)
+    respond_to do |format|
+      format.html
+      format.json {render :json => @models.map(&:number)}
+    end
   end
   
   

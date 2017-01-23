@@ -65,6 +65,7 @@ Rails.application.routes.draw do
       resources :jobs
       resources :makes
       resources :machine_models
+      resources :machine_model_items
       resources :meters
       resources :meter_readings
       resources :orders do
