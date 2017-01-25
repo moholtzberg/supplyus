@@ -82,7 +82,7 @@ if "#{SECRET['RUN_JOBS']}".present? and "#{SECRET['RUN_JOBS']}" == "true"
           line.item_id = supply.item_id
           line.quantity = 1
           line.description = "ID# #{equipment.number} / #{equipment.location}"
-          line.price = line.item.get_lowest_price(equipment.account_id)
+          line.price = line.item.actual_price(equipment.account_id)
           
           if line.save
             alert.update_attributes(:active => false, :order_line_item_id => line.id)
