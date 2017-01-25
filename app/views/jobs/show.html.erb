@@ -1,4 +1,12 @@
 <p id="notice"><%= notice %></p>
 
+<% alert_ids = @job.notes.scan(/alert_id:\W\d+/).map {|a| a.scan(/\d+/)} %>
+
+<% alerts = EquipmentAlert.where(id: alert_ids).includes(:equipment) %>
+
+<% alerts.each do |b| %>
+	<li><%= b.equipment_serial %> / <%= b.equipment.number if b.equipment %> / <%= b.equipment_make_model %> / <%= b.equipment_asset_id %> / <%= b.equipment_location %> / <%= b.equipment_group_name%></li>
+<% end %>
+
 <%= link_to 'Edit', edit_job_path(@job) %> |
 <%= link_to 'Back', jobs_path %>

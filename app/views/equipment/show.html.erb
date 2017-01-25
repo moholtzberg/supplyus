@@ -140,6 +140,7 @@
 		
 			<table class="table table-bordered table-condensed table-striped">
 				<tr>
+					<th>Time Ago</th>
 					<th>Alert Type</th>
 					<th>Asset</th>
 					<th>Type</th>
@@ -154,7 +155,7 @@
 				<% if a.active == false %>
 			
 				<tr>
-			
+					<td><%= time_ago_in_words(a.created_at) %> ago</td>
 					<td><%= a.alert_type %>
 					<td><%= a.equipment_asset_id %></td>
 					<td><%= a.supply_type %></td>
@@ -174,6 +175,7 @@
 					<% EquipmentAlert.where(alert_identification: a.alert_identification, alert_type: "end").each do |b| %>
 			
 					<tr class="collapse" id="collapse_<%= a.id %>">
+						<td><%= time_ago_in_words(b.created_at) %> ago</td>
 						<td><%= b.alert_type %>
 						<td><%= b.equipment_asset_id %></td>
 						<td><%= b.supply_type %></td>
@@ -187,6 +189,7 @@
 				<% else %>
 		
 				<tr>
+					<td><%= time_ago_in_words(a.created_at) %> ago</td>
 					<td><%= a.alert_type %>
 					<td><%= a.equipment_asset_id %></td>
 					<td><%= a.supply_type %></td>
