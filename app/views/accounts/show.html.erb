@@ -189,14 +189,14 @@
 								<li><%= link_to("Edit", edit_order_path(it.id)) %></li>
 								<li><%= link_to("Lock", lock_order_path(it.id), :remote => true, :method => "put") %></li>
 								<% else %>
-								
+								<li><%= link_to("Resend Order Confirmation", resend_order_order_path(:id => it.id), :remote => true, :method => "put") %></li>
+								<% else %>
 									<% unless it.shipped %>
-										<li><%= link_to("Ship", new_order_shipment_path(it.id))  %></li>
+									<li><%= link_to("Ship", new_order_shipment_path(it.id))  %></li>
 									<% end %>
+									
 									<% unless it.fulfilled %>
 									<li><%= link_to("Fulfill", new_order_invoice_path(it.id))  %></li>
-									<li><%= link_to("Resend Order Confirmation", resend_order_order_path(:id => it.id), :remote => true, :method => "put") %></li>
-									<% else %>
 									<li><%= link_to("Resend Invoice Notification", resend_invoice_order_path(:id => it.id), :remote => true, :method => "put") %></li>
 									<% end %>
 								<% end %>
