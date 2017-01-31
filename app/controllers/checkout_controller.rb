@@ -130,7 +130,7 @@ class CheckoutController < ApplicationController
       if c.complete
         cookies.permanent.signed[:cart_id] = nil
         puts "GOING INTO THE MAILER"
-        OrderMailer.order_confirmation(c.id).deliver_later
+        OrderMailer.order_confirmation(c.id, :bcc => "sales@247officesupply.com").deliver_later
         redirect_to my_account_path
       end
       

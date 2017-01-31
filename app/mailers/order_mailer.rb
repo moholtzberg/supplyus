@@ -1,19 +1,19 @@
 class OrderMailer < ApplicationMailer
   
-  default from: "24\/7 Office Supply <orders@247officesupply.com>"
-  
   def order_confirmation(order_id, options = {})
     
     @order = Order.find_by(:id => order_id)
     
     defaults = {
+      :from => "24\/7 Office Supply <orders@247officesupply.com>"
       :to => @order.email
     }
     options = defaults.merge(options)
     
     mail(
          :to => options[:to],
-         :bcc => "sales@247officesupply.com",
+         :cc => options[:cc],
+         :bcc => options[:bcc],
          :subject => "Order Notification #{@order.number}", 
          :text => render_to_string("order_mailer/order_confirmation").to_str
     )
@@ -26,6 +26,7 @@ class OrderMailer < ApplicationMailer
     bill_to_address = (@order.bill_to_email.nil? || (@order.bill_to_email == @order.email) ) ? nil : @order.bill_to_email
     
     defaults = {
+      :from => "24\/7 Office Supply <orders@247officesupply.com>"
       :to => @order.email,
       :cc => bill_to_address
     }
@@ -40,7 +41,7 @@ class OrderMailer < ApplicationMailer
     mail(
          :to => options[:to],
          :cc => options[:cc],
-         :bcc => "sales@247officesupply.com",
+         :bcc => options[:bcc],
          :subject => "Invoice Notification #{@order.number}", 
          :text => render_to_string("order_mailer/invoice_notification").to_str
     )

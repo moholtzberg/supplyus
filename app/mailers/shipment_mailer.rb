@@ -1,16 +1,22 @@
 class ShipmentMailer < ApplicationMailer
   
-  default from: "24\/7 Office Supply <orders@247officesupply.com>"
-  
-  def shipment_confirmation(shipment_id)
+  def shipment_confirmation(shipment_id, options = {})
     
     @shipment = Shipment.find_by(:id => shipment_id)
     
+    defaults = {
+      :from => "24\/7 Office Supply <orders@247officesupply.com>"
+      :to => @shipment.orders.first.email
+    }
+    
+    options = defaults.merge(options)
+    
     mail(
-         :to => @shipment.orders.first.email,
-         :bcc => "sales@247officesupply.com",
-         :subject => "Shipment Notification #{@shipment.orders.first.number}", 
-         :text => render_to_string("shipment_mailer/shipment_confirmation").to_str
+      :to => options[:to],
+      :cc => options[:cc],
+      :bcc => options[:bcc],
+      :subject => "Shipment Notification #{@shipment.orders.first.number}", 
+      :text => render_to_string("shipment_mailer/shipment_confirmation").to_str
     )
   end
   
