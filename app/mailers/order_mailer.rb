@@ -5,7 +5,7 @@ class OrderMailer < ApplicationMailer
     @order = Order.find_by(:id => order_id)
     
     defaults = {
-      :from => "24\/7 Office Supply <orders@247officesupply.com>"
+      :from => "24\/7 Office Supply <orders@247officesupply.com>",
       :to => @order.email
     }
     options = defaults.merge(options)
@@ -26,8 +26,8 @@ class OrderMailer < ApplicationMailer
     bill_to_address = (@order.bill_to_email.nil? || (@order.bill_to_email == @order.email) ) ? nil : @order.bill_to_email
     
     defaults = {
-      :from => "24\/7 Office Supply <orders@247officesupply.com>"
-      :to => @order.email
+      :from => "24\/7 Office Supply <orders@247officesupply.com>",
+      :to => @order.email,
       :cc => bill_to_address
     }
     options = defaults.merge(options)
