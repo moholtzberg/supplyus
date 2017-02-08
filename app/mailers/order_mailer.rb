@@ -27,7 +27,7 @@ class OrderMailer < ApplicationMailer
     
     defaults = {
       :from => "24\/7 Office Supply <orders@247officesupply.com>"
-      :to => @order.email,
+      :to => @order.email
       :cc => bill_to_address
     }
     options = defaults.merge(options)
