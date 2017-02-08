@@ -5,7 +5,7 @@ class ShipmentMailer < ApplicationMailer
     @shipment = Shipment.find_by(:id => shipment_id)
     
     defaults = {
-      :from => "24\/7 Office Supply <orders@247officesupply.com>"
+      :from => "24\/7 Office Supply <orders@247officesupply.com>",
       :to => @shipment.orders.first.email
     }
     
