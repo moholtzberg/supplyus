@@ -59,8 +59,9 @@ class PaymentsController < ApplicationController
     end
     
     if payment.save
-      @payments = Payment.order(sort_column + " " + sort_direction).includes(:order_payment_applications => [:order])
+      @payments = Payment.order(sort_column + " desc").includes(:order_payment_applications => [:order])
       flash[:notice] = "Payment saved successfully!"
+      @payments = @payments.paginate(:page => params[:page], :per_page => 25)
     end
   end
   
