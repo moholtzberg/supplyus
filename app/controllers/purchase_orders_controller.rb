@@ -43,7 +43,9 @@ class PurchaseOrdersController < ApplicationController
   
   def line_items_from_order
     @purchase_order = PurchaseOrder.find(params[:id])
-    @order_line_items = OrderLineItem.where(order_id: params[:order_id]).group("order_line_items.id").having("SUM(quantity_shipped) <> SUM(COALESCE(quantity,0) - COALESCE(quantity_canceled,0))")
+    @purchase_order.update_columns(:notes => Order.find(params[:order_id]).number)
+    @order_line_items = OrderLineItem.where(order_id: params[:order_id]).group("order_line_items.id").having("SUM(COALESCE(quantity_shipped,0)) > 0")
+    puts @order_line_items.inspect
     @order_line_items.each do |a|
       qty_for = PurchaseOrderLineItem.where(:order_line_item_id => a.id).map(&:quantity).sum
       if qty_for < a.actual_quantity

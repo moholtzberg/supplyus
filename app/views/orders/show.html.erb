@@ -95,7 +95,9 @@
 					</button>
 					<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
 						<% li.purchase_orders.each do |app| %>
-						<li><a><%= link_to "#{app.number}", app %></a></li>
+							<% if app.purchase_order_line_items.where(item_id: li.item_id).count > 0  %>
+						<li><a><%= link_to "#{app.number} x #{app.purchase_order_line_items.where(item_id: li.item_id).first.quantity}", app %></a></li>
+							<% end %>
 						<% end %>
 					</ul>
 				</div>

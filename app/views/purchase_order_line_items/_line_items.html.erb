@@ -35,11 +35,19 @@
 			</td>
 			
 			<td class="quantity_canceled">
-				<%= OrderLineItem.where(order_id: Order.find_by(number: @purchase_order.notes.to_s).id, item_id: ol.item_id).first.id unless OrderLineItem.where(order_id: Order.find_by(number: @purchase_order.notes.to_s).id, item_id: ol.item_id).first.blank? %>
+				<%= best_in_place ol, :quantity_received %>
 			</td>
 			
 			<td class="linked_order_line_item">
 				<%= best_in_place ol, :order_line_item_id  %>
+				<% a = Order.find_by(number: @purchase_order.notes)%>
+				<% if a.nil?%>
+				<% a = Order.find_by(id: @purchase_order.notes) %>
+				<% end %>
+				<% if a.present? %>
+				<% x = OrderLineItem.find_by(order_id: a.id, item_id: ol.item_id) %>
+				<%= "#{x.id} : #{x.item.number} : #{x.actual_quantity}" unless x.blank? %>
+				<% end %>
 			</td>
 			
 			<td lass="price">

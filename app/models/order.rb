@@ -154,9 +154,14 @@ class Order < ActiveRecord::Base
   end
   
   def self.not_linked_to_po
+    # ids = Order
+    # .includes(:order_line_items => [:purchase_order_line_items]).map {|a| if a.not_linked_to_po == true then a.id end}
+    # where(id: ids)
     ids = Order
-    .includes(:order_line_items => [:purchase_order_line_items]).map {|a| if a.not_linked_to_po == true then a.id end}
-    where(id: ids)
+    .joins(:order_line_items => [:purchase_order_line_items])
+    .group("orders.id")
+    .having("SUM(COALESCE(purchase_order_line_items.quantity,0)) = SUM(COALESCE(order_line_items.quantity,0) - COALESCE(order_line_items.quantity_canceled,0))").ids
+    where.not(id: ids).order("number")
   end
   
   # def self.lookup(q)

@@ -1,6 +1,7 @@
 <td><%= order.number %></td>
 <td><%= order.vendor.name unless order.vendor.blank? %>&nbsp;<% if order.vendor != nil and order.vendor.group_id != nil %><small>(<%= order.vendor.group.name %>)</small><% end %></td>
 <td><%= number_to_currency(order.total) %><%# number_to_currency(order.sum) unless order.sum.nil? %></td>
+<td><%= order.notes %></td>
 <td class="hidden-xs"><%= number_to_currency(order.amount_received) %></td>
 <td class="text-center hidden-xs"><%= order.completed_at.strftime("%m/%d/%y %I:%M %p") unless order.completed_at.nil? %></td>
 <td class="locked hidden-xs"><%= order.locked ? "Yes" : "No" %></td>

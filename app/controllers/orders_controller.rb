@@ -33,7 +33,6 @@ class OrdersController < ApplicationController
     #   puts "ORDERS - UNFULFILLED"
     #   @orders = @orders.unfulfilled
     # end
-    #
     
     if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
     else
@@ -49,7 +48,7 @@ class OrdersController < ApplicationController
     @orders = @orders.paginate(:page => params[:page], :per_page => 20)
     respond_to do |format|
       format.html
-      format.json { render :json => @orders }
+      format.json { render :json => @orders.map(&:number) }
     end
   end
   
@@ -252,6 +251,10 @@ class OrdersController < ApplicationController
       end
     end
     @unpaid_orders.includes(:payments, :accounts)
+  end
+  
+  def returnable_items
+    @returnable_items = Order.where(number: params[:order_number]).first
   end
 
   private

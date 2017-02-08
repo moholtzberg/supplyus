@@ -22,6 +22,7 @@ class PurchaseOrderLineItemsController < ApplicationController
   def update
     authorize! :update, PurchaseOrderLineItem
     @line_item = PurchaseOrderLineItem.find_by(:id => params[:id])
+    puts purchase_order_line_item_params.inspect
     if @line_item.update_attributes(purchase_order_line_item_params)
       flash[:notice] = "\"#{@line_item.purchase_order_line_number}\" has been updated"
     else
