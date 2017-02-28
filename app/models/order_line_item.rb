@@ -12,7 +12,7 @@ class OrderLineItem < ActiveRecord::Base
   has_many :purchase_orders, :through => :purchase_order_line_items
   
   scope :by_item, -> (item) { where(:item_id => item) }
-  scope :active,  -> () { where(:quantity => 1..Float::INFINITY) }
+  scope :active,  -> () { where("order_line_items.quantity <> 0") }
   
   before_create :make_line_number, :on => :create  
   
