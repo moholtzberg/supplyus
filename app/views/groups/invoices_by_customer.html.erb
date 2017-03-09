@@ -1,0 +1,36 @@
+<% content_for :app_location do %>Admin / Groups / Items By Customer<% end %>
+<div id="items" class="col-md-12">
+	
+	<% @group.accounts.each do |customer| %>
+		<table class="table table-bordered table-condensed">
+			<tr>
+				<th colspan="5" class="text-center bg-info"><%= customer.name %></th>
+			</tr>
+			<tr>
+				<th>Index</th>
+				<th>Order Number</th>
+				<th>Order Date</th>
+				<th>Order Total</th>
+				<th>Order Balance Due</th>
+			</tr>
+		
+			<% orders = Order.where(account_id: customer.id).is_complete.order(:completed_at) %>
+			<% start = 0 %>
+			
+			<% orders.each do |i|%>
+				
+				<% if i.fulfilled %>
+				<% start = start + 1  %>
+				<tr>
+					<td><%= start %></td>
+					<td><%= i.number %></td>
+					<td><%= i.completed_at.to_date.strftime("%m/%d/%Y") %></td>
+					<td><%= number_to_currency(i.total) %></td>
+					<td><%= number_to_currency(i.balance_due) %></td>
+				</tr>
+				<% end %>
+			<% end %>
+		</table>
+	<% end %>
+
+</div>

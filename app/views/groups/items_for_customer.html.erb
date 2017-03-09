@@ -1,0 +1,32 @@
+<% content_for :app_location do %>Admin / Groups / Items By Customer<% end %>
+<div id="items" class="col-md-12">
+	
+	
+		<table class="table table-bordered table-condensed">
+			<tr>
+				<th>Image</th>
+				<th>Item</th>
+				
+				<th>Item Number</th>
+				<th>Price</th>
+			</tr>
+		
+			<% order_ids = Order.where(account_id: @ids).ids %>
+			
+			<% @items.limit(100).each do |i|%>
+				<% if i.qty > 0 %>
+				<tr>
+					<td>
+						<%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/#{i.item.default_image_path}", :class => "media-object", :height => "64", :width => "64" %>
+					</td>
+					<td><%= link_to "#{i.item.number}", "#{i.item.category.slug unless i.item.category.nil?}/#{i.item.slug}" %></td>
+					
+					<td><%= i.item.name %></td>
+					<td><%= number_to_currency(i.item.cost_price.to_f * 1.2) %></td>
+				</tr>
+				<% end %>
+			<% end %>
+		</table>
+	
+
+</div>

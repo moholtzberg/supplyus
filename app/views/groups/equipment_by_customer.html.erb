@@ -1,0 +1,37 @@
+<% content_for :app_location do %>Admin / Groups / Equipment By Customer<% end %>
+<div id="items" class="col-md-12">
+	
+	<% @group.accounts.each do |customer| %>
+		<table class="table table-bordered table-condensed">
+			<tr>
+				<th colspan="5" class="text-center bg-info"><%= customer.name %></th>
+			</tr>
+			<tr>
+				<th>Index</th>
+				<th>Number</th>
+				<th>Serial Number</th>
+				<th>Make</th>
+				<th>Model</th>
+			</tr>
+		
+			<% start = 0 %>
+			
+			<% equip = Equipment.where(account_id: customer.id).includes(:machine_model => [:make])%>
+			
+			<% equip.each do |i|%>
+	
+
+				<% start = start + 1  %>
+				<tr>
+					<td><%= start %></td>
+					<td><%= i.number %></td>
+					<td><%= i.serial %></td>
+					<td><%= i.machine_model.make.name %></td>
+					<td><%= i.machine_model.number %>
+					</td>
+				</tr>
+				<% end %>
+		</table>
+	<% end %>
+
+</div>
