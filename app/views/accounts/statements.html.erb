@@ -3,7 +3,7 @@
 	<table class="table table-bordered table-condensed thead">
 		<tr class="bg-primary">
 			<th width="50%">Remit To</th>
-			<th width="50%">Billing Address </th>
+			<th width="50%">Group</th>
 		</tr>
 		<tr>
 			<td>
@@ -15,11 +15,6 @@
 
 			<td>
 				<% unless @account.name.blank? %><%= @account.name %><br/><% end %>
-				<%# unless @account.bill_to_attention.blank? %><%# @account.bill_to_attention %><br/><%# end %>
-				<% unless @account.bill_address_1.blank? %><%= @account.bill_address_1 %><br/><% end %>
-				<% unless @account.bill_address_2.blank? %><%= @account.bill_address_2 %><br/><% end %>
-				<%= @account.bill_city unless @account.bill_city.blank? %>, <%= @account.bill_state unless @account.bill_state.blank? %> <%= @account.bill_zip unless @account.bill_zip.blank? %><br/>
-				<%= @account.phone unless @account.phone.blank? %>
 			</td>
 		</tr>
 	</table>
@@ -46,13 +41,14 @@
 			<th>Pst Due Days</th>
 		</tr>
 		<% total = 0 %>
-		<% @account.orders.includes(:order_line_items).by_date_range(@from, @to).unpaid.each do |o| %>
+		<% orders = @orders %>
+		<% orders.by_date_range(@from, @to).each do |o| %>
 			<% if o.fulfilled %>
 			<tr>
 				<% total += o.balance_due %>
 				<td><%= o.account.name %></td>
-				<td><%= o.bill_to_account_name %></td>
-				<td><%= o.due_date.strftime("%m/%d/%Y") unless o.due_date.blank? %></td>
+				<td><%= o.account.user.email unless (o.account.nil? || o.account.user.nil?) %></td>
+				<td><%= o.due_date.in_time_zone.strftime("%m/%d/%Y") unless o.due_date.blank? %></td>
 				<td><%= o.number %></td>
 				<td><%= number_to_currency(o.total) %></td>
 				<td><%= number_to_currency(o.balance_due) %></td>
@@ -79,19 +75,19 @@
 		<tr>
 			
 			<td>
-				<%= number_to_currency(@account.orders.includes(:order_line_items).past_due_up_to_30.map(&:balance_due).sum) %>
+				<%= number_to_currency(orders.past_due_up_to_30.map(&:balance_due).sum) %>
 			</td>
 			
 			<td>
-				<%= number_to_currency(@account.orders.includes(:order_line_items).past_due_up_to_60.map(&:balance_due).sum) %>
+				<%= number_to_currency(orders.past_due_up_to_60.map(&:balance_due).sum) %>
 			</td>
 			
 			<td>
-				<%= number_to_currency(@account.orders.includes(:order_line_items).past_due_up_to_90.map(&:balance_due).sum) %>
+				<%= number_to_currency(orders.past_due_up_to_90.map(&:balance_due).sum) %>
 			</td>
 			
 			<td>
-				<%= number_to_currency(@account.orders.includes(:order_line_items).past_due_over_90.map(&:balance_due).sum) %>
+				<%= number_to_currency(orders.past_due_over_90.map(&:balance_due).sum) %>
 			</td>
 			
 		</tr>
