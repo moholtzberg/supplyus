@@ -45,7 +45,11 @@ Rails.application.routes.draw do
       resources :equipment_alerts
       resources :groups do 
         member do 
+          get :equipment_by_customer
+          get :invoices_by_customer
           get :items
+          get :items_by_customer
+          get :items_for_customer
           get :statements
         end
       end
@@ -77,6 +81,7 @@ Rails.application.routes.draw do
           get :unfulfilled
           get :canceled
           get :unpaid
+          get :returnable_items
         end
         member do
           put :lock
@@ -103,6 +108,10 @@ Rails.application.routes.draw do
         resources :purchase_order_receipts, :only => [:new, :create]
       end
       resources :purchase_order_line_items
+      resource :reports, :only => :index do
+        get :sales_tax_report
+      end
+      resources :return_authorizations
       resources :roles do
         collection do
           post :add_role_to_user

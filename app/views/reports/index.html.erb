@@ -1,0 +1,71 @@
+<% content_for :app_location do %>Admin / Payments / Index<% end %>
+<div id="payments" class="col-md-12">
+
+	<table class="table table-bordered table-condensed">
+		
+		<tr>
+			<th>Report Name</th>
+			<th>Description</th>
+			<th>Required Params</th>
+		</tr>
+		
+
+		<tr>
+			<td>Customer Equipment Report</td>
+			<td>Show All Equipment for a given Customer</td>
+			<td>Requires a customer_id</td>
+			<td>
+				<div class="dropdown">
+					<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+						
+					</ul>
+				</div>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>Groups Equipment Report</td>
+			<td>Show All Equipment for a given Group</td>
+			<td>Requires a group_id</td>
+			<td>
+				<div class="dropdown">
+					<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+						
+					</ul>
+				</div>
+			</td>
+		</tr>
+		
+		<tr>
+			<td>A/R Aging Report</td>
+			<td>Show All outstanding invocies grouped by customer</td>
+			<td>None requred</td>
+			<td>
+				<div class="dropdown">
+					<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+						
+					</ul>
+				</div>
+			</td>
+		</tr>
+
+	</table>
+		
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div>

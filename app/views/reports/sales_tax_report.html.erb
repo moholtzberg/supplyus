@@ -1,0 +1,26 @@
+<% @tax_rates.each do |t| %>
+	<table class="table table-bordered">
+		<tr>
+			<th colspan="4"><%= "#{t.region_name}, #{t.state_code} #{t.zip_code} - #{t.region_code} #{number_to_percentage(t.rate)}"%></th>
+		</tr>
+		<% sum = 0 %>
+		<% @order_tax_rates.where(tax_rate_id: t.id).each do |order| %>
+		
+			<% a = Order.find(order.order_id) %>
+			
+			<tr>
+				<% sum += a.tax_total %>
+				<td><%= a.order_payment_applications.map(&:date).last %></td>
+				<td><%= a.number %></td>
+				<td><%= a.tax_total %></td>
+				<td><%= sum %></td>
+			</tr>
+	
+		<% end %>
+		<tr>
+			<td><% number_to_currency(@order_tax_rates.where(tax_rate_id: t).map(&:amount).sum) unless t.nil?%></td>
+			<td><%= number_to_currency(sum)%></td>
+			<td colspan="2"><% @order_tax_rates.where(tax_rate_id: t).map(&:amount).sum == sum %></td>
+		</tr>
+	</table>
+<% end %>
