@@ -1,5 +1,5 @@
 default: &default
-  pool: 5
+  pool: 25
   timeout: 5000
 
 production:
@@ -28,7 +28,7 @@ staging:
 #   username: <%= SECRET["DATABASE"]["PROD_UN"] %>
 #   password: <%= SECRET["DATABASE"]["PROD_PW"] %>
 #   port: <%= SECRET["DATABASE"]["PROD_PORT"] %>
-  
+
 development:
   <<: *default
   adapter: <%= SECRET["DATABASE"]["DEV_ENGINE"] %>

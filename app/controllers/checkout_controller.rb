@@ -75,13 +75,13 @@ class CheckoutController < ApplicationController
   def update_shipping
     shipping = ShippingMethod.find_by(:id => params[:order_shipping_method][:shipping_method_id])
     unless OrderShippingMethod.find_by(:order_id => cookies.permanent.signed[:cart_id]).nil?
-      "WE HAVE AND ID"
       o = OrderShippingMethod.find_by(:order_id => cookies.permanent.signed[:cart_id])
     else
       o = OrderShippingMethod.new(:order_id => cookies.permanent.signed[:cart_id])
     end
     o.update_attributes(:shipping_method_id => shipping.id, :amount => shipping.calculate(@cart.sub_total))
-    redirect_to checkout_confirm_path
+    # redirect_to checkout_confirm_path
+    redirect_to checkout_payment_path
   end
   
   def payment
@@ -94,23 +94,25 @@ class CheckoutController < ApplicationController
   end
   
   def update_payment
+    puts params[:payment_method]
     if (params[:payment_method] == "terms" || params[:payment_method] == "check")
-      confirm
+      redirect_to checkout_confirm_path
     else
       if params[:payment_method] == "credit_card"
-        a = Order.find_by(:id => cookies.permanent.signed[:cart_id]).credit_card_payments.new
-        a.first_name = params[:first_name]
-        a.last_name = params[:last_name]
-        a.credit_card_number = params[:credit_card_number]
-        a.card_security_code = params[:card_security_code]
-        a.expiration_month = params[:expiration_month]
-        a.expiration_year = params[:expiration_year]
-        a.amount = Order.find_by(:id => cookies.permanent.signed[:cart_id]).total
-        if a.authorize
-          a.save
+        @checkout = Checkout.find_by(:id => cookies.permanent.signed[:cart_id])
+        @payment = Order.find_by(:id => cookies.permanent.signed[:cart_id]).credit_card_payments.new
+        @payment.first_name = params[:first_name]
+        @payment.last_name = params[:last_name]
+        @payment.credit_card_number = params[:credit_card_number]
+        @payment.card_security_code = params[:card_security_code]
+        @payment.expiration_month = params[:expiration_month]
+        @payment.expiration_year = params[:expiration_year]
+        @payment.amount = Order.find_by(:id => cookies.permanent.signed[:cart_id]).total
+        if @payment.authorize
+          @payment.save
+          OrderPaymentApplication.create(:order_id => @checkout.id, :payment_id => @payment.id, :applied_amount => @payment.amount)
           complete
         else
-          puts "-----XXX---> #{a.errors.messages}"
           render "payment"
         end
       end

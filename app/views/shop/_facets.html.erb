@@ -36,10 +36,16 @@
 				<ul class="list-group">
 				<% for brand in items.facet(:category_ids).rows %>
 				<li class="list-group-item">
-						<% if params[:category_ids].to_i == brand.value.to_i %>
-							<strong><%= brand.instance.name %></strong> (<%= link_to "remove", params.merge(:category_ids => nil) %>)
+						<% if params[:category_ids].present? and params[:category_ids].include?(brand.value.to_s) %>
+						<% copy_of_cat_ids_params = [] %>
+						<% copy_of_cat_ids_params.push(params[:category_ids]).flatten.uniq %>
+							<strong><%= brand.instance.nil? ? brand.instance : brand.instance.name  %></strong> (<%= link_to "remove", params.merge(:category_ids => (copy_of_cat_ids_params.flatten - [brand.value.to_s]).flatten) %>)
+						<% elsif params[:category_ids].nil?%>
+							<%= link_to "#{brand.instance.nil? ? brand.instance : brand.instance.name}", params.merge(:category_ids => brand.value.to_s) %> (<%= brand.count%>)
 						<% else %>
-							<%= link_to brand.instance.name, params.merge(:category_ids => brand.value) %> (<%= brand.count%>)
+						<% copy_of_cat_ids_params = [] %>
+						<% copy_of_cat_ids_params.push(params[:category_ids]).flatten.uniq %>
+							<%= link_to brand.instance.name, params.merge(:category_ids => (copy_of_cat_ids_params.flatten + [brand.value.to_s]).flatten) %> (<%= brand.count%>)
 						<% end %>
 					</li>
 				<% end %>

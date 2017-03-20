@@ -33,27 +33,32 @@ class ItemVendorPriceImport
 
   def load_imported_products
     spreadsheet = CSV.read(file.path, :headers => true, :encoding => 'ISO-8859-1')
-    # header = spreadsheet.row(1)
     spreadsheet.map do |row|
-      puts "----------------------------------> #{row.inspect}"
-      if Item.find_by(:number => row["number"])
-        item = Item.find_by(:number => row["number"])
-        product = ItemVendorPrice.where(item_id: item.id, vendor_id: row["vendor_id"]).first
-        if product.nil?
-          product = ItemVendorPrice.new
-        end
-        id = product.id
-        attributes = row.to_hash.slice(*ItemVendorPrice.attribute_names())
-        product.id = id unless id.nil?
-        product.vendor_id = attributes["vendor_id"]
-        product.item_id = item.id
-        product.price = attributes["price"]
-        product
-      else
-        product = ItemVendorPrice.new(:vendor_id => row["vendor_id"], :price => row["price"])
-        errors.add(:item, "#{row["item_number"]} cannot be not be found")
-        product
+      
+      item = Item.find_by(:number => row["number"])
+      
+      if item.nil?
+        item = Item.create(:number => row["number"], :list_price => row["list_price"], :cost_price => row["cost_price"])
       end
+      
+      product = ItemVendorPrice.where(item_id: item.id, vendor_id: row["vendor_id"]).first
+      
+      if product.nil?
+        product = ItemVendorPrice.new
+      end
+      
+      id = product.id
+      attributes = row.to_hash.slice(*ItemVendorPrice.attribute_names())
+      product.id = id unless id.nil?
+      product.vendor_id = attributes["vendor_id"]
+      product.item_id = item.id
+      product.price = attributes["cost_price"]
+      product.vendor_item_number = attributes["number"]
+      product
+      
+      # product = ItemVendorPrice.new(:vendor_id => row["vendor_id"], :price => row["price"])
+      # errors.add(:item, "#{row["item_number"]} cannot be not be found")
+      # product
     end
   end
 

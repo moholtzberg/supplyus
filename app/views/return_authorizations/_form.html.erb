@@ -1,0 +1,59 @@
+<fieldset>
+	
+	<div id="customer_name" class="col-md-12">
+		<%= f.label :customer_name, :class => "control-label" %>
+		<%= f.text_field :customer_name, :class => "form-control", data: {autocomplete_source: customers_path} %>
+	</div>
+	
+	<div id="order_number" class="col-md-12">
+		<%= f.label :order_number, :class => "control-label" %>
+		<%= f.text_field :order_number, :class => "form-control", data: {autocomplete_source: orders_path} %>
+	</div>
+	
+	<div id="applications">
+	</div>
+	
+	<div id="date" class="col-md-6">
+		<%= f.label :date, :class => "control-label" %>
+		<%= f.date_field :date, :class => "form-control" %>
+	</div>
+	
+	<div id="expiration_date" class="col-md-6">
+		<%= f.label :expiration_date, :class => "control-label" %>
+		<%= f.date_field :expiration_date, :class => "form-control" %>
+	</div>
+	
+	<script>
+	jQuery(function() {
+		return $('#return_authorization_order_number').autocomplete({
+			source: $('#return_authorization_order_number').data('autocomplete-source')
+		})
+	});
+	
+	jQuery(function(){
+		$("input#return_authorization_order_number").blur(function(){
+			var order_number = $("input#return_authorization_order_number").val();
+			var request = $.ajax({
+				url : '/admin/orders/returnable_items.js?order_number=' + order_number,
+			});
+			
+			
+			request.success(function(data) {
+				
+			});
+			
+			request.error(function(httpObj, textStatus) {
+				if(httpObj.status == 200) {
+					// console.log(httpObj);
+				} else {
+					alert("Failed");
+				}
+			});
+		})
+	});
+	
+	
+	
+	</script>
+		
+</fieldset>

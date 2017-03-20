@@ -1,0 +1,2 @@
+$("#return_authorization_customer_name").val("<%= @returnable_items.customer.name %>")
+$("#applications").html("<%= j render :template => 'orders/returnable_items.html', :format => 'html' %>")

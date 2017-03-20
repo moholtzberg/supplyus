@@ -24,7 +24,7 @@ class CreditCardPayment < Payment
       year:                expiration_year,
       first_name:          first_name,
       last_name:           last_name
-      )
+    )
   end
 
   def valid_card
@@ -39,11 +39,18 @@ class CreditCardPayment < Payment
   def authorize
     if valid_card
       response = GATEWAY.authorize(amount * 100, credit_card)
-      self.authorization_code = response.authorization
-      self.success = false
-      true
+      
+      if response.authorization and response.success?
+        self.authorization_code = response.authorization
+        self.success = response.success?
+        true
+      else
+        errors.add(:base, "The credit card you provided was declined. Please double check your information and try again.") and return
+        false
+      end
+      
     else
-      errors.add(:base, "The credit card you provided was declined.  Please double check your information and try again.") and return
+      errors.add(:base, "The credit card you provided was declined. Please double check your information and try again.") and return
       false
     end
   end

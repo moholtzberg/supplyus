@@ -1,0 +1,33 @@
+<div id="order" class="col-md-12">
+	<table class="table table-condensed table-bordered">
+		
+		<tr>
+			<th>Order Number</th>
+			<th>Due Date</th>
+			<th>Item Price</th>
+			<th>Qty Ordered</th>
+			<th>Qty Canceled</th>
+			<th>Qty Shipped</th>
+			<th>Qty Fulfilled</th>
+			<th>Actual Qty</th>
+			<th>Qty to Return</th>
+		</tr>
+		
+		<% @returnable_items.order_line_items.order(:order_line_number).each_with_index do |li, idx| %>
+		<tr>
+			<td><%= li.order_line_number %></td>
+			<td><%= li.item.number if li.item.present? %></td>
+			
+			<td><%= number_to_currency(li.price) %>
+				<% hidden_field_tag "quantity_to_return[#{idx}][order_line_item_id]", li.id %>
+			</td>
+			<td><%= li.quantity %></td>
+			<td><%= li.quantity_canceled %></td>
+			<td><%= li.quantity_shipped %></td>
+			<td><%= li.quantity_fulfilled %></td>
+			<td><%= li.actual_quantity %></td>
+			<td><%= text_field_tag "quantity_to_return[#{idx}][quantity]", li.quantity_shipped.to_s, :class => "form-control" %></td>
+		</tr>
+		<% end %>
+	</table>
+</div>

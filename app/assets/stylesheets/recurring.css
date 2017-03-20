@@ -247,3 +247,7 @@ table tr th {
 .flashes {
 	margin: 5px;
 }
+
+table.table {
+	font-size: 13px;
+}

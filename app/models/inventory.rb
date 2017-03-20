@@ -23,6 +23,7 @@ class Inventory < ActiveRecord::Base
   
   def quantity_available
     (quantity_on_hand + quantity_on_order) - (quantity_allocated + quantity_shipped)
+    # sum("SUM(COALESCE(qty_on_hand,0) + SUM(COALESCE(qty_ordered,0) - COALESCE(qty_received,0))) - SUM(COALESCE(qty_sold,0) - SUM(COALESCE(qty_shipped,0) + COALESCE(qty_shipped,0)))")
   end
   
   def quantity_on_hand

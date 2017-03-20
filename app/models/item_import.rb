@@ -1,7 +1,7 @@
 class ItemImport
   # switch to ActiveModel::Model in Rails 4
   include ActiveModel::Model
-  # attr_accessor :file
+  attr_accessor :file
   # attr_accessor :file_path
   # attr_accessor :import_hisotry
 
@@ -17,16 +17,16 @@ class ItemImport
     @file_path = file_path
   end
 
-  def put_import_hisotry(import_hisotry)
-    @import_hisotry = import_hisotry
+  def put_import_history
+    @import_history = ImportHistory.last
   end
 
   def file_path
     @file_path
   end
 
-  def import_hisotry
-    @import_hisotry
+  def import_history
+    @import_history
   end
 
   def initialize(attributes = {})
@@ -38,35 +38,33 @@ class ItemImport
   end
 
   def save
-    puts "---->>>>> #{imported_products.inspect}"
+    puts "---->>>>> #{imported_products.count}"
     i = 0
+    import_history.update(nb_in_queue: imported_products.size, nb_failed: 0, nb_imported: 0, nb_last_id: nil, failed_lines: "", is_processing: 1)
     imported_products.each do |imp|
       i = i + 1
+
       if !imp.nil?
+        item = imp
+        # item.essendant_xml_import
         #Check if the object is valid
-        if imp.valid?
-          import_hisotry.update(nb_imported: import_hisotry.nb_imported + 1)
+        if item == true
+          import_history.update(nb_imported: import_history.nb_imported + 1, nb_last_id: imp.id)
           imp.save!
         else
-          # imported_products.each_with_index do |product, index|
-          #   product.errors.full_messages.each do |message|
-          #     errors.add :base, "Row #{index+2}: #{message}"
-          #   end
-          # end
-          # false
           #Increment the number of faild raws
-          import_hisotry.update(nb_failed: import_hisotry.nb_failed + 1)
-          import_hisotry.update(failed_lines: import_hisotry.failed_lines + i.to_s + ", " )
+          import_history.update(nb_failed: import_history.nb_failed + 1)
+          import_history.update(failed_lines: import_history.failed_lines.to_s + i.to_s + ", " )
         end
         true
       else
-        import_hisotry.update(nb_failed: import_hisotry.nb_failed + 1)
-        import_hisotry.update(failed_lines: import_hisotry.failed_lines + i.to_s + ", " )
+        import_history.update(nb_failed: import_history.nb_failed + 1)
+        import_history.update(failed_lines: import_history.failed_lines + i.to_s + ", " )
       end
-      import_hisotry.update(nb_in_queue: import_hisotry.nb_in_queue - 1)
+      import_history.update(nb_in_queue: import_history.nb_in_queue - 1)
     end
     #Update the import_history object when th processing is complete
-    import_hisotry.update(is_processing: 0)
+    import_history.update(is_processing: 0)
   end
 
   def imported_products
@@ -77,7 +75,7 @@ class ItemImport
 
     spreadsheet = CSV.read(file_path || file.path, :headers => true, :encoding => 'ISO-8859-1')
     # header = spreadsheet[0]
-    import_hisotry.update(nb_in_queue: spreadsheet.size)
+    import_history.update(nb_in_queue: spreadsheet.size)
     spreadsheet.map do |row|
       if row["price"].to_f > 0 and row["cost_price"].to_f > 0
         unless Item.find_by(:number => row["number"])
@@ -93,6 +91,12 @@ class ItemImport
         item
       end
     end
+    
+    ### second type of import
+    # Item.where(:name => nil).where(:active => true).no_images.limit(250).map do |row|
+    #  row
+    # end
+    # ImportHistory.last
   end
 
   def open_spreadsheet
