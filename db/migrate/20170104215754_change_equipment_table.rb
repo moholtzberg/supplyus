@@ -1,10 +1,18 @@
 class ChangeEquipmentTable < ActiveRecord::Migration
-  
+
   def up
-    change_column :equipment, :make, 'integer USING CAST(make AS integer)'
-    change_column :equipment, :model, 'integer USING CAST(model AS integer)'
-    rename_column :equipment, :make, :make_id
-    rename_column :equipment, :model, :model_id
+    case connection.adapter_name
+      when 'PostgreSQL'
+        change_column :equipment, :make, 'integer USING CAST(make AS integer)'
+        change_column :equipment, :model, 'integer USING CAST(model AS integer)'
+        rename_column :equipment, :make, :make_id
+        rename_column :equipment, :model, :model_id
+      else
+        change_column :equipment, :make, :integer
+        change_column :equipment, :model, :integer
+        rename_column :equipment, :make, :make_id
+        rename_column :equipment, :model, :model_id
+    end
   end
   
   def down
