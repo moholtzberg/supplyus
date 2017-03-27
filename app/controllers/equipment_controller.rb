@@ -16,6 +16,29 @@ class EquipmentController < ApplicationController
     @equipment = Equipment.new
     @account_id = params[:account_id] if params[:account_id].present?
   end
+
+  def edit
+    authorize! :edit, Equipment
+    @equipment = Equipment.find(params[:id])
+  end
+
+
+  def update
+    authorize! :update, Equipment
+    @equipment = Equipment.find_by(:id => params[:id])
+    @equipment.number = params[:equipment][:number]
+    @equipment.serial = params[:equipment][:serial]
+    @equipment.model_number = params[:equipment][:model_number]
+    @equipment.location = params[:equipment][:location]
+    @equipment.is_managed = (params[:equipment][:is_managed].to_i == 1 ? true : false)
+    if @equipment.save
+      flash[:notice] = "\"#{@equipment.number}\" has been updated"
+    else
+      flash[:error] = "There were some problems with the form you submitted"
+    end
+    @equipment = Equipment.lookup(@equipment.number)
+    @equipment = @equipment.paginate(:page => params[:page], :per_page => 20)
+  end
   
   def show
     authorize! :read, Equipment
@@ -27,8 +50,19 @@ class EquipmentController < ApplicationController
   
   def create
     authorize! :create, Equipment
-    @account = Account.find_by(:id => params[:equipment][:account_id])
-    @equipment = Equipment.create(:account_id => params[:equipment][:account_id], :number => params[:equipment][:number], :serial => params[:equipment][:serial], :make => params[:equipment][:make], :model => params[:equipment][:model])
+    @equipment = Equipment.new
+    @equipment.number = params[:equipment][:number]
+    @equipment.serial = params[:equipment][:serial]
+    @equipment.model_number = params[:equipment][:model_number]
+    @equipment.location = params[:equipment][:location]
+    @equipment.is_managed = (params[:equipment][:is_managed].to_i == 1 ? true : false)
+    if @equipment.save
+      flash[:notice] = "\"#{@equipment.number}\" has been saved"
+    else
+      flash[:error] = "There were some problems with the form you submitted"
+    end
+    @equipment = Equipment.lookup(@equipment.number)
+    @equipment = @equipment.paginate(:page => params[:page], :per_page => 20)
   end
   
   def delete
@@ -46,7 +80,7 @@ class EquipmentController < ApplicationController
   private
 
   def account_params
-    params.require(:equipment).permit(:number, :serial)
+    params.require(:equipment).permit(:number, :serial, :model_number, :is_managed, :location)
   end
 
   def sort_column

@@ -4,7 +4,7 @@
 	<table class="table table-bordered table-condensed table-responsive">
 		
 		<tr>
-			<td colspan="8">
+			<td colspan="9">
 				<form id="searchBox" accept-charset="UTF-8" action="/admin/equipment" method="get" role="search">
 					<input type="text" class="form-control" id="term" name="term" placeholder="Enter Equipment Number, Serial Number or Customer Name" value="<%= params[:term] %>">
 				</form>
@@ -19,6 +19,7 @@
 			<th><%= sortable "serial", "Serial" %></th>
 			<th class="hidden-xs"><%= sortable "customers.name", "Customer Name" %></th>
 			<th class="hidden-xs">Active Alerts</th>
+      <th>Is Managed?</th>
 			<th>&nbsp;</th>
 		</tr>
 		
@@ -30,6 +31,7 @@
 			<td><%= a.serial %></td>
 			<td><%= a.customer.name if a.customer.present? %></td>
 			<td><%= a.alerts.count %></td>
+      <td class="text-center"><%= a.is_managed? %></td>
 			<td class="text-center">
 			
 				<div class="dropdown">

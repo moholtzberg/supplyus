@@ -5,6 +5,7 @@ class Equipment < ActiveRecord::Base
   
   belongs_to :customer, :foreign_key => "account_id"
   belongs_to :machine_model, :foreign_key => "model_id"
+  belongs_to :make
   has_one :contact
   has_many :meters
   has_many :alerts, :class_name => "EquipmentAlert"

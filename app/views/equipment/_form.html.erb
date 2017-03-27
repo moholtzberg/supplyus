@@ -10,15 +10,29 @@
 		<%= f.text_field :serial, :class => "form-control" %>
 	</div>
 	
-	<div id="make" class="col-md-6">
-		<%= f.label :make, :class => "control-label" %>
-		<%= f.text_field :make, :class => "form-control" %>
-	</div>
-	
 	<div id="model" class="col-sm-6 col-xs-6">
-		<%= f.label :model, :class => "control-label" %>
-		<%= f.text_field :model, :class => "form-control" %>
+		<%= f.label :model_number, :class => "control-label" %>
+		<%= f.text_field :model_number, :class => "form-control", data: {autocomplete_source: machine_models_path} %>
 	</div>
+
+  <script>
+      jQuery(function() {
+          return $('#equipment_model_number').autocomplete({
+              source: $('#equipment_model_number').data('autocomplete-source')
+          })
+      });
+  </script>
+
+  <div id="model" class="col-sm-6 col-xs-6">
+    <%= f.label :location, :class => "control-label" %>
+    <%= f.text_field :location, :class => "form-control" %>
+  </div>
+
+  <div id="is_managed" class="col-xs-12 shipping">
+    <%= label_tag :is_managed do %>Is Managed?
+        <%= f.check_box :is_managed, :value => :is_managed, :class => "form-control" %>
+    <% end %>
+  </div>
 	
 	<%= f.hidden_field :account_id, :value => @account_id %>
 	
