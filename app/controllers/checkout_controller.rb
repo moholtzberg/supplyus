@@ -37,12 +37,18 @@ class CheckoutController < ApplicationController
     params[:checkout][:bill_to_zip] = params[:checkout][:ship_to_zip] unless !params[:checkout][:bill_to_zip].blank?
     params[:checkout][:bill_to_phone] = params[:checkout][:ship_to_phone] unless !params[:checkout][:bill_to_phone].blank?
     params[:checkout][:bill_to_email] = params[:checkout][:email] unless !params[:checkout][:bill_to_email].blank?
-    
+
     cart = Checkout.find_by(:id => cookies.permanent.signed[:cart_id])
-    if current_user.has_account
-      cart.account_id = current_user.account.id
-      cart.order_line_items.each {|c| c.price = c.item.actual_price(cart.account_id)}
+    if !params[:checkout][:account_id].blank?
+      cart.account_id = params[:checkout][:account_id]
     end
+    if cart.account_id.nil?
+      if current_user.has_account
+        cart.account_id = current_user.account.id
+      end
+    end
+    cart.order_line_items.each {|c| c.price = c.item.actual_price(cart.account_id)}
+
     cart.update_attributes(checkout_params)
 
     unless OrderTaxRate.find_by(:order_id => cookies.permanent.signed[:cart_id]).nil?
@@ -80,8 +86,8 @@ class CheckoutController < ApplicationController
       o = OrderShippingMethod.new(:order_id => cookies.permanent.signed[:cart_id])
     end
     o.update_attributes(:shipping_method_id => shipping.id, :amount => shipping.calculate(@cart.sub_total))
-    # redirect_to checkout_confirm_path
-    redirect_to checkout_payment_path
+    redirect_to checkout_confirm_path
+    # redirect_to checkout_payment_path
   end
   
   def payment

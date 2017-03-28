@@ -10,7 +10,7 @@ class Customer < Account
   # has_many :payment_plans
   # has_many :invoices
   # has_many :credit_cards
-  has_many :orders
+  has_many :orders, :foreign_key => :account_id
   
   
   def payment_terms

@@ -172,7 +172,7 @@ class ShopController < ApplicationController
   end
   
   def view_account
-    @account = Account.find_by(:id => params[:account_id])
+    @account = Customer.find_by(:id => params[:account_id])
     @orders = @account.orders.is_complete.includes(:order_shipping_method).order(:completed_at).paginate(:page => params[:page], :per_page => 10)
     # @invoices = @account.invoices.paginate(:page => params[:page], :per_page => 10)
   end
