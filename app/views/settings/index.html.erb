@@ -45,7 +45,7 @@
 		</tr>
 		<tr>
 			<td>Git Revision</td>
-			<td><%= Recurring::Application::REVISION %></td>
+			<td><%= `git show --pretty=%H` %></td>
 		</tr>
 	</table>
 </div>
