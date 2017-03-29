@@ -43,11 +43,11 @@ class Order < ActiveRecord::Base
   # after_commit :sync_with_quickbooks if :persisted
   
   def account_name
-    customer.try(:name)
+    account.try(:name)
   end
   
   def account_name=(name)
-    self.customer = Customer.find_by(:name => name) if name.present?
+    self.account = Account.find_by(:name => name) if name.present?
   end
   
   def sales_rep_name
