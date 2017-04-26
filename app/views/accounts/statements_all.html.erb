@@ -1,0 +1,97 @@
+<div id="statements" class="col-md-12">
+
+  <table class="table table-bordered table-condensed thead">
+    <tr class="bg-primary">
+      <th width="50%">Remit To</th>
+      <th width="50%">Group</th>
+    </tr>
+    <tr>
+      <td>
+        24/7 Office Supply, Inc.<br/>
+        2957 NW 27th Street<br/>
+        Fort Lauderdale, FL 33311<br/>
+        (888) 247-8775
+      </td>
+
+      <td>
+        <% unless @account.name.blank? %><%= @account.name %><br/><% end %>
+      </td>
+    </tr>
+  </table>
+
+  <table class="table table-bordered table-condensed">
+    <tr class="bg-primary">
+      <th width="50%">Statement From</th>
+      <th width="50%">Statement To</th>
+    </tr>
+    <tr>
+      <td><%= @from.to_date.strftime("%m/%d/%Y") %></td>
+      <td><%= @to.to_date.strftime("%m/%d/%Y")%></td>
+    </tr>
+  </table>
+
+  <table class="table table-condensed table-bordered">
+    <tr class="bg-primary">
+      <th>Account Name</th>
+      <th>Bill To Account</th>
+      <th>Due Date</th>
+      <th>Number</th>
+      <th>Amount</th>
+      <th>Balance Due</th>
+      <th>Pst Due Days</th>
+    </tr>
+    <% total = 0 %>
+    <% orders = @orders %>
+    <% orders.by_date_range(@from, @to).each do |o| %>
+        <% if o.fulfilled %>
+            <tr>
+              <% total += o.balance_due %>
+              <td><%= o.account.name %></td>
+              <td><%= o.account.user.email unless (o.account.nil? || o.account.user.nil?) %></td>
+              <td><%= o.due_date.in_time_zone.strftime("%m/%d/%Y") unless o.due_date.blank? %></td>
+              <td><%= o.number %></td>
+              <td><%= number_to_currency(o.total) %></td>
+              <td><%= number_to_currency(o.balance_due) %></td>
+              <td><%= o.past_due_days %></td>
+            </tr>
+        <% end %>
+    <% end %>
+    <tr>
+      <td colspan="5">Total Outstanding for period from: <%= "#{@from.strftime("%m/%d/%Y")} - #{@to.strftime("%m/%d/%Y")}"%></td>
+      <td colspan="2"><%= number_to_currency(total) %></td>
+    </tr>
+
+  </table>
+
+  <table class="table table-condensed table-bordered">
+
+    <tr class="bg-primary">
+      <th width="25%">1-30</th>
+      <th width="25%">31-60</th>
+      <th width="25%">61-90</th>
+      <th width="25%">90 +</th>
+    </tr>
+
+    <tr>
+
+      <td>
+        <%= number_to_currency(orders.past_due_up_to_30.map(&:balance_due).sum) %>
+      </td>
+
+      <td>
+        <%= number_to_currency(orders.past_due_up_to_60.map(&:balance_due).sum) %>
+      </td>
+
+      <td>
+        <%= number_to_currency(orders.past_due_up_to_90.map(&:balance_due).sum) %>
+      </td>
+
+      <td>
+        <%= number_to_currency(orders.past_due_over_90.map(&:balance_due).sum) %>
+      </td>
+
+    </tr>
+
+  </table>
+
+</div>

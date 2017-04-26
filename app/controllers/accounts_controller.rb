@@ -101,6 +101,23 @@ class AccountsController < ApplicationController
     end
   end
 
+  def statements_all
+    @account = Account.find_by(:id => params[:id])
+    @from = Date.strptime(params[:from_date], '%m/%d/%y').kind_of?(Date) ? Date.strptime(params[:from_date], '%m/%d/%y') : Date.today
+    @to = Date.strptime(params[:to_date], '%m/%d/%y').kind_of?(Date) ? Date.strptime(params[:to_date], '%m/%d/%y') : Date.today
+    @orders = Order.where(:account_id => @account.id)
+
+    respond_to do |format|
+      format.html
+      format.pdf do
+        render :pdf => "#{@account.name}_statement_#{@from}-#{@to}", :title => "#{@account.name} statement #{@from}-#{@to}", :layout => 'admin_print.html.erb', :page_size => 'Letter', :background => false, :orientation => 'Landscape', :template => 'accounts/statements.html.erb', :print_media_type => true, :show_as_html => params[:debug].present?
+      end
+    end
+    if params[:deliver_notification]
+      AccountMailer::statement_all_notification(@account.id, params[:from_date], params[:to_date]).deliver_later
+    end
+  end
+
   private
 
   def account_params
