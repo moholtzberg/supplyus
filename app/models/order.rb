@@ -130,7 +130,7 @@ class Order < ActiveRecord::Base
   end
   
   def tax_amount=(name)
-    if  name.present? and tax_rate.present?
+    if name.present? and tax_rate.present?
       order_tax_rate.amount = name if name.present?
       order_tax_rate.save
     end
@@ -216,7 +216,7 @@ class Order < ActiveRecord::Base
     ids = Order.is_complete
     .joins("LEFT OUTER JOIN order_payment_applications ON order_payment_applications.order_id = orders.id")
     .group("orders.id")
-    .having("SUM(COALESCE(sub_total,0) + COALESCE(shipping_total,0) + COALESCE(tax_total,0)) > SUM(COALESCE(order_payment_applications.applied_amount,0))").ids
+    .having("SUM(COALESCE(sub_total,0) + COALESCE(shipping_total,0) + COALESCE(tax_total,0)) <> SUM(COALESCE(order_payment_applications.applied_amount,0))").ids
     where(id: ids)
   end
   
