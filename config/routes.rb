@@ -11,6 +11,7 @@ Rails.application.routes.draw do
       resources :accounts do
         member do
           get :statements
+          get :statements_all
         end
         resources :contacts
         resources :charges
@@ -109,7 +110,9 @@ Rails.application.routes.draw do
       end
       resources :purchase_order_line_items
       resource :reports, :only => :index do
-        get :sales_tax_report
+        get :sales_tax
+        get :item_usage
+        get :ar_aging
       end
       resources :return_authorizations
       resources :roles do

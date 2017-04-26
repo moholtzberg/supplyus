@@ -105,6 +105,9 @@
 		<li>
 			<a href="#settings_menu" data-toggle="collapse">Reports <i class="fa fa-caret-down pull-right"></i></a>
 			<ul id="settings_menu" class="sub-menu list-group collapse">
+				<li class="<% if current_page?(:sales_tax_reports) %>active<% end %>"><%= link_to "Sales Tax Report", sales_tax_reports_path %></li>
+				<li class="<% if current_page?(:item_usage_reports) %>active<% end %>"><%= link_to "Item Usage Report", item_usage_reports_path %></li>
+				<li class="<% if current_page?(:ar_aging_reports) %>active<% end %>"><%= link_to "AR Aging Report", ar_aging_reports_path %></li>
 			</ul>
 		</li>
 	<% end %>

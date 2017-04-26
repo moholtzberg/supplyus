@@ -1,0 +1,30 @@
+<% content_for :app_location do %>Admin / Reports / AR Aging<% end %>
+<div id="items" class="col-md-12">
+	<% Customer.all.each do |customer| %>
+	<% if customer.orders.size > 0 %>
+	<table class="table table-bordered table-condensed">
+		<tr>
+          <th colspan="6" class="text-center bg-info"><%= customer.name %></th>
+        </tr>
+        <tr>
+          <th>Number</th>
+          <th>Due Date</th>
+          <th>Total</th>
+          <th>Balance Due</th>
+          <th>Days Outstanding</th>
+	  </tr>
+	  
+	  <% customer.orders.fulfilled.unpaid.order(:completed_at).each do |i|%>
+	  <tr>
+	      <td><%= i.number %></td>
+	      <td><%= i.due_date %></td>
+	      <td><%= number_to_currency(i.total) %></td>
+	      <td><%= number_to_currency(i.balance_due) %></td>
+	      <td><%= (Date.today.to_date - i.completed_at.to_date).to_i  %></td>
+	  </tr>
+	  <% end %>
+	</table>
+	<% end %>
+	<% end %>
+
+</div>
