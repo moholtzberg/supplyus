@@ -42,7 +42,7 @@
 		</tr>
 		<% total = 0 %>
 		<% orders = @orders %>
-		<% orders.by_date_range(@from, @to).each do |o| %>
+		<% orders.by_date_range(@from, @to).order(:date).each do |o| %>
 			<% if o.fulfilled %>
 			<tr>
 				<% total += o.balance_due %>

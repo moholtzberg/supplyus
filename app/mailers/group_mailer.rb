@@ -10,7 +10,8 @@ class GroupMailer < ApplicationMailer
     @orders = Order.where(:account_id => @accounts.ids).unpaid
     
     attachments["#{@group.name}_Statement_#{@from.strftime("%Y_%m_%d")}_to_#{@to.strftime("%Y_%m_%d")}.pdf"] = WickedPdf.new.pdf_from_string(
-      render_to_string(:title => "#{@group.name} statement #{@from}-#{@to}", :layout => 'admin_print.html.erb', :orientation => 'Landscape', :template => 'groups/statements.html.erb', :print_media_type => true)
+      render_to_string(:template => 'groups/statements.html.erb', :layout => 'admin_print'),
+      :print_media_type => true, :page_size => 'Letter', :orientation => 'Landscape'
     )
     
     @orders.by_date_range(@from, @to).fulfilled.unpaid.each do |order|
@@ -18,7 +19,8 @@ class GroupMailer < ApplicationMailer
       @invoice = order
       @order = order
       attachments["INV_#{order.number}.pdf"] = WickedPdf.new.pdf_from_string(
-        render_to_string(:template => 'shop/view_invoice.html.erb', :layout => "admin_print")
+        render_to_string(:template => 'shop/view_invoice.html.erb', :layout => "admin_print"),
+        :print_media_type => true, :page_size => 'Letter'
       )
       
     end
