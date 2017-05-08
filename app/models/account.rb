@@ -48,23 +48,23 @@ class Account < ActiveRecord::Base
   end
   
   def bill_address_1
-    ship_to_address_1 if bill_to_address_1.blank?
+    bill_to_address_1.blank? ? ship_to_address_1 : bill_to_address_1
   end
   
   def bill_address_2
-    ship_to_address_2 if bill_to_address_2.blank?
+    bill_to_address_2.blank? ? ship_to_address_2 : bill_to_address_2
   end
   
   def bill_city
-    ship_to_city if bill_to_city.blank?
+    bill_to_city.blank? ? ship_to_city : bill_to_city
   end
   
   def bill_state
-    ship_to_state if bill_to_state.blank?
+    bill_to_state.blank? ? ship_to_state : bill_to_state 
   end
   
   def bill_zip
-    ship_to_zip if bill_to_zip.blank?
+    bill_to_zip.blank? ? ship_to_zip : bill_to_zip 
   end
   
   def self.lookup(term)
