@@ -1,3 +1,4 @@
+
 <td><%= order.number %></td>
 <td><%= order.account.name unless order.account.blank? %>&nbsp;<% if order.account != nil and order.account.group_id != nil %><small>(<%= order.account.group.name %>)</small><% end %></td>
 <td><%= number_to_currency(order.total) %></td>
@@ -11,8 +12,12 @@
 	<i class="fa fa-lock" aria-hidden="true"></i>
 	<% end %>
 	
-	<% if order.is_taxable? %> 
+	<% if order.is_taxable? %>
 	<i class="fa fa-balance-scale" aria-hidden="true"></i>
+	<% end %>
+	
+	<% if order.credit_hold == true %> 
+	<i class="fa fa-ban text-danger" aria-hidden="true"></i>
 	<% end %>
 <td>
 
@@ -25,8 +30,14 @@
 			<% unless order.locked %>
 			<li><%= link_to("Edit", edit_order_path(order.id)) %></li>
 			<li><%= link_to("Lock", lock_order_path(order.id), :remote => true, :method => "put") %></li>
+			<li><%= link_to("Toggle Credit Hold", credit_hold_order_path(order.id), :remote => true, :method => "put")  %></li>
 			<% else %>
-				<% unless order.shipped %><li><%= link_to("Ship", new_order_shipment_path(order.id))  %></li><% end %>
+				
+				<% unless order.shipped %>
+				<li><%= link_to("Ship", new_order_shipment_path(order.id))  %></li>
+				<li><%= link_to("Toggle Credit Hold", credit_hold_order_path(order.id), :remote => true, :method => "put")  %></li>
+				<% end %>
+				
 				<% unless order.fulfilled %>
 				<li><%= link_to("Fulfill", new_order_invoice_path(order.id))  %></li>
 				<li><%= link_to("Resend Order Notification", resend_order_order_path(:id => order.id), :remote => true, :method => "put") %></li>

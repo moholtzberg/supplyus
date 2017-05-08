@@ -134,6 +134,11 @@ class CheckoutController < ApplicationController
     c.email             = current_user.email if c.email.nil?
     c.user_id           = current_user.id if c.user_id.nil?
     c.completed_at = Time.now
+    if c.account.present? and c.account.credit_hold == false
+      c.credit_hold = false
+    else
+      c.credit_hold = true
+    end
     if c.save
       if c.complete
         cookies.permanent.signed[:cart_id] = nil
@@ -165,7 +170,7 @@ class CheckoutController < ApplicationController
   end
   
   def checkout_params
-    params.require(:checkout).permit(
+    params.require(:checkout).permit(:credit_hold,
     :bill_to_account_name, :bill_to_attention, :bill_to_address_1, :bill_to_address_2, :bill_to_city, :bill_to_state, :bill_to_zip, :bill_to_phone, :bill_to_email,
     :ship_to_account_name, :ship_to_attention, :ship_to_address_1, :ship_to_address_2, :ship_to_city, :ship_to_state, :ship_to_zip, :ship_to_phone, :po_number, :email, :notes
     )

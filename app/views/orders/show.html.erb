@@ -151,11 +151,12 @@
 	<table class="table table-bordered table-condensed">
 		
 		<tr class="line_items">
-			<th width="20%" class="bg-primary">Order ID</th>
-			<th width="20%" class="bg-primary">IP Address</th>
-			<th width="20%" class="bg-primary">Created At</th>
-			<th width="20%" class="bg-primary">Updated At</th>
-			<th width="20%" class="bg-primary">Locked</th>
+			<th width="16%" class="bg-primary">Order ID</th>
+			<th width="16%" class="bg-primary">IP Address</th>
+			<th width="17%" class="bg-primary">Created At</th>
+			<th width="17%" class="bg-primary">Updated At</th>
+			<th width="17%" class="bg-primary">Locked</th>
+			<th width="17%" class="bg-primary">Credit Hold</th>
 		</tr>
 		
 		<tr>
@@ -164,6 +165,7 @@
 			<td><%= @order.created_at.strftime("%m/%d/%y %I:%M:%S %p") unless @order.created_at.nil? %></td>
 			<td><%= @order.updated_at.strftime("%m/%d/%y %I:%M:%S %p") unless @order.updated_at.nil? %></td>
 			<td><%= @order.locked ? "Yes" : "No" %></td>
+			<td><%= @order.credit_hold ? "Yes" : "No" %></td>
 		</tr>
 	</table>
 	

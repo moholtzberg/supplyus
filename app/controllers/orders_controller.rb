@@ -219,6 +219,7 @@ class OrdersController < ApplicationController
     authorize! :update, Order
     @order = Order.find(params[:id])
     params[:order][:sales_rep_id] = @order.account.sales_rep_id unless !params[:order][:sales_rep_name].blank?
+    params[:order][:credit_hold]  = @order.account.credit_hold unless @order.account.nil?
     respond_to do |format|
       if @order.update_attributes(order_params)
         format.html { redirect_to @order, notice: "Order #{@order.number} was successfully updated!" }
@@ -241,6 +242,22 @@ class OrdersController < ApplicationController
     @order.locked = true
     @order.save
   end
+  
+  def credit_hold
+    authorize! :update, Order
+    @order_id = params[:id]
+    @order = Order.find_by(:id => @order_id)
+    @order.credit_hold = !@order.credit_hold
+    @order.save
+  end
+  
+  def credit_hold_remove
+    authorize! :update, Order
+    @order_id = params[:id]
+    @order = Order.find_by(:id => @order_id)
+    @order.credit_hold = false
+    @order.save
+  end
 
   def unpaid
     @unpaid_orders = Order.unpaid
@@ -260,7 +277,7 @@ class OrdersController < ApplicationController
   private
 
   def order_params
-    params.require(:order).permit(:account_name, :sales_rep_name, :number, :email, :po_number, :completed_at, :notes, :shipping_method, :shipping_amount, :tax_rate, :tax_amount, :bill_to_account_name, :bill_to_attention, :bill_to_address_1, :bill_to_address_2, :bill_to_city, :bill_to_state, :bill_to_zip, :bill_to_phone, :bill_to_email, :ship_to_account_name, :ship_to_attention, :ship_to_address_1, :ship_to_address_2, :ship_to_city, :ship_to_state, :ship_to_zip, :ship_to_phone)
+    params.require(:order).permit(:account_name, :sales_rep_name, :number, :email, :po_number, :completed_at, :notes, :credit_hold, :shipping_method, :shipping_amount, :tax_rate, :tax_amount, :bill_to_account_name, :bill_to_attention, :bill_to_address_1, :bill_to_address_2, :bill_to_city, :bill_to_state, :bill_to_zip, :bill_to_phone, :bill_to_email, :ship_to_account_name, :ship_to_attention, :ship_to_address_1, :ship_to_address_2, :ship_to_city, :ship_to_state, :ship_to_zip, :ship_to_phone)
   end
 
   def sort_column

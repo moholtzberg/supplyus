@@ -90,6 +90,7 @@ Rails.application.routes.draw do
           post :resend_invoice_notification
           put :resend_order
           post :resend_order_confirmation
+          put :credit_hold
         end
         resources :shipments, :only => [:new, :create]
         # resources :payments, :shallow => true
