@@ -31,7 +31,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # POST /resource
   def create
-    a = Account.create({
+    a = Customer.create({
       email: params["user"]["email"], 
       name: params["account"]["name"], 
       address_1: params["account"]["address_1"], 
