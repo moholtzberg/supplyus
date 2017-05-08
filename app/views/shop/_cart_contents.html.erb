@@ -13,7 +13,7 @@
 	<% @cart.contents.active.each_with_index do |li, idx| %>
 	<tr>
 		<td class="text-center"><%= li.order_line_number %></td>
-		<td><%= li.item.name %></td>
+		<td><%= li.item.number %> / <%= li.item.name %></td>
 		<td class="text-center">
 			<%= hidden_field_tag "lines[#{idx}][id]", li.id %>
 			<%= text_field_tag "lines[#{idx}][quantity]", li.quantity.to_i, :class => "form-control" %>
