@@ -1,21 +1,21 @@
 class ImportItemWorker
   include Sidekiq::Worker
   
-  def perform(file_path)
-    puts "********** Start Importing the items *********"
-    item_import = ItemImport.new
-    import_history = ImportHistory.last
-    #Passe the file path to item_import model
-    item_import.put_file_path(file_path)
-    #Passe the import history object to the model
-    item_import.put_import_hisotry
-    item_import.save
-    puts "********** End of Importing the items *********"
-  end
-  #
-  # def perform(args)
-  #   puts "Clear Up the que"
+  # def perform(file_path)
+  #   puts "********** Start Importing the items *********"
+  #   item_import = ItemImport.new
+  #   import_history = ImportHistory.last
+  #   #Passe the file path to item_import model
+  #   item_import.put_file_path(file_path)
+  #   #Passe the import history object to the model
+  #   item_import.put_import_hisotry
+  #   item_import.save
+  #   puts "********** End of Importing the items *********"
   # end
+  #
+  def perform(args)
+    puts "Clear Up the que"
+  end
   
   # def perform(import_hisotry_id)
  #    puts "********** Start Importing the items *********"

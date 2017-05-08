@@ -1,4 +1,4 @@
-source 'http://rubygems.org'
+source 'https://rubygems.org'
 
 gem 'rails', '4.2.3'
 
@@ -70,14 +70,15 @@ gem 'sidekiq', '~> 4.1', '>= 4.1.1'
 gem 'shrimp'
 gem 'stripe'
 # gem 'whenever'
-gem 'rufus-scheduler'
+# gem 'rufus-scheduler'
+gem 'clockwork', github: 'Rykian/clockwork', branch: 'master'
 gem 'mailgun_rails'
 # Roles & Permissions
 gem 'cancancan', '~> 1.13', '>= 1.13.1'
 gem 'rolify', '~> 5.1'
 
 gem 'simple_form', '~> 3.2', '>= 3.2.1'
-
+gem 'foreman'
 group :development, :test do
   gem 'capistrano-rails', '~> 1.1.3'
   gem 'capistrano-bundler'
