@@ -4,6 +4,7 @@
 staging:
   :concurrency: 10
 production:
+  :pidfile: pids/sidekiq.pid
   :concurrency: 20
 :queues:
   - default

@@ -7,6 +7,7 @@ module Clockwork
   handler do |job|
     case job
     when "test"
+      puts "Running the test"
       TestWorker::perform_async
     when "order_line_item_from_equipment_alert"
       OrderLineItemFromEquipnentAlert::perform_async
