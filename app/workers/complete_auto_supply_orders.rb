@@ -1,4 +1,7 @@
-class CompleteIncompleteAutoSupplyOrders
+require 'sidekiq-scheduler'
+
+class CompleteAutoSupplyOrders
+  
   include Sidekiq::Worker
   
   def peform()

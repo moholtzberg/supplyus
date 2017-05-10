@@ -1,4 +1,7 @@
-class OrderLineItemFromEquipmentAlertWorker
+require 'sidekiq-scheduler'
+
+class OrderLineItemFromEquipmentAlert
+  
   include Sidekiq::Worker
   
   def perform()
