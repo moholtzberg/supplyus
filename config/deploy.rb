@@ -1,66 +1,69 @@
-set :user, "rails"
-set :use_sudo, false
-# set :application, "twenty-four-seven"
-set :repo_url, 'https://github.com/moholtzberg/recurring.git'
-set :branch, "master"
-set :deploy_to, "/home/rails/twenty_four_seven"
+require 'mina/rails'
+require 'mina/git'
+# require 'mina/rbenv'  # for rbenv support. (https://rbenv.org)
+require 'mina/rvm'    # for rvm support. (https://rvm.io)
+# require 'mina/foreman'
+# Basic settings:
+#   domain       - The hostname to SSH to.
+#   deploy_to    - Path to deploy into.
+#   repository   - Git repo to clone from. (needed by mina/git)
+#   branch       - Branch name to deploy. (needed by mina/git)
 
-set :log_level, :debug
-# set :rvm1_ruby_version, "ruby-2.1.5-p273"
-set :ssh_options, {:forward_agent => true}
-set :pty, false
-set :deploy_via, :copy
-set :bundle, 'source $HOME/.bashrc && bundle'
-set :default_env, { rvm_bin_path: '/usr/local/rvm/rubies/ruby-2.2.1/bin/ruby' }
-set :default_shell, '/bin/bash'
-set :shell, '/bin/bash'
-# default_environment["RAILS_ENV"] = 'production'
-# set :linked_files, %w{config/database.yml config/newrelic.yml app/views/spree/shared/_lucky_orange.html.erb public/google98548de7465bed0f.html}
-set :linked_files, %w{config/application.rb config/database.yml config/sunspot.yml}
-# set :linked_dirs, %W{public/spree}
+set :application_name, 'twenty-four-seven'
+set :domain, '107.170.18.28'
+# set :domain, '107.170.14.158
+set :deploy_to, '/home/rails/twenty_four_seven'
+set :repository, 'git://github.com/moholtzberg/recurring.git'
+set :branch, 'master'
 
-task :init do
-  on roles(:all) do
-    rvm_path = fetch(:rvm_custom_path)
-    rvm_path ||= case fetch(:rvm_type)
-    when :auto
-      if test("[ -d #{RVM_SYSTEM_PATH} ]")
-        RVM_SYSTEM_PATH
-      else
-        RVM_USER_PATH
-      end
-    when :system, :mixed
-      RVM_SYSTEM_PATH
-    else # :user
-      RVM_USER_PATH
-    end
-    set :rvm_path, rvm_path
-    set :rvm_bins_path, fetch(:rvm_type) == :mixed ? RVM_USER_PATH : rvm_path
+# Optional settings:
+set :user, 'rails'          # Username in the server to SSH to.
+#   set :port, '30000'           # SSH port number.
+#   set :forward_agent, true     # SSH forward_agent.
+set :rvm_use_path, '/usr/local/rvm/scripts/rvm'
+# shared dirs and files will be symlinked into the app-folder by the 'deploy:link_shared_paths' step.
+# set :shared_dirs, fetch(:shared_dirs, []).push('somedir')
+set :shared_files, fetch(:shared_files, []).push('config/application.rb', 'config/database.yml', 'config/sunspot.yml', 'pids/sidekiq.pid')
 
-    rvm_ruby_version = fetch(:rvm_ruby_version)
-    rvm_ruby_version ||= capture(:rvm, "current")
-    set :rvm_ruby_version, rvm_ruby_version
-  end
+# This task is the environment that is loaded for all remote run commands, such as
+# `mina deploy` or `mina rake`.
+task :environment do
+  # If you're using rbenv, use this to load the rbenv environment.
+  # Be sure to commit your .ruby-version or .rbenv-version to your repository.
+  # invoke :'rbenv:load'
+
+  # For those using RVM, use this to load an RVM version@gemset.
+  invoke :'rvm:use', 'ruby-2.2.1@global'
 end
 
-namespace :deploy do
+# Put any custom commands you need to run at setup
+# All paths in `shared_dirs` and `shared_paths` will be created on their own.
+task :setup do
+  # command %{rbenv install 2.3.0}
+end
 
-  after :restart, :clear_cache do
-    on roles(:web), in: :groups, limit: 3, wait: 10 do
-      # Here we can do anything such as:
-      within release_path do
-        execute :rake, 'cache:clear'
+desc "Deploys the current version to the server."
+task :deploy do
+  # uncomment this line to make sure you pushed your local branch to the remote origin
+  # invoke :'git:ensure_pushed'
+  deploy do
+    # Put things that will set up an empty directory into a fully set-up
+    # instance of your project.
+    invoke :'git:clone'
+    invoke :'deploy:link_shared_paths'
+    invoke :'bundle:install'
+    invoke :'rails:db_migrate'
+    invoke :'rails:assets_precompile'
+    invoke :'deploy:cleanup'
+    
+    on :launch do
+      in_path(fetch(:current_path)) do
+        command %{mkdir -p tmp/}
+        command %{touch tmp/restart.txt}
       end
     end
   end
-  
-  desc "Copy \"app_secrets.yml\" file to"
-  task :copy do
-    on roles(:all) do |host|
-       %w[ app_secrets.yml ].each do |f|
-          upload! '../shared/' + f , '/home/rails/twenty_four_seven/shared/' + f
-       end
-    end
-  end
-  
+
+  # you can use `run :local` to run tasks on local machine before of after the deploy scripts
+  # run(:local){ say 'foreman start' }
 end

@@ -1,4 +1,7 @@
+require 'sidekiq-scheduler'
+
 class TestWorker
+  
   include Sidekiq::Worker
   
   def perform()

@@ -2,10 +2,16 @@
 :concurrency: 15
 :pidfile: tmp/pids/sidekiq.pid
 staging:
-  :concurrency: 10
+ :concurrency: 10
 production:
-  :pidfile: pids/sidekiq.pid
-  :concurrency: 20
+ :pidfile: pids/sidekiq.pid
+ :concurrency: 20
 :queues:
-  - default
-  - [myqueue, 2]
+ - default
+ - [myqueue, 2]
+:dynamic: true
+:schedule:
+ test_worker:
+  #cron: '0 * * * * *'
+  every: '10s'
+	class: TestWorker
