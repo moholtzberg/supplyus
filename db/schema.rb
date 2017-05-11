@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170324003101) do
+ActiveRecord::Schema.define(version: 20170505154846) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -54,6 +54,7 @@ ActiveRecord::Schema.define(version: 20170324003101) do
     t.string  "bill_to_email"
     t.boolean "is_taxable"
     t.integer "sales_rep_id"
+    t.boolean "replace_items",     default: false, null: false
   end
 
   create_table "assets", force: :cascade do |t|
@@ -253,6 +254,20 @@ ActiveRecord::Schema.define(version: 20170324003101) do
     t.string  "type",    default: "Specification"
   end
 
+  create_table "item_references", force: :cascade do |t|
+    t.integer  "original_item_id"
+    t.integer  "replacement_item_id"
+    t.string   "original_uom"
+    t.string   "repacement_uom"
+    t.string   "original_uom_qty"
+    t.string   "replacement_uom_qty"
+    t.string   "comments"
+    t.string   "match_type"
+    t.string   "xref_type"
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
+  end
+
   create_table "item_types", force: :cascade do |t|
     t.string "name"
     t.text   "description"
@@ -434,8 +449,8 @@ ActiveRecord::Schema.define(version: 20170324003101) do
     t.string   "bill_to_zip"
     t.string   "bill_to_phone"
     t.text     "notes"
-    t.datetime "created_at",                                                  null: false
-    t.datetime "updated_at",                                                  null: false
+    t.datetime "created_at",                                                    null: false
+    t.datetime "updated_at",                                                    null: false
     t.string   "email"
     t.integer  "user_id"
     t.string   "bill_to_email"
@@ -443,6 +458,7 @@ ActiveRecord::Schema.define(version: 20170324003101) do
     t.decimal  "sub_total",            precision: 10, scale: 2, default: 0.0
     t.decimal  "shipping_total",       precision: 10, scale: 2, default: 0.0
     t.decimal  "tax_total",            precision: 10, scale: 2, default: 0.0
+    t.boolean  "credit_hold",                                   default: false
   end
 
   add_index "orders", ["account_id"], name: "order_customer_id_ix", using: :btree
