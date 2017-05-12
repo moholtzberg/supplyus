@@ -11,10 +11,10 @@
 		<th>Comments</th>
 	</tr>
 
-	<% item.replacement_items.each do |it| %>
+	<% item.item_substitutes.each do |it| %>
 	<tr>
 		<td><%= it.replacement_item.number %></td>
-		<td><%= it.replacement_uom %></td>
+		<td><%= it.repacement_uom %></td>
 		<td><%= it.replacement_uom_qty %></td>
 		<td><%= it.comments %></td>
 	</tr>

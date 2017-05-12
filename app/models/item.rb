@@ -18,6 +18,8 @@ class Item < ActiveRecord::Base
   has_many :properties, :class_name => "Property", :inverse_of => :item
   has_many :item_categories, :inverse_of => :item
   has_many :categories, :through => :item_categories
+  has_many :item_substitutes, :class_name => "ItemReference", :foreign_key => :original_item_id
+  has_many :substituting_items, :class_name => "ItemReference", :foreign_key => :replacement_item_id
   belongs_to :category
   belongs_to :brand
   has_one :inventory, :class_name => "Inventory"

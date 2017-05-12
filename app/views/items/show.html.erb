@@ -85,6 +85,8 @@
 		<li role="presentation"><a href="#item_vendor_prices" aria-controls="item_vendor_prices" role="tab" data-toggle="tab">Vendor Item Prices</a></li>
 		<li role="presentation"><a href="#account_item_prices" aria-controls="account_item_prices" role="tab" data-toggle="tab">Account Item Prices</a></li>
 		<li role="presentation"><a href="#group_item_prices" aria-controls="group_item_prices" role="tab" data-toggle="tab">Group Item Prices</a></li>
+		<li role="presentation"><a href="#item_substitutes" aria-controls="item_substitutes" role="tab" data-toggle="tab">Item Substitutes</a></li>
+		<li role="presentation"><a href="#substituting_items" aria-controls="substituting_items" role="tab" data-toggle="tab"> Substituting Items</a></li>
 	</ul>
 	
 	<div class="tab-content">
@@ -127,6 +129,18 @@
 		<div id="group_item_prices" class="tab-pane" role="tabpanel">
 			
 			<%= render :partial => "group_item_prices", :locals => {:item => @item} %>
+			
+		</div>
+		
+		<div id="item_substitutes" class="tab-pane" role="tabpanel">
+			
+			<%= render :partial => "item_substitutes", :locals => {:item => @item} %>
+			
+		</div>
+		
+		<div id="substituting_items" class="tab-pane" role="tabpanel">
+			
+			<%= render :partial => "substituting_items", :locals => {:item => @item} %>
 			
 		</div>
 		
