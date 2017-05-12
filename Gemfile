@@ -37,24 +37,29 @@ gem 'roo'
 gem 'will_paginate-bootstrap'
 gem 'twitter-typeahead-rails', :git => "git://github.com/yourabi/twitter-typeahead-rails.git"
 gem 'best_in_place'
-gem 'wicked_pdf'
-gem 'wkhtmltopdf-binary'
 gem 'rack-mini-profiler'
-gem "bullet", :group => "development"
 gem 'dalli'
-gem 'activemerchant', '~> 1.46.0'
-gem 'braintree'
-gem 'qbo_api'
-gem 'oauth-plugin'
-gem 'newrelic_rpm'
-gem 'sidekiq', '~> 4.1', '>= 4.1.1'
-gem 'sidekiq-scheduler'
 gem 'shrimp'
-gem 'stripe'
 gem 'mailgun_rails'
 gem 'cancancan', '~> 1.13', '>= 1.13.1'
 gem 'rolify', '~> 5.1'
 gem 'simple_form', '~> 3.2', '>= 3.2.1'
+
+gem 'qbo_api'
+gem 'oauth-plugin'
+gem 'newrelic_rpm'
+
+gem 'wicked_pdf'
+gem 'wkhtmltopdf-binary'
+
+gem 'sidekiq', '~> 4.1', '>= 4.1.1'
+gem 'sidekiq-scheduler'
+gem 'sidekiq-batch'
+
+gem 'activemerchant', '~> 1.46.0'
+gem 'braintree'
+gem 'stripe'
+
 group :development, :test do
   gem 'mina'
   gem 'mina-foreman', github: 'asabourin/mina-foreman', branch: 'master'
@@ -63,7 +68,7 @@ group :development, :test do
   gem 'pry-byebug'
   gem 'web-console', '~> 2.0'
 end
-
+gem "bullet", :group => "development"
 gem 'quiet_assets', '~> 1.1', group: :development
 gem "letter_opener", :group => :development
 gem 'raindrops', '~> 0.15.0'
