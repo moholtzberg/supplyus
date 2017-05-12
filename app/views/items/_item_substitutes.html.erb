@@ -1,0 +1,23 @@
+<table class="table table-bordered table-condensed table-striped">
+	
+	<tr>
+		<td colspan="4"><%# link_to "Add Group Item Price", new_group_item_price_path(:item_id => item.id), :class => "btn btn-primary btn-block btn-xs", :remote => true %></td>
+	</tr>
+	
+	<tr>
+		<th>Replacement Item</th>
+		<th>Replacement Item UOM</th>
+		<th>Replacement Item UOM Quantity</th>
+		<th>Comments</th>
+	</tr>
+
+	<% item.replacement_items.each do |it| %>
+	<tr>
+		<td><%= it.replacement_item.number %></td>
+		<td><%= it.replacement_uom %></td>
+		<td><%= it.replacement_uom_qty %></td>
+		<td><%= it.comments %></td>
+	</tr>
+	<% end %>
+
+</table>
