@@ -1,5 +1,4 @@
 source 'https://rubygems.org'
-
 gem 'rails', '4.2.3'
 
 gem 'sqlite3', group: :development
@@ -72,3 +71,4 @@ gem "bullet", :group => "development"
 gem 'quiet_assets', '~> 1.1', group: :development
 gem "letter_opener", :group => :development
 gem 'raindrops', '~> 0.15.0'
+gem 'themes_on_rails'

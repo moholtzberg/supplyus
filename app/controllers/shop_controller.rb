@@ -1,5 +1,5 @@
 class ShopController < ApplicationController
-  
+  theme "supply.us"
   before_filter :find_categories
   before_filter :find_cart
   
