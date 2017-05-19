@@ -94,7 +94,21 @@ class Item < ActiveRecord::Base
     string :scent, :multiple => true, :stored => true do
       specifications.where("lower(key) like ?", "%scent%").map {|color| color.value unless color.nil?}
     end
-    
+
+    string :properties, :multiple => true, :stored => true do
+      item_properties.map { |property| "#{property.key}|#{property.value}" }
+    end
+  end
+
+  def self.dynamic_facets(orig_facet)
+    new_facet = {}
+    orig_facet.rows.each do |facet|
+      k,v = facet.value.split('|')
+      new_facet[k] ||= {}
+      new_facet[k][v] ||= 0
+      new_facet[k][v] += facet.count
+    end
+    new_facet
   end
  
   def self.no_images
