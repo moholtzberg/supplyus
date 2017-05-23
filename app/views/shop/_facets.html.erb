@@ -150,6 +150,34 @@
 	</div>
 <% end %>
 
+<% if items.facet(:properties) and items.facet(:properties).rows.count > 0 %>
+	<% Item.dynamic_facets(items.facet(:properties)).each do |prop_name,val_hash| %>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h4 class="panel-title">
+					<a data-toggle="collapse" data-parent="#accordion" href="#<%= prop_name.gsub(/[^\w-]/, '') %>Filter">
+					</span><%= prop_name %></a>
+				</h4>
+			</div>
+			<div id="<%= prop_name.gsub(/[^\w-]/, '') %>Filter" class="panel-collapse collapse">
+					<ul class="list-group">
+					<% val_hash.each do |val_name,count| %>
+						<% if val_name %>
+							<li class="list-group-item">
+								<% if params[:properties].blank? || !params[:properties].include?("#{prop_name}|#{val_name}") %>
+									<%= link_to val_name, params.merge(:properties => params[:properties].to_a + ["#{prop_name}|#{val_name}"]) %> (<%= count%>)
+								<% else %>
+									<strong><%= val_name %></strong> (<%= link_to "remove", properties: params[:properties].to_a - ["#{prop_name}|#{val_name}"] %>)
+								<% end %>
+							</li>
+						<% end %>
+					<% end %>
+					</ul>
+			</div>
+		</div>
+	<% end %>
+<% end %>
+
 <% if items.facet(:application) and items.facet(:application).rows.count > 0 %>
 	<div class="panel panel-default">
 		<div class="panel-heading">
