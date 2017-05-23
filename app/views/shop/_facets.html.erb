@@ -162,9 +162,15 @@
 			<div id="<%= prop_name.gsub(' ', '') %>Filter" class="panel-collapse collapse">
 					<ul class="list-group">
 					<% val_hash.each do |val_name,count| %>
-						<li class="list-group-item">
-							<%= link_to val_name, params.merge(:properties => "#{prop_name}|#{val_name}") %> (<%= count%>)
-						</li>
+						<% if val_name %>
+							<li class="list-group-item">
+								<% if params[:properties].blank? || !params[:properties].include?("#{prop_name}|#{val_name}") %>
+									<%= link_to val_name, params.merge(:properties => params[:properties].to_a + ["#{prop_name}|#{val_name}"]) %> (<%= count%>)
+								<% else %>
+									<strong><%= val_name %></strong> (<%= link_to "remove", properties: params[:properties].to_a - ["#{prop_name}|#{val_name}"] %>)
+								<% end %>
+							</li>
+						<% end %>
 					<% end %>
 					</ul>
 			</div>

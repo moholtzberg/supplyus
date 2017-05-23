@@ -77,7 +77,11 @@ class ShopController < ApplicationController
       with(:recycled, params[:recycled]) if params[:recycled].present?
       with(:material, params[:material]) if params[:material].present?
       with(:application, params[:application]) if params[:application].present?
-      with(:properties, params[:properties]) if params[:properties].present?
+      if params[:properties].present?
+        params[:properties].each do |param|
+          with(:properties, param)
+        end
+      end
       facet :brand, :color, :size, :format, :recycled, :material, :application, :properties
       facet :property_ids, :specification_ids
       category_ids = with(:category_ids, params[:category_ids]) if params[:category_ids].present?
