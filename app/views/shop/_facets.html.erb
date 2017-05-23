@@ -1,230 +1,41 @@
 <div class="panel-group" id="facets">
-	
-<% if items.facet(:brand) and items.facet(:brand).rows.count > 0 %>
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h4 class="panel-title">
-				<a data-toggle="collapse" data-parent="#accordion" href="#brandFilter">
-				</span>Brand</a>
-			</h4>
-		</div>
-		<div id="brandFilter" class="panel-collapse collapse in">
-				<ul class="list-group">
-				<% for brand in items.facet(:brand).rows %>
-				<li class="list-group-item">
-						<% if params[:brand].blank? %>
-							<%= link_to brand.value, params.merge(:brand => [brand.value]) %> (<%= brand.count%>)
-						<% else %>
-						<strong><%= brand.value %></strong> (<%= link_to "remove", params.merge(:brand => nil) %>)
-						<% end %>
-					</li>
-				<% end %>
-				</ul>
-		</div>
-	</div>
-<% end %>
-
-<% if items.facet(:category_ids) and items.facet(:category_ids).rows.count > 0 %>
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h4 class="panel-title">
-				<a data-toggle="collapse" data-parent="#accordion" href="#categoryFilter">
-				</span>Category</a>
-			</h4>
-		</div>
-		<div id="categoryFilter" class="panel-collapse collapse">
-				<ul class="list-group">
-				<% for brand in items.facet(:category_ids).rows %>
-				<li class="list-group-item">
-						<% if params[:category_ids].present? and params[:category_ids].include?(brand.value.to_s) %>
-						<% copy_of_cat_ids_params = [] %>
-						<% copy_of_cat_ids_params.push(params[:category_ids]).flatten.uniq %>
-							<strong><%= brand.instance.nil? ? brand.instance : brand.instance.name  %></strong> (<%= link_to "remove", params.merge(:category_ids => (copy_of_cat_ids_params.flatten - [brand.value.to_s]).flatten) %>)
-						<% elsif params[:category_ids].nil?%>
-							<%= link_to "#{brand.instance.nil? ? brand.instance : brand.instance.name}", params.merge(:category_ids => brand.value.to_s) %> (<%= brand.count%>)
-						<% else %>
-						<% copy_of_cat_ids_params = [] %>
-						<% copy_of_cat_ids_params.push(params[:category_ids]).flatten.uniq %>
-							<%= link_to brand.instance.name, params.merge(:category_ids => (copy_of_cat_ids_params.flatten + [brand.value.to_s]).flatten) %> (<%= brand.count%>)
-						<% end %>
-					</li>
-				<% end %>
-				</ul>
-		</div>
-	</div>
-<% end %>
-
-<% if items.facet(:size) and items.facet(:size).rows.count > 0 %>
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h4 class="panel-title">
-				<a data-toggle="collapse" data-parent="#accordion" href="#sizeFilter">
-				</span>Size</a>
-			</h4>
-		</div>
-		<div id="sizeFilter" class="panel-collapse collapse">
-				<ul class="list-group">
-				<% for brand in items.facet(:size).rows %>
-				<li class="list-group-item">
-						<% if params[:size].blank? %>
-						<%= link_to brand.value, params.merge(:size => brand.value) %> (<%= brand.count%>)
-						<% else %>
-						<strong><%= brand.value %></strong> (<%= link_to "remove", :size => nil %>)
-						<% end %>
-					</li>
-				<% end %>
-				</ul>
-		</div>
-	</div>
-<% end %>
-
-<% if items.facet(:format) and items.facet(:format).rows.count > 0 %>
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h4 class="panel-title">
-				<a data-toggle="collapse" data-parent="#accordion" href="#formatFilter">
-				</span>Format</a>
-			</h4>
-		</div>
-		<div id="formatFilter" class="panel-collapse collapse">
-				<ul class="list-group">
-				<% for brand in items.facet(:format).rows %>
-				<li class="list-group-item">
-						<% if params[:format].blank? %>
-						<%= link_to brand.value, params.merge(:format => brand.value) %> (<%= brand.count%>)
-						<% else %>
-						<strong><%= brand.value %></strong> (<%= link_to "remove", :format => nil %>)
-						<% end %>
-					</li>
-				<% end %>
-				</ul>
-		</div>
-	</div>
-<% end %>
-
-<% if items.facet(:recycled) and items.facet(:recycled).rows.count > 0 %>
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h4 class="panel-title">
-				<a data-toggle="collapse" data-parent="#accordion" href="#recycledFilter">
-				</span>Recycled</a>
-			</h4>
-		</div>
-		<div id="recycledFilter" class="panel-collapse collapse">
-				<ul class="list-group">
-				<% for brand in items.facet(:recylced).rows %>
-				<li class="list-group-item">
-						<% if params[:recycled].blank? %>
-						<%= link_to brand.value, params.merge(:recycled => brand.value) %> (<%= brand.count%>)
-						<% else %>
-						<strong><%= brand.value %></strong> (<%= link_to "remove", :recycled => nil %>)
-						<% end %>
-					</li>
-				<% end %>
-				</ul>
-		</div>
-	</div>
-<% end %>
-
-<% if items.facet(:material) and items.facet(:material).rows.count > 0 %>
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h4 class="panel-title">
-				<a data-toggle="collapse" data-parent="#accordion" href="#materialFilter">
-				</span>Material</a>
-			</h4>
-		</div>
-		<div id="materialFilter" class="panel-collapse collapse">
-				<ul class="list-group">
-				<% for brand in items.facet(:material).rows %>
-				<li class="list-group-item">
-						<% if params[:material].blank? %>
-						<%= link_to brand.value, params.merge(:material => brand.value) %> (<%= brand.count%>)
-						<% else %>
-						<strong><%= brand.value %></strong> (<%= link_to "remove", :material => nil %>)
-						<% end %>
-					</li>
-				<% end %>
-				</ul>
-		</div>
-	</div>
-<% end %>
 
 <% if items.facet(:properties) and items.facet(:properties).rows.count > 0 %>
+	
 	<% Item.dynamic_facets(items.facet(:properties)).each do |prop_name,val_hash| %>
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h4 class="panel-title">
-					<a data-toggle="collapse" data-parent="#accordion" href="#<%= prop_name.gsub(/[^\w-]/, '') %>Filter">
-					</span><%= prop_name %></a>
-				</h4>
-			</div>
-			<div id="<%= prop_name.gsub(/[^\w-]/, '') %>Filter" class="panel-collapse collapse">
-					<ul class="list-group">
-					<% val_hash.each do |val_name,count| %>
-						<% if val_name %>
-							<li class="list-group-item">
-								<% if params[:properties].blank? || !params[:properties].include?("#{prop_name}|#{val_name}") %>
-									<%= link_to val_name, params.merge(:properties => params[:properties].to_a + ["#{prop_name}|#{val_name}"]) %> (<%= count%>)
-								<% else %>
-									<strong><%= val_name %></strong> (<%= link_to "remove", properties: params[:properties].to_a - ["#{prop_name}|#{val_name}"] %>)
-								<% end %>
-							</li>
-						<% end %>
-					<% end %>
-					</ul>
-			</div>
+	
+	<div class="panel panel-default">
+		
+		<div class="panel-heading">
+			<h4 class="panel-title">
+				<a data-toggle="collapse" data-parent="#accordion" href="#<%= prop_name.gsub(/[^\w-]/, '') %>Filter">
+				</span><%= prop_name %></a>
+			</h4>
 		</div>
+		
+		<div id="<%= prop_name.gsub(/[^\w-]/, '') %>Filter" class="panel-collapse collapse">
+			
+			<ul class="list-group">
+				
+				<% val_hash.each do |val_name,count| %>
+					
+					<% if val_name %>
+						
+						<li class="list-group-item">
+							<% if params[:properties].blank? || !params[:properties].include?("#{prop_name}|#{val_name}") %>
+							<%= link_to val_name, params.merge(:properties => params[:properties].to_a + ["#{prop_name}|#{val_name}"]) %> (<%= count%>)
+				 	 	 <% else %>
+					 	<strong><%= val_name %></strong> (<%= link_to "remove", properties: params[:properties].to_a - ["#{prop_name}|#{val_name}"] %>)
+					 	<% end %>
+						</li>
+						<% end %>
+				<% end %>
+			</ul>
+		</div>
+	</div>
+	
 	<% end %>
+	
 <% end %>
-
-<% if items.facet(:application) and items.facet(:application).rows.count > 0 %>
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h4 class="panel-title">
-				<a data-toggle="collapse" data-parent="#accordion" href="#applicationFilter">
-				</span>Application</a>
-			</h4>
-		</div>
-		<div id="applicationFilter" class="panel-collapse collapse">
-				<ul class="list-group">
-				<% for brand in items.facet(:application).rows %>
-				<li class="list-group-item">
-						<% if params[:application].blank? %>
-						<%= link_to brand.value, params.merge(:application => brand.value) %> (<%= brand.count%>)
-						<% else %>
-						<strong><%= brand.value %></strong> (<%= link_to "remove", :application => nil %>)
-						<% end %>
-					</li>
-				<% end %>
-				</ul>
-		</div>
-	</div>
-<% end %>
-
-<% if items.facet(:scent) and items.facet(:scent).rows.count > 0 %>
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h4 class="panel-title">
-				<a data-toggle="collapse" data-parent="#accordion" href="#scentFilter">
-				</span>Application</a>
-			</h4>
-		</div>
-		<div id="scentFilter" class="panel-collapse collapse">
-				<ul class="list-group">
-				<% for brand in items.facet(:scent).rows %>
-				<li class="list-group-item">
-						<% if params[:scent].blank? %>
-						<%= link_to brand.value, params.merge(:scent => brand.value) %> (<%= brand.count%>)
-						<% else %>
-						<strong><%= brand.value %></strong> (<%= link_to "remove", :scent => nil %>)
-						<% end %>
-					</li>
-				<% end %>
-				</ul>
-		</div>
-	</div>
-<% end %>
-
 
 </div>
