@@ -34,8 +34,8 @@ class ShopController < ApplicationController
     categories = categories.flatten.compact
     @items = Item.search do 
       with(:category_ids, categories)
-      with(:properties, params[:properties]) if params[:properties].present?
-      facet :properties
+      with(:specs, params[:specs]) if params[:specs].present?
+      facet :specs
       order_by(:score, :desc)
       paginate(:page => params[:page])
     end
@@ -56,13 +56,13 @@ class ShopController < ApplicationController
       fulltext params[:keywords] if params[:keywords].present?
       # facet :price, :range => 0..1000, :range_interval => 100
       # with(:brand, params[:brand]) if params[:brand].present?
-      if params[:properties].present?
-        params[:properties].each do |param|
-          with(:properties, param)
+      if params[:specs].present?
+        params[:specs].each do |param|
+          with(:specs, param)
         end
       end
       # facet :brand
-      facet :properties
+      facet :specs
       order_by(:score, :desc)
       paginate(:page => params[:page])
     end

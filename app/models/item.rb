@@ -34,7 +34,7 @@ class Item < ActiveRecord::Base
   searchable do
     text :number, :stored => true, :boost => 32
     text :name, :stored => true, :boost => 16
-    text :slug, :stored => true, :boost => 12
+    # text :slug, :stored => true, :boost => 12
     text :description, :stored => true, :boost => 8
     
     text :brand, :boost => 4 do
@@ -44,10 +44,6 @@ class Item < ActiveRecord::Base
     text :item_categories, :boost => 4 do
       item_categories.map { |item_category| item_category.category.name }
     end
-    
-    text :item_properties do
-      item_properties.map { |item_property| item_property.key }
-    end
 
     text :item_properties do
       item_properties.map { |item_property| item_property.value }
@@ -55,15 +51,16 @@ class Item < ActiveRecord::Base
     
     float :price, :trie => true
     
-    # string :brand, :stored => true do
-    #   brand.name if brand
-    # end
+    string :brand, :stored => true do
+      brand.name if brand
+    end
     
     integer :category_ids, :multiple => true, :references => Category
 
-    string :properties, :multiple => true, :stored => true do
-      item_properties.map { |property| "#{property.key}|#{property.value}" }
+    string :specs, :multiple => true, :stored => true do
+      specifications.map { |spec| "#{spec.key}|#{spec.value}" unless spec.value.blank?}
     end
+    
   end
 
   def self.dynamic_facets(orig_facet)
