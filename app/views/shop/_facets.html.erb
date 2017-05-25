@@ -34,13 +34,13 @@
 									
 										<% count > (params[:page].to_i - 1) * items.results.per_page ? page_num = params[:page] : page_num = 1 %>
 										
-										<%= link_to val_name, params.merge(:page => page_num, :specs => params[:specs].to_a + ["#{prop_name}|#{val_name}"]) %>
+										<%= link_to val_name, params.merge(:page => page_num, :specs => params[:specs].to_a + ["#{prop_name}|#{val_name}"]), remote: true %>
 										(<%= count%>)
 									
 									<% else %>
 										
 										<strong><%= val_name %></strong>
-										(<%= link_to "remove", :specs =>  params[:specs].to_a - ["#{prop_name}|#{val_name}"] %>)
+										(<%= link_to "remove", :specs =>  (params[:specs].to_a - ["#{prop_name}|#{val_name}"]), remote: true %>)
 										
 									<% end %>
 								
