@@ -1,5 +1,28 @@
 <div class="panel-group" id="facets">
 
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4 class="panel-title">
+				<a data-toggle="collapse" data-parent="#accordion" href="#sortFilter">
+				</span>Sort By</a>
+			</h4>
+		</div>
+		<div id="sortFilter" class="panel-collapse collapse in">
+			<ul class="list-group">
+				<% for sorting in [{name: 'Price Asc', value: ['price', 'asc']}, {name: 'Price Desc', value: ['price', 'desc']}] %>
+					<li class="list-group-item">
+						<% if params[:sort_by].blank? || params[:sort_by] != sorting[:value] %>
+							<%= link_to sorting[:name], params.merge(:sort_by => sorting[:value]), remote: true %>
+						<% else %>
+						<strong><%= sorting[:name] %></strong> (<%= link_to "remove", params.merge(:sort_by => nil) %>)
+						<% end %>
+					</li>
+				<% end %>
+			</ul>
+		</div>
+	</div>
+
+
 	<% i = 0 %>
 
 	<% if items.facet(:price) and items.facet(:price).rows.count > 0 %>

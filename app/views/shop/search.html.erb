@@ -4,16 +4,11 @@
 	<h1>Search Results: <%= params[:keywords] %></h1>
 </div>
 
-<% if @items.facets.count > 0 %>
-	<% col = 9 %>
-	<div class="col-md-3 row">
-		<%= render :partial => "facets", :locals => {:items => @items} %>
-	</div>
-<% else %>
-	<% col = 12 %>
-<% end %>
+<div class="col-md-3 row">
+	<%= render :partial => "facets", :locals => {:items => @items} %>
+</div>
 
-<div class="col-md-<%= col %>" id="search-items">
+<div class="row col-md-9" id="search-items">
 	<%= render :partial => "search_items", :locals => {:items => @items} %>
 </div>
 

@@ -62,8 +62,11 @@ class ShopController < ApplicationController
         end
       end
       # facet :brand
-      facet :price, :range => 0..200, :range_interval => 50
       facet :specs
+      facet :price, :range => 0..200, :range_interval => 50
+      if params[:sort_by].present?
+        order_by(*params[:sort_by])
+      end
       order_by(:score, :desc)
       paginate(:page => params[:page])
     end
