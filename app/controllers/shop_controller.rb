@@ -54,7 +54,7 @@ class ShopController < ApplicationController
     @items = []
     @items = Item.search do
       fulltext params[:keywords] if params[:keywords].present?
-      # facet :price, :range => 0..1000, :range_interval => 100
+      with(:price, Range.new(*params[:price_range].split("..").map(&:to_i))) if params[:price_range].present?
       # with(:brand, params[:brand]) if params[:brand].present?
       if params[:specs].present?
         params[:specs].each do |param|
@@ -62,6 +62,7 @@ class ShopController < ApplicationController
         end
       end
       # facet :brand
+      facet :price, :range => 0..200, :range_interval => 50
       facet :specs
       order_by(:score, :desc)
       paginate(:page => params[:page])

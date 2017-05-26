@@ -1,25 +1,56 @@
 <div class="panel-group" id="facets">
+
+	<% i = 0 %>
+
+	<% if items.facet(:price) and items.facet(:price).rows.count > 0 %>
+
+		<% i += 1 %>
+
+		<div class="panel panel-default <%= 'hide' if i > 5 %>">
+			<div class="panel-heading">
+				<h4 class="panel-title">
+					<a data-toggle="collapse" data-parent="#accordion" href="#priceFilter">
+					</span>Price</a>
+				</h4>
+			</div>
+			<div id="priceFilter" class="panel-collapse collapse">
+					<ul class="list-group">
+					<% for range in items.facet(:price).rows %>
+					<li class="list-group-item">
+							<% if params[:price_range].blank? %>
+								<%= link_to range.value, params.merge(:price_range => range.value), remote: true %> (<%= range.count%>)
+							<% else %>
+							<strong><%= range.value %></strong> (<%= link_to "remove", params.merge(:price_range => nil) %>)
+							<% end %>
+						</li>
+					<% end %>
+					</ul>
+			</div>
+		</div>
+	<% end %>
 	
 	<% if items.facet(:specs) and items.facet(:specs).rows.count > 0 %>
 	
 		<% Item.dynamic_facets(items.facet(:specs)).each do |prop_name,val_hash| %>
 		
 			<% if !val_hash.values.include?(items.total) %>
-			
-			<div class="panel panel-default">
+
+				<% i += 1 %>
 				
-				<div class="panel-heading">
+				<div class="panel panel-default <%= 'hide' if i > 5 %>">
 					
-					<h4 class="panel-title">
+					<div class="panel-heading">
 						
-						<a data-toggle="collapse" data-parent="#accordion" href="#<%= prop_name.gsub(/[^\w-]/, '') %>Filter">
-							<span><%= prop_name %></span>
-						</a>
+						<h4 class="panel-title">
+							
+							<a data-toggle="collapse" data-parent="#accordion" href="#<%= prop_name.gsub(/[^\w-]/, '') %>Filter">
+								<span><%= prop_name %></span>
+							</a>
+							
+						</h4>
 						
-					</h4>
+					</div>
 					
-				</div>
-				
 					<div id="<%= prop_name.gsub(/[^\w-]/, '') %>Filter" class="panel-collapse collapse">
 						
 						<ul class="list-group">
@@ -28,23 +59,23 @@
 							
 								<% if val_name %>
 								
-								<li class="list-group-item">
-									
-									<% if params[:specs].blank? || !params[:specs].include?("#{prop_name}|#{val_name}") %>
-									
-										<% count > (params[:page].to_i - 1) * items.results.per_page ? page_num = params[:page] : page_num = 1 %>
+									<li class="list-group-item">
 										
-										<%= link_to val_name, params.merge(:page => page_num, :specs => params[:specs].to_a + ["#{prop_name}|#{val_name}"]), remote: true %>
-										(<%= count%>)
+										<% if params[:specs].blank? || !params[:specs].include?("#{prop_name}|#{val_name}") %>
+										
+											<% count > (params[:page].to_i - 1) * items.results.per_page ? page_num = params[:page] : page_num = 1 %>
+											
+											<%= link_to val_name, params.merge(:page => page_num, :specs => params[:specs].to_a + ["#{prop_name}|#{val_name}"]), remote: true %>
+											(<%= count%>)
+										
+										<% else %>
+											
+											<strong><%= val_name %></strong>
+											(<%= link_to "remove", :specs =>  (params[:specs].to_a - ["#{prop_name}|#{val_name}"]), remote: true %>)
+											
+										<% end %>
 									
-									<% else %>
-										
-										<strong><%= val_name %></strong>
-										(<%= link_to "remove", :specs =>  (params[:specs].to_a - ["#{prop_name}|#{val_name}"]), remote: true %>)
-										
-									<% end %>
-								
-								</li>
+									</li>
 								
 								<% end %>
 								
@@ -53,13 +84,35 @@
 						</ul>
 					
 					</div>
-				
-			</div>
-				
+					
+				</div>
+					
 			<% end %>
 	
+		<% end %>
+
+		<% if i > 5 %>
+
+			<div class="panel panel-default show-more">
+			  <div class="panel-heading">
+			    <h4 class="panel-title">
+			      <a>
+			      <span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span>
+			      <span>Show More</span>
+			      </a>
+			    </h4>
+			  </div>
+			</div>			
+
 		<% end %>
 		
 	<% end %>
 
 </div>
+
+<script>
+	$('.panel.show-more a').click(function(){
+		$('.panel.panel-default.hide').removeClass('hide');
+		$(this).closest('.panel').addClass('hide');
+	})
+</script>
