@@ -18,7 +18,7 @@
 		<div id="MainSearchBox" class="hidden-xs col-sm-5 col-md-6">
 
 			<div class="input-group input-group-lg">
-				<form id="searchBox" accept-charset="UTF-8" action="/search" method="get" role="search" data-remote="<%= current_page?(controller: :shop, action: :search) %>">
+				<form id="searchBox" accept-charset="UTF-8" action="/search" method="get" role="search">
 					<input type="text" class="form-control input-group js-autocomplete" id="keywords" name="keywords" placeholder="Search Over 5,000 Products" value="<%=params['keywords']%>" >
 					<div class="input-group-btn">
 						<button type="submit" class="btn btn-default"><i class="icon-shopping-search"></i> Go</button>
@@ -48,7 +48,7 @@
 				</button>
 				
 				<div id="mobile-search" class="col-xs-10 hidden-sm hidden-md hidden-lg hidden-xl">
-					<form id="searchBox" accept-charset="UTF-8" action="/search" method="get" role="search" class="navbar-form" data-remote="<%= current_page?(controller: :shop, action: :search) %>">
+					<form id="searchBox" accept-charset="UTF-8" action="/search" method="get" role="search" class="navbar-form">
 						<div class="input-group">
 							<input type="text" class="form-control js-autocomplete" id="keywords" name="keywords" placeholder="Search Over 5,000 Products" value="<%=params['keywords']%>">
 							
