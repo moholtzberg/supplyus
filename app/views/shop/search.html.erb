@@ -19,4 +19,14 @@
 
 <% if @items and @items.results.size > 0 %>
 	<%= will_paginate @items.results, renderer: BootstrapPagination::Rails %>
-<% end %> 
+<% end %>
+
+<script>
+  $(document).on('click', '#facets a[data-remote=true]', function(e) {
+    history.pushState({}, '', $(this).attr('href'));
+  });
+
+  $(window).on('popstate', function () {
+    $.get(document.location.href)
+  });
+</script>
