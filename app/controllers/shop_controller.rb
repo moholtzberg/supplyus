@@ -54,7 +54,8 @@ class ShopController < ApplicationController
     @items = []
     @items = Item.search do
       fulltext params[:keywords] if params[:keywords].present?
-      # facet :price, :range => 0..1000, :range_interval => 100
+      stats :price
+      with(:price, Range.new(*params[:price_range].split("..").map(&:to_i))) if params[:price_range].present?
       # with(:brand, params[:brand]) if params[:brand].present?
       if params[:specs].present?
         params[:specs].each do |param|
@@ -63,9 +64,15 @@ class ShopController < ApplicationController
       end
       # facet :brand
       facet :specs
+      if params[:sort_by].present?
+        order_by(*params[:sort_by])
+      end
       order_by(:score, :desc)
       paginate(:page => params[:page])
     end
+    max = @items.stats(:price).max
+    @items.build { facet :price, :range => 0..max, :range_interval => (max/4).ceil }
+    @items.execute
   end
   
   def search_autocomplete
