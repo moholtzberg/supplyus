@@ -150,6 +150,30 @@
 	</div>
 <% end %>
 
+<!-- FROM HERER -->
+<% if items.facet(:properties) and items.facet(:properties).rows.count > 0 %>
+	<% Item.dynamic_facets(items.facet(:properties)).each do |prop_name,val_hash| %>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h4 class="panel-title">
+					<a data-toggle="collapse" data-parent="#accordion" href="#<%= prop_name.gsub(' ', '') %>Filter">
+					</span><%= prop_name %></a>
+				</h4>
+			</div>
+			<div id="<%= prop_name.gsub(' ', '') %>Filter" class="panel-collapse collapse">
+					<ul class="list-group">
+					<% val_hash.each do |val_name,count| %>
+						<li class="list-group-item">
+							<%= link_to val_name, params.merge(:properties => "#{prop_name}|#{val_name}") %> (<%= count%>)
+						</li>
+					<% end %>
+					</ul>
+			</div>
+		</div>
+	<% end %>
+<% end %>
+<!-- TILL HERER -->
+
 <% if items.facet(:application) and items.facet(:application).rows.count > 0 %>
 	<div class="panel panel-default">
 		<div class="panel-heading">
