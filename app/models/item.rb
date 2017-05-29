@@ -22,8 +22,8 @@ class Item < ActiveRecord::Base
   has_many :substituting_items, :class_name => "ItemReference", :foreign_key => :replacement_item_id
   belongs_to :category
   belongs_to :brand
-  has_one :inventory, :class_name => "Inventory"
   belongs_to :model
+  has_one :inventory, :class_name => "Inventory"
   attr_reader :category_tokens
   
   validates_uniqueness_of :number
@@ -34,7 +34,6 @@ class Item < ActiveRecord::Base
   searchable do
     text :number, :stored => true, :boost => 32
     text :name, :stored => true, :boost => 16
-    text :slug, :stored => true, :boost => 12
     text :description, :stored => true, :boost => 8
     
     text :brand, :boost => 4 do
@@ -43,10 +42,6 @@ class Item < ActiveRecord::Base
     
     text :item_categories, :boost => 4 do
       item_categories.map { |item_category| item_category.category.name }
-    end
-    
-    text :item_properties do
-      item_properties.map { |item_property| item_property.key }
     end
 
     text :item_properties do
@@ -60,41 +55,22 @@ class Item < ActiveRecord::Base
     end
     
     integer :category_ids, :multiple => true, :references => Category
-    integer :property_ids, :multiple => true, :references => ItemProperty
-    integer :specification_ids, :multiple => true, :references => Specification
     
-    string :color, :multiple => true, :stored => true do
-      specifications.where("lower(key) like ?", "%color%").map {|color| color.value unless color.nil?}
+    string :specs, :multiple => true, :stored => true do
+      specifications.map { |spec| "#{spec.key}|#{spec.value}" unless spec.value.blank?}
     end
     
-    string :size, :multiple => true, :stored => true do
-      specifications.where("lower(key) like ?", "%size%").map {|color| color.value unless color.nil?}
+  end
+
+  def self.dynamic_facets(orig_facet)
+    new_facet = {}
+    orig_facet.rows.each do |facet|
+      k,v = facet.value.split('|')
+      new_facet[k] ||= {}
+      new_facet[k][v] ||= 0
+      new_facet[k][v] += facet.count
     end
-    
-    boolean :recycled, :multiple => true, :stored => true do
-      specifications.where("lower(key) like ?", "%toal recycled content%").map {|color| (color.value.to_i >= 30) unless color.nil?}
-    end
-    
-    string :grade, :multiple => true, :stored => true do
-      specifications.where("lower(key) like ?", "%grade%").map {|color| color.value unless color.nil?}
-    end
-    
-    string :format, :multiple => true, :stored => true do
-      specifications.where("lower(key) like ?", "%format%").map {|color| color.value unless color.nil?}
-    end
-    
-    string :material, :multiple => true, :stored => true do
-      specifications.where("lower(key) like ?", "%material%").map {|color| color.value unless color.nil?}
-    end
-    
-    string :application, :multiple => true, :stored => true do
-      specifications.where("lower(key) like ?", "%application%").map {|color| color.value unless color.nil?}
-    end
-    
-    string :scent, :multiple => true, :stored => true do
-      specifications.where("lower(key) like ?", "%scent%").map {|color| color.value unless color.nil?}
-    end
-    
+    new_facet
   end
  
   def self.no_images
