@@ -1,0 +1,103 @@
+<header id="topNav">
+	<div class="container">
+
+		<!-- Mobile Menu Button -->
+		<button class="btn btn-mobile" data-toggle="collapse" data-target=".nav-main-collapse">
+			<i class="fa fa-bars"></i>
+		</button>
+
+		<!-- BUTTONS -->
+		<ul class="pull-right nav nav-pills nav-second-main">
+
+			<!-- SEARCH -->
+			<li class="search">
+				<a href="javascript:;">
+					<i class="fa fa-search"></i>
+				</a>
+			</li>
+			<!-- /SEARCH -->
+
+
+			<!-- QUICK SHOP CART -->
+			<li class="quick-cart">
+				<%= render :partial => "/shop/common/cart" %>
+			</li>
+			<!-- /QUICK SHOP CART -->
+
+		</ul>
+		<!-- /BUTTONS -->
+
+		<!-- Logo -->
+		<a class="logo pull-left" href="index.html">
+			<img src="assets/supply.us/logo_dark.png" alt="" />
+		</a>
+
+		<!-- 
+			Top Nav 
+			
+			AVAILABLE CLASSES:
+			submenu-dark = dark sub menu
+		-->
+		<% cache @menu do %>
+		<div class="navbar-collapse pull-right nav-main-collapse collapse">
+			<nav class="nav-main">
+
+				<!--
+					NOTE
+					
+					For a regular link, remove "dropdown" class from LI tag and "dropdown-toggle" class from the href.
+					Direct Link Example: 
+
+					<li>
+						<a href="#">HOME</a>
+					</li>
+				-->
+				<ul id="topMain" class="nav nav-pills nav-main">
+					<li><!-- HOME -->
+						<a href="#">HOME</a>
+					</li>
+					<% @menu.each do |cat| %>
+					<li class="dropdown mega-menu"><!-- PAGES -->
+						<a class="dropdown-toggle" href="#">
+							<%= cat.name %>
+						</a>
+						
+						
+						<ul class="dropdown-menu">
+							<div class="row">
+								<div class="col-md-4">
+								<% cat.children.limit(cat.children.count/3).each do |child| %>
+								<li class="dropdown">
+									<%= link_to child.name, "/#{child.slug}"%>
+								</li>	
+								<% end %>
+								</div>
+							
+								<div class="col-md-4">
+								<% cat.children.limit(cat.children.count/3).offset(cat.children.count/3).each do |child| %>
+								<li class="dropdown">
+									<%= link_to child.name, "/#{child.slug}"%>
+								</li>	
+								<% end %>
+								</div>
+							
+								<div class="col-md-4">
+								<% cat.children.limit(cat.children.count/3).offset((cat.children.count/3)*2).each do |child| %>
+								<li class="dropdown">
+									<%= link_to child.name, "/#{child.slug}"%>
+								</li>	
+								<% end %>
+								</div>
+							</div>
+							
+							
+						</ul>
+					</li>
+					<% end %>
+				</ul>
+
+			</nav>
+		</div>
+		<% end %>
+	</div>
+</header>
