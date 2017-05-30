@@ -23,10 +23,10 @@
 		<!-- price -->
 		<div class="shop-item-price">
 			<% if current_user and current_user.has_account and item.actual_price(current_user.account.id).to_f <= item.price.to_f %>
-			<span class="line-through"><%= number_to_currency(item.price) %></span>
-			<%= number_to_currency(item.actual_price(current_user.account.id)) %>
+				<span class="line-through"><%= number_to_currency(item.price) %></span>
+				<%= number_to_currency(item.actual_price(current_user.account.id)) %>
 			<% else %>
-			<%= number_to_currency(item.actual_price(current_user.account.id)) %>
+				<%= number_to_currency(item.price) %>
 			<% end %>
 		</div>
 		<!-- /price -->
