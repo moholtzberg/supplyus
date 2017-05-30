@@ -32,12 +32,33 @@ class ShopController < ApplicationController
     categories.push(@category.id)
     categories.push(@category.children.map(&:id))
     categories = categories.flatten.compact
-    @items = Item.search do 
+    @items = Item.search(include: [:categories, :item_categories, :features, :brand, :images]) do
+      fulltext params[:keywords] if params[:keywords].present?
       with(:category_ids, categories)
-      with(:specs, params[:specs]) if params[:specs].present?
+      stats :price
+      with(:price, Range.new(*params[:price_range].split("..").map(&:to_i))) if params[:price_range].present?
+      # with(:brand, params[:brand]) if params[:brand].present?
+      if params[:specs].present?
+        params[:specs].each do |param|
+          with(:specs, param)
+        end
+      end
+      # facet :brand
       facet :specs
+      if params[:sort_by].present?
+        order_by(*params[:sort_by])
+      end
       order_by(:score, :desc)
       paginate(:page => params[:page])
+    end
+    max = @items.stats(:price).max
+    @items.build { facet :price, :range => 0..max, :range_interval => (max/4).ceil }
+    @items.execute
+    respond_to do |format|
+      format.html
+      format.js do
+        render 'search'
+      end
     end
   end
   
@@ -52,7 +73,7 @@ class ShopController < ApplicationController
   def search
     # @items = Item.where(nil).active
     @items = []
-    @items = Item.search do
+    @items = Item.search(include: [:categories, :item_categories, :features, :brand, :images]) do
       fulltext params[:keywords] if params[:keywords].present?
       stats :price
       with(:price, Range.new(*params[:price_range].split("..").map(&:to_i))) if params[:price_range].present?

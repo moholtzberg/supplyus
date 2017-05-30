@@ -51,5 +51,9 @@ module ApplicationHelper
     direction = column == sort_column && sort_direction == "asc" ? "desc" : "asc"
     link_to title, {:sort => column, :direction => direction}, {:class => css_class}
   end
+
+  def range_to_currency(range)
+    number_to_currency(range.begin) + ' - ' + number_to_currency(range.end)
+  end
   
 end

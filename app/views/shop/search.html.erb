@@ -28,7 +28,7 @@
   $(document).ajaxStart(function() {
     $('body').append('<div class="preloader-overlay"></div>');
   });
-  
+
   $(document).ajaxStop(function() {
     $('.preloader-overlay').remove();
   })
