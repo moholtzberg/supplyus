@@ -14,7 +14,7 @@
 						<% if params[:sort_by].blank? || params[:sort_by] != sorting[:value] %>
 							<%= link_to sorting[:name], params.merge(:sort_by => sorting[:value]), remote: true %>
 						<% else %>
-						<strong><%= sorting[:name] %></strong> (<%= link_to "remove", params.merge(:sort_by => nil) %>)
+						<strong><%= sorting[:name] %></strong> (<%= link_to "remove", params.merge(:sort_by => nil), remote: true %>)
 						<% end %>
 					</li>
 				<% end %>
@@ -36,14 +36,14 @@
 					</span>Price</a>
 				</h4>
 			</div>
-			<div id="priceFilter" class="panel-collapse collapse">
+			<div id="priceFilter" class="panel-collapse collapse <%= 'in' if !params[:price_range].blank? %>">
 					<ul class="list-group">
 					<% for range in items.facet(:price).rows %>
 					<li class="list-group-item">
 							<% if params[:price_range].blank? %>
-								<%= link_to range.value, params.merge(:price_range => range.value), remote: true %> (<%= range.count%>)
+								<%= link_to range_to_currency(range.value), params.merge(:price_range => range.value), remote: true %> (<%= range.count%>)
 							<% else %>
-							<strong><%= range.value %></strong> (<%= link_to "remove", params.merge(:price_range => nil) %>)
+							<strong><%= range_to_currency(range.value) %></strong> (<%= link_to "remove", params.merge(:price_range => nil), remote: true %>)
 							<% end %>
 						</li>
 					<% end %>
@@ -56,11 +56,11 @@
 	
 		<% Item.dynamic_facets(items.facet(:specs)).each do |prop_name,val_hash| %>
 		
-			<% if !val_hash.values.include?(items.total) %>
+			<% if !val_hash.values.include?(items.total) || params[:specs].to_a.join(',').include?("#{prop_name}") %>
 
 				<% i += 1 %>
 				
-				<div class="panel panel-default <%= 'hide' if i > 5 %>">
+				<div class="panel panel-default <%= 'hide' if i > 5 && !params[:specs].to_a.join(',').include?("#{prop_name}") %>">
 					
 					<div class="panel-heading">
 						
@@ -74,7 +74,7 @@
 						
 					</div>
 					
-					<div id="<%= prop_name.gsub(/[^\w-]/, '') %>Filter" class="panel-collapse collapse">
+					<div id="<%= prop_name.gsub(/[^\w-]/, '') %>Filter" class="panel-collapse collapse <%= 'in' if params[:specs].to_a.join(',').include?("#{prop_name}") %>">
 						
 						<ul class="list-group">
 							
@@ -94,7 +94,7 @@
 										<% else %>
 											
 											<strong><%= val_name %></strong>
-											(<%= link_to "remove", :specs =>  (params[:specs].to_a - ["#{prop_name}|#{val_name}"]), remote: true %>)
+											(<%= link_to "remove", params.merge(:specs =>  (params[:specs].to_a - ["#{prop_name}|#{val_name}"])), remote: true %>)
 											
 										<% end %>
 									
