@@ -32,7 +32,7 @@ class ShopController < ApplicationController
     categories.push(@category.id)
     categories.push(@category.children.map(&:id))
     categories = categories.flatten.compact
-    @items = Item.search do
+    @items = Item.search(include: [:categories, :item_categories, :features, :brand, :images]) do
       fulltext params[:keywords] if params[:keywords].present?
       with(:category_ids, categories)
       stats :price
@@ -73,7 +73,7 @@ class ShopController < ApplicationController
   def search
     # @items = Item.where(nil).active
     @items = []
-    @items = Item.search do
+    @items = Item.search(include: [:categories, :item_categories, :features, :brand, :images]) do
       fulltext params[:keywords] if params[:keywords].present?
       stats :price
       with(:price, Range.new(*params[:price_range].split("..").map(&:to_i))) if params[:price_range].present?
