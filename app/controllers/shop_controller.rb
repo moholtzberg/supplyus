@@ -54,12 +54,6 @@ class ShopController < ApplicationController
     max = @items.stats(:price).max
     @items.build { facet :price, :range => 0..max, :range_interval => (max/4).ceil }
     @items.execute
-    respond_to do |format|
-      format.html
-      format.js do
-        render 'search'
-      end
-    end
   end
   
   def item
