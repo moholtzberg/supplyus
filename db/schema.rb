@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170605124422) do
+ActiveRecord::Schema.define(version: 20170605191931) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -127,6 +127,8 @@ ActiveRecord::Schema.define(version: 20170605124422) do
     t.integer "item_id"
     t.integer "appliable_id"
     t.string  "appliable_type"
+    t.integer "discount_code_id"
+    t.string  "name"
   end
 
   create_table "discount_code_rules", force: :cascade do |t|
@@ -134,6 +136,7 @@ ActiveRecord::Schema.define(version: 20170605124422) do
     t.float   "amount"
     t.integer "requirable_id"
     t.string  "requirable_type"
+    t.integer "discount_code_id"
   end
 
   create_table "discount_codes", force: :cascade do |t|
@@ -482,6 +485,7 @@ ActiveRecord::Schema.define(version: 20170605124422) do
     t.decimal  "shipping_total",       precision: 10, scale: 2, default: 0.0
     t.decimal  "tax_total",            precision: 10, scale: 2, default: 0.0
     t.boolean  "credit_hold",                                   default: false
+    t.decimal  "discount_total",       precision: 10, scale: 2, default: 0.0
   end
 
   add_index "orders", ["account_id"], name: "order_customer_id_ix"

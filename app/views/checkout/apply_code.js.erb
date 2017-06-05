@@ -1,0 +1,6 @@
+<% if @order_discount_code.errors.any? %>
+  
+<% else %>
+  $('tr#order_total').before("<%= j render 'discount_code', checkout: @checkout %>")
+  $('tr#order_total td:last').html("<strong><%= number_to_currency(@checkout.total) %></strong>")
+<% end %>

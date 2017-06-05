@@ -150,7 +150,8 @@ Rails.application.routes.draw do
   patch "checkout/payment" => "checkout#update_payment"
   get   "checkout/confirm" => "checkout#confirm"
   patch "checkout/complete"=> "checkout#complete"
-  
+  post  "checkout/apply_code" => "checkout#apply_code"
+
   post  "/add_to_cart" => "shop#add_to_cart"
   patch "/add_to_cart" => "shop#add_to_cart"
   post  "/update_cart" => "shop#update_cart"

@@ -1,0 +1,4 @@
+<tr>
+  <td colspan="3"><%= checkout.discount_code.effect.name %></td>
+  <td colspan="2" class="text-center"><strong> <%= number_to_currency(-checkout.discount_code.effect.calculate(checkout)) %></strong></td>
+</tr>

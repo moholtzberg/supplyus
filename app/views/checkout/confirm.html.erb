@@ -32,7 +32,10 @@
 		<td colspan="3"><%= @checkout.order_shipping_method.name %> - Shipping</td>
 		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@checkout.shipping_total) %></strong></td>
 	</tr>
-	<tr>
+	<% if @cart.order_discount_code %>
+		<%= render :partial => "discount_code", :locals => {:checkout => @checkout} %>
+	<% end %>
+	<tr id="order_total">
 		<td colspan="3">Order Total</td>
 		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@checkout.total) %></strong></td>
 	</tr>
@@ -73,6 +76,16 @@
 	<tr>
 		<th width="50%">Notes</th>
 		<td width="50%"><%= @cart.notes %></td>
+	</tr>
+</table>
+
+<table class="table table-bordered">
+	<tr>
+		<th class="vertical-middle" width="50%">Apply discount code</th>
+		<%= simple_form_for :discount_code, url: checkout_apply_code_path, method: :post, remote: true do |f| %>
+			<td width="40%"><%= f.input_field :code, :class => "form-control"%></td>
+			<td width="10%"><%= f.submit "Apply Code", :class => "btn btn-primary pull-right"%></td>
+		<% end %>
 	</tr>
 </table>
 
