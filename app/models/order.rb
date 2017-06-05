@@ -23,6 +23,7 @@ class Order < ActiveRecord::Base
   belongs_to :sales_rep, :class_name => "User"
   has_one :order_shipping_method, :dependent => :destroy, :inverse_of => :order
   has_one :order_tax_rate, :dependent => :destroy, :inverse_of => :order
+  has_many :discount_codes, through: :order_discount_codes
   has_many :order_line_items, :dependent => :destroy, :inverse_of => :order
   has_many :items, :through => :order_line_items
   has_many :shipments, :through => :order_line_items
