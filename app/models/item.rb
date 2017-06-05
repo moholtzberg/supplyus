@@ -62,7 +62,7 @@ class Item < ActiveRecord::Base
     end
     
   end
-
+  
   def self.dynamic_facets(orig_facet)
     new_facet = {}
     orig_facet.rows.each do |facet|
@@ -84,6 +84,10 @@ class Item < ActiveRecord::Base
   
   def brand_name=(name)
     self.brand = Brand.find_by(:name => name) if name.present?
+  end
+  
+  def index_async
+    ItemIndexWorker.perform_async(id)
   end
   
   def category_name
