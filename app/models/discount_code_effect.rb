@@ -1,4 +1,4 @@
-class DiscountCode < ActiveRecord::Base
+class DiscountCodeEffect < ActiveRecord::Base
   include ApplicationHelper
   
   belongs_to :discount_code
