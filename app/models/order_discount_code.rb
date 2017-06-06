@@ -13,7 +13,7 @@ class OrderDiscountCode < ActiveRecord::Base
 
   def check_rules
     code.rules.each do |rule|
-      errors.add(:order, 'something is wrong') if !rule.check
+      errors.add(:order, rule.error_message) if !rule.check(order)
     end
   end
 

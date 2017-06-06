@@ -81,8 +81,8 @@
 
 <table class="table table-bordered">
 	<tr>
-		<th class="vertical-middle" width="50%">Apply discount code</th>
 		<%= simple_form_for :discount_code, url: checkout_apply_code_path, method: :post, remote: true do |f| %>
+			<th class="vertical-middle discount_code" width="50%">Apply discount code</th>
 			<td width="40%"><%= f.input_field :code, :class => "form-control"%></td>
 			<td width="10%"><%= f.submit "Apply Code", :class => "btn btn-primary pull-right"%></td>
 		<% end %>
