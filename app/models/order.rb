@@ -34,6 +34,7 @@ class Order < ActiveRecord::Base
   has_many :purchase_order_line_items, :through => :order_line_items
   
   accepts_nested_attributes_for :order_line_items, :allow_destroy => true
+  accepts_nested_attributes_for :order_discount_code, :allow_destroy => true
   
   before_save :make_record_number
   

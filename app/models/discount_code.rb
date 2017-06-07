@@ -4,6 +4,7 @@ class DiscountCode < ActiveRecord::Base
   has_many :orders, through: :order_discount_codes
   has_many :rules, class_name: 'DiscountCodeRule'
   has_one :effect, class_name: 'DiscountCodeEffect'
+  delegate :name, to: :effect
 
   validates :code, presence: true, uniqueness: true
   validates :times_of_use, presence: true

@@ -160,6 +160,7 @@ class OrdersController < ApplicationController
       @accounts = Customer.all
       @order = Order.create()
     end
+    @order.build_order_discount_code
     @items = Item.all
     # @order.order_line_items.build
     @order_line_item = OrderLineItem.new
@@ -210,6 +211,7 @@ class OrdersController < ApplicationController
   def edit
     authorize! :update, Order
     @order = Order.find(params[:id])
+    @order.build_order_discount_code if !@order.order_discount_code
     @accounts = Customer.all.order(:name)
     @order_line_item = OrderLineItem.new
     @items = Item.all
@@ -277,7 +279,22 @@ class OrdersController < ApplicationController
   private
 
   def order_params
-    params.require(:order).permit(:account_name, :sales_rep_name, :number, :email, :po_number, :completed_at, :notes, :credit_hold, :shipping_method, :shipping_amount, :tax_rate, :tax_amount, :bill_to_account_name, :bill_to_attention, :bill_to_address_1, :bill_to_address_2, :bill_to_city, :bill_to_state, :bill_to_zip, :bill_to_phone, :bill_to_email, :ship_to_account_name, :ship_to_attention, :ship_to_address_1, :ship_to_address_2, :ship_to_city, :ship_to_state, :ship_to_zip, :ship_to_phone)
+    temp_params = params.require(:order).permit(:account_name, :sales_rep_name, :number, :email, :po_number, 
+      :completed_at, :notes, :credit_hold, :shipping_method, :shipping_amount, :tax_rate, :tax_amount, 
+      :bill_to_account_name, :bill_to_attention, :bill_to_address_1, :bill_to_address_2, :bill_to_city, 
+      :bill_to_state, :bill_to_zip, :bill_to_phone, :bill_to_email, :ship_to_account_name, :ship_to_attention, 
+      :ship_to_address_1, :ship_to_address_2, :ship_to_city, :ship_to_state, :ship_to_zip, :ship_to_phone,
+      order_discount_code_attributes: [:discount_code_id, :id])
+    odc = temp_params[:order_discount_code_attributes]
+    if odc && odc[:discount_code_id].empty? && !odc[:id].empty?
+      odc[:_destroy] = true
+      odc.delete(:discount_code_id)
+    elsif odc && !odc[:discount_code_id].empty? && odc[:id].empty?
+      odc.delete(:id)
+    else
+      temp_params.delete(:order_discount_code_attributes)
+    end
+    temp_params
   end
 
   def sort_column
