@@ -3,30 +3,31 @@ class EssendantXmlImportWorker
   include Sidekiq::Worker
   
   def perform(id)
-    update_columns(:updated_at => Time.now)
+    item = Item.find_by(id: id)
+    item.update_columns(:updated_at => Time.now)
     start = Time.now
   
     puts "START >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> #{id}"
   
     current_item_id = id
   
-    path = "Users/Moshe/Documents/ecdb/xml/individual_items/ecdb.individual_items"
+    path = File.expand_path("#{SHARED_DIR}/ecdb.individual_items")
   
     begin
-      noko = File.open("/#{path}/#{number}.xml") { |f| Nokogiri::XML(f) }
+      noko = File.open("/#{path}/#{item.number}.xml") { |f| Nokogiri::XML(f) }
     rescue
     
-      unless self.number.ends_with? "COMP"
-        update_attributes(:active => false)
+      unless item.number.ends_with? "COMP"
+        item.update_attributes(:active => false)
       end
     
-      puts "No such file #{number}.xml"
+      puts "No such file #{item.number}.xml"
       return false
     else
       result = current_item_id.even?
       # self.item_properties.delete_all
 
-      ItemProperty.delete_all(:item_id => self.id)
+      ItemProperty.delete_all(:item_id => item.id)
       puts "deleted item properties"
       unless noko.xpath("//us:GlobalItem//us:GTINItem").nil?
         ItemProperty.create(item_id: current_item_id, key: "gtin_item", value: noko.xpath("//us:GlobalItem//us:GTINItem").text, active: true, :type => "Property")
@@ -89,7 +90,7 @@ class EssendantXmlImportWorker
       end
       puts "matchbook starting"
       noko.xpath("//us:Matchbook").each_with_index.map do |k, index|
-        ItemProperty.create(:item_id => self.id, :key => k.attributes["name"], :value => k.text, :order => index, :active => true)
+        ItemProperty.create(:item_id => item.id, :key => k.attributes["name"], :value => k.text, :order => index, :active => true)
         rel_make    = noko.xpath("//us:Matchbook")[index].element_children[0].element_children[0].text
         rel_family  = noko.xpath("//us:Matchbook")[index].element_children[2].text
         rel_model   = noko.xpath("//us:Matchbook")[index].element_children[3].text
@@ -134,7 +135,7 @@ class EssendantXmlImportWorker
       height = noko.xpath("//us:Packaging//us:Dimensions//oa:HeightMeasure").text
       width = noko.xpath("//us:Packaging//us:Dimensions//oa:WidthMeasure").text
       length = noko.xpath("//us:Packaging//us:Dimensions//oa:LengthMeasure").text
-      wieght = noko.xpath("//us:Packaging//us:Dimensions//us:WeightMeasure").text
+      weight = noko.xpath("//us:Packaging//us:Dimensions//us:WeightMeasure").text
     
       # list_price = noko.xpath("//us:ItemList//us:ListAmount").text
       #
@@ -144,9 +145,9 @@ class EssendantXmlImportWorker
       name = noko.css("[type=Long_Item_Description]").text
       description = noko.css("[type=Item_Consolidated_Copy]").text
    
-      update_attributes(:brand_id => brand, :slug => self.number.downcase, :height => height, :width => width, :length => length, :weight => weight, :name => name, :description => description, :active => active)
+      item.update_attributes(:brand_id => brand, :slug => item.number.downcase, :height => height, :width => width, :length => length, :weight => weight, :name => name, :description => description, :active => active)
     
-      Image.delete_all(:item_id => self.id)
+      Image.delete_all(:item_id => item.id)
 
       image_array = []
       image_array.push noko.xpath("//oa:DrawingAttachment//oa:FileName").text
@@ -161,12 +162,12 @@ class EssendantXmlImportWorker
         image = single_image.tr(" ", "")
 
         if image
-          item_images = self.images
+          item_images = item.images
           unless Image.find_by(item_id: id, attachment_file_name: image)
             img = Image.create(:item_id => id, :attachment_file_name => image, :position => pos)
             img.upload_from_oppictures_to_s3 unless image == "NOA.JPG"
           else
-            img = Image.find_by(id: self.images.first.id).update_attributes(:item_id => current_item_id, :attachment_file_name => image, :position => pos) unless image == "NOA.JPG"
+            img = Image.find_by(id: item.images.first.id).update_attributes(:item_id => current_item_id, :attachment_file_name => image, :position => pos) unless image == "NOA.JPG"
             img.upload_from_oppictures_to_s3 unless image == "NOA.JPG"
           end
         end
