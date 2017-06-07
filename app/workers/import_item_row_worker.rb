@@ -15,6 +15,7 @@ class ImportItemRowWorker
         item = Item.find_by(number: row["number"])
         id = item.id
         # item.attributes = row.to_hash.slice(*Item.attribute_names())
+        item.number = row["number"]
         item.id = id
       end
       item.price = row["price"]
