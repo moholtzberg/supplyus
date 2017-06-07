@@ -25,6 +25,6 @@ class OrderDiscountCode < ActiveRecord::Base
 
   def remove_effect
     discount = code.effect.calculate(order)
-    order.update_attribute(:discount_total, order.discount_total - discount)
+    order.update_attribute(:discount_total, 0)
   end
 end
