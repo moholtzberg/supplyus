@@ -79,20 +79,14 @@
 	</tr>
 </table>
 
-<table class="table table-bordered">
-	<tr>
-		<%= simple_form_for :discount_code, url: checkout_apply_code_path, method: :post, remote: true do |f| %>
-			<th class="vertical-middle discount_code" width="50%">Apply discount code</th>
-			<td width="40%"><%= f.input_field :code, :class => "form-control"%></td>
-			<td width="10%"><%= f.submit "Apply Code", :class => "btn btn-primary pull-right"%></td>
-		<% end %>
-	</tr>
-</table>
+<% if @cart.order_discount_code.nil? %>
+	<%= render :partial => "order_discount_code_form" %>
+<% end %>
 
-<table class="table table-bordered">
-	<tr>
-		<%= form_for @checkout, :url => checkout_complete_path, :method => :patch do |f| %>
-		<td colspan="2"><%= f.submit "Place Order", :class => "btn btn-primary pull-right"%></td>
-		<% end %>
-	</tr>
-</table>
+<%= form_for @checkout, :url => checkout_complete_path, :method => :patch do |f| %>
+	<table class="table table-bordered">
+		<tr>
+			<td colspan="2"><%= f.submit "Place Order", :class => "btn btn-primary pull-right"%></td>
+		</tr>
+	</table>
+<% end %>

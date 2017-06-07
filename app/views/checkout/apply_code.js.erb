@@ -1,9 +1,10 @@
 <% if @order_discount_code.nil? %>
-  $('th.discount_code').html("Apply discount code <span class='text text-danger'>Wrong or expired code</span>")
+  $('th.apply-code').html("Apply discount code <span class='text text-danger'>Wrong or expired code</span>")
 <% elsif @order_discount_code.errors.any? %>
-  $('th.discount_code').html("Apply discount code <span class='text text-danger'><%= @order_discount_code.errors.messages[:order].join(', ') %></span>")
+  $('th.apply-code').html("Apply discount code <span class='text text-danger'><%= @order_discount_code.errors.messages[:order].join(', ') %></span>")
 <% else %>
-  $('th.discount_code').html("Apply discount code")
-  $('tr#order_total').before("<%= j render 'discount_code', checkout: @checkout %>")
-  $('tr#order_total td:last').html("<strong><%= number_to_currency(@checkout.total) %></strong>")
+  $('th.apply-code').html("Apply discount code")
+  $('form.discount_code').remove();
+  $('tr#order_total').before("<%= j render 'discount_code', checkout: @cart %>")
+  $('tr#order_total td:last').html("<strong><%= number_to_currency(@cart.total) %></strong>")
 <% end %>
