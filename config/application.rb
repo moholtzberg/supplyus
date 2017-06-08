@@ -7,11 +7,10 @@ require 'wicked_pdf'
 
 Bundler.require(*Rails.groups)
 
-SHARED_DIR = Rails.env == "development" ? "../shared"  : "../../shared"
-secret_file = Rails.env == "development" ? "#{SHARED_DIR}/app_secrets.yml"  : "#{SHARED_DIR}/app_secrets.yml"
-
+SHARED_DIR = Rails.env == "development" ? File.expand_path("../shared", "#{Rails.root}")  : File.expand_path("../shared", "#{Rails.root}")
+secret_file = secret_file = "#{SHARED_DIR}/app_secrets.yml"
 SECRET = File.exists?(secret_file) ? YAML.load_file(secret_file) : {}
-puts "++++++++++++++#{SECRET.inspect}"
+puts "++++++++++++++ #{SECRET.inspect}\n"
 
 module Recurring
   class Application < Rails::Application

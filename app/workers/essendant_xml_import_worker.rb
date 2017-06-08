@@ -1,6 +1,7 @@
 class EssendantXmlImportWorker
   
   include Sidekiq::Worker
+  sidekiq_options :backtrace => true
   
   def perform(id)
     item = Item.find_by(id: id)
@@ -156,11 +157,13 @@ class EssendantXmlImportWorker
       if image_array.empty?
         image_array.push noko.xpath("//us:SkuGroupImage").text
       end
+      
+      puts image_array.inspect
 
-      image_array.each_with_index.map do |single_image, pos|
+      image_array.each {|a| a.strip! if a.respond_to? :strip! }.uniq.each_with_index.map do |single_image, pos|
 
         image = single_image.tr(" ", "")
-
+        puts "-------image --> #{image}"
         if image
           item_images = item.images
           unless Image.find_by(item_id: id, attachment_file_name: image)
