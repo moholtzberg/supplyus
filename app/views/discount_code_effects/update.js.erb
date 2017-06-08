@@ -1,0 +1,6 @@
+<% unless flash[:error] %>
+	$('#myModal').modal("hide")
+	$('body').removeClass('modal-open')
+	$('.modal-backdrop').remove()
+	$("#discount_code_effects").html("<%= j render :template => 'discount_code_effects/index.html', :format => 'html', :locals => {:discount_code_effects => @discount_code_effects} %>")
+<% end %>

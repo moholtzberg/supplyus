@@ -1,0 +1,4 @@
+<tr id="discount_code">
+  <td colspan="3"><%= checkout.discount_code.effect.name + ' (code: ' + checkout.discount_code.code + ')' %></td>
+  <td colspan="2" class="text-center"><strong> <%= number_to_currency(-checkout.discount_code.effect.calculate(checkout)) %> (<%= link_to 'Remove Code', checkout_remove_code_path, method: :delete, remote: true %>)</strong></td>
+</tr>

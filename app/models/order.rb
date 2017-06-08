@@ -23,6 +23,8 @@ class Order < ActiveRecord::Base
   belongs_to :sales_rep, :class_name => "User"
   has_one :order_shipping_method, :dependent => :destroy, :inverse_of => :order
   has_one :order_tax_rate, :dependent => :destroy, :inverse_of => :order
+  has_one :order_discount_code
+  has_one :discount_code, through: :order_discount_code, source: :code
   has_many :order_line_items, :dependent => :destroy, :inverse_of => :order
   has_many :items, :through => :order_line_items
   has_many :shipments, :through => :order_line_items
@@ -32,6 +34,7 @@ class Order < ActiveRecord::Base
   has_many :purchase_order_line_items, :through => :order_line_items
   
   accepts_nested_attributes_for :order_line_items, :allow_destroy => true
+  accepts_nested_attributes_for :order_discount_code, :allow_destroy => true
   
   before_save :make_record_number
   
@@ -245,7 +248,7 @@ class Order < ActiveRecord::Base
   end
   
   def total
-    sub_total + shipping_total + tax_total
+    sub_total + shipping_total + tax_total - discount_total
   end
   
   def profit
