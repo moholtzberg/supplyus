@@ -1,0 +1,5 @@
+// fix partial -> template
+$("#discount_codes").replaceWith("<%= j render :template => 'discount_codes/index.html', :format => 'html', :locals => {:discount_codes => @discount_codes} %>");
+$("#confirmModal").modal("hide");
+// flash example
+Recurring.flash.showMsg('notice', "Discount code was deleted.");
