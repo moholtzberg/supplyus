@@ -5,7 +5,6 @@ class DiscountCodeEffect < ActiveRecord::Base
   belongs_to :appliable, polymorphic: true
   belongs_to :item
   validates :discount_code_id, presence: true
-  validate :amount_or_percent_or_quantity
 
   def calculate(order)
     if amount
@@ -20,5 +19,9 @@ class DiscountCodeEffect < ActiveRecord::Base
       amount_sum = items.sum("(COALESCE(quantity,0) - COALESCE(quantity_canceled,0)) * price").to_f
       return (percent/100)*amount_sum
     end
+  end
+
+  def self.lookup(word)
+    where("lower(name) like ?", "%#{word.downcase}%")
   end
 end

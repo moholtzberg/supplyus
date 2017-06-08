@@ -1,0 +1,47 @@
+<div id="accounts" class="col-md-12">
+		
+	<table class="table table-bordered table-striped">
+		<tr>
+			<td colspan="8">
+				<form id="searchBox" accept-charset="UTF-8" action="/admin/discount_code_effects" method="get" role="search">
+					<input type="text" class="form-control" id="term" name="term" placeholder="Search Over 5,000 Products" value="">
+				</form>
+			</td>
+		</tr>
+	</table>
+	
+	<table class="table table-bordered table-striped">
+		
+		<tr>
+			<th width="10%">Name</th>
+			<th width="10%">Discount Code</th>
+			<th width="10%">Amount</th>
+			<th width="10%">Percent</th>
+			<th width="10%">Shipping</th>
+			<th width="10%">Quantity</th>
+			<th width="20%">Item</th>
+			<th width="20%">Appliable</th>
+		</tr>
+		
+		<tr>
+			<td><%= @discount_code_effect.name %></td>
+			<td><%= link_to @discount_code_effect.discount_code_id, discount_code_path(@discount_code_effect.discount_code_id) %></td>
+			<td><%= @discount_code_effect.amount %></td>
+			<td><%= @discount_code_effect.percent %></td>
+			<td><%= @discount_code_effect.shipping %></td>
+			<td><%= @discount_code_effect.quantity %></td>
+			<td><%= @discount_code_effect.item.try(:name) %></td>
+			<td><%= @discount_code_effect.appliable.try(:name) %></td>
+		</tr>
+		
+	</table>
+	
+</div>
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div
