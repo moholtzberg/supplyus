@@ -57,7 +57,9 @@ class ItemsController < ApplicationController
     @items = Item.all
     @items = @items.paginate(:page => params[:page], :per_page => 25)
     respond_to do |format|
-      format.html
+      format.html do
+        redirect_to @item
+      end
       format.js
     end
   end
@@ -80,7 +82,9 @@ class ItemsController < ApplicationController
     @items = Item.all
     @items = @items.paginate(:page => params[:page], :per_page => 25)
     respond_to do |format|
-      format.html
+      format.html do
+        redirect_to @item
+      end
       format.js
       format.json do 
         respond_with_bip(@item)
@@ -99,7 +103,7 @@ class ItemsController < ApplicationController
     e = Item.find_by(:id => params[:id])
     e.destroy!
     respond_to do |format|
-      format.js { alert("ITem Detelet") }
+      format.js { alert("Item Deleted") }
     end
   end
   
