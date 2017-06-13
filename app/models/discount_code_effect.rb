@@ -1,10 +1,13 @@
 class DiscountCodeEffect < ActiveRecord::Base
   include ApplicationHelper
+  attr_accessor :appliable_term, :item_term
   
   belongs_to :code, class_name: 'DiscountCode', foreign_key: :discount_code_id
   belongs_to :appliable, polymorphic: true
   belongs_to :item
   validates :discount_code_id, presence: true, uniqueness: true
+
+  APPLIABLE_TYPES = ['Item', 'Category']
 
   def calculate(order)
     if amount
