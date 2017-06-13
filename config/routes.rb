@@ -43,7 +43,7 @@ Rails.application.routes.draw do
       resources :customers
       resources :discount_codes
       resources :discount_code_effects
-      resources :discount_code_rules
+      resources :discount_code_rules, only: [:new, :create, :destroy]
       resources :equipment
       resources :equipment_imports
       resources :equipment_alerts
