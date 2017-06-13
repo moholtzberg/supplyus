@@ -101,7 +101,8 @@ class Order < ActiveRecord::Base
     subtotal = sub_total_sum
     shippingtotal = shipping_total_sum
     taxtotal = tax_total_sum
-    self.update_columns(:sub_total => subtotal, :shipping_total => shippingtotal, :tax_total => taxtotal)
+    discounttotal = code ? code.effect.calculate(self) : 0
+    self.update_columns(:sub_total => subtotal, :shipping_total => shippingtotal, :tax_total => taxtotal, :discount_total => discounttotal)
   end
   
   def is_taxable?
