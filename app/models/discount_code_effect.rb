@@ -4,7 +4,7 @@ class DiscountCodeEffect < ActiveRecord::Base
   belongs_to :code, class_name: 'DiscountCode', foreign_key: :discount_code_id
   belongs_to :appliable, polymorphic: true
   belongs_to :item
-  validates :discount_code_id, presence: true
+  validates :discount_code_id, presence: true, uniqueness: true
 
   def calculate(order)
     if amount

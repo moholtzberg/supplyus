@@ -17,8 +17,6 @@ class DiscountCodeEffectsController < ApplicationController
   def new
     authorize! :create, DiscountCodeEffect
     @discount_code_effect = DiscountCodeEffect.new
-    # @brands = Brand.active
-    # @categories = Category.all
   end
   
   def show
