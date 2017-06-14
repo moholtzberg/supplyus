@@ -2,5 +2,5 @@
 	$('#myModal').modal("hide")
 	$('body').removeClass('modal-open')
 	$('.modal-backdrop').remove()
-	$("#discount_code_effects").html("<%= j render :template => 'discount_code_effects/index.html', :format => 'html', :locals => {:discount_code_effects => @discount_code_effects} %>")
+	$("#discount_code_effect").html("<%= j render :partial => 'discount_codes/discount_code_effect', :format => 'html', :locals => {:effect => @discount_code_effect} %>")
 <% end %>

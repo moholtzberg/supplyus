@@ -4,11 +4,13 @@ class DiscountCode < ActiveRecord::Base
   has_many :orders, through: :order_discount_codes
   has_many :order_discount_codes
   has_many :rules, class_name: 'DiscountCodeRule'
-  has_one :effect, class_name: 'DiscountCodeEffect'
+  has_one :effect, class_name: 'DiscountCodeEffect', dependent: :destroy
   delegate :name, to: :effect, allow_nil: true
 
   validates :code, presence: true, uniqueness: true
   validates :times_of_use, presence: true
+
+  after_create {self.create_effect}
 
   def remaining
     times_of_use - order_discount_codes.size

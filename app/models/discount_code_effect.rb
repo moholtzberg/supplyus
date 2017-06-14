@@ -1,10 +1,15 @@
 class DiscountCodeEffect < ActiveRecord::Base
   include ApplicationHelper
+  attr_accessor :appliable_term, :item_term
   
   belongs_to :code, class_name: 'DiscountCode', foreign_key: :discount_code_id
   belongs_to :appliable, polymorphic: true
   belongs_to :item
-  validates :discount_code_id, presence: true
+  validates :discount_code_id, presence: true, uniqueness: true
+
+  after_save :recalculate_discounts
+
+  APPLIABLE_TYPES = ['Item', 'Category']
 
   def calculate(order)
     if amount
@@ -19,6 +24,10 @@ class DiscountCodeEffect < ActiveRecord::Base
       amount_sum = items.sum("(COALESCE(quantity,0) - COALESCE(quantity_canceled,0)) * price").to_f
       return (percent/100)*amount_sum
     end
+  end
+
+  def recalculate_discounts
+    code.order_discount_codes.each(&:apply_effect)
   end
 
   def self.lookup(word)

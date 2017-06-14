@@ -1,48 +1,89 @@
-<fieldset>	
-			
-	<div id="name" class="col-md-8">
-		<%= f.label :name, :class => "control-label" %>
-		<%= f.text_field :name, :class => "form-control" %>
-	</div>
+<%= form_for effect, :remote => true, :html => {:class => "form-horizontal"} do |f| %>
+	<fieldset>	
+				
+		<div id="name" class="col-md-8">
+			<%= f.label :name, class: "control-label" %>
+			<%= f.text_field :name, class: "form-control" %>
+		</div>
+		
+		<div id="amount" class="col-md-4">
+			<%= f.label :amount, class: "control-label" %>
+			<%= f.text_field :amount, class: "form-control" %>
+		</div>
+		
+		<div id="percent" class="col-md-4">
+			<%= f.label :percent, class: "control-label" %>
+			<%= f.text_field :percent, class: "form-control" %>
+		</div>
 
-	<div id="discount_code_id" class="col-md-4">
-		<%= f.label :discount_code_id, :class => "control-label" %>
-		<%= f.text_field :discount_code_id, :class => "form-control" %>
-	</div>
-	
-	<div id="amount" class="col-md-4">
-		<%= f.label :amount, :class => "control-label" %>
-		<%= f.text_field :amount, :class => "form-control" %>
-	</div>
-	
-	<div id="percent" class="col-md-4">
-		<%= f.label :percent, :class => "control-label" %>
-		<%= f.text_field :percent, :class => "form-control" %>
-	</div>
-	
-	<div id="shipping" class="col-md-4">
-		<%= f.label :shipping, :class => "control-label" %>
-		<%= f.check_box :shipping, :class => "form-control" %>
-	</div>
+		<div id="quantity" class="col-md-4">
+			<%= f.label :quantity, class: "control-label" %>
+			<%= f.text_field :quantity, class: "form-control" %>
+		</div>
 
-	<div id="quantity" class="col-md-4">
-		<%= f.label :quantity, :class => "control-label" %>
-		<%= f.text_field :quantity, :class => "form-control" %>
-	</div>
+		<div id="item_id" class="col-md-4">
+			<%= f.label :item_id, class: "control-label" %>
+			<%= f.text_field :item_term, class: "form-control", data: {autocomplete_source: items_path} %>
+		</div>
 
-	<div id="item_id" class="col-md-4">
-		<%= f.label :item_id, :class => "control-label" %>
-		<%= f.text_field :item_id, :class => "form-control" %>
-	</div>
+		<div id="appliable_id" class="col-md-4">
+			<%= f.label :appliable_id, class: "control-label" %>
+			<% sources = {'Item' => items_path, 'Category' => categories_path} %>
+			<%= f.text_field :appliable_term, class: "form-control", data: {autocomplete_source: sources[effect.appliable_type]}, disabled: effect.appliable_type.blank?, value: effect.appliable&.name %>
+		</div>
 
-	<div id="appliable_id" class="col-md-4">
-		<%= f.label :appliable_id, :class => "control-label" %>
-		<%= f.text_field :appliable_id, :class => "form-control" %>
-	</div>
+		<div id="appliable_type" class="col-md-4">
+			<%= f.label :appliable_type, class: "control-label" %>
+			<%= f.select :appliable_type, DiscountCodeEffect::APPLIABLE_TYPES, {include_blank: true}, class: "form-control" %>
+		</div>
 
-	<div id="appliable_type" class="col-md-4">
-		<%= f.label :appliable_type, :class => "control-label" %>
-		<%= f.text_field :appliable_type, :class => "form-control" %>
-	</div>
-	
-</fieldset>
+		<div id="shipping" class="col-md-4">
+			<%= f.label :shipping, class: "control-label" %>
+			<br/>
+			<%= f.check_box :shipping %>
+		</div>
+
+		<%= f.hidden_field :appliable_id %>
+		<%= f.hidden_field :item_id %>
+
+		<script>
+			jQuery(function() {
+				var sources = <%= sources.to_json.html_safe %>;
+				var AppliableAutoComplete = function() { $('#discount_code_effect_appliable_term').autocomplete({
+						source: $('#discount_code_effect_appliable_term').data('autocomplete-source'),
+			      select: function( event, ui ) {
+			        $("#discount_code_effect_appliable_term" ).val(ui.item.label);
+			        $("#discount_code_effect_appliable_id" ).val(ui.item.id);
+			        return false;
+			      }
+					});
+				}
+				AppliableAutoComplete();
+				$('#discount_code_effect_appliable_type').change(function() {
+	        $("#discount_code_effect_appliable_term").val('');
+					$('#discount_code_effect_appliable_term').prop('disabled', !$(this).val());
+	        $("#discount_code_effect_appliable_id").val('');
+					$('#discount_code_effect_appliable_term').data('autocomplete-source', sources[$(this).val()]);
+					AppliableAutoComplete();
+				});
+				$("#discount_code_effect_appliable_term").focus(function() {
+					$("#discount_code_effect_appliable_term").val('');
+	        $("#discount_code_effect_appliable_id").val('');
+				});
+				$('#discount_code_effect_item_term').autocomplete({
+					source: $('#discount_code_effect_item_term').data('autocomplete-source'),
+		      select: function( event, ui ) {
+		        $("#discount_code_effect_item_term" ).val(ui.item.label);
+		        $("#discount_code_effect_item_id" ).val(ui.item.id);
+		        return false;
+		      }
+				});
+				$("#discount_code_effect_item_term").focus(function() {
+					$("#discount_code_effect_item_term").val('');
+	        $("#discount_code_effect_item_id").val('');
+				});
+			});
+		</script>
+
+	</fieldset>
+<% end %>

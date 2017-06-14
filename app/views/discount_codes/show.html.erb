@@ -67,29 +67,7 @@
 
 		<div id="discount_code_effect" class="tab-pane" role="tabpanel">
 
-			<table class="table table-bordered table-condensed table-striped">
-				
-				<tr>
-					<th>Name</th>
-					<th>Amount</th>
-					<th>Percent</th>
-					<th>Quantity</th>
-					<th>Shipping</th>
-					<th>Item</th>
-					<th>Appliable</th>
-				</tr>
-
-				<tr>
-					<td><%= @discount_code.effect.name %></td>
-					<td><%= @discount_code.effect.amount %></td>
-					<td><%= @discount_code.effect.percent %></td>
-					<td><%= @discount_code.effect.quantity %></td>
-					<td><%= @discount_code.effect.shipping %></td>
-					<td><%= @discount_code.effect.item.try(:name) %></td>
-					<td><%= @discount_code.effect.appliable.try(:name) %></td>
-				</tr>
-
-			</table>
+			<%= render :partial => "discount_code_effect", :locals => {:effect => @discount_code.effect} %>
 
 		</div>
 		

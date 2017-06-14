@@ -1,10 +1,13 @@
 class DiscountCodeRule < ActiveRecord::Base
   include ApplicationHelper
+  attr_accessor :requirable_term
   
   belongs_to :code, class_name: 'DiscountCode', foreign_key: :discount_code_id
   belongs_to :requirable, polymorphic: true
   validate :amount_or_quantity
   validates :discount_code_id, presence: true
+
+  REQUIRABLE_TYPES = ['Item', 'Category']
 
   def check(order)
     items = order.order_line_items
