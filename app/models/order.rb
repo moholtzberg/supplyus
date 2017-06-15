@@ -101,7 +101,7 @@ class Order < ActiveRecord::Base
     subtotal = sub_total_sum
     shippingtotal = shipping_total_sum
     taxtotal = tax_total_sum
-    discounttotal = code ? code.effect.calculate(self) : 0
+    discounttotal = discount_code ? discount_code.effect.calculate(self) : 0
     self.update_columns(:sub_total => subtotal, :shipping_total => shippingtotal, :tax_total => taxtotal, :discount_total => discounttotal)
   end
   
