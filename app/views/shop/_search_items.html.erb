@@ -7,3 +7,24 @@
 <% else %>
 <p>Sorry, No items were found!</p>
 <% end %>
+<script>
+  $('#add_to_list').change(function(){
+    switch($(this).val()) {
+      case '':
+        break;
+      case '0':
+        $.ajax({
+          url: "<%= new_my_account_item_list_path %>",
+          type: 'GET',
+          dataType: 'script',
+          data: {
+            item_item_list_attributes: {item_id: this.closest("[id^='item_']").id.match(/\d+/g)[0]}
+          }
+        });
+        break;
+      default:
+        console.log($(this).val());
+        break;
+    }
+  })
+</script>

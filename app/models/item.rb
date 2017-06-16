@@ -20,6 +20,7 @@ class Item < ActiveRecord::Base
   has_many :categories, :through => :item_categories
   has_many :item_substitutes, :class_name => "ItemReference", :foreign_key => :original_item_id
   has_many :substituting_items, :class_name => "ItemReference", :foreign_key => :replacement_item_id
+  has_many :item_lists, through: :item_item_lists
   belongs_to :category
   belongs_to :brand
   belongs_to :model

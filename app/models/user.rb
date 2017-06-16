@@ -13,6 +13,7 @@ class User < ActiveRecord::Base
   belongs_to :customer
   has_many :user_accounts
   has_many :orders, :through => :account
+  has_many :item_lists
   belongs_to :contact
   
   accepts_nested_attributes_for :account
