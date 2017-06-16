@@ -49,7 +49,7 @@
 				<%= bootstrap_flash %>
 			</div>
 			
-			<% if !ImportHistory.last.nil? and ImportHistory.last.is_processing == 1 %>
+			<% if !ImportHistory.first.nil? and ImportHistory.first.is_processing == 1 %>
 				<div class="col-md-offset-1 col-md-10">
 					<br>
 					<div class="alert alert-success alert-dismissible" role="alert">
@@ -90,7 +90,7 @@
 </html>
 
 
-<% if !ImportHistory.last.nil? and ImportHistory.last.is_processing == 1 %>
+<% if !ImportHistory.first.nil? and ImportHistory.first.is_processing == 1 %>
 	<script>
 		
 		var timer;
@@ -120,7 +120,7 @@
 			
 		}
 
-		timer=setInterval("check_for_import()", 1000);
+		timer=setInterval("check_for_import()", 5000);
 
 	</script>
 <% end %>

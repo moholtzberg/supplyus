@@ -14,7 +14,7 @@
 			Total Orders
 		</div>
 		<div class="panel-body text-center">
-			<p class="text-primary"><strong><%= number_to_human(Order.is_complete.count) %></strong></p>
+			<p class="text-primary"><strong><%= number_with_delimiter(Order.is_complete.count) %></strong></p>
 		</div>
 	</div>
 </div>
@@ -24,7 +24,7 @@
 			Total Accounts
 		</div>
 		<div class="panel-body text-center">
-			<p class="text-success"><strong><%= number_to_human(Account.count) %></strong></p>
+			<p class="text-success"><strong><%= number_with_delimiter(Account.count) %></strong></p>
 		</div>
 	</div>
 </div>
@@ -34,7 +34,7 @@
 			Total Users
 		</div>
 		<div class="panel-body text-center">
-			<p class="text-warning"><strong><%= number_to_human(User.count) %></strong></p>
+			<p class="text-warning"><strong><%= number_with_delimiter(User.count) %></strong></p>
 		</div>
 	</div>
 </div>
@@ -44,17 +44,17 @@
 			Total Items
 		</div>
 		<div class="panel-body text-center">
-			<p class="text-danger"><strong><%= number_to_human(Item.active.count) %></strong></p>
+			<p class="text-danger"><strong><%= number_with_delimiter(Item.active.count) %></strong></p>
 		</div>
 	</div>
 </div>
 <div class="col-md-2">
 	<div class="panel panel-info">
 		<div class="panel-heading text-center">
-			Total Items
+			Total Categories
 		</div>
 		<div class="panel-body text-center">
-			<p class="text-info"><strong><%= number_to_human(Category.is_active.count) %></strong></p>
+			<p class="text-info"><strong><%= number_with_delimiter(Category.is_active.count) %></strong></p>
 		</div>
 	</div>
 </div>

@@ -3,22 +3,14 @@ require File.expand_path('../boot', __FILE__)
 require 'csv'
 require 'aws-sdk-v1'
 require 'rails/all'
-# require 'pdfkit'
 require 'wicked_pdf'
 
-# Require the gems listed in Gemfile, including any gems
-# you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-secret_file = Rails.env == "development" ? "../shared/app_secrets.yml"  : "../../shared/app_secrets.yml"
-puts "++++++++++++++#{secret_file}"
+SHARED_DIR = Rails.env == "development" ? File.expand_path("../shared", "#{Rails.root}")  : File.expand_path("../shared", "#{Rails.root}")
+secret_file = secret_file = "#{SHARED_DIR}/app_secrets.yml"
 SECRET = File.exists?(secret_file) ? YAML.load_file(secret_file) : {}
-puts "++++++++++++++#{SECRET.inspect}"
-
-# AWS.config({
-#     :access_key_id => "#{SECRET['AWS']['ACCESS_KEY_ID']}",
-#     :secret_access_key => "#{SECRET['AWS']['SECRET_ACCESS_KEY']}",
-# })
+puts "++++++++++++++ #{SECRET.inspect}\n"
 
 module Recurring
   class Application < Rails::Application
@@ -37,7 +29,5 @@ module Recurring
     REVISION = `git log --pretty=format:'%h' -n 1`
     # Do not swallow errors in after_commit/after_rollback callbacks.
     config.active_record.raise_in_transactional_callbacks = true
-    # config.middleware.use "PDFKit::Middleware", :print_media_type => true
-    config.middleware.use WickedPdf::Middleware, :print_media_type => true
   end
 end

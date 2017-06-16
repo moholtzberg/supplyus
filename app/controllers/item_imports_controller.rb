@@ -30,9 +30,9 @@ class ItemImportsController < ApplicationController
   
   def check_for_import
     #This method id for check the rows importation
-    import_item = ImportHistory.last
+    import_item = ImportHistory.first
     if import_item
-      render json: {nb_imported: import_item.nb_imported, nb_failed:import_item.nb_failed, nb_in_queue: import_item.nb_in_queue, failed_lines: import_item.failed_lines, is_processing: import_item.is_processing, last_id: import_item.last_id}
+      render json: {nb_imported: import_item.nb_imported, nb_failed: import_item.nb_failed, nb_in_queue: import_item.nb_in_queue, failed_lines: import_item.failed_lines, is_processing: import_item.is_processing, last_id: import_item.nb_last_id}
     else
       render json: {nb_imported: 0, nb_failed:0, nb_in_queue: 0}
     end
