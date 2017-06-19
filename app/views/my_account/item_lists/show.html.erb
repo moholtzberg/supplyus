@@ -1,0 +1,9 @@
+<% content_for :title do %>Item List: <%= @item_list.name %><% end %>
+
+<div class="page-header">
+  <h1>Item List: <%= @item_list.name %></h1>
+</div>
+
+<div class="row col-md-12">
+  <%= render :partial => "shop/item", collection: @item_list.items, as: :i %>
+</div>

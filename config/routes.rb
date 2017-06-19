@@ -146,7 +146,12 @@ Rails.application.routes.draw do
         passwords: "users/passwords",
         registrations: "users/registrations"
   }
-  
+
+  namespace :my_account do
+    resources :item_lists
+    resources :item_item_lists, only: :create
+  end
+
   get   "checkout/address" => "checkout#address"
   patch "checkout/address" => "checkout#update_address"
   get   "checkout/shipping" => "checkout#shipping"
@@ -170,7 +175,7 @@ Rails.application.routes.draw do
   get "/my_account/:account_id" => "shop#view_account"
   get "/my_account" => "shop#my_account"
   get "/edit_account" => "shop#edit_account"
-  
+
   get "/cart" => "shop#cart"
   get "/search" => "shop#search"
   get "/search_autocomplete" => "shop#search_autocomplete"

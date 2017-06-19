@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170605191931) do
+ActiveRecord::Schema.define(version: 20170616152935) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -265,6 +265,19 @@ ActiveRecord::Schema.define(version: 20170605191931) do
 
   add_index "item_categories", ["category_id"], name: "item_category_category_id_ix"
   add_index "item_categories", ["item_id"], name: "item_category_item_id_ix"
+
+  create_table "item_item_lists", force: :cascade do |t|
+    t.integer "item_id"
+    t.integer "item_list_id"
+  end
+
+  add_index "item_item_lists", ["item_id"], name: "index_item_item_lists_on_item_id"
+  add_index "item_item_lists", ["item_list_id"], name: "index_item_item_lists_on_item_list_id"
+
+  create_table "item_lists", force: :cascade do |t|
+    t.string  "name"
+    t.integer "user_id"
+  end
 
   create_table "item_properties", force: :cascade do |t|
     t.integer "item_id"
