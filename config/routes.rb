@@ -113,6 +113,7 @@ Rails.application.routes.draw do
       resource :reports, :only => :index do
         get :sales_tax
         get :item_usage
+        get :item_usage_by_group
         get :ar_aging
       end
       resources :return_authorizations
