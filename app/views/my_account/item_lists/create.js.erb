@@ -3,6 +3,7 @@
   $('body').removeClass('modal-open')
   $('.modal-backdrop').remove()
   $("select.add_to_list").replaceWith('<%= j render "shop/list_select" %>')
+  $(".lists").html('<%= j render "shop/lists" %>')
   $('.add_to_list').change(function(){
     switch($(this).val()) {
       case '':

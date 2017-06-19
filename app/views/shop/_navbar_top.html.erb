@@ -28,13 +28,20 @@
 			<% else %>
 			<li><%= link_to I18n.t(:login), new_user_session_path %> or <%= link_to I18n.t(:create_a_new_account), new_user_registration_path %></li>
 			<% end %>
+
+			<% if current_user %>
+				<li class="dropdown">
+					<div class="lists">
+						<%= render :partial => "shop/lists" %>
+					</div>
+				</li>
+			<% end %>
 			
 			<li>
 				<div class="cart">
 				<%= render :partial => "shop/cart" %>
 				<div>
 			</li>
-				
 		</ul>
 		
 	</div>
