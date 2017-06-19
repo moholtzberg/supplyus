@@ -1,0 +1,6 @@
+<% unless flash[:error] %>
+	$('#myModal').modal("hide")
+	$('body').removeClass('modal-open')
+	$('.modal-backdrop').remove()
+	$("#discount_code_rules").html("<%= j render :partial => 'discount_codes/discount_code_rules', :format => 'html', :locals => {:discount_code => @discount_code} %>")
+<% end %>

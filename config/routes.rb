@@ -41,6 +41,9 @@ Rails.application.routes.draw do
       resources :contacts
       resources :credit_cards
       resources :customers
+      resources :discount_codes
+      resources :discount_code_effects, only: [:edit, :update]
+      resources :discount_code_rules, only: [:new, :create, :destroy]
       resources :equipment
       resources :equipment_imports
       resources :equipment_alerts
@@ -91,11 +94,13 @@ Rails.application.routes.draw do
           put :resend_order
           post :resend_order_confirmation
           put :credit_hold
+          post :apply_code
         end
         resources :shipments, :only => [:new, :create]
         # resources :payments, :shallow => true
         resources :invoices
       end
+      resources :order_discount_codes
       resources :order_line_items
       resources :payments
       resources :payment_plans
@@ -150,7 +155,9 @@ Rails.application.routes.draw do
   patch "checkout/payment" => "checkout#update_payment"
   get   "checkout/confirm" => "checkout#confirm"
   patch "checkout/complete"=> "checkout#complete"
-  
+  post  "checkout/apply_code" => "checkout#apply_code"
+  delete  "checkout/remove_code" => "checkout#remove_code"
+
   post  "/add_to_cart" => "shop#add_to_cart"
   patch "/add_to_cart" => "shop#add_to_cart"
   post  "/update_cart" => "shop#update_cart"

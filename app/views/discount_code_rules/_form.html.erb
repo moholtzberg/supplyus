@@ -1,0 +1,56 @@
+<%= form_for rule, :remote => true, :html => {:class => "form-horizontal"} do |f| %>
+	<fieldset>	
+				
+		<div id="quantity" class="col-md-6">
+			<%= f.label :quantity, class: "control-label" %>
+			<%= f.text_field :quantity, class: "form-control" %>
+		</div>
+
+		<div id="amount" class="col-md-6">
+			<%= f.label :amount, class: "control-label" %>
+			<%= f.text_field :amount, class: "form-control" %>
+		</div>
+		
+		<div id="requirable_id" class="col-md-6">
+			<%= f.label :requirable_id, class: "control-label" %>
+			<% sources = {'Item' => items_path, 'Category' => categories_path} %>
+			<%= f.text_field :requirable_term, class: "form-control", data: {autocomplete_source: sources[rule.requirable_type]}, disabled: rule.requirable_type.blank?, value: rule.requirable&.name %>
+		</div>
+		
+		<div id="requirable_type" class="col-md-6">
+			<%= f.label :requirable_type, class: "control-label" %>
+			<%= f.select :requirable_type, DiscountCodeRule::REQUIRABLE_TYPES, {include_blank: true}, class: "form-control" %>
+		</div>
+
+		<%= f.hidden_field :requirable_id %>	
+		<%= f.hidden_field :discount_code_id %>
+		
+		<script>
+			jQuery(function() {
+				var sources = <%= sources.to_json.html_safe %>;
+				var RequirableAutoComplete = function() { $('#discount_code_rule_requirable_term').autocomplete({
+						source: $('#discount_code_rule_requirable_term').data('autocomplete-source'),
+			      select: function( event, ui ) {
+			        $("#discount_code_rule_requirable_term" ).val(ui.item.label);
+			        $("#discount_code_rule_requirable_id" ).val(ui.item.id);
+			        return false;
+			      }
+					});
+				}
+				RequirableAutoComplete();
+				$('#discount_code_rule_requirable_type').change(function() {
+	        $("#discount_code_rule_requirable_term" ).val('');
+					$('#discount_code_rule_requirable_term').prop('disabled', !$(this).val());
+	        $("#discount_code_rule_requirable_id" ).val('');
+					$('#discount_code_rule_requirable_term').data('autocomplete-source', sources[$(this).val()]);
+					RequirableAutoComplete();				
+				});
+				$("#discount_code_rule_requirable_term").focus(function() {
+					$("#discount_code_rule_requirable_term").val('');
+	        $("#discount_code_rule_requirable_id").val('');
+				});
+			});
+		</script>
+
+	</fieldset>
+<% end %>
