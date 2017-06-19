@@ -163,7 +163,7 @@ Rails.application.routes.draw do
   get "/my_account/:account_id" => "shop#view_account"
   get "/my_account" => "shop#my_account"
   get "/edit_account" => "shop#edit_account"
-  
+
   get "/cart" => "shop#cart"
   get "/search" => "shop#search"
   get "/search_autocomplete" => "shop#search_autocomplete"
@@ -172,6 +172,11 @@ Rails.application.routes.draw do
   get "/:category/:item" => "shop#item"
   get "/:category" => "shop#category"
   get "/" => "shop#index"
+
+  namespace :my_account do
+    resources :item_lists
+    resources :item_item_lists, only: :create
+  end
   
   namespace :api, defaults: {format: :json} do
     scope :v1 do

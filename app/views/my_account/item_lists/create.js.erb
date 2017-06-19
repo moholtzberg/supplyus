@@ -1,13 +1,8 @@
-<% unless @items.results.nil? %>
-  <% @items.results.each do |i| %>
-    <% if i && i.active? %>
-      <%= render :partial => "shop/item", :locals => {:i => i} unless i.nil? %>
-    <% end %>
-  <% end %>
-<% else %>
-<p>Sorry, No items were found!</p>
-<% end %>
-<script>
+<% unless flash[:error] %>
+  $('#myModal').modal("hide")
+  $('body').removeClass('modal-open')
+  $('.modal-backdrop').remove()
+  $("select.add_to_list").replaceWith('<%= j render "shop/list_select" %>')
   $('.add_to_list').change(function(){
     switch($(this).val()) {
       case '':
@@ -41,4 +36,4 @@
         break;
     }
   })
-</script>
+<% end %>

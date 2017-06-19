@@ -1,0 +1,6 @@
+My Lists  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a>
+<ul class="dropdown-menu dropdown-menu-right">
+  <% current_user.item_lists.each do |item_list| %>
+    <li><%= link_to item_list.name, my_account_item_list_path(item_list) %></li>
+  <% end %>
+</ul>

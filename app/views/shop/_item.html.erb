@@ -51,7 +51,7 @@
 				</div>
 				<%= f.submit "Add To Cart", :class => "btn btn-primary btn-sm btn-block" %>
 			<% end %>
-			<%= select_tag("Add to List", options_from_collection_for_select(current_user.item_lists + [ItemList.new(name: '< New List >', id: 0)], "id", "name"), include_blank: 'Add to List', id: 'add_to_list') if current_user %>
+			<%= render partial: 'shop/list_select' %>
 		</div>
 	</div>
 	

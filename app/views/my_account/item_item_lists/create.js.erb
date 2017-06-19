@@ -1,0 +1,5 @@
+<% if @item_item_list.errors.empty? %>
+  alert('Item was added successfully');
+<% elsif @item_item_list.errors.added?(:item_list_id, :taken) %>
+  alert('Item already on the list');
+<% end %>
