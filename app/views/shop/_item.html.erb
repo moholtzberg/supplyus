@@ -51,7 +51,7 @@
 				</div>
 				<%= f.submit "Add To Cart", :class => "btn btn-primary btn-sm btn-block" %>
 			<% end %>
-			<%= render partial: 'shop/list_select' %>
+			<%= render partial: 'shop/list_select', locals: {item: i} %>
 		</div>
 	</div>
 	

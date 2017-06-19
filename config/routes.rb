@@ -141,7 +141,12 @@ Rails.application.routes.draw do
         passwords: "users/passwords",
         registrations: "users/registrations"
   }
-  
+
+  namespace :my_account do
+    resources :item_lists
+    resources :item_item_lists, only: :create
+  end
+
   get   "checkout/address" => "checkout#address"
   patch "checkout/address" => "checkout#update_address"
   get   "checkout/shipping" => "checkout#shipping"
@@ -172,11 +177,6 @@ Rails.application.routes.draw do
   get "/:category/:item" => "shop#item"
   get "/:category" => "shop#category"
   get "/" => "shop#index"
-
-  namespace :my_account do
-    resources :item_lists
-    resources :item_item_lists, only: :create
-  end
   
   namespace :api, defaults: {format: :json} do
     scope :v1 do

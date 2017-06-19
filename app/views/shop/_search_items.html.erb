@@ -7,38 +7,3 @@
 <% else %>
 <p>Sorry, No items were found!</p>
 <% end %>
-<script>
-  $('.add_to_list').change(function(){
-    switch($(this).val()) {
-      case '':
-        break;
-      case '0':
-        $.ajax({
-          url: "<%= new_my_account_item_list_path %>",
-          type: 'GET',
-          dataType: 'script',
-          data: {
-            item_list: {
-              item_item_lists_attributes: {
-                0: {item_id: this.closest("[id^='item_']").id.match(/\d+/g)[0]}  
-              }            
-            }
-          }
-        });
-        break;
-      default:
-        $.ajax({
-          url: "<%= my_account_item_item_lists_path %>",
-          type: 'POST',
-          dataType: 'script',
-          data: {
-            item_item_list: {
-              item_list_id: $(this).val(),
-              item_id: this.closest("[id^='item_']").id.match(/\d+/g)[0]
-            }
-          }
-        });
-        break;
-    }
-  })
-</script>

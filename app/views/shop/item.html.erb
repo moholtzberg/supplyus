@@ -89,6 +89,9 @@
 			<button type="submit" class="btn btn-lg btn-brand btn-full-width">Add to Cart</button>
 		</div>
 		<% end %>
+		<div class="col-md-3">
+			<%= render partial: 'shop/list_select', locals: {item: @item} %>
+		</div>
 	</div><!-- end row -->
 	
 	<div class="row">

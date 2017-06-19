@@ -2,39 +2,9 @@
   $('#myModal').modal("hide")
   $('body').removeClass('modal-open')
   $('.modal-backdrop').remove()
-  $("select.add_to_list").replaceWith('<%= j render "shop/list_select" %>')
+  $("select.add_to_list").each(function() {
+    $(this).find("option:last-child").before($("<option></option>").attr("value","<%= @item_list.id %>").text("<%= @item_list.name %>"));
+  });
+  $("table#item_lists").append("<%= j render partial: 'item_list', locals: {item_list: @item_list} %>")
   $(".lists").html('<%= j render "shop/lists" %>')
-  $('.add_to_list').change(function(){
-    switch($(this).val()) {
-      case '':
-        break;
-      case '0':
-        $.ajax({
-          url: "<%= new_my_account_item_list_path %>",
-          type: 'GET',
-          dataType: 'script',
-          data: {
-            item_list: {
-              item_item_lists_attributes: {
-                0: {item_id: this.closest("[id^='item_']").id.match(/\d+/g)[0]}  
-              }            
-            }
-          }
-        });
-        break;
-      default:
-        $.ajax({
-          url: "<%= my_account_item_item_lists_path %>",
-          type: 'POST',
-          dataType: 'script',
-          data: {
-            item_item_list: {
-              item_list_id: $(this).val(),
-              item_id: this.closest("[id^='item_']").id.match(/\d+/g)[0]
-            }
-          }
-        });
-        break;
-    }
-  })
 <% end %>
