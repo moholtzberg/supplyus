@@ -51,9 +51,11 @@ class ShopController < ApplicationController
       order_by(:score, :desc)
       paginate(:page => params[:page])
     end
-    max = @items.stats(:price).max
-    @items.build { facet :price, :range => 0..max, :range_interval => (max/4).ceil }
-    @items.execute
+    if @items.results.any?
+      max = @items.stats(:price).max
+      @items.build { facet :price, :range => 0..max, :range_interval => (max/4).ceil }
+      @items.execute
+    end
   end
   
   def item
@@ -85,9 +87,11 @@ class ShopController < ApplicationController
       order_by(:score, :desc)
       paginate(:page => params[:page])
     end
-    max = @items.stats(:price).max
-    @items.build { facet :price, :range => 0..max, :range_interval => (max/4).ceil }
-    @items.execute
+    if @items.results.any?
+      max = @items.stats(:price).max
+      @items.build { facet :price, :range => 0..max, :range_interval => (max/4).ceil }
+      @items.execute
+    end
   end
   
   def search_autocomplete

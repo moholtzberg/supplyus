@@ -11,7 +11,7 @@ class CategoriesController < ApplicationController
     @categories = @categories.paginate(:page => params[:page], :per_page => 25)
     respond_to do |format|
       format.html
-      format.json { render json: @categories }
+      format.json { render json: @categories.map { |cat| {id: cat.id, label: cat.name } } }
     end
   end
   
