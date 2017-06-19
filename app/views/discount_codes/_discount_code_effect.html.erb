@@ -1,0 +1,25 @@
+<table class="table table-bordered table-condensed table-striped">
+  
+  <tr>
+    <th>Name</th>
+    <th>Amount</th>
+    <th>Percent</th>
+    <th>Quantity</th>
+    <th>Shipping</th>
+    <th>Item</th>
+    <th>Appliable</th>
+    <th></th>
+  </tr>
+
+  <tr>
+    <td><%= effect.name %></td>
+    <td><%= effect.amount %></td>
+    <td><%= effect.percent %></td>
+    <td><%= effect.quantity %></td>
+    <td><%= effect.shipping %></td>
+    <td><%= effect.item.try(:name) %></td>
+    <td><%= effect.appliable.try(:name) %></td>
+    <td><%= link_to 'Edit', edit_discount_code_effect_path(effect), remote: true %></td>
+  </tr>
+
+</table>

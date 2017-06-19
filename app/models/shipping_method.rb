@@ -12,11 +12,11 @@ class ShippingMethod < ActiveRecord::Base
       puts "2-------> #{amount}"
       amount.to_f
     elsif calculation.downcase == "percentage"
-      amount = (rate/100) * order_amount
+      shipping_amount = (rate/100) * order_amount
       puts "1-------> #{amount}"
-      amount = (rate.to_f >= self.minimum_amount.to_f) ? rate.to_f : self.minimum_amount.to_f
+      shipping_amount = (shipping_amount.to_f >= self.minimum_amount.to_f) ? shipping_amount.to_f : self.minimum_amount.to_f
       puts "2-------> #{amount}"
-      amount = determine_free_shipping(order_amount)
+      amount = determine_free_shipping(order_amount, shipping_amount)
       puts "3-------> #{amount}"
       amount.to_f
     end

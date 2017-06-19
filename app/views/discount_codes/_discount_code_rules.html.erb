@@ -1,0 +1,27 @@
+<table class="table table-bordered table-condensed table-striped">
+	
+	<tr>
+		<td colspan="4"><%= link_to "Add Discount Code Rule", new_discount_code_rule_path(discount_code_rule: {discount_code_id: discount_code.id }), class: "btn btn-primary btn-block btn-xs", remote: true %>
+	</tr>
+	
+	<tr>
+		<th>Quantity</th>
+		<th>Amount</th>
+		<th>Requirable</th>
+		<th>Remove</th>
+	</tr>
+
+	<% discount_code.rules.each do |rule| %>
+		<tr>
+			<td><%= rule.quantity %></td>
+			<td><%= rule.amount %></td>
+			<td><%= rule.requirable.try(:name) %></td>
+			<td>
+				<%= link_to discount_code_rule_path(rule), method: :delete, remote: true do %>
+					<i class="fa fa-remove"></i>
+				<% end %>
+			</td>
+		</tr>
+	<% end %>
+
+</table>

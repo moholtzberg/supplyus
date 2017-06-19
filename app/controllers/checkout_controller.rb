@@ -124,7 +124,18 @@ class CheckoutController < ApplicationController
       end
     end
   end
-  
+
+  def apply_code
+    discount_code = DiscountCode.find_by(code: params[:discount_code][:code])
+    @order_discount_code = OrderDiscountCode.create(discount_code_id: discount_code.id, order_id: @cart.id) if discount_code
+    @cart.reload
+  end
+
+  def remove_code
+    @cart.order_discount_code.destroy
+    @cart.reload
+  end
+
   def confirm
     @checkout = Checkout.find_by(:id => cookies.permanent.signed[:cart_id])
   end
