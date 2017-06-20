@@ -1,22 +1,26 @@
-<%= select_tag("Add to List", options_from_collection_for_select(current_user.item_lists.where.not(id: current_user.item_lists.joins(:item_item_lists).where(item_item_lists: {item_id: item.id})) + [ItemList.new(name: "< New List >", id: 0)], "id", "name"), include_blank: "Add to List", class: "add_to_list", data: {item_id: item.id}) %>
+<%= select_tag("Add to List", options_from_collection_for_select((current_user ? current_user.item_lists.where.not(id: current_user.item_lists.joins(:item_item_lists).where(item_item_lists: {item_id: item.id})) : []) + [ItemList.new(name: "< New List >", id: 0)], "id", "name"), include_blank: "Add to List", class: "add_to_list", data: {item_id: item.id}) %>
 <script>
   $('select.add_to_list[data-item-id="<%= item.id %>"]').change(function(){
     switch($(this).val()) {
       case '':
         break;
       case '0':
-        $.ajax({
-          url: "<%= new_my_account_item_list_path %>",
-          type: 'GET',
-          dataType: 'script',
-          data: {
-            item_list: {
-              item_item_lists_attributes: {
-                0: {item_id: $(this).data('item-id')}
+        <% if current_user %>
+          $.ajax({
+            url: "<%= new_my_account_item_list_path %>",
+            type: 'GET',
+            dataType: 'script',
+            data: {
+              item_list: {
+                item_item_lists_attributes: {
+                  0: {item_id: $(this).data('item-id')}
+                }
               }
             }
-          }
-        });
+          });
+        <% else %>
+          window.location.href = "<%= new_user_session_path %>";
+        <% end %>
         break;
       default:
         $.ajax({
