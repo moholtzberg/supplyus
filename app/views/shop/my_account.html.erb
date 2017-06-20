@@ -29,3 +29,14 @@
 	</table>
 	
 <% end %>
+
+<% if current_user.item_lists.any? %>
+
+	<table class="table table-bordered">
+		<tr>
+			<th colspan="3">Item Lists</th>
+		</tr>
+    <%= render partial: 'my_account/item_lists/item_list', collection: current_user.item_lists.first(5) %>
+	</table>
+
+<% end %>
