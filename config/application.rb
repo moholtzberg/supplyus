@@ -4,11 +4,12 @@ require 'csv'
 require 'aws-sdk-v1'
 require 'rails/all'
 require 'wicked_pdf'
+# require 'mechanize'
 
 Bundler.require(*Rails.groups)
-
-SHARED_DIR = Rails.env == "development" ? File.expand_path("../shared", "#{Rails.root}")  : File.expand_path("../shared", "#{Rails.root}")
-secret_file = secret_file = "#{SHARED_DIR}/app_secrets.yml"
+APP_NAME = Rails.env == "development" ? File.expand_path(".", "#{Rails.root}").split("/").last : File.expand_path("../..", "#{Rails.root}").split("/").last
+SHARED_DIR = Rails.env == "development" ? File.expand_path("../shared", "#{Rails.root}")  : File.expand_path("../../shared", "#{Rails.root}")
+secret_file = secret_file = "#{SHARED_DIR}/#{APP_NAME}_secrets.yml"
 SECRET = File.exists?(secret_file) ? YAML.load_file(secret_file) : {}
 puts "++++++++++++++ #{SECRET.inspect}\n"
 
