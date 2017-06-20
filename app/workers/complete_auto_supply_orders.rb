@@ -4,7 +4,7 @@ class CompleteAutoSupplyOrders
   
   include Sidekiq::Worker
   
-  def peform()
+  def perform()
     j = Job.new
     puts "********* Completeting Incomplete Toner Orders from Alerts *********"
     j.job_name = "Complete Incomplete Toner Orders from Alerts"
