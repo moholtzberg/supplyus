@@ -33,18 +33,17 @@ class Item < ActiveRecord::Base
   before_validation :slugger
   
   searchable do
-    text :number, :stored => true, :boost => 32
-    text :name, :stored => true, :boost => 16
-    # text :slug, :stored => true, :boost => 12
-    text :description, :stored => true, :boost => 8
+    text :number, :stored => true, :boost => 4
+    text :name, :stored => true, :boost => 2
+    text :description, :stored => true
     
-    text :brand, :boost => 4 do
+    text :brand do
       brand.name if brand
     end
     
-    text :item_categories, :boost => 4 do
-      item_categories.map { |item_category| item_category.category.name }
-    end
+    # text :item_categories do
+    #   item_categories.map { |item_category| item_category.category.name }
+    # end
 
     text :item_properties do
       item_properties.map { |item_property| item_property.value }
