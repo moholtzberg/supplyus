@@ -1,4 +1,5 @@
 <% if @item_item_list.errors.empty? %>
+  $('select.add_to_list[data-item-id="<%= @item_item_list.item_id %>"]').replaceWith('<%= j render partial: "shop/list_select", locals: {item: @item_item_list.item} %>');
   alert('Item was added successfully');
 <% elsif @item_item_list.errors.added?(:item_list_id, :taken) %>
   alert('Item already on the list');
