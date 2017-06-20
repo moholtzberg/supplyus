@@ -1,6 +1,7 @@
 class MyAccount::ItemListsController < ApplicationController
   layout 'shop'
   before_filter :find_cart, only: :show
+  before_filter :find_categories, only: [:index, :show]
 
   def new
     authorize! :create, ItemList
@@ -26,6 +27,16 @@ class MyAccount::ItemListsController < ApplicationController
   def index
     authorize! :read, ItemList
     @item_lists = current_user.item_lists
+  end
+
+  def find_categories
+    @store_name = StoreSetting.store_name
+    @store_phone_number = StoreSetting.store_phone_number
+    @store_address = StoreSetting.store_address
+    @store_city = StoreSetting.store_city
+    @store_state = StoreSetting.store_state
+    @store_zip = StoreSetting.store_zip
+    @menu = Category.is_parent.is_active.show_in_menu.includes(:children)
   end
 
   def find_cart
