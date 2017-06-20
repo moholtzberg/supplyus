@@ -1,5 +1,5 @@
 <tr data-item-list-id="<%= item_list.id %>">
-  <td><%= item_list.name %></td>
+  <td><%= link_to item_list.name, my_account_item_list_path(item_list) %></td>
   <td><%= h truncate(item_list.items.first(5).map(&:number).join(', '), length: 300) %></td>
   <td>
     <%= link_to my_account_item_list_path(item_list), method: :delete, remote: true do %>

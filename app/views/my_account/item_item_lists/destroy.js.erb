@@ -1,0 +1,3 @@
+<% if @item_item_list.destroyed? %>
+  $('.row[data-item-item-list-id="<%= @item_item_list.id %>"]').remove();
+<% end %>

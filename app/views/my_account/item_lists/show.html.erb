@@ -5,5 +5,16 @@
 </div>
 
 <div class="row col-md-12">
-  <%= render :partial => "shop/item", collection: @item_list.items, as: :i %>
+  <% @item_list.item_item_lists.each do |iil| %>
+    <div class="row" data-item-item-list-id="<%= iil.id %>">
+      <div class="col-md-11">
+        <%= render :partial => "shop/item", locals: {i: iil.item} %>
+      </div>
+      <div class="col-md-1">
+        <%= link_to my_account_item_item_list_path(iil), method: :delete, remote: true do %>
+          <i class="fa fa-remove"></i>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
 </div>
