@@ -3,7 +3,7 @@ class ShopController < ApplicationController
   before_filter :find_categories
   before_filter :find_cart
   
-  before_action :authenticate_user!, :only => :my_account
+  before_action :authenticate_user!, :only => [:my_account, :my_items, :view_account, :view_order, :view_invoice, :pay_invoice, :edit_account]
   
   def check_authorization
     
@@ -173,29 +173,40 @@ class ShopController < ApplicationController
   
   def view_account
     @account = Customer.find_by(:id => params[:account_id])
-    @orders = @account.orders.is_complete.includes(:order_shipping_method).order(:completed_at).paginate(:page => params[:page], :per_page => 10)
-    # @invoices = @account.invoices.paginate(:page => params[:page], :per_page => 10)
+    if current_user.my_account_ids.include?(@account.id)
+      @orders = @account.orders.is_complete.includes(:order_shipping_method).order(:completed_at).paginate(:page => params[:page], :per_page => 10)
+    else
+      redirect_to "/"
+    end
   end
   
   def view_order
     @order = Order.find_by(:number => params[:order_number])
     @shipments = Shipment.where(:order_id => @order.id)
-    respond_to do |format|
-      format.html
-      format.pdf do
-        render :pdf => "#{@order.number}", :title => "#{@order.number}", :layout => 'admin_print.html.erb', :page_size => 'Letter', :background => false, :template => 'shop/view_order.html.erb', :print_media_type => true
+    if current_user.my_account_ids.include?(@order.account_id)
+      respond_to do |format|
+        format.html
+        format.pdf do
+          render :pdf => "#{@order.number}", :title => "#{@order.number}", :layout => 'admin_print.html.erb', :page_size => 'Letter', :background => false, :template => 'shop/view_order.html.erb', :print_media_type => true
+        end
       end
+    else
+      redirect_to "/"
     end
   end
   
   def view_invoice
     @invoice = Order.find_by(:number => params[:invoice_number])
-    respond_to do |format|
-      format.html
-      format.pdf do
-        render :pdf => "#{@invoice.number}", :title => "#{@invoice.number}", :layout => 'admin_print.html.erb', :page_size => 'Letter', :background => false, :template => 'shop/view_invoice.html.erb', :print_media_type => true
+    if current_user.my_account_ids.include?(@invoice.account_id)
+      respond_to do |format|
+        format.html
+        format.pdf do
+          render :pdf => "#{@invoice.number}", :title => "#{@invoice.number}", :layout => 'admin_print.html.erb', :page_size => 'Letter', :background => false, :template => 'shop/view_invoice.html.erb', :print_media_type => true
+        end
+        format.xls
       end
-      format.xls
+    else
+      redirect_to "/"
     end
   end
   

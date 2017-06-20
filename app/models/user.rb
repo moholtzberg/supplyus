@@ -18,6 +18,14 @@ class User < ActiveRecord::Base
   
   accepts_nested_attributes_for :account
   
+  def my_account_ids
+    res = [account.id]
+    if user_accounts.size > 0
+      res << user_accounts.map(&:account_id)
+    end
+    res.flatten.uniq
+  end
+  
   def account_name
     account.try(:name)
   end
