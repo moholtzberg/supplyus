@@ -6,5 +6,5 @@
     $(this).find("option:last-child").before($("<option></option>").attr("value","<%= @item_list.id %>").text("<%= @item_list.name %>"));
   });
   $("table#item_lists").append("<%= j render partial: 'item_list', locals: {item_list: @item_list} %>")
-  $(".lists").html('<%= j render "shop/lists" %>')
+  $(".lists").replaceWith('<%= j render "shop/lists" %>')
 <% end %>

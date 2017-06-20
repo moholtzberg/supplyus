@@ -1,5 +1,9 @@
 class MyAccount::ItemItemListsController < ApplicationController
 
+  def check_authorization
+    
+  end
+  
   def create
     authorize! :create, ItemItemList
     @item_item_list = ItemItemList.create(item_item_list_params)

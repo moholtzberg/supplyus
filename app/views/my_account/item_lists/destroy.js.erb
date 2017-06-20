@@ -1,1 +1,2 @@
 $('tr[data-item-list-id="<%= @item_list.id %>"').remove();
+$(".lists").replaceWith('<%= j render "shop/lists" %>');

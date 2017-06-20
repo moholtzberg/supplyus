@@ -1,8 +1,16 @@
-My Lists  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a>
-<ul class="dropdown-menu dropdown-menu-right">
-  <li><%= link_to 'View All', my_account_item_lists_path %></li>
-  <li class="divider"></li>
-  <% current_user.item_lists.each do |item_list| %>
-    <li><%= link_to item_list.name, my_account_item_list_path(item_list) %></li>
-  <% end %>
-</ul>
+<% if current_user.item_lists.any? %>
+  <li class="dropdown dropdown-submenu lists">
+    <a class="dropdown-toggle" data-toggle="dropdown" href="#">My Lists</a>
+    <ul class="dropdown-menu dropdown-menu-right">
+      <li><%= link_to 'View All', my_account_item_lists_path %></li>
+      <li class="divider"></li>
+      <% current_user.item_lists.each do |item_list| %>
+        <li><%= link_to item_list.name, my_account_item_list_path(item_list) %></li>
+      <% end %>
+    </ul>
+  </li>
+<% else %>
+  <li class="dropdown lists">
+    <%= link_to 'Create List', new_my_account_item_list_path, remote: true %>
+  </li>
+<% end %>

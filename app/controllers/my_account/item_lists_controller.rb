@@ -3,6 +3,10 @@ class MyAccount::ItemListsController < ApplicationController
   before_filter :find_cart, only: :show
   before_filter :find_categories, only: [:index, :show]
 
+  def check_authorization
+    
+  end
+  
   def new
     authorize! :create, ItemList
     @item_list = ItemList.new(item_list_params.to_h.merge(user_id: current_user.id))
