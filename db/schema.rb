@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170505154846) do
+ActiveRecord::Schema.define(version: 20170616152935) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -121,6 +121,31 @@ ActiveRecord::Schema.define(version: 20170505154846) do
     t.string  "stripe_customer_id"
     t.string  "stripe_card_id"
     t.string  "expiration"
+  end
+
+  create_table "discount_code_effects", force: :cascade do |t|
+    t.float   "amount"
+    t.float   "percent"
+    t.boolean "shipping"
+    t.integer "quantity"
+    t.integer "item_id"
+    t.integer "appliable_id"
+    t.string  "appliable_type"
+    t.integer "discount_code_id"
+    t.string  "name"
+  end
+
+  create_table "discount_code_rules", force: :cascade do |t|
+    t.integer "quantity"
+    t.float   "amount"
+    t.integer "requirable_id"
+    t.string  "requirable_type"
+    t.integer "discount_code_id"
+  end
+
+  create_table "discount_codes", force: :cascade do |t|
+    t.string  "code"
+    t.integer "times_of_use"
   end
 
   create_table "equipment", force: :cascade do |t|
@@ -244,6 +269,19 @@ ActiveRecord::Schema.define(version: 20170505154846) do
 
   add_index "item_categories", ["category_id"], name: "item_category_category_id_ix", using: :btree
   add_index "item_categories", ["item_id"], name: "item_category_item_id_ix", using: :btree
+
+  create_table "item_item_lists", force: :cascade do |t|
+    t.integer "item_id"
+    t.integer "item_list_id"
+  end
+
+  add_index "item_item_lists", ["item_id"], name: "index_item_item_lists_on_item_id", using: :btree
+  add_index "item_item_lists", ["item_list_id"], name: "index_item_item_lists_on_item_list_id", using: :btree
+
+  create_table "item_lists", force: :cascade do |t|
+    t.string  "name"
+    t.integer "user_id"
+  end
 
   create_table "item_properties", force: :cascade do |t|
     t.integer "item_id"
@@ -374,6 +412,11 @@ ActiveRecord::Schema.define(version: 20170505154846) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "order_discount_codes", force: :cascade do |t|
+    t.integer "discount_code_id"
+    t.integer "order_id"
+  end
+
   create_table "order_line_items", force: :cascade do |t|
     t.integer  "order_id"
     t.integer  "order_line_number"
@@ -459,6 +502,7 @@ ActiveRecord::Schema.define(version: 20170505154846) do
     t.decimal  "shipping_total",       precision: 10, scale: 2, default: 0.0
     t.decimal  "tax_total",            precision: 10, scale: 2, default: 0.0
     t.boolean  "credit_hold",                                   default: false
+    t.decimal  "discount_total",       precision: 10, scale: 2, default: 0.0
   end
 
   add_index "orders", ["account_id"], name: "order_customer_id_ix", using: :btree

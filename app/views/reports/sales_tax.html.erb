@@ -1,26 +1,44 @@
-<% @tax_rates.each do |t| %>
-	<table class="table table-bordered">
-		<tr>
-			<th colspan="4"><%= "#{t.region_name}, #{t.state_code} #{t.zip_code} - #{t.region_code} #{number_to_percentage(t.rate)}"%></th>
-		</tr>
-		<% sum = 0 %>
-		<% @order_tax_rates.where(tax_rate_id: t.id).each do |order| %>
-		
-			<% a = Order.find(order.order_id) %>
-			
-			<tr>
-				<% sum += a.tax_total %>
-				<td><%= a.order_payment_applications.map(&:date).last %></td>
-				<td><%= a.number %></td>
-				<td><%= a.tax_total %></td>
-				<td><%= sum %></td>
-			</tr>
+<% start_date = 12.months.ago.beginning_of_year %>
+<% end_date   = Date.today %>
+<% number_of_months = (end_date.year*12+end_date.month)-(start_date.year*12+start_date.month) %>
+
+<% (0..number_of_months).to_a.reverse.each do |month_offset| %>
 	
-		<% end %>
-		<tr>
-			<td><% number_to_currency(@order_tax_rates.where(tax_rate_id: t).map(&:amount).sum) unless t.nil?%></td>
-			<td><%= number_to_currency(sum)%></td>
-			<td colspan="2"><% @order_tax_rates.where(tax_rate_id: t).map(&:amount).sum == sum %></td>
-		</tr>
-	</table>
+	<% s = month_offset.months.ago.beginning_of_month %>
+	<% e = month_offset.months.ago.end_of_month %>
+	
+	<% order_ids = Order.where("COALESCE(tax_total,0) <> 0").where(completed_at: s..e).fulfilled %>
+	
+	<% order_tax_rates = OrderTaxRate.where(order_id: order_ids) %>
+	
+	<% if order_tax_rates.map(&:amount).sum > 0 %>
+		<table class="table table-bordered">
+			<tr>
+				<th colspan="2"><%= Date::MONTHNAMES[s.month] %> <%= s.year %></th>
+			</tr>
+			<% sum = 0 %>
+			<% TaxRate.where(id: order_tax_rates.map(&:tax_rate_id)).each do |t| %>
+			<tr>
+				<td><%= "#{t.state_code} - #{t.zip_code}(#{t.region_name}) - #{t.rate}" %></td>
+				<td><%= number_to_currency(order_tax_rates.where(tax_rate_id: t.id).map(&:amount).sum) %></td>
+				<% sum += order_tax_rates.where(tax_rate_id: t.id).map(&:amount).sum %>
+			</tr>
+			<% end %>
+			<tr>
+				<td><%= number_to_currency(order_tax_rates.map(&:amount).sum) %></td>
+				<td><%= number_to_currency(sum)%></td>
+			</tr>
+			<% if sum != order_tax_rates.map(&:amount).sum %>
+			<tr>
+				<td colspan="2">
+					<% order_tax_rates.where(tax_rate_id: nil).each do |amt| %>
+						<%= "#{number_to_currency(amt.amount)} -> #{amt.tax_rate_id} -> #{amt.order_id}" if amt.tax_rate_id.nil?  %><br/>
+					<% end %>
+				</td>
+			</tr>
+			<% end %>
+		</table>
+		
+	<% end %>
+	
 <% end %>

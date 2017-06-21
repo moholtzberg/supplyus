@@ -20,6 +20,7 @@
 				<ul class="dropdown-menu dropdown-menu-right">
 					<li><%= link_to I18n.t(:my_account), "/my_account" %></li>
 					<% if current_user.account %><li><%= link_to I18n.t(:my_items), "/my_account/items" %></li><% end %>
+					<%= render :partial => "shop/lists" %>
 					<li><%= link_to "Change password", edit_user_registration_path, :remote => true %></li>
 					<li class="divider"></li>
 					<li><%= link_to I18n.t(:logout), destroy_user_session_path, :method => "delete" %></li>
@@ -34,7 +35,6 @@
 				<%= render :partial => "shop/cart" %>
 				<div>
 			</li>
-				
 		</ul>
 		
 	</div>

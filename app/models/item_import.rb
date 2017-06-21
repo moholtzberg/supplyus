@@ -1,5 +1,5 @@
 class ItemImport
-  # switch to ActiveModel::Model in Rails 4
+  
   include ActiveModel::Model
   attr_accessor :file
   # attr_accessor :file_path
@@ -72,9 +72,7 @@ class ItemImport
   end
 
   def load_imported_products
-
     spreadsheet = CSV.read(file_path || file.path, :headers => true, :encoding => 'ISO-8859-1')
-    # header = spreadsheet[0]
     import_history.update(nb_in_queue: spreadsheet.size)
     spreadsheet.map do |row|
       if row["price"].to_f > 0 and row["cost_price"].to_f > 0
@@ -87,25 +85,10 @@ class ItemImport
           item.attributes = row.to_hash.slice(*Item.attribute_names())
           item.id = id
         end
-        # puts "----> #{item.inspect}"
         item
       end
     end
-    
-    ### second type of import
-    # Item.where(:name => nil).where(:active => true).no_images.limit(250).map do |row|
-    #  row
-    # end
-    # ImportHistory.last
-  end
-
-  def open_spreadsheet
-    case File.extname(file.original_filename)
-    when ".csv" then Roo::Spreadsheet.open(file.path, csv_options: {encoding: Encoding::ISO_8859_1})
-    when ".xls" then Roo::Excel.new(file.path, nil, :ignore)
-    when ".xlsx" then Roo::Excelx.new(file.path, nil, :ignore)
-    else raise "Unknown file type: #{file.original_filename}"
-    end
+  
   end
 
 end

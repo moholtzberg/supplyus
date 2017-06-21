@@ -1,0 +1,10 @@
+<% unless flash[:error] %>
+  $('#myModal').modal("hide")
+  $('body').removeClass('modal-open')
+  $('.modal-backdrop').remove()
+  $("select.add_to_list").each(function() {
+    $(this).find("option:last-child").before($("<option></option>").attr("value","<%= @item_list.id %>").text("<%= @item_list.name %>"));
+  });
+  $("table#item_lists").append("<%= j render partial: 'item_list', locals: {item_list: @item_list} %>")
+  $(".lists").replaceWith('<%= j render "shop/lists" %>')
+<% end %>

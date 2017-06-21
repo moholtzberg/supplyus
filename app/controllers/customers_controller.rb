@@ -121,7 +121,7 @@ class CustomersController < ApplicationController
   private
 
   def account_params
-    params.require(:customer).permit(:name, :sales_rep_name, :email, :address_1, :address_2, :city, :state, :zip, :phone, :fax, :email, :group_name, :credit_terms, :credit_limit, :quickbooks_id, :bill_to_address_1, :bill_to_address_2, :bill_to_city, :bill_to_state, :bill_to_zip, :bill_to_phone, :bill_to_email, :is_taxable)
+    params.require(:customer).permit(:name, :sales_rep_name, :email, :address_1, :address_2, :city, :state, :zip, :phone, :fax, :email, :group_name, :credit_terms, :credit_limit, :quickbooks_id, :bill_to_address_1, :bill_to_address_2, :bill_to_city, :bill_to_state, :bill_to_zip, :bill_to_phone, :bill_to_email, :is_taxable, :replace_items)
   end
 
   def sort_column

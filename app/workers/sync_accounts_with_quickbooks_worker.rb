@@ -1,4 +1,4 @@
-class TestWorker
+class SyncAccountsWithQuickbooksWorker
   include Sidekiq::Worker
   
   def perform()

@@ -4,27 +4,32 @@
 	<h1>Search Results: <%= params[:keywords] %></h1>
 </div>
 
-<% if @items.facets.count > 0 %>
-	<% col = 9 %>
-	<div class="col-md-3 row">
-		<%= render :partial => "facets", :locals => {:items => @items} %>
-	</div>
-<% else %>
-	<% col = 12 %>
-<% end %>
+<div class="col-md-3 row">
+	<%= render :partial => "facets", :locals => {:items => @items} %>
+</div>
 
-<div class="col-md-<%= col %>">
-	<% unless @items.results.nil? %>
-		<% @items.results.each do |i| %>
-			<% if i && i.active? %>
-				<%= render :partial => "shop/item", :locals => {:i => i} unless i.nil? %>
-			<% end %>
-		<% end %>
-	<% else %>
-	<p>Sorry, No items were found!</p>
-	<% end %>
+<div class="row col-md-9" id="search-items">
+	<%= render :partial => "search_items", :locals => {:items => @items} %>
 </div>
 
 <% if @items and @items.results.size > 0 %>
 	<%= will_paginate @items.results, renderer: BootstrapPagination::Rails %>
-<% end %> 
+<% end %>
+
+<script>
+  $(document).on('click', '#facets a[data-remote=true]', function(e) {
+    history.pushState({}, '', $(this).attr('href'));
+  });
+
+  $(window).on('popstate', function () {
+    $.get(document.location.href)
+  });
+
+  $(document).ajaxStart(function() {
+    $('body').append('<div class="preloader-overlay"></div>');
+  });
+
+  $(document).ajaxStop(function() {
+    $('.preloader-overlay').remove();
+  })
+</script>

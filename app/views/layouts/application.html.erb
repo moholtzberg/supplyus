@@ -12,7 +12,7 @@
 		<script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js"></script>
 	</head>
 	
-	<body class="florida">
+	<body class="florida" data-no-turbolink="<%= params[:controller] == 'shop' && ['search', 'category'].include?(params[:action]) %>">
 
 		<div id="main" class="container" >
 

@@ -1,0 +1,4 @@
+$('tr#discount_code').remove();
+$('form#edit_checkout_1').before("<%= j render 'order_discount_code_form' %>")
+$('tr#order_total td:last').html("<strong><%= number_to_currency(@cart.total) %></strong>")
+

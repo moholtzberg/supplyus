@@ -1,4 +1,5 @@
 class ImportItemWorker
+  
   include Sidekiq::Worker
   
   # def perform(file_path)
@@ -13,8 +14,11 @@ class ImportItemWorker
   #   puts "********** End of Importing the items *********"
   # end
   #
-  def perform(args)
-    puts "Clear Up the que"
+  def perform(file_path)
+    spreadsheet = CSV.read(file_path || file.path, :headers => true, :encoding => 'ISO-8859-1')
+    spreadsheet.map do |row|
+      ImportItemRowWorker.perform_async(row.to_hash)
+    end
   end
   
   # def perform(import_hisotry_id)

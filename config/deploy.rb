@@ -2,11 +2,11 @@ require 'mina/rails'
 require 'mina/git'
 require 'mina/rvm'    # for rvm support. (https://rvm.io)
 
-set :application_name, 'twenty-four-seven'
-set :domain, '107.170.18.28'
-# set :domain, '107.170.14.158
-set :deploy_to, '/home/rails/twenty_four_seven'
-set :repository, 'git://github.com/moholtzberg/recurring.git'
+set :application_name, 'supply.us'
+set :domain, '162.243.54.198'
+
+set :deploy_to, '/home/rails/supplyus'
+set :repository, 'git://github.com/moholtzberg/supplyus.git'
 set :branch, 'master'
 
 # Optional settings:

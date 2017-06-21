@@ -14,7 +14,7 @@
 		<link href="/jquery.auto-complete.css" rel="stylesheet" />
 	</head>
 	
-	<body class="florida">
+	<body class="florida" data-no-turbolink="<%= params[:controller] == 'shop' && ['search', 'category'].include?(params[:action]) %>">
 
 		<div id="main" class="container" >
 

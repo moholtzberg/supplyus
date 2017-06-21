@@ -1,9 +1,9 @@
 class ShopController < ApplicationController
-  theme "supply.us"
+  
   before_filter :find_categories
   before_filter :find_cart
   
-  before_action :authenticate_user!, :only => :my_account
+  before_action :authenticate_user!, :only => [:my_account, :my_items, :view_account, :view_order, :view_invoice, :pay_invoice, :edit_account]
   
   def check_authorization
     
@@ -30,20 +30,32 @@ class ShopController < ApplicationController
     end
     categories = []
     categories.push(@category.id)
-    # categories.push(@category.children.map(&:id))
+    categories.push(@category.children.map(&:id))
     categories = categories.flatten.compact
-    
-    # if @category.children.size > 0
-    #   @child_cats = @category.children
-    # else
-      @items = Item.search do 
-        with(:category_ids, categories)
-        with(:specs, params[:specs]) if params[:specs].present?
-        facet :specs
-        order_by(:score, :desc)
-        paginate(:page => params[:page])
+    @items = Item.search(include: [:categories, :item_categories, :features, :brand, :images]) do
+      fulltext params[:keywords] if params[:keywords].present?
+      with(:category_ids, categories)
+      stats :price
+      with(:price, Range.new(*params[:price_range].split("..").map(&:to_i))) if params[:price_range].present?
+      # with(:brand, params[:brand]) if params[:brand].present?
+      if params[:specs].present?
+        params[:specs].each do |param|
+          with(:specs, param)
+        end
       end
-    # end
+      # facet :brand
+      facet :specs
+      if params[:sort_by].present?
+        order_by(*params[:sort_by])
+      end
+      order_by(:score, :desc)
+      paginate(:page => params[:page])
+    end
+    if @items.results.any?
+      max = @items.stats(:price).max
+      @items.build { facet :price, :range => 0..max, :range_interval => (max/4).ceil }
+      @items.execute
+    end
   end
   
   def item
@@ -57,9 +69,10 @@ class ShopController < ApplicationController
   def search
     # @items = Item.where(nil).active
     @items = []
-    @items = Item.search do
+    @items = Item.search(include: [:categories, :item_categories, :features, :brand, :images]) do
       fulltext params[:keywords] if params[:keywords].present?
-      # facet :price, :range => 0..1000, :range_interval => 100
+      stats :price
+      with(:price, Range.new(*params[:price_range].split("..").map(&:to_i))) if params[:price_range].present?
       # with(:brand, params[:brand]) if params[:brand].present?
       if params[:specs].present?
         params[:specs].each do |param|
@@ -68,8 +81,16 @@ class ShopController < ApplicationController
       end
       # facet :brand
       facet :specs
+      if params[:sort_by].present?
+        order_by(*params[:sort_by])
+      end
       order_by(:score, :desc)
       paginate(:page => params[:page])
+    end
+    if @items.results.any?
+      max = @items.stats(:price).max
+      @items.build { facet :price, :range => 0..max, :range_interval => (max/4).ceil }
+      @items.execute
     end
   end
   
@@ -152,29 +173,40 @@ class ShopController < ApplicationController
   
   def view_account
     @account = Customer.find_by(:id => params[:account_id])
-    @orders = @account.orders.is_complete.includes(:order_shipping_method).order(:completed_at).paginate(:page => params[:page], :per_page => 10)
-    # @invoices = @account.invoices.paginate(:page => params[:page], :per_page => 10)
+    if current_user.my_account_ids.include?(@account.id)
+      @orders = @account.orders.is_complete.includes(:order_shipping_method).order(:completed_at).paginate(:page => params[:page], :per_page => 10)
+    else
+      redirect_to "/"
+    end
   end
   
   def view_order
     @order = Order.find_by(:number => params[:order_number])
     @shipments = Shipment.where(:order_id => @order.id)
-    respond_to do |format|
-      format.html
-      format.pdf do
-        render :pdf => "#{@order.number}", :title => "#{@order.number}", :layout => 'admin_print.html.erb', :page_size => 'Letter', :background => false, :template => 'shop/view_order.html.erb', :print_media_type => true
+    if current_user.my_account_ids.include?(@order.account_id)
+      respond_to do |format|
+        format.html
+        format.pdf do
+          render :pdf => "#{@order.number}", :title => "#{@order.number}", :layout => 'admin_print.html.erb', :page_size => 'Letter', :background => false, :template => 'shop/view_order.html.erb', :print_media_type => true
+        end
       end
+    else
+      redirect_to "/"
     end
   end
   
   def view_invoice
     @invoice = Order.find_by(:number => params[:invoice_number])
-    respond_to do |format|
-      format.html
-      format.pdf do
-        render :pdf => "#{@invoice.number}", :title => "#{@invoice.number}", :layout => 'admin_print.html.erb', :page_size => 'Letter', :background => false, :template => 'shop/view_invoice.html.erb', :print_media_type => true
+    if current_user.my_account_ids.include?(@invoice.account_id)
+      respond_to do |format|
+        format.html
+        format.pdf do
+          render :pdf => "#{@invoice.number}", :title => "#{@invoice.number}", :layout => 'admin_print.html.erb', :page_size => 'Letter', :background => false, :template => 'shop/view_invoice.html.erb', :print_media_type => true
+        end
+        format.xls
       end
-      format.xls
+    else
+      redirect_to "/"
     end
   end
   

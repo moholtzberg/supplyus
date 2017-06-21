@@ -119,6 +119,10 @@
 			<td colspan="3" class="text-center"><strong> <%= number_to_currency(@order.tax_total)%></strong></td>
 		</tr>
 		<tr class="line_items">
+			<td colspan="6"><%= "#{@order.discount_code.name}" unless  @order.discount_code.nil? %> Discount</td>
+			<td colspan="3" class="text-center"><strong> <%= number_to_currency(- @order.discount_total)%></strong></td>
+		</tr>
+		<tr class="line_items">
 			<td colspan="6">Order Total</td>
 			<td colspan="3" class="text-center"><strong> <%= number_to_currency(@order.total) %></strong></td>
 		</tr>

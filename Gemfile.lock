@@ -7,6 +7,13 @@ GIT
       mina (~> 1.0)
 
 GIT
+  remote: git://github.com/cd-rum/will_paginate-bootstrap.git
+  revision: e3446ba65330343335466bc3baba633c839b9eaf
+  specs:
+    will_paginate-bootstrap (1.0.2)
+      will_paginate (>= 3.0.3)
+
+GIT
   remote: git://github.com/yourabi/twitter-typeahead-rails.git
   revision: fc343ac2f026589117bad0b7234c8bc69ef8bd6a
   specs:
@@ -342,8 +349,6 @@ GEM
       sprockets-rails (>= 2.0, < 4.0)
     wicked_pdf (1.1.0)
     will_paginate (3.1.5)
-    will_paginate-bootstrap (1.0.1)
-      will_paginate (>= 3.0.3)
     wkhtmltopdf-binary (0.12.3.1)
 
 PLATFORMS
@@ -402,7 +407,7 @@ DEPENDENCIES
   unicorn
   web-console (~> 2.0)
   wicked_pdf
-  will_paginate-bootstrap
+  will_paginate-bootstrap!
   wkhtmltopdf-binary
 
 BUNDLED WITH

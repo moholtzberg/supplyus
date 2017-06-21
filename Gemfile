@@ -33,7 +33,7 @@ gem 'devise'
 gem 'simple_token_authentication', '~> 1.0'
 gem "recaptcha", require: "recaptcha/rails"
 gem 'roo'
-gem 'will_paginate-bootstrap'
+gem 'will_paginate-bootstrap', :github => "cd-rum/will_paginate-bootstrap"
 gem 'twitter-typeahead-rails', :git => "git://github.com/yourabi/twitter-typeahead-rails.git"
 gem 'best_in_place'
 gem 'rack-mini-profiler'

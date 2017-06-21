@@ -13,9 +13,18 @@ class User < ActiveRecord::Base
   belongs_to :customer
   has_many :user_accounts
   has_many :orders, :through => :account
+  has_many :item_lists
   belongs_to :contact
   
   accepts_nested_attributes_for :account
+  
+  def my_account_ids
+    res = [account.id]
+    if user_accounts.size > 0
+      res << user_accounts.map(&:account_id)
+    end
+    res.flatten.uniq
+  end
   
   def account_name
     account.try(:name)

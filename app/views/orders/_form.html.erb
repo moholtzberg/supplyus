@@ -194,7 +194,16 @@
 		</script>
 		
 	</fieldset>
-	
+
+	<fieldset class="well">
+		<div class="col-md-12">
+			<%= f.fields_for :order_discount_code do |e| %>
+				<%= e.label :discount_code_id %>
+				<%= e.select(:discount_code_id, DiscountCode.joins(:effect).all.collect {|a| [a.name, a.id]}, {:include_blank => "Select Discount Code"}, {:class => "form-control col-md-12 input-sm"}) %>
+				<%= e.hidden_field(:id) %>
+			<% end %>
+		</div>
+	</fieldset>
 <% end %>
 
 <hr/>

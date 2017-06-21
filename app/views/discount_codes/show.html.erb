@@ -1,0 +1,84 @@
+<div id="accounts" class="col-md-12">
+		
+	<table class="table table-bordered table-striped">
+		<tr>
+			<td colspan="8">
+				<form id="searchBox" accept-charset="UTF-8" action="/admin/discount_codes" method="get" role="search">
+					<input type="text" class="form-control" id="term" name="term" placeholder="Search Over 5,000 Products" value="">
+				</form>
+			</td>
+		</tr>
+	</table>
+	
+	<table class="table table-bordered table-striped">
+		
+		<tr>
+			<th width="10%">ID</th>
+			<th width="10%">Code</th>
+			<th width="50%">Effect Name</th>
+			<th width="10%">Remaining</th>
+			<th width="10%">Times of use</th>
+		</tr>
+		
+		<tr>
+			<td><%= @discount_code.id %></td>
+			<td><%= @discount_code.code %></td>
+			<td><%= @discount_code.name %></td>
+			<td><%= @discount_code.remaining %></td>
+			<td><%= @discount_code.times_of_use %></td>
+		</tr>
+		
+	</table>
+	
+	<ul class="nav nav-tabs nav-justified">
+		<li role="presentation" class="active"><a href="#orders" aria-controls="orders" role="tab" data-toggle="tab">Orders</a></li>
+		<li role="presentation"><a href="#discount_code_rules" aria-controls="discount_code_rules" role="tab" data-toggle="tab">Discount Code Rules</a></li>
+		<li role="presentation"><a href="#discount_code_effect" aria-controls="discount_code_effect" role="tab" data-toggle="tab">Discount Code Effect</a></li>
+	</ul>
+	
+	<div class="tab-content">
+		
+		<br/>
+		
+		<div role="tabpanel" class="tab-pane active" id="orders">		
+			<table class="table table-bordered table-condensed table-striped">
+				<tr>
+					<th>Order</th>
+					<th>Ship To Name</th>
+					<th>Price</th>
+					<th>Discount</th>
+				</tr>
+				<% @discount_code.orders.each do |order| %>
+					<tr>
+						<td><%= link_to order.number, order %></td>
+						<td><%= order.ship_to_account_name %></td>
+						<td><%= order.total %></td>
+						<td><%= order.discount_total %></td>
+					</tr>
+				<% end %>
+			</table>
+		</div>
+		
+		<div id="discount_code_rules" class="tab-pane" role="tabpanel">
+
+			<%= render :partial => "discount_code_rules", :locals => {:discount_code => @discount_code} %>
+
+		</div>
+
+		<div id="discount_code_effect" class="tab-pane" role="tabpanel">
+
+			<%= render :partial => "discount_code_effect", :locals => {:effect => @discount_code.effect} %>
+
+		</div>
+		
+	</div>
+	
+</div>
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div

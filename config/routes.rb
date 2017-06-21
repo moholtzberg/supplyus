@@ -41,6 +41,9 @@ Rails.application.routes.draw do
       resources :contacts
       resources :credit_cards
       resources :customers
+      resources :discount_codes
+      resources :discount_code_effects, only: [:edit, :update]
+      resources :discount_code_rules, only: [:new, :create, :destroy]
       resources :equipment
       resources :equipment_imports
       resources :equipment_alerts
@@ -91,11 +94,13 @@ Rails.application.routes.draw do
           put :resend_order
           post :resend_order_confirmation
           put :credit_hold
+          post :apply_code
         end
         resources :shipments, :only => [:new, :create]
         # resources :payments, :shallow => true
         resources :invoices
       end
+      resources :order_discount_codes
       resources :order_line_items
       resources :payments
       resources :payment_plans
@@ -113,6 +118,7 @@ Rails.application.routes.draw do
       resource :reports, :only => :index do
         get :sales_tax
         get :item_usage
+        get :item_usage_by_group
         get :ar_aging
       end
       resources :return_authorizations
@@ -141,7 +147,12 @@ Rails.application.routes.draw do
         passwords: "users/passwords",
         registrations: "users/registrations"
   }
-  
+
+  namespace :my_account do
+    resources :item_lists
+    resources :item_item_lists, only: [:create, :destroy]
+  end
+
   get   "checkout/address" => "checkout#address"
   patch "checkout/address" => "checkout#update_address"
   get   "checkout/shipping" => "checkout#shipping"
@@ -150,7 +161,9 @@ Rails.application.routes.draw do
   patch "checkout/payment" => "checkout#update_payment"
   get   "checkout/confirm" => "checkout#confirm"
   patch "checkout/complete"=> "checkout#complete"
-  
+  post  "checkout/apply_code" => "checkout#apply_code"
+  delete  "checkout/remove_code" => "checkout#remove_code"
+
   post  "/add_to_cart" => "shop#add_to_cart"
   patch "/add_to_cart" => "shop#add_to_cart"
   post  "/update_cart" => "shop#update_cart"
@@ -163,7 +176,7 @@ Rails.application.routes.draw do
   get "/my_account/:account_id" => "shop#view_account"
   get "/my_account" => "shop#my_account"
   get "/edit_account" => "shop#edit_account"
-  
+
   get "/cart" => "shop#cart"
   get "/search" => "shop#search"
   get "/search_autocomplete" => "shop#search_autocomplete"

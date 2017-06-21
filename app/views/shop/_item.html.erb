@@ -20,14 +20,14 @@
 			
 			<p class="hidden-xs">
 				<%# description.html_safe unless description.nil? %>
-				<% i.features.limit(3).each do |feature| %>
+				<% i.features.first(3).each do |feature| %>
 				<li><%= feature.value %></li>
 				<% end %>
 			</p>
 			<p>
 				<% unless i.brand.nil? %><span class="label label-warning"><%= i.brand.name %></span><% end %>
 				<%# unless i.category.nil? %><span class="label label-info"><%# i.category.name %></span><%# end %>
-				<% i.item_categories.limit(25).each do |cat| %>&nbsp;<span class="label label-info"><%= cat.category.name %></span><% end %>
+				<% i.item_categories.first(25).each do |cat| %>&nbsp;<span class="label label-info"><%= cat.category.name %></span><% end %>
 				<%# i.item_categories.inspect %>
 			</p>
 		</div>
@@ -50,6 +50,7 @@
 				</div>
 				<%= f.submit "Add To Cart", :class => "btn btn-primary btn-sm btn-block" %>
 			<% end %>
+			<%= render partial: 'shop/list_select', locals: {item: i} %>
 		</div>
 	</div>
 	
