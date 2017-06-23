@@ -1,9 +1,10 @@
 class Inventory < ActiveRecord::Base
   
-  belongs_to :item, -> { includes(:inventory_transactions) }
-  has_many :inventory_transactions, :through => :item
+  belongs_to :item
+  belongs_to :bin
+  has_many :inventory_transactions
   
-  validates_uniqueness_of :item_id
+  validates_uniqueness_of :item_id, scope: :bin_id
   
   before_save :set_quantities
   

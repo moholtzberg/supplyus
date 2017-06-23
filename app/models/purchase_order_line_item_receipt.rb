@@ -13,7 +13,7 @@ class PurchaseOrderLineItemReceipt < ActiveRecord::Base
     else
       i = InventoryTransaction.new
     end
-    i.update_attributes(:inv_transaction_id => id, :inv_transaction_type => "PurchaseOrderLineItemReceipt", :item_id => purchase_order_line_item.item_id, :quantity => quantity_received)
+    i.update_attributes(:inv_transaction_id => id, :inv_transaction_type => "PurchaseOrderLineItemReceipt", :inventory_id => bin.inventories.find_or_create_by(item_id: purchase_order_line_item.item_id).id, :quantity => quantity_received)
   end
 
   def recalculate_line_item

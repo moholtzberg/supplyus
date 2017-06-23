@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170622165713) do
+ActiveRecord::Schema.define(version: 20170623193643) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -238,16 +238,17 @@ ActiveRecord::Schema.define(version: 20170622165713) do
     t.integer  "qty_backordered"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "bin_id"
   end
 
   create_table "inventory_transactions", force: :cascade do |t|
-    t.integer  "item_id",                          null: false
     t.integer  "inv_transaction_id",               null: false
     t.string   "inv_transaction_type",             null: false
     t.integer  "quantity",             default: 0, null: false
     t.string   "notes"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "inventory_id"
   end
 
   create_table "invoice_payment_applications", force: :cascade do |t|
@@ -572,6 +573,7 @@ ActiveRecord::Schema.define(version: 20170622165713) do
     t.integer  "quantity_received"
     t.datetime "date"
     t.integer  "bin_id"
+    t.integer  "item_id"
   end
 
   create_table "purchase_order_line_items", force: :cascade do |t|

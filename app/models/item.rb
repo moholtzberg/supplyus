@@ -24,7 +24,7 @@ class Item < ActiveRecord::Base
   belongs_to :category
   belongs_to :brand
   belongs_to :model
-  has_one :inventory, :class_name => "Inventory"
+  has_many :inventories, :class_name => "Inventory"
   attr_reader :category_tokens
   
   validates_uniqueness_of :number

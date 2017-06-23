@@ -112,7 +112,7 @@ Rails.application.routes.draw do
           put :resend_invoice
           put :resend_order
         end
-        resources :purchase_order_receipts, :only => [:new, :create]
+        resources :purchase_order_receipts, :only => [:new, :create, :destroy]
       end
       resources :purchase_order_line_items
       resource :reports, :only => :index do
