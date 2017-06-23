@@ -41,7 +41,6 @@ class Order < ActiveRecord::Base
   after_commit :flush_cache
   after_update :update_order_tax_rate
   after_commit :update_totals, :if => :persisted?
-  after_update :create_inventory_transactions_for_line_items
   
   # after_commit :sync_with_quickbooks if :persisted
   
@@ -141,12 +140,6 @@ class Order < ActiveRecord::Base
   end
   
   #####
-  
-  def create_inventory_transactions_for_line_items
-    unless completed_at.blank?
-      order_line_items.each {|a| a.create_inventory_transactions }
-    end
-  end
   
   def quantities_not_linked_to_po
     order_line_items.map(&:quantities_not_linked_to_po).sum.to_i
