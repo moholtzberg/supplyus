@@ -1,6 +1,7 @@
 class PurchaseOrderLineItemReceipt < ActiveRecord::Base
   
   belongs_to :purchase_order_line_item
+  belongs_to :bin
   has_many :inventory_transactions, :as => :inv_transaction
   
   after_commit :create_inventory_transactions
