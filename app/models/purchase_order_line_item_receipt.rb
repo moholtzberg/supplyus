@@ -2,9 +2,9 @@ class PurchaseOrderLineItemReceipt < ActiveRecord::Base
   
   belongs_to :purchase_order_line_item
   belongs_to :bin
-  has_many :inventory_transactions, :as => :inv_transaction
+  has_many :inventory_transactions, as: :inv_transaction, dependent: :destroy
   
-  after_commit :create_inventory_transactions
+  after_commit :create_inventory_transactions, on: :create
   after_commit :recalculate_line_item
   
   def create_inventory_transactions

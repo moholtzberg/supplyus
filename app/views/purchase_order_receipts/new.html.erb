@@ -31,7 +31,7 @@
     <%= f.hidden_field :purchase_order_id, value: params[:purchase_order_id].to_i %>
     
     <tr class="receipts-form">
-      <td><%= select_tag :purchase_order_line_item_id, options_for_select(@line_items.map {|li| ["#{li.item.number} / #{li.item.name}", li.id ] }), {include_blank: true, class: 'form-control'} %></td>
+      <td><%= select_tag :purchase_order_line_item_id, options_for_select(@line_items.select{|li| (li.quantity.to_i - li.quantity_received.to_i) > 0}.map {|li| ["#{li.item.number} / #{li.item.name}", li.id ] }), {include_blank: true, class: 'form-control'} %></td>
       <td><%= select_tag :bin_id, options_from_collection_for_select(Bin.all, 'id', 'name'), {include_blank: true, class: 'form-control'} %></td>
       <td><%= text_field_tag :quantity_received, nil, class: 'form-control' %></td>
       <td><%= button_tag "Add Item", class: "btn btn-primary add-item" %></td>
