@@ -1,0 +1,50 @@
+<div id="warehouse" class="col-md-12">
+		
+	<table class="table table-bordered table-striped">
+		<tr>
+			<td colspan="8">
+				<form id="searchBox" accept-charset="UTF-8" action="/admin/warehouses" method="get" role="search">
+					<input type="text" class="form-control" id="term" name="term" placeholder="Search for warehouse" value="">
+				</form>
+			</td>
+		</tr>
+	</table>
+	
+	<table class="table table-bordered table-striped">
+		
+		<tr class="bg-primary">
+			<th width="20%">ID</th>
+			<th width="40%">Name</th>
+			<th width="40%">Remaining</th>
+		</tr>
+		
+		<tr>
+			<td><%= @warehouse.id %></td>
+			<td><%= @warehouse.name %></td>
+			<td><%= @warehouse._type %></td>
+		</tr>
+		
+	</table>
+	
+	<table class="table table-bordered table-condensed table-striped">
+		<tr class="bg-primary">
+			<th>Name</th>
+			<th>Type</th>
+		</tr>
+		<% @warehouse.bins.each do |bin| %>
+			<tr>
+				<td><%= link_to bin.name, bin %></td>
+				<td><%= bin._type %></td>
+			</tr>
+		<% end %>
+	</table>
+	
+</div>
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div

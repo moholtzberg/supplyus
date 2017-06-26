@@ -34,6 +34,7 @@ Rails.application.routes.draw do
       resources :account_item_prices
       resources :account_item_price_imports
       resources :assets
+      resources :bins
       resources :brands
       resources :brand_imports
       resources :categories
@@ -136,6 +137,7 @@ Rails.application.routes.draw do
         get :reset_password
       end
       resources :vendors
+      resources :warehouses
       get "items/delete/:id" => "items#delete"
       get "/" => "home#show"
       get "/check_for_import" => "item_imports#check_for_import"
