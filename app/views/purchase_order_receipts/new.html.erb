@@ -217,7 +217,7 @@
 
       updateQuantityToShip: function() {
         var target = FORMBUILDER.actions.findLineItem(FORMBUILDER.current_receipt);
-        $(':input#quantity_received').val(target ? target.remaining_quantity : '');
+        $(':input#quantity_received').val(target ? target.remaining_quantity : '').change();
       }
 
     }
