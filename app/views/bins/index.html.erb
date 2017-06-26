@@ -1,0 +1,58 @@
+<% content_for :app_location do %>Admin / Bins / Index<% end %>
+<div id="bins" class="col-md-12">
+
+	<table class="table table-bordered table-condensed table-responsive">
+		
+		<tr>
+			<td colspan="8">
+				<form id="searchBox" accept-charset="UTF-8" action="/admin/bins" method="get" role="search">
+					<input type="text" class="form-control" id="term" name="term" placeholder="Search for bin" value="<%= params[:term] %>">
+				</form>
+			</td>
+			
+		</tr>
+		
+		<tr>
+			<th class="hidden-xs">ID</th>
+			<th>Name</th>
+			<th>Type</th>
+			<th>&nbsp;</th>
+		</tr>
+		
+		<% @bins.each do |a| %>
+		<tr>
+			<td class="hidden-xs"><%= a.id %></td>
+			<td><%= a.name %></td>
+			<td><%= a._type %></td>
+			<td class="text-center">
+			
+				<div class="dropdown">
+					<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+						<li><%= link_to("View", bin_path(a.id))  %></li>
+						<li><%= link_to("Edit", edit_bin_path(a.id), :remote => true)  %></li>
+						<li><%= link_to("Delete", bin_path(a.id), :method => "delete", :remote => true)  %></li>
+					</ul>
+				</div>
+			
+			</td>
+		</tr>
+		<% end %>
+
+	</table>
+	
+	<%= will_paginate @bins, renderer: BootstrapPagination::Rails %>
+	
+	<%= link_to new_bin_path, :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
+	
+</div>
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div>

@@ -9,5 +9,8 @@ class Bin < ActiveRecord::Base
   validates :name, presence: true, uniqueness: { scope: :warehouse_id }
   validates :_type, presence: true, inclusion: { in: TYPES }
 
+  def self.lookup(word)
+    where("lower(name) like", "%#{word.downcase}%")
+  end
 
 end
