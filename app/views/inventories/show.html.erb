@@ -16,30 +16,18 @@
 			<th>ID</th>
 	    <th>Item</th>
 	    <th>Bin</th>
-	    <th>Quantity Available</th>
-	    <th>Quantity Allocated</th>
-	    <th>Quantity On Order</th>
 	    <th>Qty On Hand</th>
-	    <th>Qty Sold</th>
-	    <th>Qty Ordered</th>
 	    <th>Qty Shipped</th>
 	    <th>Qty Received</th>
-	    <th>Qty Backordered</th>
 	  </tr>
 
 	  <tr>
 	    <td><%= @inventory.id %></td>
 	    <td><%= link_to @inventory.item.number, @inventory.item %></td>
 	    <td><%= link_to(@inventory.bin.name, @inventory.bin) if @inventory.bin %></td>
-	    <td><%= @inventory.quantity_available %></td>
-	    <td><%= @inventory.quantity_allocated %></td>
-	    <td><%= @inventory.quantity_on_order %></td>
 	    <td><%= @inventory.qty_on_hand %></td>
-	    <td><%= @inventory.qty_sold %></td>
-	    <td><%= @inventory.qty_ordered %></td>
 	    <td><%= @inventory.qty_shipped %></td>
 	    <td><%= @inventory.qty_received %></td>
-	    <td><%= @inventory.qty_backordered %></td>
 	  </tr>
 		
 	</table>
@@ -56,7 +44,7 @@
 		</tr>
 		<% @inventory.inventory_transactions.each do |tr| %>
 			<tr>
-				<td><%= link_to tr.parent.number, tr.parent %></td>
+				<td><%= link_to tr.ancestor_title, tr.ancestor %></td>
 				<td><%= tr.inv_transaction_type %></td>
 				<td><%= tr.inv_transaction_id %></td>
 				<td><%= tr.quantity %></td>

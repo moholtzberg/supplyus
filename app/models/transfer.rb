@@ -12,8 +12,8 @@ class Transfer < ActiveRecord::Base
   after_commit :create_inventory_transactions, on: :create
   
   def create_inventory_transactions
-    from = InventoryTransaction.create(:inv_transaction_id => id, :inv_transaction_type => "Transfer", :inventory_id => from.id, :quantity => -quantity)
-    to = InventoryTransaction.create(:inv_transaction_id => id, :inv_transaction_type => "Transfer", :inventory_id => to.inventories.find_or_create_by(item_id: from.item_id).id, :quantity => quantity)
+    InventoryTransaction.create(:inv_transaction_id => id, :inv_transaction_type => "Transfer", :inventory_id => from.id, :quantity => -quantity)
+    InventoryTransaction.create(:inv_transaction_id => id, :inv_transaction_type => "Transfer", :inventory_id => to.inventories.find_or_create_by(item_id: from.item_id).id, :quantity => quantity)
   end
 
   def different_bin

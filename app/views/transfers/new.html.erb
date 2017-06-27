@@ -11,7 +11,7 @@
   </div>
   <% end %>
   
-  <%= form_for @transfer, :url => inventory_transfers_path, :remote => true, :html => {:class => "form-horizontal"} do |f| %>
+  <%= form_for @transfer, :url => inventory_transfers_path, :html => {:class => "form-horizontal"} do |f| %>
     <%= render :partial => "transfers/form", :locals => {:f => f}%>
   <% end %>
   
