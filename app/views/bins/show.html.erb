@@ -27,13 +27,16 @@
 	</table>
 	
 	<table class="table table-bordered table-condensed table-striped">
+		<tr class="line_items">
+			<th colspan="2" class="bg-primary">Inventories</th>
+		</tr>
 		<tr>
 			<th>Item Number</th>
 			<th>Quantity On Hand</th>
 		</tr>
-		<% @bin.inventories.joins(:item).each do |inv| %>
+		<% @bin.inventories.with_items.joins(:item).order(:item_id).each do |inv| %>
 			<tr>
-				<td><%= link_to inv.item.number, inv %></td>
+				<td><%= link_to inv.item.number, inv.item %></td>
 				<td><%= inv.qty_on_hand %></td>
 			</tr>
 		<% end %>

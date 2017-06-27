@@ -1,5 +1,6 @@
 class Inventory < ActiveRecord::Base
   
+  scope :with_items, -> () { where.not(:qty_on_hand => 0) }
   belongs_to :item
   belongs_to :bin
   has_many :inventory_transactions
