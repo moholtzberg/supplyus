@@ -1,13 +1,6 @@
 <div id="bin" class="col-md-12">
 		
 	<table class="table table-bordered table-striped">
-		<tr>
-			<td colspan="8">
-				<form id="searchBox" accept-charset="UTF-8" action="/admin/bins" method="get" role="search">
-					<input type="text" class="form-control" id="term" name="term" placeholder="Search for bin" value="">
-				</form>
-			</td>
-		</tr>
 	</table>
 	
 	<table class="table table-bordered table-striped">
@@ -31,16 +24,25 @@
 			<th colspan="2" class="bg-primary">Inventories</th>
 		</tr>
 		<tr>
+			<td colspan="8">
+				<form id="searchBox" accept-charset="UTF-8" action="/admin/bins/<%= @bin.id %>" method="get" role="search">
+					<input type="text" class="form-control" id="term" name="term" placeholder="Search for inventory" value="">
+				</form>
+			</td>
+		</tr>
+		<tr>
 			<th>Item Number</th>
 			<th>Quantity On Hand</th>
 		</tr>
-		<% @bin.inventories.with_items.joins(:item).order(:item_id).each do |inv| %>
+		<% @inventories.each do |inv| %>
 			<tr>
 				<td><%= link_to inv.item.number, inv.item %></td>
 				<td><%= inv.qty_on_hand %></td>
 			</tr>
 		<% end %>
 	</table>
+
+	<%= will_paginate @inventories, renderer: BootstrapPagination::Rails %>
 	
 </div>
 

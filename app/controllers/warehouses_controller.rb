@@ -21,6 +21,11 @@ class WarehousesController < ApplicationController
   def show
     authorize! :read, Warehouse
     @warehouse = Warehouse.find_by(:id => params[:id])
+    @inventories = Inventory.where(bin_id: @warehouse.bins).with_items.joins(:item).joins(:bin).order(:item_id)
+    unless params[:term].blank?
+      @inventories = @inventories.lookup(params[:term]) if params[:term].present?
+    end
+    @inventories = @inventories.paginate(:page => params[:page], :per_page => 25)
   end
   
   def search

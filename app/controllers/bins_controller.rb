@@ -21,6 +21,11 @@ class BinsController < ApplicationController
   def show
     authorize! :read, Bin
     @bin = Bin.find_by(:id => params[:id])
+    @inventories = @bin.inventories.with_items.joins(:item).order(:item_id)
+    unless params[:term].blank?
+      @inventories = @inventories.lookup(params[:term]) if params[:term].present?
+    end
+    @inventories = @inventories.paginate(:page => params[:page], :per_page => 25)
   end
   
   def search
