@@ -18,5 +18,14 @@ class InventoryTransaction < ActiveRecord::Base
   def qty_received_by_item
     InventoryTransaction.where(inventory_id: self.inventory_id, inv_transaction_type: "PurchaseOrderLineItemReceipt").sum("quantity")
   end
+
+  def parent
+    case inv_transaction_type
+    when "LineItemShipment"
+      self.inv_transaction.order_line_item.order
+    when "PurchaseOrderLineItemReceipt"
+      self.inv_transaction.purchase_order_receipt.purchase_order
+    end
+  end
     
 end
