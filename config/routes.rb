@@ -59,7 +59,9 @@ Rails.application.routes.draw do
         end
       end
       resources :group_item_prices
-      resources :inventories
+      resources :inventories do
+        resources :transfers, only: [:new, :create]
+      end
       resources :invoices
       resources :items do
         collection do

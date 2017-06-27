@@ -15,6 +15,7 @@
 	  <tr>
 			<th>ID</th>
 	    <th>Item</th>
+	    <th>Bin</th>
 	    <th>Quantity Available</th>
 	    <th>Quantity Allocated</th>
 	    <th>Quantity On Order</th>
@@ -28,7 +29,8 @@
 
 	  <tr>
 	    <td><%= @inventory.id %></td>
-	    <td><%= @inventory.item.number %></td>
+	    <td><%= link_to @inventory.item.number, @inventory.item %></td>
+	    <td><%= link_to(@inventory.bin.name, @inventory.bin) if @inventory.bin %></td>
 	    <td><%= @inventory.quantity_available %></td>
 	    <td><%= @inventory.quantity_allocated %></td>
 	    <td><%= @inventory.quantity_on_order %></td>

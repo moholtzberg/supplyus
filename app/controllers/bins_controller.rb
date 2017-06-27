@@ -8,7 +8,10 @@ class BinsController < ApplicationController
       @bins = @bins.lookup(params[:term]) if params[:term].present?
     end
     @bins = @bins.paginate(:page => params[:page], :per_page => 25)
-    
+    respond_to do |format|
+      format.html
+      format.json {render :json => @bins.map { |bin| {id: bin.id, label: bin.name } }}
+    end
   end
   
   def new

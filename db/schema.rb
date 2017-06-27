@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170626153534) do
+ActiveRecord::Schema.define(version: 20170627160823) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -724,6 +724,12 @@ ActiveRecord::Schema.define(version: 20170626153534) do
     t.string  "transaction_type"
     t.decimal "amount",             precision: 10, scale: 2, null: false
     t.string  "authorization_code"
+  end
+
+  create_table "transfers", force: :cascade do |t|
+    t.integer "from_id"
+    t.integer "to_id"
+    t.integer "quantity"
   end
 
   create_table "user_accounts", force: :cascade do |t|

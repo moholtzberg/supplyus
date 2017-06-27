@@ -10,7 +10,7 @@ class Bin < ActiveRecord::Base
   validates :_type, presence: true, inclusion: { in: TYPES }
 
   def self.lookup(word)
-    where("lower(name) like", "%#{word.downcase}%")
+    where("lower(name) like ?", "%#{word.downcase}%")
   end
 
 end
