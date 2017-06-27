@@ -82,6 +82,7 @@
 	
 	<ul class="nav nav-tabs nav-justified">
 		<li role="presentation" class="active"><a href="#orders" aria-controls="orders" role="tab" data-toggle="tab">Orders</a></li>
+		<li role="presentation"><a href="#inventories" aria-controls="inventories" role="tab" data-toggle="tab">Inventories</a></li>
 		<li role="presentation"><a href="#item_vendor_prices" aria-controls="item_vendor_prices" role="tab" data-toggle="tab">Vendor Item Prices</a></li>
 		<li role="presentation"><a href="#account_item_prices" aria-controls="account_item_prices" role="tab" data-toggle="tab">Account Item Prices</a></li>
 		<li role="presentation"><a href="#group_item_prices" aria-controls="group_item_prices" role="tab" data-toggle="tab">Group Item Prices</a></li>
@@ -112,6 +113,12 @@
 					<% end %>
 				</table>
 			
+		</div>
+
+		<div id="inventories" class="tab-pane" role="tabpanel">
+
+			<%= render :partial => "inventories", :locals => {:item => @item} %>
+
 		</div>
 		
 		<div id="item_vendor_prices" class="tab-pane" role="tabpanel">
