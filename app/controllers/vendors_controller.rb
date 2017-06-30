@@ -16,6 +16,7 @@ class VendorsController < ApplicationController
   def new
     authorize! :create, :vendor
     @vendor = Vendor.new
+    @vendor.build_main_address
   end
   
   def show
@@ -34,7 +35,7 @@ class VendorsController < ApplicationController
   private
 
   def vendor_params
-    params.require(:vendor).permit(:name, :email, :address_1, :address_2, :city, :state, :zip, :phone, :fax, :email)
+    params.require(:vendor).permit(:name, :email, main_address_attributes: [:address_1, :address_2, :city, :state, :zip, :phone, :fax])
   end
   
   def sort_column

@@ -47,7 +47,6 @@ class AccountsController < ApplicationController
     params[:account][:is_taxable] = true unless params[:account][:is_taxable] != 1
     params[:account][:sales_rep_name] = current_user.email unless !params[:account][:sales_rep_name].blank?
     @account = Account.new(account_params)
-    byebug
     if @account.save
       @accounts = Account.joins(:main_address).order(sort_column + " " + sort_direction).includes(:group)
       @accounts = @accounts.paginate(:page => params[:page], :per_page => 25)

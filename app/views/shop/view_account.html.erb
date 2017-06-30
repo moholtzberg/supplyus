@@ -1,41 +1,37 @@
 <% if params[:account_id] %>
 	
 	<% unless @account.nil? %>
-	<table class="table table-bordered">
-
-		<tr>
-			<td colspan="2">My Account <%# link_to "Edit", "/edit_account" %></td>
-		</tr>
-
-		<tr>
-			<td>
-				<strong>Ship To:</strong>
-				<address>
-				<%= @account.name %><br/>
-				<%= @account.address_1 %><br/>
-				<%= @account.address_2 %><br/>
-				<%= @account.city %>, <%= @account.state %> <%= @account.zip %><br/>
-				<%= @account.phone %>
-				<%= @account.email %>
-				</address>
-			</td>
-			<td>
-				<strong>Bill To:</strong>
-				<address>
-				<%= @account.name %><br/>
-				<%= @account.bill_address_1 %><br/>
-				<%= @account.bill_address_2 %><br/>
-				<%= @account.bill_city %>, <%= @account.bill_state %> <%= @account.bill_zip %><br/>
-				<%= @account.bill_to_email %>
-				</address>
-			</td>
-		</tr>
+		<table class="table table-bordered">
+			<tr>
+				<th colspan="8">Addresses</th>
+			</tr>
+			<tr>
+				<th>Address 1</th>
+				<th>Address 2</th>
+				<th>City</th>
+				<th>State</th>
+				<th>Zip</th>
+				<th>Phone</th>
+				<th>Main</th>
+			</tr>
 		
-		<tr>
-			<td colspan="2"><%= link_to "View Item History", "/my_account/items", :class => "btn btn-primary" %></td>
-		</tr>
-	
-	</table>
+			<% @account.addresses.each do |addr|%>
+				<tr>
+					<td><%= addr.address_1 %></td>
+					<td><%= addr.address_2 %></td>
+					<td><%= addr.city %></td>
+					<td><%= addr.state %></td>
+					<td><%= addr.zip %></td>
+					<td><%= addr.phone %></td>
+					<td><%= addr.main %></td>
+				</tr>
+			<% end %>
+
+			<tr>
+				<td colspan="8"><%= link_to "View Item History", "/my_account/items", :class => "btn btn-primary" %></td>
+			</tr>
+		
+		<table>
 	<% end %>
 
 	<table class="table table-bordered">
