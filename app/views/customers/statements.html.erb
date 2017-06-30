@@ -3,7 +3,7 @@
 	<table class="table table-bordered table-condensed thead">
 		<tr class="bg-primary">
 			<th width="50%">Remit To</th>
-			<th width="50%">Billing Address </th>
+			<th width="50%">Default Address </th>
 		</tr>
 		<tr>
 			<td>
@@ -16,9 +16,9 @@
 			<td>
 				<% unless @account.name.blank? %><%= @account.name %><br/><% end %>
 				<%# unless @account.bill_to_attention.blank? %><%# @account.bill_to_attention %><br/><%# end %>
-				<% unless @account.bill_address_1.blank? %><%= @account.bill_address_1 %><br/><% end %>
-				<% unless @account.bill_address_2.blank? %><%= @account.bill_address_2 %><br/><% end %>
-				<%= @account.bill_city unless @account.bill_city.blank? %>, <%= @account.bill_state unless @account.bill_state.blank? %> <%= @account.bill_zip unless @account.bill_zip.blank? %><br/>
+				<% unless @account.address_1.blank? %><%= @account.address_1 %><br/><% end %>
+				<% unless @account.address_2.blank? %><%= @account.address_2 %><br/><% end %>
+				<%= @account.city unless @account.city.blank? %>, <%= @account.state unless @account.state.blank? %> <%= @account.zip unless @account.zip.blank? %><br/>
 				<%= @account.phone unless @account.phone.blank? %>
 			</td>
 		</tr>

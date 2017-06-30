@@ -29,37 +29,6 @@ class Account < ActiveRecord::Base
   
   # validates_presence_of :creator, :on => :create, :message => "creator can't be blank"
   
-  
-  def use_bill_to_address
-    ["address_1", "address_2", "city", "state", "zip", "email", "phone", "fax"].each do |prop|
-      # puts prop
-      # puts eval(prop)
-      if eval(prop) != eval("bill_to_#{prop}")
-        return false
-      end
-    end
-  end
-  
-  def bill_address_1
-    bill_to_address_1.blank? ? ship_to_address_1 : bill_to_address_1
-  end
-  
-  def bill_address_2
-    bill_to_address_2.blank? ? ship_to_address_2 : bill_to_address_2
-  end
-  
-  def bill_city
-    bill_to_city.blank? ? ship_to_city : bill_to_city
-  end
-  
-  def bill_state
-    bill_to_state.blank? ? ship_to_state : bill_to_state 
-  end
-  
-  def bill_zip
-    bill_to_zip.blank? ? ship_to_zip : bill_to_zip 
-  end
-  
   def self.lookup(term)
     includes(:user).where("lower(users.first_name) like (?) or lower(users.last_name) like (?) or lower(users.email) like (?) or lower(accounts.name) like (?)", "%#{term.downcase}%", "%#{term.downcase}%", "%#{term.downcase}%", "%#{term.downcase}%").references(:user)
   end
@@ -123,14 +92,7 @@ class Account < ActiveRecord::Base
     customer = { 
       CompanyName: name.gsub("&", "and"),
       DisplayName: name.gsub("&", "and"),
-      BillAddr: { 
-        Line1: bill_address_1,
-        Line2: bill_address_2,
-        City: bill_city, 
-        CountrySubDivisionCode: bill_state,
-        PostalCode: bill_zip
-      },
-      ShipAddr: { 
+      MainAddr: { 
         Line1: address_1,
         Line2: address_2,
         City: city, 

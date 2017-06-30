@@ -1,37 +1,7 @@
 <% if params[:account_id] %>
 	
 	<% unless @account.nil? %>
-		<table class="table table-bordered">
-			<tr>
-				<th colspan="8">Addresses</th>
-			</tr>
-			<tr>
-				<th>Address 1</th>
-				<th>Address 2</th>
-				<th>City</th>
-				<th>State</th>
-				<th>Zip</th>
-				<th>Phone</th>
-				<th>Main</th>
-			</tr>
-		
-			<% @account.addresses.each do |addr|%>
-				<tr>
-					<td><%= addr.address_1 %></td>
-					<td><%= addr.address_2 %></td>
-					<td><%= addr.city %></td>
-					<td><%= addr.state %></td>
-					<td><%= addr.zip %></td>
-					<td><%= addr.phone %></td>
-					<td><%= addr.main %></td>
-				</tr>
-			<% end %>
-
-			<tr>
-				<td colspan="8"><%= link_to "View Item History", "/my_account/items", :class => "btn btn-primary" %></td>
-			</tr>
-		
-		<table>
+		<%= render :partial => "addresses", :locals => {:account => @account} %>
 	<% end %>
 
 	<table class="table table-bordered">
@@ -71,6 +41,6 @@
 			<td class="text-center" colspan="8"><%= will_paginate @orders, renderer: BootstrapPagination::Rails %></td>
 		</tr>
 	
-	<table>
+	</table>
 		
 <% end %>

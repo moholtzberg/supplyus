@@ -152,6 +152,7 @@ Rails.application.routes.draw do
   namespace :my_account do
     resources :item_lists
     resources :item_item_lists, only: [:create, :destroy]
+    resources :addresses, only: [:index, :new, :create, :destroy]
   end
 
   get   "checkout/address" => "checkout#address"
