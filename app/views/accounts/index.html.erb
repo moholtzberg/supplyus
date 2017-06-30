@@ -28,10 +28,10 @@
 			<td class="hidden-xs"><%= a.id %></td>
 			<td><%= a.group_name %></td>
 			<td><%= a.name %></td>
-			<td class="hidden-xs"><%= a.main_address.address_1 %></td>
-			<td class="hidden-xs"><%= a.main_address.city %></td>
-			<td class="hidden-xs"><%= a.main_address.state %></td>
-			<td class="hidden-xs"><%= a.main_address.zip %></td>
+			<td class="hidden-xs"><%= a.address_1 %></td>
+			<td class="hidden-xs"><%= a.city %></td>
+			<td class="hidden-xs"><%= a.state %></td>
+			<td class="hidden-xs"><%= a.zip %></td>
 			<td class="hidden-xs"><% if a.is_taxable? %><i class="fa fa-check-circle-o text-success" aria-hidden="true"></i><% end %></td>
 			<td class="text-center">
 				<div class="dropdown">

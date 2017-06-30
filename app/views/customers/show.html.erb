@@ -22,24 +22,6 @@
 		<div class="panel panel-default">
 			
 			<div class="panel-heading text-center">
-				Billing Info
-			</div>
-			
-			<div class="panel-body">
-				<% if !@customer.name.nil? %><%= @customer.name %><% end %>
-				<% if !@customer.bill_to_address_1.nil? %><br/><%= @customer.bill_to_address_1 %><% end %>
-				<% if !@customer.bill_to_address_2.nil? %><br/><%= @customer.bill_to_address_2 %><% end %>
-				<%= @customer.bill_to_city %>, <%= @customer.bill_to_state %> <%= @customer.bill_to_zip %><br/>
-				<% if !@customer.bill_to_phone.nil? %><br/><%= number_to_phone(@customer.bill_to_phone) %><% end %>
-				<% if !@customer.bill_to_fax.nil? %><br/><%= number_to_phone(@customer.bill_to_fax) %><% end %>
-			</div>
-		</div>
-	</div>
-	
-	<div class="col-md-4">
-		<div class="panel panel-default">
-			
-			<div class="panel-heading text-center">
 				Misc Info
 			</div>
 			
@@ -143,6 +125,7 @@
 		<li role="presentation" class="active"><a href="#orders" aria-controls="orders" role="tab" data-toggle="tab">Orders</a></li>
 		<li role="presentation"><a href="#account_item_prices" aria-controls="account_item_prices" role="tab" data-toggle="tab">Account Item Prices</a></li>
 		<li role="presentation"><a href="#users" aria-controls="users" role="tab" data-toggle="tab">Users</a></li>
+		<li role="presentation"><a href="#addresses" aria-controls="addresses" role="tab" data-toggle="tab">Addresses</a></li>
 	</ul>
 	
 	<div class="tab-content">
@@ -249,6 +232,12 @@
 				<% end %>
 			</table>
 		
+		</div>
+	
+		<div role="tabpanel" class="tab-pane" id="addresses">
+
+			<%= render :partial => "addresses", :locals => {:account => @customer} %>
+				
 		</div>
 	
 	</div>
