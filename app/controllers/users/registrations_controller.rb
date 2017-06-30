@@ -1,5 +1,5 @@
 class Users::RegistrationsController < Devise::RegistrationsController
-  prepend_before_action :check_captcha, only: [:create]
+  # prepend_before_action :check_captcha, only: [:create]
    
   layout "devise"
   
@@ -33,13 +33,16 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def create
     a = Customer.create({
       email: params["user"]["email"], 
-      name: params["account"]["name"], 
+      name: params["account"]["name"]
+      })
+    a.addresses.create({
       address_1: params["account"]["address_1"], 
       address_2: params["account"]["address_2"], 
       city: params["account"]["city"], 
       state: params["account"]["state"], 
       zip: params["account"]["zip"], 
-      phone: params["account"]["phone"]
+      phone: params["account"]["phone"],
+      main: true
       })
     super
     User.find_by(:email => params[:user][:email]).update_attributes(:account_id => a.id, :first_name => params[:user][:first_name], :last_name => params[:user][:last_name])

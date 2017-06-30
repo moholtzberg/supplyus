@@ -16,9 +16,9 @@
 			<th><%= sortable "group_id", "Group" %></th>
 			<th><%= sortable "name" %></th>
 			<th class="hidden-xs">Address 1</th>
-			<th class="hidden-xs"><%= sortable "ship_to_city", "City" %></th>
-			<th class="hidden-xs"><%= sortable "ship_to_state", "State" %></th>
-			<th class="hidden-xs"><%= sortable "ship_to_zip", "Zip" %></th>
+			<th class="hidden-xs"><%= sortable "city", "City" %></th>
+			<th class="hidden-xs"><%= sortable "state", "State" %></th>
+			<th class="hidden-xs"><%= sortable "zip", "Zip" %></th>
 			<th class="hidden-xs">Taxable</th>
 			<th>&nbsp;</th>
 		</tr>
@@ -28,10 +28,10 @@
 			<td class="hidden-xs"><%= a.id %></td>
 			<td><%= a.group_name %></td>
 			<td><%= a.name %></td>
-			<td class="hidden-xs"><%= a.ship_to_address_1 %></td>
-			<td class="hidden-xs"><%= a.ship_to_city %></td>
-			<td class="hidden-xs"><%= a.ship_to_state %></td>
-			<td class="hidden-xs"><%= a.ship_to_zip %></td>
+			<td class="hidden-xs"><%= a.main_address.address_1 %></td>
+			<td class="hidden-xs"><%= a.main_address.city %></td>
+			<td class="hidden-xs"><%= a.main_address.state %></td>
+			<td class="hidden-xs"><%= a.main_address.zip %></td>
 			<td class="hidden-xs"><% if a.is_taxable? %><i class="fa fa-check-circle-o text-success" aria-hidden="true"></i><% end %></td>
 			<td class="text-center">
 				<div class="dropdown">

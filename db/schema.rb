@@ -11,11 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170616152935) do
-
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
-  enable_extension "pg_stat_statements"
+ActiveRecord::Schema.define(version: 20170629185140) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -32,29 +28,27 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.string  "quickbooks_id"
     t.string  "number"
     t.string  "email"
-    t.string  "ship_to_address_1"
-    t.string  "ship_to_address_2"
-    t.string  "ship_to_city"
-    t.string  "ship_to_state"
-    t.string  "ship_to_zip"
-    t.string  "ship_to_phone"
-    t.string  "ship_to_fax"
-    t.string  "bill_to_address_1"
-    t.string  "bill_to_address_2"
-    t.string  "bill_to_city"
-    t.string  "bill_to_state"
-    t.string  "bill_to_zip"
-    t.string  "bill_to_phone"
-    t.string  "bill_to_fax"
     t.boolean "active"
     t.integer "group_id"
-    t.float   "credit_limit",      default: 0.0
+    t.float   "credit_limit",  default: 0.0
     t.integer "credit_terms"
-    t.boolean "credit_hold",       default: true
+    t.boolean "credit_hold",   default: true
     t.string  "bill_to_email"
     t.boolean "is_taxable"
     t.integer "sales_rep_id"
-    t.boolean "replace_items",     default: false, null: false
+    t.boolean "replace_items", default: false, null: false
+  end
+
+  create_table "addresses", force: :cascade do |t|
+    t.integer "account_id"
+    t.string  "address_1"
+    t.string  "address_2"
+    t.string  "city"
+    t.string  "state"
+    t.string  "zip"
+    t.string  "phone"
+    t.string  "fax"
+    t.boolean "main",       default: false
   end
 
   create_table "assets", force: :cascade do |t|
@@ -70,6 +64,12 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.text     "alt"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "bins", force: :cascade do |t|
+    t.string  "name"
+    t.string  "_type"
+    t.integer "warehouse_id"
   end
 
   create_table "brands", force: :cascade do |t|
@@ -91,8 +91,8 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.boolean "active"
   end
 
-  add_index "categories", ["id"], name: "category_id_ix", using: :btree
-  add_index "categories", ["parent_id"], name: "category_parent_id_ix", using: :btree
+  add_index "categories", ["id"], name: "category_id_ix"
+  add_index "categories", ["parent_id"], name: "category_parent_id_ix"
 
   create_table "charges", force: :cascade do |t|
     t.integer "account_id"
@@ -141,11 +141,14 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.integer "requirable_id"
     t.string  "requirable_type"
     t.integer "discount_code_id"
+    t.string  "user_appliable_type"
+    t.integer "user_appliable_id"
   end
 
   create_table "discount_codes", force: :cascade do |t|
     t.string  "code"
     t.integer "times_of_use"
+    t.boolean "automatic",    default: false
   end
 
   create_table "equipment", force: :cascade do |t|
@@ -200,8 +203,8 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.datetime "updated_at"
   end
 
-  add_index "group_item_prices", ["group_id"], name: "index_group_item_prices_on_group_id", using: :btree
-  add_index "group_item_prices", ["item_id"], name: "index_group_item_prices_on_item_id", using: :btree
+  add_index "group_item_prices", ["group_id"], name: "index_group_item_prices_on_group_id"
+  add_index "group_item_prices", ["item_id"], name: "index_group_item_prices_on_item_id"
 
   create_table "groups", force: :cascade do |t|
     t.string   "group_type"
@@ -233,16 +236,17 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.integer  "qty_backordered"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "bin_id"
   end
 
   create_table "inventory_transactions", force: :cascade do |t|
-    t.integer  "item_id",                          null: false
     t.integer  "inv_transaction_id",               null: false
     t.string   "inv_transaction_type",             null: false
     t.integer  "quantity",             default: 0, null: false
     t.string   "notes"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "inventory_id"
   end
 
   create_table "invoice_payment_applications", force: :cascade do |t|
@@ -250,8 +254,8 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.integer "invoice_id"
   end
 
-  add_index "invoice_payment_applications", ["invoice_id"], name: "index_invoice_payment_applications_on_invoice_id", using: :btree
-  add_index "invoice_payment_applications", ["payment_id"], name: "index_invoice_payment_applications_on_payment_id", using: :btree
+  add_index "invoice_payment_applications", ["invoice_id"], name: "index_invoice_payment_applications_on_invoice_id"
+  add_index "invoice_payment_applications", ["payment_id"], name: "index_invoice_payment_applications_on_payment_id"
 
   create_table "invoices", force: :cascade do |t|
     t.integer  "account_id"
@@ -267,16 +271,16 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.integer "item_id"
   end
 
-  add_index "item_categories", ["category_id"], name: "item_category_category_id_ix", using: :btree
-  add_index "item_categories", ["item_id"], name: "item_category_item_id_ix", using: :btree
+  add_index "item_categories", ["category_id"], name: "item_category_category_id_ix"
+  add_index "item_categories", ["item_id"], name: "item_category_item_id_ix"
 
   create_table "item_item_lists", force: :cascade do |t|
     t.integer "item_id"
     t.integer "item_list_id"
   end
 
-  add_index "item_item_lists", ["item_id"], name: "index_item_item_lists_on_item_id", using: :btree
-  add_index "item_item_lists", ["item_list_id"], name: "index_item_item_lists_on_item_list_id", using: :btree
+  add_index "item_item_lists", ["item_id"], name: "index_item_item_lists_on_item_id"
+  add_index "item_item_lists", ["item_list_id"], name: "index_item_item_lists_on_item_list_id"
 
   create_table "item_lists", force: :cascade do |t|
     t.string  "name"
@@ -343,7 +347,7 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.decimal  "list_price",    precision: 10, scale: 2
   end
 
-  add_index "items", ["id"], name: "item_id_ix", using: :btree
+  add_index "items", ["id"], name: "item_id_ix"
 
   create_table "jobs", force: :cascade do |t|
     t.string   "job_name"
@@ -364,11 +368,12 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.integer  "shipment_id"
     t.integer  "quantity_shipped"
     t.datetime "date"
+    t.integer  "bin_id"
   end
 
-  add_index "line_item_shipments", ["id"], name: "line_item_shipment_id_ix", using: :btree
-  add_index "line_item_shipments", ["order_line_item_id"], name: "line_item_shipment_order_line_item_id_ix", using: :btree
-  add_index "line_item_shipments", ["shipment_id"], name: "line_item_shipment_shipment_id_ix", using: :btree
+  add_index "line_item_shipments", ["id"], name: "line_item_shipment_id_ix"
+  add_index "line_item_shipments", ["order_line_item_id"], name: "line_item_shipment_order_line_item_id_ix"
+  add_index "line_item_shipments", ["shipment_id"], name: "line_item_shipment_shipment_id_ix"
 
   create_table "machine_model_items", force: :cascade do |t|
     t.integer  "machine_model_id"
@@ -432,9 +437,9 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.integer  "quantity_fulfilled",                          default: 0
   end
 
-  add_index "order_line_items", ["id"], name: "order_line_item_id_ix", using: :btree
-  add_index "order_line_items", ["item_id"], name: "order_line_item_item_id_ix", using: :btree
-  add_index "order_line_items", ["order_id"], name: "order_line_item_order_id_ix", using: :btree
+  add_index "order_line_items", ["id"], name: "order_line_item_id_ix"
+  add_index "order_line_items", ["item_id"], name: "order_line_item_item_id_ix"
+  add_index "order_line_items", ["order_id"], name: "order_line_item_order_id_ix"
 
   create_table "order_payment_applications", force: :cascade do |t|
     t.integer  "payment_id"
@@ -444,8 +449,8 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.decimal  "applied_amount", precision: 10, scale: 2, default: 0.0
   end
 
-  add_index "order_payment_applications", ["order_id"], name: "index_order_payment_applications_on_order_id", using: :btree
-  add_index "order_payment_applications", ["payment_id"], name: "index_order_payment_applications_on_payment_id", using: :btree
+  add_index "order_payment_applications", ["order_id"], name: "index_order_payment_applications_on_order_id"
+  add_index "order_payment_applications", ["payment_id"], name: "index_order_payment_applications_on_payment_id"
 
   create_table "order_shipping_methods", force: :cascade do |t|
     t.integer  "order_id"
@@ -505,8 +510,8 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.decimal  "discount_total",       precision: 10, scale: 2, default: 0.0
   end
 
-  add_index "orders", ["account_id"], name: "order_customer_id_ix", using: :btree
-  add_index "orders", ["id"], name: "order_id_ix", using: :btree
+  add_index "orders", ["account_id"], name: "order_customer_id_ix"
+  add_index "orders", ["id"], name: "order_id_ix"
 
   create_table "payment_methods", force: :cascade do |t|
     t.string  "name"
@@ -559,13 +564,15 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.datetime "updated_at",                  null: false
   end
 
-  add_index "permissions", ["role_id"], name: "index_permissions_on_role_id", using: :btree
+  add_index "permissions", ["role_id"], name: "index_permissions_on_role_id"
 
   create_table "purchase_order_line_item_receipts", force: :cascade do |t|
     t.integer  "purchase_order_line_item_id"
     t.integer  "purchase_order_receipt_id"
     t.integer  "quantity_received"
     t.datetime "date"
+    t.integer  "bin_id"
+    t.integer  "item_id"
   end
 
   create_table "purchase_order_line_items", force: :cascade do |t|
@@ -654,8 +661,8 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.datetime "updated_at"
   end
 
-  add_index "roles", ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id", using: :btree
-  add_index "roles", ["name"], name: "index_roles_on_name", using: :btree
+  add_index "roles", ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id"
+  add_index "roles", ["name"], name: "index_roles_on_name"
 
   create_table "settings", force: :cascade do |t|
     t.string "key"
@@ -717,6 +724,12 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.string  "authorization_code"
   end
 
+  create_table "transfers", force: :cascade do |t|
+    t.integer "from_id"
+    t.integer "to_id"
+    t.integer "quantity"
+  end
+
   create_table "user_accounts", force: :cascade do |t|
     t.integer "user_id"
     t.integer "account_id"
@@ -743,22 +756,27 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.string   "authentication_token",   limit: 30
   end
 
-  add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", unique: true, using: :btree
-  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
-  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
+  add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", unique: true
+  add_index "users", ["email"], name: "index_users_on_email", unique: true
+  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
 
   create_table "users_roles", id: false, force: :cascade do |t|
     t.integer "user_id"
     t.integer "role_id"
   end
 
-  add_index "users_roles", ["user_id", "role_id"], name: "index_users_roles_on_user_id_and_role_id", using: :btree
+  add_index "users_roles", ["user_id", "role_id"], name: "index_users_roles_on_user_id_and_role_id"
 
   create_table "vendors", force: :cascade do |t|
     t.string   "number"
     t.integer  "account_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "warehouses", force: :cascade do |t|
+    t.string "name"
+    t.string "_type"
   end
 
 end

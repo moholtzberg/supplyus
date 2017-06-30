@@ -3,17 +3,13 @@ class Account < ActiveRecord::Base
   devise :registerable
   self.inheritance_column = :account_type
   
-  alias_attribute :address_1, :ship_to_address_1
-  alias_attribute :address_2, :ship_to_address_2
-  alias_attribute :city,      :ship_to_city
-  alias_attribute :state,     :ship_to_state
-  alias_attribute :zip,       :ship_to_zip
-  alias_attribute :phone,     :ship_to_phone
-  alias_attribute :fax,       :ship_to_fax
+  delegate :address_1, :address_2, :city, :state, :zip, :phone, :fax, to: :main_address
   
   belongs_to :user
   belongs_to :group
   belongs_to :sales_rep, :class_name => "User"
+  has_many :addresses
+  has_one :main_address, -> { where(main: true) }, :class_name => "Address"
   has_many :users
   has_many :contacts
   has_many :equipment, :class_name => "Equipment"
@@ -27,11 +23,8 @@ class Account < ActiveRecord::Base
   has_many :account_item_prices
   
   validates :name, :presence => true
-  validates :ship_to_address_1, :presence => true
-  validates :ship_to_city, :presence => true
-  validates :ship_to_state, :presence => true
-  validates :ship_to_zip, :presence => true
-  
+  accepts_nested_attributes_for :main_address
+
   # after_commit :sync_with_quickbooks if :persisted
   
   # validates_presence_of :creator, :on => :create, :message => "creator can't be blank"

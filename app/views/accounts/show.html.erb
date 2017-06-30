@@ -22,24 +22,6 @@
 		<div class="panel panel-default">
 			
 			<div class="panel-heading text-center">
-				Billing Info
-			</div>
-			
-			<div class="panel-body">
-				<% if !@account.name.nil? %><%= @account.name %><% end %>
-				<% if !@account.bill_to_address_1.nil? %><br/><%= @account.bill_to_address_1 %><% end %>
-				<% if !@account.bill_to_address_2.nil? %><br/><%= @account.bill_to_address_2 %><% end %>
-				<%= @account.bill_to_city %>, <%= @account.bill_to_state %> <%= @account.bill_to_zip %><br/>
-				<% if !@account.bill_to_phone.nil? %><br/><%= number_to_phone(@account.bill_to_phone) %><% end %>
-				<% if !@account.bill_to_fax.nil? %><br/><%= number_to_phone(@account.bill_to_fax) %><% end %>
-			</div>
-		</div>
-	</div>
-	
-	<div class="col-md-4">
-		<div class="panel panel-default">
-			
-			<div class="panel-heading text-center">
 				Misc Info
 			</div>
 			
@@ -143,6 +125,7 @@
 		<li role="presentation" class="active"><a href="#orders" aria-controls="orders" role="tab" data-toggle="tab">Orders</a></li>
 		<li role="presentation"><a href="#account_item_prices" aria-controls="account_item_prices" role="tab" data-toggle="tab">Account Item Prices</a></li>
 		<li role="presentation"><a href="#users" aria-controls="users" role="tab" data-toggle="tab">Users</a></li>
+		<li role="presentation"><a href="#addresses" aria-controls="addresses" role="tab" data-toggle="tab">Addresses</a></li>
 	</ul>
 	
 	<div class="tab-content">
@@ -190,15 +173,14 @@
 								<li><%= link_to("Lock", lock_order_path(it.id), :remote => true, :method => "put") %></li>
 								<% else %>
 								<li><%= link_to("Resend Order Confirmation", resend_order_order_path(:id => it.id), :remote => true, :method => "put") %></li>
-								<% else %>
-									<% unless it.shipped %>
-									<li><%= link_to("Ship", new_order_shipment_path(it.id))  %></li>
-									<% end %>
-									
-									<% unless it.fulfilled %>
-									<li><%= link_to("Fulfill", new_order_invoice_path(it.id))  %></li>
-									<li><%= link_to("Resend Invoice Notification", resend_invoice_order_path(:id => it.id), :remote => true, :method => "put") %></li>
-									<% end %>
+								<% end %>
+								<% unless it.shipped %>
+								<li><%= link_to("Ship", new_order_shipment_path(it.id))  %></li>
+								<% end %>
+								
+								<% unless it.fulfilled %>
+								<li><%= link_to("Fulfill", new_order_invoice_path(it.id))  %></li>
+								<li><%= link_to("Resend Invoice Notification", resend_invoice_order_path(:id => it.id), :remote => true, :method => "put") %></li>
 								<% end %>
 							</ul>
 						</div>
@@ -249,6 +231,12 @@
 				<% end %>
 			</table>
 		
+		</div>
+   
+		<div role="tabpanel" class="tab-pane" id="addresses">
+
+			<%= render :partial => "addresses", :locals => {:account => @account} %>
+				
 		</div>
 	
 	</div>

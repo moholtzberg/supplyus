@@ -1,0 +1,6 @@
+<% unless flash[:error] %>
+	$('#myModal').modal("hide")
+	$('body').removeClass('modal-open')
+	$('.modal-backdrop').remove()
+	$("#addresses").html("<%= j render :partial => 'accounts/addresses', :format => 'html', :locals => {:account => @account} %>")
+<% end %>

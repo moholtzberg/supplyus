@@ -33,6 +33,7 @@ Rails.application.routes.draw do
       end
       resources :account_item_prices
       resources :account_item_price_imports
+      resources :addresses
       resources :assets
       resources :brands
       resources :brand_imports
