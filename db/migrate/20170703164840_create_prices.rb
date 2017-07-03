@@ -10,6 +10,7 @@ class CreatePrices < ActiveRecord::Migration
       t.boolean :combinable, default: false
       t.integer :appliable_id
       t.string :appliable_type
+      t.decimal :price, :precision => 10, :scale => 2
     end
   end
 end

@@ -5,5 +5,6 @@ class Price < ActiveRecord::Base
   belongs_to :item
 
   validates :_type, presence: true, inclusion: { in: PRICE_TYPES }
+  validates :price, presence: true, numericality: { greater_than: 0 }
   
 end

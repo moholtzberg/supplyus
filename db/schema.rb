@@ -570,12 +570,13 @@ ActiveRecord::Schema.define(version: 20170703164840) do
     t.integer  "item_id"
     t.integer  "min_qty"
     t.integer  "max_qty"
-    t.string   "_type",          default: "Default"
+    t.string   "_type",                                   default: "Default"
     t.datetime "start_date"
     t.datetime "end_date"
-    t.boolean  "combinable",     default: false
+    t.boolean  "combinable",                              default: false
     t.integer  "appliable_id"
     t.string   "appliable_type"
+    t.decimal  "price",          precision: 10, scale: 2
   end
 
   create_table "purchase_order_line_item_receipts", force: :cascade do |t|
