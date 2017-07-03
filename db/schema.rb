@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170629185140) do
+ActiveRecord::Schema.define(version: 20170703164840) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -566,6 +566,18 @@ ActiveRecord::Schema.define(version: 20170629185140) do
 
   add_index "permissions", ["role_id"], name: "index_permissions_on_role_id"
 
+  create_table "prices", force: :cascade do |t|
+    t.integer  "item_id"
+    t.integer  "min_qty"
+    t.integer  "max_qty"
+    t.string   "_type",          default: "Default"
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.boolean  "combinable",     default: false
+    t.integer  "appliable_id"
+    t.string   "appliable_type"
+  end
+
   create_table "purchase_order_line_item_receipts", force: :cascade do |t|
     t.integer  "purchase_order_line_item_id"
     t.integer  "purchase_order_receipt_id"
@@ -693,6 +705,13 @@ ActiveRecord::Schema.define(version: 20170629185140) do
     t.boolean "active"
     t.float   "minimum_amount"
     t.float   "free_at_amount"
+  end
+
+  create_table "subscriptions", force: :cascade do |t|
+    t.integer "address_id"
+    t.integer "item_id"
+    t.integer "quantity"
+    t.integer "frequency"
   end
 
   create_table "tax_rates", force: :cascade do |t|
