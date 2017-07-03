@@ -10,7 +10,7 @@ class Address < ActiveRecord::Base
   validate :one_main
 
   def one_main
-    errors.add(:main, "Only one main address is allowed per account") if account.addresses.where.not(id: id).where(main: true).any? && main
+    errors.add(:main, "address could be only one per account") if account.addresses.where.not(id: id).where(main: true).any? && main
   end
   
 end

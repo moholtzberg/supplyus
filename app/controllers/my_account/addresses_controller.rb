@@ -10,6 +10,7 @@ class MyAccount::AddressesController < ApplicationController
     authorize! :create, Address
     @account = Account.find(address_params[:account_id])
     @address = Address.create(address_params)
+    flash[:error] = @address.errors.full_messages.join(', ') if @address.errors.any?
     respond_to do |format|
       format.html
       format.js
