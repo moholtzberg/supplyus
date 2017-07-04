@@ -107,6 +107,7 @@ Rails.application.routes.draw do
       resources :payment_plans
       resources :payment_plan_templates
       resources :prices
+      resources :price_imports
       resources :purchase_orders do
         member do
           get :line_items_from_order
