@@ -61,7 +61,7 @@
 			<th width="10%">Number</th>
 			<th width="50%">Name</th>
 			<th width"10%">Slug</th>
-			<th width"10%">Price</th>
+			<th width"10%">List Price</th>
 			<th width"10%">Sale Price</th>
 			<th width"10%">Cost</th>
 		</tr>
@@ -70,7 +70,7 @@
 			<td><%= best_in_place @item, :number %></td>
 			<td><%= @item.name %></td>
 			<td><%= @item.slug %></td>
-			<td><%= number_to_currency(@item.price) %></td>
+			<td><%= number_to_currency(@item.list_price) %></td>
 			<td><%= number_to_currency(@item.sale_price) %></td>
 			<td><%= number_to_currency(@item.cost_price) %></td>
 		</tr>
@@ -83,8 +83,7 @@
 	<ul class="nav nav-tabs nav-justified">
 		<li role="presentation" class="active"><a href="#orders" aria-controls="orders" role="tab" data-toggle="tab">Orders</a></li>
 		<li role="presentation"><a href="#item_vendor_prices" aria-controls="item_vendor_prices" role="tab" data-toggle="tab">Vendor Item Prices</a></li>
-		<li role="presentation"><a href="#account_item_prices" aria-controls="account_item_prices" role="tab" data-toggle="tab">Account Item Prices</a></li>
-		<li role="presentation"><a href="#group_item_prices" aria-controls="group_item_prices" role="tab" data-toggle="tab">Group Item Prices</a></li>
+		<li role="presentation"><a href="#prices" aria-controls="prices" role="tab" data-toggle="tab">Prices</a></li>
 		<li role="presentation"><a href="#item_substitutes" aria-controls="item_substitutes" role="tab" data-toggle="tab">Item Substitutes</a></li>
 		<li role="presentation"><a href="#substituting_items" aria-controls="substituting_items" role="tab" data-toggle="tab"> Substituting Items</a></li>
 	</ul>
@@ -120,16 +119,10 @@
 
 		</div>
 
-		<div id="account_item_prices" class="tab-pane" role="tabpanel">
+		<div id="prices" class="tab-pane" role="tabpanel">
 
-			<%= render :partial => "account_item_prices", :locals => {:item => @item} %>
+			<%= render :partial => "prices", :locals => {:item => @item} %>
 
-		</div>
-		
-		<div id="group_item_prices" class="tab-pane" role="tabpanel">
-			
-			<%= render :partial => "group_item_prices", :locals => {:item => @item} %>
-			
 		</div>
 		
 		<div id="item_substitutes" class="tab-pane" role="tabpanel">
