@@ -34,7 +34,7 @@ class AccountsController < ApplicationController
     @account = Account.find(params[:id])
     puts @account.inspect
     @orders = Order.where(account_id: @account.id).includes(:order_line_items).order(:completed_at)
-    @item_prices = AccountItemPrice.where(account_id: @account.id).includes(:item)
+    @item_prices = Price.where(appliable: @account).includes(:item)
   end
   
   def edit

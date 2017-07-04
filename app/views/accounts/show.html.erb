@@ -123,7 +123,7 @@
 
 	<ul class="nav nav-tabs nav-justified">
 		<li role="presentation" class="active"><a href="#orders" aria-controls="orders" role="tab" data-toggle="tab">Orders</a></li>
-		<li role="presentation"><a href="#account_item_prices" aria-controls="account_item_prices" role="tab" data-toggle="tab">Account Item Prices</a></li>
+		<li role="presentation"><a href="#prices" aria-controls="prices" role="tab" data-toggle="tab">Prices</a></li>
 		<li role="presentation"><a href="#users" aria-controls="users" role="tab" data-toggle="tab">Users</a></li>
 		<li role="presentation"><a href="#addresses" aria-controls="addresses" role="tab" data-toggle="tab">Addresses</a></li>
 	</ul>
@@ -191,8 +191,7 @@
 		
 		</div>
 	
-		<div id="account_item_prices" class="tab-pane" role="tabpanel">
-			<%= link_to "Copy Price Catalogue", new_account_item_price_path(:copy => true, :account_id => @account.id), :class => "btn btn-primary", :remote => true  %>
+		<div id="prices" class="tab-pane" role="tabpanel">
 			<table class="table table-bordered table-condensed table-hover">
 				<tr>
 					<th>Item Number</th>
@@ -207,7 +206,7 @@
 					<td><%= a.item.name unless a.item.nil? %></td>
 					<td><%= number_to_currency(a.price) %></td>
 					<td><%= number_to_currency(a.item.cost_price) unless a.item.nil? %></td>
-					<td><%= link_to "Delete", account_item_price_path(a.id), :method => :delete, :remote => true %></td>
+					<td><%= link_to "Delete", price_path(a.id), :method => :delete %></td>
 
 				</tr>
 				<% end %>

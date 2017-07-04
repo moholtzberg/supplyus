@@ -36,7 +36,6 @@ class PriceImport
     header = spreadsheet.row(1)
     (2..spreadsheet.last_row).each_row do |i|
       row = Hash[[header, spreadsheet.row(i)].transpose]
-      # product = AccountItemPrice.find_by_id(row["id"])
       if Item.find_by(:number => row["item_number"])
         item = Item.find_by(:number => row["item_number"])
         product = Price.new

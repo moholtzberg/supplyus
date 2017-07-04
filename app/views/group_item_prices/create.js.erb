@@ -1,6 +1,0 @@
-<% unless flash[:error] %>
-	$('#myModal').modal("hide")
-	$('body').removeClass('modal-open')
-	$('.modal-backdrop').remove()
-	$("#group_item_prices").html("<%= j render :partial => 'items/group_item_prices.html', :format => 'html', :locals => {:item => @item} %>")
-<% end %>

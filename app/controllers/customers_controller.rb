@@ -45,7 +45,7 @@ class CustomersController < ApplicationController
     @customer = Customer.find(params[:id])
     puts @customer.inspect
     @orders = Order.where(account_id: @customer.id).includes(:order_line_items).order(:completed_at)
-    @item_prices = AccountItemPrice.where(account_id: @customer.id).includes(:item)
+    @item_prices = Price.where(appliable: @customer).includes(:item)
   end
   
   def create

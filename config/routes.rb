@@ -31,8 +31,6 @@ Rails.application.routes.draw do
           resources :invoices
         end
       end
-      resources :account_item_prices
-      resources :account_item_price_imports
       resources :addresses
       resources :assets
       resources :brands
@@ -58,7 +56,6 @@ Rails.application.routes.draw do
           get :statements
         end
       end
-      resources :group_item_prices
       resources :inventories
       resources :invoices
       resources :items do

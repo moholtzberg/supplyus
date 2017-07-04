@@ -63,7 +63,7 @@ class ShopController < ApplicationController
     if Item.where("slug = lower(?)", params[:item].downcase).take.nil?
       raise ActionController::RoutingError.new('Not Found')
     end
-    @item = Item.where("slug = lower(?)", params[:item].downcase).includes(:group_item_prices, :account_item_prices, :item_properties, :item_categories => [:category]).take
+    @item = Item.where("slug = lower(?)", params[:item].downcase).includes(:prices, :item_properties, :item_categories => [:category]).take
   end
   
   def search

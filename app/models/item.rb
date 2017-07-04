@@ -5,8 +5,6 @@ class Item < ActiveRecord::Base
   scope :active, -> { where(:active => true)}
   scope :inactive, -> { where(:active => false)}
   
-  has_many :account_item_prices, :dependent => :destroy, :inverse_of => :item
-  has_many :group_item_prices, :dependent => :destroy, :inverse_of => :item
   has_many :item_vendor_prices
   has_many :images  
   has_many :order_line_items

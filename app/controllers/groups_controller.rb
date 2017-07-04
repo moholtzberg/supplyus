@@ -65,7 +65,7 @@ class GroupsController < ApplicationController
     .select("SUM(COALESCE(quantity, 0) - COALESCE(quantity_canceled, 0)) AS qty, item_id AS item_id, items.number AS number")
     .having("item_id = item_id")
     .order("qty DESC")
-    .includes(:item => [:group_item_prices, :item_vendor_prices])
+    .includes(:item => [:prices, :item_vendor_prices])
   end
   
   def invoices_by_customer
@@ -91,7 +91,7 @@ class GroupsController < ApplicationController
     .select("SUM(COALESCE(quantity, 0) - COALESCE(quantity_canceled, 0)) AS qty, item_id AS item_id, items.number AS number")
     .having("item_id = item_id")
     .order("qty DESC")
-    .includes(:item => [:group_item_prices, :item_vendor_prices])
+    .includes(:item => [:prices, :item_vendor_prices])
   end
   
   def items_for_customer

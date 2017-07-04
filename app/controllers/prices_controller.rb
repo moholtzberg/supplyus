@@ -22,6 +22,7 @@ class PricesController < ApplicationController
     @price = Price.find_by(:id => params[:id])
     @price.destroy!
     respond_to do |format|
+      format.html {redirect_to :back}
       format.js
     end
   end

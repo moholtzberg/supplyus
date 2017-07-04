@@ -21,7 +21,7 @@
         <% items = OrderLineItem.unscoped.joins("INNER JOIN orders ON orders.id = order_line_items.order_id").joins("RIGHT OUTER JOIN items ON items.id = order_line_items.item_id").where("orders.completed_at BETWEEN ? AND ?", @from_date, @to_date).where("orders.account_id IN (?)", customer.id).where("quantity_shipped >= 0").group("item_id, items.number").select("SUM(COALESCE(quantity, 0) - COALESCE(quantity_canceled, 0)) AS qty, item_id AS item_id, items.number AS number").having("item_id = item_id").order("qty DESC") %>
 
         <% items.each do |i|%>
-            <% group_item_price = i.item.group_item_prices.where(group_id: @group.id).last %>
+            <% group_item_price = i.item.prices.by_group(@group.id).last %>
             <% if i.qty > 0 %>
                 <% start = start + 1  %>
                 <tr>
@@ -30,7 +30,7 @@
                   <td><%= number_with_delimiter(i.qty) %></td>
                   <td><%= i.number %></td>
                   <td><% prc = group_item_price.nil? ? 0 : group_item_price.price %>
-                    <%= number_to_currency([prc, i.item.price.to_f.to_d].min) %>
+                    <%= number_to_currency([prc, i.item.default_price.to_f.to_d].min) %>
                   </td>
 
                 </tr>

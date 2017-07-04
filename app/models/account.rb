@@ -20,7 +20,7 @@ class Account < ActiveRecord::Base
   has_many :credit_cards
   has_many :orders
   has_many :order_line_items, :through => :orders
-  has_many :account_item_prices
+  has_many :prices, as: :appliable
   
   validates :name, :presence => true
   accepts_nested_attributes_for :main_address
