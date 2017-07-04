@@ -156,10 +156,11 @@ class Item < ActiveRecord::Base
     self.prices._public.default.minimum(:price)
   end
 
-  def actual_price(account_id = nil)
-    public_price = self.prices._public.singular.minimum(:price)
+  def actual_price(account_id = nil, quantity = nil)
+    singular_price = self.prices._public.singular.minimum(:price)
+    bulk_price = quantity ? self.prices._public.bulk.by_qty(quantity).minimum(:price) : nil
     account_price = account_id ? self.prices.by_account(account_id).singular.minimum(:price) : nil
-    (account_price and account_price < public_price) ? account_price : public_price
+    [singular_price, bulk_price, account_price].select(&:present?).min
   end
 
   def default_image_path

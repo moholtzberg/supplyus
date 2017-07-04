@@ -47,7 +47,7 @@ class CheckoutController < ApplicationController
         cart.account_id = current_user.account.id
       end
     end
-    cart.order_line_items.each {|c| c.price = c.item.actual_price(cart.account_id)}
+    cart.order_line_items.each {|c| c.price = c.item.actual_price(cart.account_id, c.quantity)}
 
     cart.update_attributes(checkout_params)
 

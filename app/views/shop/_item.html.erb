@@ -39,10 +39,23 @@
 			<%= form_for @cart, url: add_to_cart_path, :class => "form-inline", :remote => true do |f| %>
 				<div class="form-group">
 					<% if i.actual_price(current_user.try(:account_id)) < i.default_price %>
-					<h5 class="text-center"><span class="hidden-xs">List Price:</span> <span style="text-decoration:line-through;"><%= number_to_currency(i.default_price) %></span><h5>
-					<h4 class="text-center"><span class="hidden-xs">Your Price:</span> <%= number_to_currency(i.actual_price(current_user.try(:account_id))) %><h4>
+						<h5 class="text-center"><span class="hidden-xs">List Price:</span> <span style="text-decoration:line-through;"><%= number_to_currency(i.default_price) %></span><h5>
+						<h4 class="text-center"><span class="hidden-xs">Your Price:</span> <%= number_to_currency(i.actual_price(current_user.try(:account_id))) %><h4>
 					<% else %>
-					<h4 class="text-center"><span class="hidden-xs">Your Price:</span> <%= number_to_currency(i.default_price) %><h4>
+						<h4 class="text-center"><span class="hidden-xs">Your Price:</span> <%= number_to_currency(i.default_price) %><h4>
+					<% end %>
+					<% if i.prices.recurring.any? %>
+						<input type="submit" name="commit" value="Subscribe (<%= number_to_currency(i.prices.recurring.first.price) %>)" class="btn btn-primary btn-sm btn-block margin-bottom">
+					<% end %>
+					<% if i.prices.bulk.any? %>
+						<div class="well well-sm">
+							<p class="border-bottom">Bulk prices:</p>
+							<% i.prices.bulk.order('min_qty asc').each do |price| %>
+								<p>
+									<%= "#{price.min_qty}-#{price.max_qty} pcs.: #{number_to_currency(price.price)}" %>
+								</p>
+							<% end %>
+						</div>
 					<% end %>
 					<%= f.hidden_field :item_id, :value => i.id %>
 					<div class="input-group">

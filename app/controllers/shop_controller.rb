@@ -120,6 +120,7 @@ class ShopController < ApplicationController
       qty = line.first.quantity.to_f + params[:cart][:quantity].to_f
       line = line.first
       line.quantity = qty
+      line.price = line.item.actual_price(current_user.try(:account_id), line.quantity)
       line.save
     else
       
@@ -127,9 +128,9 @@ class ShopController < ApplicationController
         if current_user.has_account
           @cart.account_id = current_user.account.id
         end
-        @cart.contents.create(:item_id => params[:cart][:item_id], :quantity => params[:cart][:quantity].to_i, :price => i.actual_price(current_user.account.id))
+        @cart.contents.create(:item_id => params[:cart][:item_id], :quantity => params[:cart][:quantity].to_i, :price => i.actual_price(current_user.account_id, params[:cart][:quantity].to_i))
       else
-        @cart.contents.create(:item_id => params[:cart][:item_id], :quantity => params[:cart][:quantity].to_i, :price => i.price)
+        @cart.contents.create(:item_id => params[:cart][:item_id], :quantity => params[:cart][:quantity].to_i, :price => i.actual_price(nil, params[:cart][:quantity].to_i))
       end
       
     end
@@ -140,7 +141,8 @@ class ShopController < ApplicationController
     lines.each_with_index do |line, idx|
       id = line[1]["id"]
       qt = line[1]["quantity"].to_i
-      OrderLineItem.find(id).update_attributes(:quantity => qt)
+      oli = OrderLineItem.find(id)
+      oli.update_attributes(:quantity => qt, :price => oli.item.actual_price(current_user.try(:account_id), qt))
     end
   end
   
@@ -149,7 +151,7 @@ class ShopController < ApplicationController
     if current_user && current_user.has_account
       @cart.account_id = current_user.account.id
       @cart.order_line_items.each do |c| 
-        c.price = c.item.actual_price(@cart.account_id)
+        c.price = c.item.actual_price(@cart.account_id, c.quantity)
         c.save!
       end
     end
