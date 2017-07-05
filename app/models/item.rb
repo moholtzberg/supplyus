@@ -48,7 +48,7 @@ class Item < ActiveRecord::Base
       item_properties.map { |item_property| item_property.value }
     end
     
-    float :price, :trie => true
+    float :actual_price, :trie => true
     
     string :brand, :stored => true do
       brand.name if brand
@@ -155,10 +155,9 @@ class Item < ActiveRecord::Base
   end
 
   def actual_price(account_id = nil, quantity = nil)
-    singular_price = self.prices._public.singular.minimum(:price)
-    bulk_price = quantity ? self.prices._public.bulk.by_qty(quantity).minimum(:price) : nil
-    account_price = account_id ? self.prices.by_account(account_id).singular.minimum(:price) : nil
-    [singular_price, bulk_price, account_price].select(&:present?).min
+    self.prices.where('(appliable_type = ? AND appliable_id = ?) OR (appliable_type = ? AND appliable_id = ?) OR (appliable_type IS NULL AND appliable_id IS NULL)', (account_id ? 'Account' : nil), account_id, (account_id ? 'Group' : nil), (account_id ? Account.find(account_id).group_id : nil)).
+      where('(_type = ? AND min_qty <= ? AND max_qty >= ?) OR (_type IN (?) AND min_qty IS NULL AND max_qty IS NULL)', (quantity ? 'Bulk' : nil), quantity, quantity, ['Default', 'Sale']).
+      minimum(:price)
   end
 
   def default_image_path

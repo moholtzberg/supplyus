@@ -54,7 +54,7 @@ class PriceImport
       else
         product = Price.new(:price => row["price"], :min_qty => row["min_qty"], 
           :max_qty => row["max_qty"], :_type => row["_type"], :start_date => row[:start_date], :end_date => row[:end_date], 
-          :combinable => row[:combinable], :appliable_id => row[:appliable_id], :appliable_type => row[:appliable_type], :price => row[:price])
+          :combinable => row[:combinable], :appliable_id => row[:appliable_id], :appliable_type => row[:appliable_type])
         errors.add(:item, "#{row["item_number"]} cannot be not be found")
         product
       end
