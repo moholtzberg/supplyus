@@ -69,7 +69,7 @@ class ShopController < ApplicationController
   def search
     # @items = Item.where(nil).active
     @items = []
-    @items = Item.search(include: [:prices, :categories, :item_categories, :features, :brand, :images]) do
+    @items = Item.search(include: [:prices, :categories, :item_categories, :features, :brand, :images, :item_lists]) do
       fulltext params[:keywords] if params[:keywords].present?
       stats :actual_price
       with(:actual_price, Range.new(*params[:price_range].split("..").map(&:to_i))) if params[:price_range].present?
