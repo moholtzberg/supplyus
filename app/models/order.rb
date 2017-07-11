@@ -41,7 +41,7 @@ class Order < ActiveRecord::Base
   after_commit :flush_cache
   after_update :update_order_tax_rate
   after_commit :update_totals, :if => :persisted?
-  after_update :create_inventory_transactions_for_line_items
+  # after_update :create_inventory_transactions_for_line_items
   
   # after_commit :sync_with_quickbooks if :persisted
   
