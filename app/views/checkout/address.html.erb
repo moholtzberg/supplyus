@@ -70,12 +70,12 @@
 
         <div id="select_address" class="col-md-12 shipping">
           <label for="checkout_{:class=>&quot;control-label&quot;}">Select Address</label>
-          <%= select_tag("Select Address", options_from_collection_for_select(current_user.account.addresses, "id", "address_1"), class: "shipping_address form-control") %>
+          <%= select_tag("Select Address", options_from_collection_for_select(current_user.account.addresses, "id", "address_1"), {include_blank: true, class: "shipping_address form-control"}) %>
           <script>
-            var addresses = <%= raw current_user.account.addresses.to_json %>;
+            var addresses = <%= raw current_user.account.addresses.to_a.push(Address.new).to_json %>;
             $('select.shipping_address').change(function(){
               var $select = $(this);
-              var current_address = addresses.filter(function(item){return item.id == parseInt( $select.val() ) })[0];
+              var current_address = addresses.filter(function(item){return item.id == (parseInt( $select.val() ) || null) })[0];
               $(':input#checkout_ship_to_address_1').val(current_address['address_1']);
               $(':input#checkout_ship_to_address_2').val(current_address['address_2']);
               $(':input#checkout_ship_to_city').val(current_address['city']);
@@ -163,12 +163,12 @@
 
         <div id="select_address" class="col-md-12 shipping">
           <label for="checkout_{:class=>&quot;control-label&quot;}">Select Address</label>
-          <%= select_tag("Select Address", options_from_collection_for_select(current_user.account.addresses, "id", "address_1"), class: "billing_address form-control bill_to") %>
+          <%= select_tag("Select Address", options_from_collection_for_select(current_user.account.addresses, "id", "address_1"), {include_blank: true, class: "billing_address form-control bill_to"}) %>
           <script>
-            var addresses = <%= raw current_user.account.addresses.to_json %>;
+            var addresses = <%= raw current_user.account.addresses.to_a.push(Address.new).to_json %>;
             $('select.billing_address').change(function(){
               var $select = $(this);
-              var current_address = addresses.filter(function(item){return item.id == parseInt( $select.val() ) })[0];
+              var current_address = addresses.filter(function(item){return item.id == (parseInt( $select.val() ) || null) })[0];
               $(':input#checkout_bill_to_address_1').val(current_address['address_1']);
               $(':input#checkout_bill_to_address_2').val(current_address['address_2']);
               $(':input#checkout_bill_to_city').val(current_address['city']);
@@ -225,9 +225,8 @@
 				</div>
 				
 				<div id="use_ship_to" class="col-xs-12 shipping">
-					<%= label_tag :use_ship_to_address do %>
-						<%= check_box_tag :use_ship_to_address, :checked, :class => "form-control" %>
-					<% end %>
+          <%= check_box_tag :use_ship_to_address, :checked, :class => "form-control" %>
+					<%= label_tag :use_ship_to_address %>
 				</div>
 				
 				
