@@ -21,7 +21,8 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def configure_permitted_parameters
     devise_parameter_sanitizer.for(:sign_up) {|u| 
       u.permit(:email, :password, :password_confirmation, :remember_me, :first_name, :last_name,
-      account: [:name, :ship_to_address_1, :ship_to_address_2, :ship_to_city, :ship_to_state, :ship_to_zip, :ship_to_phone])}
+      account: [:name],
+      address: [:ship_to_address_1, :ship_to_address_2, :ship_to_city, :ship_to_state, :ship_to_zip, :ship_to_phone])}
   end
 
   # GET /resource/sign_up
@@ -36,12 +37,12 @@ class Users::RegistrationsController < Devise::RegistrationsController
       name: params["account"]["name"]
       })
     a.addresses.create({
-      address_1: params["account"]["address_1"], 
-      address_2: params["account"]["address_2"], 
-      city: params["account"]["city"], 
-      state: params["account"]["state"], 
-      zip: params["account"]["zip"], 
-      phone: params["account"]["phone"],
+      address_1: params["address"]["address_1"], 
+      address_2: params["address"]["address_2"], 
+      city: params["address"]["city"], 
+      state: params["address"]["state"], 
+      zip: params["address"]["zip"], 
+      phone: params["address"]["phone"],
       main: true
       })
     super
