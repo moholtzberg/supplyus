@@ -76,19 +76,30 @@
 	<tr>
 		<%= form_for @checkout, :url => checkout_payment_path, :method => :patch do |f| %>
 		<td>
-			<select id="payment_type" class="form-control">
-				<option value="credit_card">Credit Card</option>
+			<select id="payment_type" class="selectpicker">
+				<% @cards.each do |card| %>
+					<option value="<%= card.service_card_id %>" data-content='<span class="<%= card.logo_class %>" style="margin-right: 5px;"></span><span class="text">  **** **** **** <%= card.last_4 %></span>'></option>
+				<% end %>
+				<option value="credit_card">New Credit Card</option>
 				<option value="check">Check</option>
 				<% if current_user.account and current_user.account.has_credit %>
 				<option value="terms">Net <%= current_user.account.credit_terms %></option>
 				<% end %>
 			</select>
-			
+
 			<script>
-			$("select#payment_type").change(function(){
-				var m = this.value;
-				$("#payment_method").val(m);
-			})
+				$("select#payment_type").change(function(){
+					var m = this.value;
+					if (m == 'credit_card' || m == 'check') { 
+						$("#payment_method").val(m);
+						$("#credit_card_token").val('');
+						$("#credit_card").removeClass('hidden')
+					} else { 
+						$("#payment_method").val('credit_card');
+						$("#credit_card_token").val(m);
+						$("#credit_card").addClass('hidden')
+					}
+				})
 			</script>
 			
 			<!-- Load the required client component. -->
@@ -97,9 +108,10 @@
 			<!-- Load Hosted Fields component. -->
 			<script src="https://js.braintreegateway.com/web/3.11.0/js/hosted-fields.min.js"></script>
 			
-			<div id="credit_card" class="panel panel-default bootstrap-basic">
+			<div id="credit_card" class="panel panel-default bootstrap-basic <%= 'hidden' if @cards.any? %>">
 				
 				<input type="hidden" id="payment_method" name="payment_method" value="credit_card" />
+				<input type="hidden" id="credit_card_token" name="credit_card_token" value="<%= @cards.first.try(:service_card_id) %>" />
 				<input type="hidden" id="order_id" name="order_id" value="<%= @checkout.id %>" />
 				
 				<div class="panel-heading">

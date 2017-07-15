@@ -21,8 +21,11 @@ class Account < ActiveRecord::Base
   has_many :orders
   has_many :order_line_items, :through => :orders
   has_many :prices, as: :appliable
-  
+  has_many :account_payment_services, dependent: :destroy
+  has_one :main_service, -> { where(name: AccountPaymentService::PROVIDERS_HASH[GATEWAY.class.to_s]) }, :class_name => "AccountPaymentService"
+
   validates :name, :presence => true
+  before_create :set_payment_services
   accepts_nested_attributes_for :main_address
 
   # after_commit :sync_with_quickbooks if :persisted
@@ -122,6 +125,11 @@ class Account < ActiveRecord::Base
     secret = Setting.find_by(:key => "qb_secret").value
     realm_id = Setting.find_by(:key => "qb_realm").value
     $qbo_api = QboApi.new(token: token, token_secret: secret, realm_id: realm_id, consumer_key: QB_KEY, consumer_secret: QB_SECRET)
+  end
+
+  def set_payment_services
+    response = Braintree::Customer.create(first_name: name.split(' ')[0], last_name: name.split(' ')[-1], email: email)
+    self.account_payment_services.build(name: 'braintree', service_id: response.customer.id)
   end
   
 end
