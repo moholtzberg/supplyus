@@ -341,6 +341,11 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.integer  "brand_id"
     t.boolean  "active",                                 default: true, null: false
     t.decimal  "list_price",    precision: 10, scale: 2
+    t.boolean  "green_indicator"
+    t.boolean  "recycle_indicator"
+    t.boolean  "small_package_indicator"
+    t.string   "assembly_code"
+    t.string   "non_returnable_code"
   end
 
   add_index "items", ["id"], name: "item_id_ix", using: :btree
