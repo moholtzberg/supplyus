@@ -110,27 +110,25 @@ class CheckoutController < ApplicationController
       redirect_to checkout_confirm_path
     else
       if params[:payment_method] == "credit_card"
-        @card = CreditCard.new
-        @card.first_name = params[:cardholder_name].split(' ')[0]
-        @card.last_name = params[:cardholder_name].split(' ')[-1]
-        @card.credit_card_number = params[:credit_card_number]
-        @card.card_security_code = params[:card_security_code]
-        @card.expiration_month = params[:expiration_month]
-        @card.expiration_year = params[:expiration_year]
-        @card.account_payment_service = @checkout.account.main_service
-        @card.save if @card.store
+        @card = CreditCard.store({
+          cardholder_name: params[:cardholder_name],
+          number: params[:credit_card_number],
+          cvv: params[:card_security_code],
+          expiration_month: params[:expiration_month],
+          expiration_year: params[:expiration_year],
+          customer_id: current_user.account.main_service.service_id,
+          account_payment_service_id: @checkout.account.main_service.id
+        })
       else
         @card = CreditCard.find_by(account_payment_service_id: @checkout.account.main_service.id, service_card_id: params[:credit_card_token])
       end
       @payment.credit_card = @card
       @cards = current_user.account.main_service.credit_cards
-      byebug
-      if @card && @card.persisted? && @payment.authorize
+      if @payment.authorize
         @payment.save
         OrderPaymentApplication.create(:order_id => @checkout.id, :payment_id => @payment.id, :applied_amount => @payment.amount)
         complete
       else
-
         render "payment"
       end
     end

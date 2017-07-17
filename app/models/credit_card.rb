@@ -21,26 +21,33 @@ class CreditCard < ActiveRecord::Base
   #   end
   # end
 
-  def active_merchant_card
-    ActiveMerchant::Billing::CreditCard.new(
-      number:              credit_card_number,
-      verification_value:  card_security_code,
-      month:               expiration_month,
-      year:                expiration_year,
-      first_name:          first_name,
-      last_name:           last_name
-    )
-  end
-
-  def store
-    response = GATEWAY.store(active_merchant_card, options: {customer: account_payment_service.service_id})
-    if response.success?
-      self.service_card_id = response.params['credit_card_token']
-      self.expiration = "#{expiration_month}/#{expiration_year}"
-      self.last_4 = credit_card_number[-4..-1]
-      self.card_type = response.params['braintree_customer']['credit_cards'].select { |card| card['token'] == self.service_card_id }.first['card_type']
+  def self.store(params)
+    if GATEWAY.class == ActiveMerchant::Billing::BraintreeBlueGateway
+      resp = Braintree::CreditCard.create(
+        customer_id: params[:customer_id],
+        cardholder_name: params[:cardholder_name],
+        number: params[:number],
+        cvv: params[:cvv],
+        expiration_month: params[:expiration_month],
+        expiration_year: params[:expiration_year],
+        options: { fail_on_duplicate_payment_method: true }
+      )
+      if resp.class == Braintree::SuccessfulResult
+        self.create(
+          account_payment_service_id: params[:account_payment_service_id],
+          service_card_id: resp.credit_card.token,
+          expiration: "#{params[:expiration_month]}/#{params[:expiration_year]}",
+          last_4: resp.credit_card.last_4,
+          card_type: resp.credit_card.card_type
+        )
+      elsif resp.class == Braintree::ErrorResult && resp.errors.select{ |error| error.code == '81724' }.size > 0 && resp.errors.size == 1
+        self.find_by(
+            account_payment_service_id: params[:account_payment_service_id],
+            expiration: "#{params[:expiration_month]}/#{params[:expiration_year]}",
+            last_4: params[:number][-4..-1]
+          )
+      end
     end
-    response.success?
   end
 
   def logo_class
