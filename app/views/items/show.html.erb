@@ -11,7 +11,7 @@
 		</tr>
 		
 		<tr>
-			<td width="50%" rowspan="<%= @item.item_properties.size + 1 %>">
+			<td width="50%" rowspan="<%= @item.item_properties.size + 7 %>">
 				
 				<div class="col-md-3">
 					<% @item.images.each do |img| %>
@@ -38,9 +38,35 @@
 		</tr>
 		
 		<tr>
+			<th width="25%">Small Package Indicator</th>
+			<th width="25%"><span class="label label-<%= (@item.small_package_indicator == true) ? "success" : "danger"  %>"><%= (@item.small_package_indicator == true) ? "Yes" : "No" %></span></th>
+		</tr>
+		
+		<tr>
+			<th width="25%">Green Indicator</th>
+			<th width="25%"><span class="label label-<%= (@item.green_indicator == true) ? "success" : "danger"  %>"><%= (@item.green_indicator == true) ? "Yes" : "No" %></span></th>
+		</tr>
+		
+		<tr>
+			<th width="25%">Recycle Indicator</th>
+			<th width="25%"><span class="label label-<%= (@item.recycle_indicator == true) ? "success" : "danger"  %>"><%= (@item.recycle_indicator == true) ? "Yes" : "No" %></span></th>
+		</tr>
+		
+		<tr>
+			<th width="25%">Assembly Code</th>
+			<th width="25%"><%= @item.assembly_code %></th>
+		</tr>
+		
+		<tr>
+			<th width="25%">Non Returnable Code</th>
+			<th width="25%"><%= @item.non_returnable_code %></th>
+		</tr>
+		
+		<tr>
 			<th width="25%">Key</th>
 			<th width="25%">Value</th>
 		</tr>	
+		
 		<% @item.item_properties.each  do |ip| %>
 		<tr>
 			<td><%= ip.key %></td>

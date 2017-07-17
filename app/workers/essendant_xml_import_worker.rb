@@ -138,15 +138,25 @@ class EssendantXmlImportWorker
       length = noko.xpath("//us:Packaging//us:Dimensions//oa:LengthMeasure").text
       weight = noko.xpath("//us:Packaging//us:Dimensions//us:WeightMeasure").text
     
-      # list_price = noko.xpath("//us:ItemList//us:ListAmount").text
-      #
+      list_price = noko.xpath("//us:ItemList//us:ListAmount").text unless noko.xpath("//us:ItemList//us:ListAmount").blank?
+      
       active = noko.xpath("//oa:ItemStatus//oa:Code").text
       active = (active == "Y" )? true : false
-
+      
+      assembly_code = noko.css("[type=Assembly_Code]").children[1].children[1].text unless noko.css("[type=Assembly_Code]").blank?
+      non_returnable_code = noko.css("[type=Non_Returnable_Code]").children[1].children[1].text unless noko.css("[type=Non_Returnable_Code]").blank?
+      
+      green_indicator = noko.css("[type=Green_Indicator]").children[1].children[1].text unless noko.css("[type=Green_Indicator]").blank?
+      green_indicator = (green_indicator == "Y")? true : false
+      recycle_indicator = noko.css("[type=Recycle_Indicator]").children[1].children[1].text unless noko.css("[type=Recycle_Indicator]").blank?
+      recycle_indicator = (recycle_indicator == "Y")? true : false
+      small_package_indicator = noko.css("[name=Small_Package_Indicator]").text unless noko.css("[name=Small_Package_Indicator]").blank?
+      small_package_indicator = (small_package_indicator == "Y")? true : false
+      
       name = noko.css("[type=Long_Item_Description]").text
       description = noko.css("[type=Item_Consolidated_Copy]").text
    
-      item.update_attributes(:brand_id => brand, :slug => item.number.downcase, :height => height, :width => width, :length => length, :weight => weight, :name => name, :description => description, :active => active)
+      item.update_attributes(:brand_id => brand, :slug => item.number.downcase, :height => height, :width => width, :length => length, :weight => weight, :name => name, :description => description, :active => active, :assembly_code => assembly_code, :non_returnable_code => non_returnable_code, :green_indicator => green_indicator, :recycle_indicator => recycle_indicator, :small_package_indicator => small_package_indicator, :list_price => list_price)
     
       Image.delete_all(:item_id => item.id)
 
