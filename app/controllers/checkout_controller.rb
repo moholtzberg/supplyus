@@ -107,7 +107,7 @@ class CheckoutController < ApplicationController
     @payment.account = current_user.account
     @payment.amount = Order.find_by(:id => cookies.permanent.signed[:cart_id]).total
     if (params[:payment_method] == "terms" || params[:payment_method] == "check")
-      redirect_to checkout_confirm_path
+      complete
     else
       if params[:payment_method] == "credit_card"
         @card = CreditCard.store({

@@ -2,7 +2,7 @@
 	
 	<tr>
 		<th width="5%" class="text-center"></th>
-		<th>Item Name/Description</th>
+		<th>Item Number/Item Name</th>
 		<th width="10%" class="text-center">Quantity</th>
 		<th width="10%" class="text-center">Price</th>
 		<th width="10%" class="text-center">Subtotal</th>
@@ -11,7 +11,7 @@
 	<% @cart.contents.active.each_with_index do |li, idx| %>
 	<tr>
 		<td class="text-center"><%= li.order_line_number %></td>
-		<td><%= li.item.name %></td>
+		<td><strong><%= li.item.number %></strong> - <%= li.item.name %></td>
 		<td class="text-center">
 			<%= li.quantity.to_i %>
 		</td>
@@ -24,13 +24,24 @@
 		<td colspan="3">Sub Total</td>
 		<td colspan="2" class="text-center"><strong><%= number_to_currency(@cart.sub_total) %></strong></td>
 	</tr>
-	
+	<tr>
+		<td colspan="3">Sales Tax</td>
+		<td colspan="2" class="text-center"><strong><%= number_to_currency(@cart.tax_total) %></strong></td>
+	</tr>
+	<tr>
+		<td colspan="3"><%= @checkout.order_shipping_method.name %> - Shipping</td>
+		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@checkout.shipping_total) %></strong></td>
+	</tr>
+	<tr id="order_total">
+		<td colspan="3">Order Total</td>
+		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@checkout.total) %></strong></td>
+	</tr>
 </table>
 
 <table class="table table-bordered">
 	<tr>
-		<th>Shipping Address</th>
-		<th>Billing Address</th>
+		<th width="50%">Shipping Address</th>
+		<th width="50%">Billing Address</th>
 	</tr>
 	<tr>
 		<td>
@@ -39,7 +50,8 @@
 			<%= @cart.ship_to_address_1 %><br/>
 			<% unless @cart.ship_to_address_2.blank? %><%= @cart.ship_to_address_2 %><br/><% end %>
 			<%= @cart.ship_to_city %>, <%= @cart.ship_to_state %> <%= @cart.ship_to_zip %><br/>
-			<%= @cart.ship_to_phone %>
+			<% unless @cart.ship_to_phone.blank? %><%= @cart.ship_to_phone %><br/><% end %>
+			<% unless @cart.email.blank? %><%= @cart.email %><br/><% end %>
 		</td>
 		<td>
 			<%= @cart.bill_to_account_name %><br/>
@@ -47,20 +59,26 @@
 			<%= @cart.bill_to_address_1 %><br/>
 			<% unless @cart.bill_to_address_2.blank? %><%= @cart.bill_to_address_2 %><br/><% end %>
 			<%= @cart.bill_to_city %>, <%= @cart.bill_to_state %> <%= @cart.bill_to_zip %><br/>
-			<%= @cart.bill_to_phone %>
+			<% unless @cart.bill_to_phone.blank? %><%= @cart.bill_to_phone %><br/><% end %>
+			<% unless @cart.bill_to_email.blank? %><%= @cart.bill_to_email %><br/><% end %>
 		</td>
 	</tr>
 </table>
 
 <table class="table table-bordered">
 	<tr>
-		<td colspan="2">Shipping</td>
+		<th width="50%">PO Number</th>
+		<td width="50%"><%= @cart.po_number %></td>
 	</tr>
 	<tr>
-		<td><%= @cart.order_shipping_method.name %></td>
-		<td><%= number_to_currency(@cart.shipping_total) %></td>
+		<th width="50%">Notes</th>
+		<td width="50%"><%= @cart.notes %></td>
 	</tr>
 </table>
+
+<% if @cart.order_discount_code.nil? %>
+	<%= render :partial => "order_discount_code_form" %>
+<% end %>
 
 <table class="table table-bordered">
 	<div id="checkout_errors" class="alert alert-warning">
@@ -95,7 +113,7 @@
 						$("#credit_card_token").val('');
 						$("#credit_card").removeClass('hidden')
 					} else { 
-						$("#payment_method").val('credit_card');
+						$("#payment_method").val('');
 						$("#credit_card_token").val(m);
 						$("#credit_card").addClass('hidden')
 					}
