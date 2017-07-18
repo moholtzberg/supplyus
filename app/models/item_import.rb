@@ -2,8 +2,6 @@ class ItemImport
   
   include ActiveModel::Model
   attr_accessor :file
-  # attr_accessor :file_path
-  # attr_accessor :import_hisotry
 
   def put_file(file)
     @file = file
