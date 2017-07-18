@@ -23,7 +23,7 @@
 # set path to application
 # app_dir = File.expand_path("../..", __FILE__)
 app_dir = "/home/rails/supplyus/current"
-shared_dir = "/home/rails/shared"
+shared_dir = "/home/rails/supplyus/shared"
 working_directory app_dir
 
 # Set unicorn options
