@@ -1,0 +1,8 @@
+<% unless flash[:error] %>
+	$('#myModal').modal("hide")
+	$('body').removeClass('modal-open')
+	$('.modal-backdrop').remove()
+	$(".addresses").replaceWith("<%= j render :partial => 'shop/addresses', :format => 'html', :locals => {:account => @account} %>")
+<% else %>
+  $("#modal-content").html("<%= j render :template => 'my_account/addresses/new.html', :format => 'html' %>")
+<% end %>

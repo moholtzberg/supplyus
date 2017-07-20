@@ -50,7 +50,7 @@
 				Total Items
 			</div>
 			<div class="panel-body text-center">
-				<%= number_to_human(GroupItemPrice.where(:group_id => @group.id).count) %>
+				<%= number_to_human(Price.where(appliable: @group).count) %>
 			</div>
 		</div>
 	</div>
@@ -105,7 +105,7 @@
 	
 	<ul class="nav nav-tabs nav-justified">
 		<li role="presentation" class="active"><a href="#members" aria-controls="members" role="tab" data-toggle="tab">Members</a></li>
-		<li role="presentation"><a href="#group_item_prices" aria-controls="group_item_prices" role="tab" data-toggle="tab">Group Item Prices</a></li>
+		<li role="presentation"><a href="#prices" aria-controls="prices" role="tab" data-toggle="tab">Group Item Prices</a></li>
 		<li role="presentation"><a href="#orders" aria-controls="orders" role="tab" data-toggle="tab">Orders</a></li>
 	</ul>
 	
@@ -138,10 +138,8 @@
 			
 		</div>
 		
-		<div id="group_item_prices" class="tab-pane" role="tabpanel">
+		<div id="prices" class="tab-pane" role="tabpanel">
 			
-			<%= link_to "Copy Price Catalogue", new_group_item_price_path(:copy => true, :group_id => @group.id), :class => "btn btn-primary", :remote => true  %>
-
 			<table class="table table-bordered table-condensed table-hover">
 				<tr>
 					<th>Item</th>
@@ -151,14 +149,14 @@
 					<th>&nbsp;</th>
 				</tr>
 
-				<% @group.group_item_prices.includes(:item).each do |a| %>
+				<% @group.prices.includes(:item).each do |a| %>
 
 				<tr <% if a.item && (a.price.to_f < a.item.cost_price.to_f) %>class="danger" <% end %>>
 					<td><%= a.item.number unless a.item.nil?  %></td>
 					<td><%= a.item.name unless a.item.nil?  %></td>
 					<td><%= number_to_currency(a.price) %></td>
 					<td><%= number_to_currency(a.item.cost_price) unless a.item.nil? %></td>
-					<td><%= link_to "Delete", group_item_price_path(a.id), :method => :delete, :remote => true %></td>
+					<td><%= link_to "Delete", price_path(a.id), :method => :delete %></td>
 				</tr>
 
 				<% end %>

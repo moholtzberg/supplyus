@@ -1,4 +1,4 @@
-class AccountItemPriceImport
+class PriceImport
   # switch to ActiveModel::Model in Rails 4
   include ActiveModel::Model
 
@@ -36,22 +36,25 @@ class AccountItemPriceImport
     header = spreadsheet.row(1)
     (2..spreadsheet.last_row).each_row do |i|
       row = Hash[[header, spreadsheet.row(i)].transpose]
-      # product = AccountItemPrice.find_by_id(row["id"])
       if Item.find_by(:number => row["item_number"])
         item = Item.find_by(:number => row["item_number"])
-        product = AccountItemPrice.by_item(item.id).by_account(row["account_id"]).first
-        if product.nil?
-          product = AccountItemPrice.new
-        end
-        id = product.id
-        attributes = row.to_hash.slice(*AccountItemPrice.attribute_names())
-        product.id = id unless id.nil?
-        product.account_id = attributes["account_id"]
-        product.item_id = item.id
+        product = Price.new
+        attributes = row.to_hash.slice(*Price.attribute_names())
+        product.id = attributes["id"]
+        product.min_qty = attributes["min_qty"]
+        product.max_qty = attributes["max_qty"]
+        product._type = attributes["_type"]
+        product.start_date = attributes["start_date"]
+        product.end_date = attributes["end_date"]
+        product.combinable = attributes["combinable"]
+        product.appliable_id = attributes["appliable_id"]
+        product.appliable_type = attributes["appliable_type"]
         product.price = attributes["price"]
         product
       else
-        product = AccountItemPrice.new(:account_id => row["account_id"], :price => row["price"])
+        product = Price.new(:price => row["price"], :min_qty => row["min_qty"], 
+          :max_qty => row["max_qty"], :_type => row["_type"], :start_date => row[:start_date], :end_date => row[:end_date], 
+          :combinable => row[:combinable], :appliable_id => row[:appliable_id], :appliable_type => row[:appliable_type])
         errors.add(:item, "#{row["item_number"]} cannot be not be found")
         product
       end

@@ -3,7 +3,7 @@ class Group < ActiveRecord::Base
   has_many :accounts
   has_many :orders, :through => :accounts
   has_many :users
-  has_many :group_item_prices
+  has_many :prices, as: :appliable
   
   def self.lookup(term)
     where("lower(name) like (?) or lower(description) like (?)", "%#{term.downcase}%", "%#{term.downcase}%")

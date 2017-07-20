@@ -1,6 +1,6 @@
 <div class="modal-header">
 	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	<h4 class="modal-title" id="myModalLabel">New Group Item Price</h4>
+	<h4 class="modal-title" id="myModalLabel">New Price</h4>
 </div>
 
 <div class="modal-body" id="modal-body">
@@ -12,14 +12,14 @@
 	<% end %>
 	
 	
-	<%= form_for @group_item_price, :remote => true, :html => {:class => "form-horizontal"} do |f| %>
-		<%= render :partial => "group_item_prices/form", :locals => {:f => f}%>
+	<%= form_for @price, :remote => true, :html => {:class => "form-horizontal"} do |f| %>
+		<%= render :partial => "prices/form", :locals => {:f => f}%>
 	<% end %>
 	
 </div>
 
 <div class="modal-footer">
-	<%= button_tag(:name => :commit, :type => :submit, :class => "btn btn-primary", :form => "new_group_item_price") do %>
-	Create Group Item Price 
+	<%= button_tag(:name => :commit, :type => :submit, :class => "btn btn-primary", :form => "new_price") do %>
+	Create Price 
 	<% end %>
 </div>

@@ -35,8 +35,8 @@ class ShopController < ApplicationController
     @items = Item.search(include: [:categories, :item_categories, :features, :brand, :images]) do
       fulltext params[:keywords] if params[:keywords].present?
       with(:category_ids, categories)
-      stats :price
-      with(:price, Range.new(*params[:price_range].split("..").map(&:to_i))) if params[:price_range].present?
+      stats :actual_price
+      with(:actual_price, Range.new(*params[:price_range].split("..").map(&:to_i))) if params[:price_range].present?
       # with(:brand, params[:brand]) if params[:brand].present?
       if params[:specs].present?
         params[:specs].each do |param|
@@ -52,8 +52,8 @@ class ShopController < ApplicationController
       paginate(:page => params[:page])
     end
     if @items.results.any?
-      max = @items.stats(:price).max
-      @items.build { facet :price, :range => 0..max, :range_interval => (max/4).ceil }
+      max = @items.stats(:actual_price).max
+      @items.build { facet :actual_price, :range => 0..max, :range_interval => (max/4).ceil }
       @items.execute
     end
   end
@@ -63,16 +63,16 @@ class ShopController < ApplicationController
     if Item.where("slug = lower(?)", params[:item].downcase).take.nil?
       raise ActionController::RoutingError.new('Not Found')
     end
-    @item = Item.where("slug = lower(?)", params[:item].downcase).includes(:group_item_prices, :account_item_prices, :item_properties, :item_categories => [:category]).take
+    @item = Item.where("slug = lower(?)", params[:item].downcase).includes(:prices, :item_properties, :item_categories => [:category]).take
   end
   
   def search
     # @items = Item.where(nil).active
     @items = []
-    @items = Item.search(include: [:categories, :item_categories, :features, :brand, :images]) do
+    @items = Item.search(include: [:prices, :categories, :item_categories, :features, :brand, :images, :item_lists]) do
       fulltext params[:keywords] if params[:keywords].present?
-      stats :price
-      with(:price, Range.new(*params[:price_range].split("..").map(&:to_i))) if params[:price_range].present?
+      stats :actual_price
+      with(:actual_price, Range.new(*params[:price_range].split("..").map(&:to_i))) if params[:price_range].present?
       # with(:brand, params[:brand]) if params[:brand].present?
       if params[:specs].present?
         params[:specs].each do |param|
@@ -88,8 +88,8 @@ class ShopController < ApplicationController
       paginate(:page => params[:page])
     end
     if @items.results.any?
-      max = @items.stats(:price).max
-      @items.build { facet :price, :range => 0..max, :range_interval => (max/4).ceil }
+      max = @items.stats(:actual_price).max
+      @items.build { facet :actual_price, :range => 0..max, :range_interval => (max/4).ceil }
       @items.execute
     end
   end
@@ -120,6 +120,7 @@ class ShopController < ApplicationController
       qty = line.first.quantity.to_f + params[:cart][:quantity].to_f
       line = line.first
       line.quantity = qty
+      line.price = line.item.actual_price(current_user.try(:account_id), line.quantity)
       line.save
     else
       
@@ -127,9 +128,9 @@ class ShopController < ApplicationController
         if current_user.has_account
           @cart.account_id = current_user.account.id
         end
-        @cart.contents.create(:item_id => params[:cart][:item_id], :quantity => params[:cart][:quantity].to_i, :price => i.actual_price(current_user.account.id))
+        @cart.contents.create(:item_id => params[:cart][:item_id], :quantity => params[:cart][:quantity].to_i, :price => i.actual_price(current_user.account_id, params[:cart][:quantity].to_i))
       else
-        @cart.contents.create(:item_id => params[:cart][:item_id], :quantity => params[:cart][:quantity].to_i, :price => i.price)
+        @cart.contents.create(:item_id => params[:cart][:item_id], :quantity => params[:cart][:quantity].to_i, :price => i.actual_price(nil, params[:cart][:quantity].to_i))
       end
       
     end
@@ -140,7 +141,8 @@ class ShopController < ApplicationController
     lines.each_with_index do |line, idx|
       id = line[1]["id"]
       qt = line[1]["quantity"].to_i
-      OrderLineItem.find(id).update_attributes(:quantity => qt)
+      oli = OrderLineItem.find(id)
+      oli.update_attributes(:quantity => qt, :price => oli.item.actual_price(current_user.try(:account_id), qt))
     end
   end
   
@@ -149,7 +151,7 @@ class ShopController < ApplicationController
     if current_user && current_user.has_account
       @cart.account_id = current_user.account.id
       @cart.order_line_items.each do |c| 
-        c.price = c.item.actual_price(@cart.account_id)
+        c.price = c.item.actual_price(@cart.account_id, c.quantity)
         c.save!
       end
     end

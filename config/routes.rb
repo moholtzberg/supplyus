@@ -31,8 +31,7 @@ Rails.application.routes.draw do
           resources :invoices
         end
       end
-      resources :account_item_prices
-      resources :account_item_price_imports
+      resources :addresses
       resources :assets
       resources :brands
       resources :brand_imports
@@ -57,7 +56,6 @@ Rails.application.routes.draw do
           get :statements
         end
       end
-      resources :group_item_prices
       resources :inventories
       resources :invoices
       resources :items do
@@ -105,6 +103,8 @@ Rails.application.routes.draw do
       resources :payments
       resources :payment_plans
       resources :payment_plan_templates
+      resources :prices
+      resources :price_imports
       resources :purchase_orders do
         member do
           get :line_items_from_order
@@ -151,6 +151,7 @@ Rails.application.routes.draw do
   namespace :my_account do
     resources :item_lists
     resources :item_item_lists, only: [:create, :destroy]
+    resources :addresses, only: [:index, :new, :create, :destroy]
   end
 
   get   "checkout/address" => "checkout#address"

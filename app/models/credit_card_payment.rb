@@ -1,45 +1,13 @@
 class CreditCardPayment < Payment
   require 'active_merchant/billing/rails'
-  
-  attr_accessor :card_security_code
-  attr_accessor :credit_card_number
-  attr_accessor :expiration_month
-  attr_accessor :expiration_year
-  
-  validates :first_name, :presence => true
-  validates :last_name, :presence => true
-  validates :card_security_code, :presence => true
-  validates :credit_card_number, :presence => true
-  validates :expiration_month, :presence => true, :numericality => { greater_then_or_equal_to: 1, less_then_or_equal_to: 12 }
-  validates :expiration_year, :presence => true
-  validates :amount, :presence => true, :numericality => { greater_then: 0 }
-  
-  validate :valid_card
-  
-  def credit_card
-    ActiveMerchant::Billing::CreditCard.new(
-      number:              credit_card_number,
-      verification_value:  card_security_code,
-      month:               expiration_month,
-      year:                expiration_year,
-      first_name:          first_name,
-      last_name:           last_name
-    )
-  end
 
-  def valid_card
-    if !credit_card.valid?
-      errors.add(:base, "The credit card information you provided is not valid. Please double check the information you provided and then try again.")
-      false
-    else
-      true
-    end
-  end
+  validates :amount, :presence => true, :numericality => { greater_then: 0 }
+  belongs_to :credit_card
   
   def authorize
-    if valid_card
-      response = GATEWAY.authorize(amount * 100, credit_card)
-      
+    if credit_card_id
+      response = GATEWAY.authorize(amount * 100, credit_card.service_card_id, {payment_method_token: true})
+
       if response.authorization and response.success?
         self.authorization_code = response.authorization
         self.success = response.success?
@@ -56,7 +24,7 @@ class CreditCardPayment < Payment
   end
   
   def capture
-    if authorization_code
+    if credit_card_id && authorization_code
       transaction = GATEWAY.capture(amount * 100, authorization_code)
       if !transaction.success?
         errors.add(:base, "The credit card you provided was declined.  Please double check your information and try again.") and return
@@ -68,8 +36,8 @@ class CreditCardPayment < Payment
   end
   
   def process
-    if valid_card
-      response = GATEWAY.authorize(amount * 100, credit_card)
+    if credit_card_id
+      response = GATEWAY.authorize(amount * 100, credit_card.service_card_id, {payment_method_token: true})
       if response.success?
         transaction = GATEWAY.capture(amount * 100, response.authorization)
         if !transaction.success?
@@ -84,5 +52,5 @@ class CreditCardPayment < Payment
       end
     end
   end
-  
+
 end

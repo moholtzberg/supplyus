@@ -5,8 +5,6 @@ class Item < ActiveRecord::Base
   scope :active, -> { where(:active => true)}
   scope :inactive, -> { where(:active => false)}
   
-  has_many :account_item_prices, :dependent => :destroy, :inverse_of => :item
-  has_many :group_item_prices, :dependent => :destroy, :inverse_of => :item
   has_many :item_vendor_prices
   has_many :images  
   has_many :order_line_items
@@ -21,6 +19,8 @@ class Item < ActiveRecord::Base
   has_many :item_substitutes, :class_name => "ItemReference", :foreign_key => :original_item_id
   has_many :substituting_items, :class_name => "ItemReference", :foreign_key => :replacement_item_id
   has_many :item_lists, through: :item_item_lists
+  has_many :item_item_lists, dependent: :destroy
+  has_many :prices
   belongs_to :category
   belongs_to :brand
   belongs_to :model
@@ -49,7 +49,7 @@ class Item < ActiveRecord::Base
       item_properties.map { |item_property| item_property.value }
     end
     
-    float :price, :trie => true
+    float :actual_price, :trie => true
     
     string :brand, :stored => true do
       brand.name if brand
@@ -150,64 +150,17 @@ class Item < ActiveRecord::Base
     prices.push(cost_price)
     return prices.min
   end
-  
-  def actual_price(account_id={})
-    unless account_id.blank?
-      unless get_lowest_price(account_id).blank?
-        return [get_lowest_price(account_id), get_lowest_public_price].min
-      else
-        return get_lowest_public_price
-      end
-      return get_lowest_public_price
-    end
+
+  def default_price
+    self.prices._public.default.minimum(:price)
   end
-  
-  def get_lowest_public_price
-    prices_array = []
-    if sale_price.to_f > 0
-      prices_array << sale_price.to_f
-    end
-    prices_array << price
-    price = prices_array.min
-    return price == 0 ? false : price
+
+  def actual_price(account_id = nil, quantity = nil)
+    self.prices.where('(appliable_type = ? AND appliable_id = ?) OR (appliable_type = ? AND appliable_id = ?) OR (appliable_type IS NULL AND appliable_id IS NULL)', (account_id ? 'Account' : nil), account_id, (account_id ? 'Group' : nil), (account_id ? Account.find(account_id).group_id : nil)).
+      where('(_type = ? AND min_qty <= ? AND max_qty >= ?) OR (_type IN (?) AND min_qty IS NULL AND max_qty IS NULL)', (quantity ? 'Bulk' : nil), quantity, quantity, ['Default', 'Sale']).
+      minimum(:price)
   end
-  
-  def get_lowest_price(account_id)
-    acct_price = get_account_price(account_id).to_f
-    group_price = get_group_price(account_id).to_f
-    prices_array = []
-    if acct_price > 0
-      prices_array << acct_price
-    end
-    if group_price > 0
-      prices_array << group_price
-    end
-    puts "PRICES ARRAY #{prices_array.inspect}"
-    price = prices_array.min
-    return price == 0 ? false : price
-  end
-  
-  def get_account_price(account_id)
-    if has_account_price(account_id)
-      self.account_item_prices.by_account(account_id).last.price
-    end
-  end
-  
-  def get_group_price(account_id)
-    group_id = Account.find(account_id).group_id
-    if has_group_price(group_id)
-      self.group_item_prices.by_group(group_id).last.price
-    end
-  end
-  
-  def has_account_price(account_id)
-    return !self.account_item_prices.by_account(account_id).blank? 
-  end
-  
-  def has_group_price(group_id)
-    return !self.group_item_prices.by_group(group_id).blank? 
-  end
-  
+
   def default_image_path
     unless images.first.nil?
       puts "----> #{images.first.path}"

@@ -38,11 +38,24 @@
 		<div class="pull-right">
 			<%= form_for @cart, url: add_to_cart_path, :class => "form-inline", :remote => true do |f| %>
 				<div class="form-group">
-					<%if (current_user and current_user.has_account and i.actual_price(current_user.account.id).to_f < i.price.to_f) %>
-					<h5 class="text-center"><span class="hidden-xs">List Price:</span> <span style="text-decoration:line-through;"><%= number_to_currency(i.price) %></span><h5>
-					<h4 class="text-center"><span class="hidden-xs">Your Price:</span> <%= number_to_currency(i.actual_price(current_user.account.id)) %><h4>
+					<% if i.actual_price(current_user.try(:account_id)) < i.default_price %>
+						<h5 class="text-center"><span class="hidden-xs">List Price:</span> <span style="text-decoration:line-through;"><%= number_to_currency(i.default_price) %></span><h5>
+						<h4 class="text-center"><span class="hidden-xs">Your Price:</span> <%= number_to_currency(i.actual_price(current_user.try(:account_id))) %><h4>
 					<% else %>
-					<h4 class="text-center"><span class="hidden-xs">Your Price:</span> <%= number_to_currency(i.price) %><h4>
+						<h4 class="text-center"><span class="hidden-xs">Your Price:</span> <%= number_to_currency(i.default_price) %><h4>
+					<% end %>
+					<% if i.prices.select{|p| p._type == 'Recurring'}.any? %>
+						<input type="submit" name="commit" value="Subscribe (<%= number_to_currency(i.prices.select{|p| p._type == 'Recurring'}[0].price) %>)" class="btn btn-primary btn-sm btn-block margin-bottom">
+					<% end %>
+					<% if i.prices.select{|p| p._type == 'Bulk'}.any? %>
+						<div class="well well-sm">
+							<p class="border-bottom">Bulk prices:</p>
+							<% i.prices.select{|p| p._type == 'Bulk'}.sort_by(&:min_qty).each do |price| %>
+								<p>
+									<%= "#{price.min_qty}-#{price.max_qty} pcs.: #{number_to_currency(price.price)}" %>
+								</p>
+							<% end %>
+						</div>
 					<% end %>
 					<%= f.hidden_field :item_id, :value => i.id %>
 					<div class="input-group">

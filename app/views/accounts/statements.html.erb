@@ -15,11 +15,11 @@
 
 			<td>
 				<% unless @account.name.blank? %><%= @account.name %><br/><% end %>
-				<% unless @account.bill_to_address_1.blank? %><%= @account.bill_to_address_1 %><br/><% end %>
-				<% unless @account.bill_to_address_2.blank? %><%= @account.bill_to_address_2 %><br/><% end %>
-				<%= @account.bill_to_city unless @account.bill_to_city.blank? %>, <%= @account.bill_to_state unless @account.bill_to_state.blank?%> <%= @account.bill_to_zip unless @account.bill_to_zip.blank? %><br/>
-				<%= @account.bill_to_phone unless @account.bill_to_phone.blank? %><br/>
-				<%= @account.bill_to_email %>
+				<% unless @account.address_1.blank? %><%= @account.address_1 %><br/><% end %>
+				<% unless @account.address_2.blank? %><%= @account.address_2 %><br/><% end %>
+				<%= @account.city unless @account.city.blank? %>, <%= @account.state unless @account.state.blank?%> <%= @account.zip unless @account.zip.blank? %><br/>
+				<%= @account.phone unless @account.phone.blank? %><br/>
+				<%= @account.email %>
 			</td>
 		</tr>
 	</table>

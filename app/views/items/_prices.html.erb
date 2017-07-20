@@ -1,0 +1,37 @@
+<table class="table table-bordered table-condensed table-striped">
+	
+	<tr>
+		<td colspan="9"><%= link_to "Add Item Price", new_price_path(price: {item_id: item.id}), :class => "btn btn-primary btn-block btn-xs", :remote => true %>
+	</tr>
+	
+	<tr>
+		<th>Type</th>
+		<th>Price</th>
+		<th>Start Date</th>
+		<th>End Date</th>
+		<th>Min Q-ty</th>
+		<th>Max Q-ty</th>
+		<th>Appliable</th>
+		<th>Combinable</th>
+		<th>Remove</th>
+	</tr>
+
+	<% item.prices.each do |it| %>
+		<tr>
+			<td><%= it._type %></td>
+			<td><%= number_to_currency(it.price) %></td>
+			<td><%= it.start_date.try(:to_date) %></td>
+			<td><%= it.end_date.try(:to_date) %></td>
+			<td><%= it.min_qty %></td>
+			<td><%= it.max_qty %></td>
+			<td><%= it.appliable %></td>
+			<td><%= it.combinable %></td>
+			<td>
+				<%= link_to price_path(it), method: :delete, remote: true do %>
+					<i class="fa fa-remove"></i>
+				<% end %>
+			</td>
+		</tr>
+	<% end %>
+
+</table>
