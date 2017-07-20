@@ -723,7 +723,7 @@ ActiveRecord::Schema.define(version: 20170720172651) do
     t.integer "address_id"
     t.integer "item_id"
     t.integer "quantity"
-    t.integer "frequency"
+    t.string  "frequency"
     t.integer "bill_address_id"
     t.integer "account_id"
     t.integer "credit_card_id"

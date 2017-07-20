@@ -1,6 +1,5 @@
 class ChangeFrequencyToString < ActiveRecord::Migration
-  def change
-    
+   
     def self.up
       change_column :subscriptions, :frequency, :string
     end
@@ -9,5 +8,4 @@ class ChangeFrequencyToString < ActiveRecord::Migration
       change_column :subscriptions, :frequency, :integer
     end
     
-  end
 end

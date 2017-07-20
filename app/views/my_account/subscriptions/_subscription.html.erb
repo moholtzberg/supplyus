@@ -2,7 +2,7 @@
   <td><%= subscription.item.name %></td>
   <td><%= subscription.item.prices.select{|p| p._type == 'Recurring'}[0].price %></td>
   <td><%= subscription.quantity %></td>
-  <td><%= pluralize(subscription.frequency, 'month') %></td>
+  <td><%= subscription.frequency %></td>
   <td class="hidden-xs"><%= subscription.ship_to_address.address_1 %></td>
   <td class="hidden-xs"><%= subscription.bill_to_address.address_1 %></td>
   <td class="hidden-xs"><%= subscription.payment_method %></td>
