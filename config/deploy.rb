@@ -27,6 +27,16 @@ task :setup do
   # command %{rbenv install 2.3.0}
 end
 
+
+# desc "Copy files"
+# task :copy do
+#   on roles(:all) do |host|
+#      %w[ supplyus_secrets.yml ].each do |f|
+#         upload! '../shared/' + f , '../../shared/' + f
+#      end
+#   end
+# end
+
 desc "Deploys the current version to the server."
 task :deploy do
   # uncomment this line to make sure you pushed your local branch to the remote origin
