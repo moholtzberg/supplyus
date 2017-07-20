@@ -1,5 +1,6 @@
 class CategoriesController < ApplicationController
   layout "admin"
+  helper_method :sort_column, :sort_direction
   # respond_to :html, :json
   def index
     authorize! :read, Category
@@ -52,6 +53,17 @@ class CategoriesController < ApplicationController
 
   def registration_params
     params.require(:category).permit(:name, :active, :slug, :show_in_menu, :menu_id, :parent_name)
+  end
+  
+  def sort_column
+    related_columns = Category.reflect_on_all_associations(:belongs_to).map {|a| a.klass.column_names.map {|col| "#{a.klass.table_name}.#{col}"}}
+    columns = Category.column_names.map {|a| "categories.#{a}" }
+    columns.push(related_columns).flatten!.uniq!
+    columns.include?(params[:sort]) ? params[:sort] : "categories.id"
+  end
+  
+  def sort_direction
+    %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
   end
   
 end
