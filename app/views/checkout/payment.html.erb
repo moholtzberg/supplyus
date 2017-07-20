@@ -108,14 +108,18 @@
 			<script>
 				$("select#payment_type").change(function(){
 					var m = this.value;
-					if (m == 'credit_card' || m == 'check') { 
+					if (m == 'credit_card') { 
 						$("#payment_method").val(m);
 						$("#credit_card_token").val('');
-						$("#credit_card").removeClass('hidden')
+						$("#credit_card").removeClass('hidden');
+					} else if (m == 'check') {
+						$("#payment_method").val(m);
+						$("#credit_card_token").val('');
+						$("#credit_card").addClass('hidden');
 					} else { 
 						$("#payment_method").val('');
 						$("#credit_card_token").val(m);
-						$("#credit_card").addClass('hidden')
+						$("#credit_card").addClass('hidden');
 					}
 				})
 			</script>

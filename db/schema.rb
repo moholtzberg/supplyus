@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170714193619) do
+ActiveRecord::Schema.define(version: 20170719175252) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -515,6 +515,7 @@ ActiveRecord::Schema.define(version: 20170714193619) do
     t.decimal  "tax_total",            precision: 10, scale: 2, default: 0.0
     t.boolean  "credit_hold",                                   default: false
     t.decimal  "discount_total",       precision: 10, scale: 2, default: 0.0
+    t.integer  "subscription_id"
   end
 
   add_index "orders", ["account_id"], name: "order_customer_id_ix"
@@ -720,6 +721,11 @@ ActiveRecord::Schema.define(version: 20170714193619) do
     t.integer "item_id"
     t.integer "quantity"
     t.integer "frequency"
+    t.integer "bill_address_id"
+    t.integer "account_id"
+    t.integer "credit_card_id"
+    t.string  "payment_method"
+    t.string  "state"
   end
 
   create_table "tax_rates", force: :cascade do |t|

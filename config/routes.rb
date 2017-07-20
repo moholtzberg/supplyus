@@ -152,6 +152,12 @@ Rails.application.routes.draw do
     resources :item_lists
     resources :item_item_lists, only: [:create, :destroy]
     resources :addresses, only: [:index, :new, :create, :destroy]
+    resources :subscriptions do
+      member do
+        get :details
+        patch :details, to: :update_details
+      end
+    end
   end
 
   get   "checkout/address" => "checkout#address"
