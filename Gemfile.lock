@@ -264,9 +264,8 @@ GEM
     roo (2.7.1)
       nokogiri (~> 1)
       rubyzip (~> 1.1, < 2.0.0)
-    rsolr (2.0.2)
+    rsolr (1.1.2)
       builder (>= 2.1.2)
-      faraday
     rubyzip (1.2.1)
     rufus-scheduler (3.4.0)
       et-orbi (~> 1.0)
@@ -313,13 +312,13 @@ GEM
     sqlite3 (1.3.13)
     stripe (2.8.0)
       faraday (~> 0.9)
-    sunspot (2.2.7)
+    sunspot (2.2.5)
       pr_geohash (~> 1.0)
-      rsolr (>= 1.1.1, < 3)
-    sunspot_rails (2.2.7)
+      rsolr (~> 1.1.1)
+    sunspot_rails (2.2.5)
       nokogiri
       rails (>= 3)
-      sunspot (= 2.2.7)
+      sunspot (= 2.2.5)
     sunspot_solr (2.2.7)
     themes_on_rails (0.4.0)
       rails (>= 3.2)
@@ -398,7 +397,7 @@ DEPENDENCIES
   simple_token_authentication (~> 1.0)
   sqlite3
   stripe
-  sunspot_rails
+  sunspot_rails (= 2.2.5)
   sunspot_solr
   themes_on_rails
   turbolinks

@@ -6,7 +6,7 @@ production:
     path: <%= SECRET["WEBSOLR"]["PROD_PATH"] %>
     read_timeout: 2
     open_timeout: 0.5
-    auto_commit_after_request: false
+    # auto_commit_after_request: false
 
 development:
   solr:

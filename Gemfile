@@ -19,7 +19,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # gem 'searchkick'
 # gem 'ransack'
 gem 'progress_bar'
-gem 'sunspot_rails'
+gem 'sunspot_rails', '2.2.5'
 gem 'sunspot_solr', :group => "development"
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
