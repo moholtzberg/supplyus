@@ -76,8 +76,6 @@
 			
 			</td>
 		</tr>
-
-
 		
 	</table>
 	
@@ -86,22 +84,24 @@
 		<tr>
 			<th width="10%">Number</th>
 			<th width="50%">Name</th>
-			<th width"10%">Slug</th>
-			<th width"10%">Price</th>
-			<th width"10%">Sale Price</th>
-			<th width"10%">Cost</th>
+			<th width"9%">Slug</th>
+			<th width"9%">List Price</th>
+			<th width"9%">Price</th>
+			<th width"9%">Sale Price</th>
+			<th width"9%">Cost</th>
 		</tr>
 		
 		<tr>
 			<td><%= best_in_place @item, :number %></td>
 			<td><%= @item.name %></td>
 			<td><%= @item.slug %></td>
+			<td><%= number_to_currency(@item.list_price) %></td>
 			<td><%= number_to_currency(@item.price) %></td>
 			<td><%= number_to_currency(@item.sale_price) %></td>
 			<td><%= number_to_currency(@item.cost_price) %></td>
 		</tr>
 		<tr>
-			<td colspan="6"><%= best_in_place @item, :description %></td>
+			<td colspan="7"><%= best_in_place @item, :description %></td>
 		<tr>
 		
 	</table>
