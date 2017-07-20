@@ -22,6 +22,7 @@ class Account < ActiveRecord::Base
   has_many :order_line_items, :through => :orders
   has_many :prices, as: :appliable
   has_many :account_payment_services, dependent: :destroy
+  has_many :subscriptions
   has_one :main_service, -> { where(name: AccountPaymentService::PROVIDERS_HASH[GATEWAY.class.to_s]) }, :class_name => "AccountPaymentService"
 
   validates :name, :presence => true
