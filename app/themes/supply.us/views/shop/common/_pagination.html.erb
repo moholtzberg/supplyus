@@ -1,0 +1,9 @@
+<div class="text-center">
+	
+	<% if @items and @items.results.size > 0 %>
+		
+		<%= will_paginate @items.results, :per_page => 24, :previous_label => "&laquo;", :inner_window => 2, :outer_window => 0, :truncate => nil, :next_label => "&raquo;", renderer: BootstrapPagination::Rails %>
+		
+	<% end %>
+	
+</div>
