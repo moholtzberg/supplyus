@@ -1,5 +1,6 @@
 class Subscription < ActiveRecord::Base
 
+  FREQUENCIES = ['monthly', 'quarterly']
   belongs_to :account
   belongs_to :ship_to_address, foreign_key: :address_id, class_name: Address
   belongs_to :bill_to_address, foreign_key: :bill_address_id, class_name: Address
@@ -10,7 +11,7 @@ class Subscription < ActiveRecord::Base
   validates :account_id, presence: true
   validates :item_id, presence: true
   validates :quantity, presence: true, numericality: { greater_than: 0 }
-  validates :frequency, presence: true, numericality: { greater_than: 0 }
+  validates :frequency, presence: true, inclusion: { in: FREQUENCIES }  
   accepts_nested_attributes_for :ship_to_address
   accepts_nested_attributes_for :bill_to_address
 

@@ -37,19 +37,28 @@ class MyAccount::SubscriptionsController < ApplicationController
       }, @subscription, params[:credit_card_token])
     @subscription.credit_card = @card
     @cards = @subscription.account.main_service.credit_cards
-    @order = SubscriptionServices::GenerateOrderFromSubscription.new.call(@subscription)
-    @payment = SubscriptionServices::GeneratePayment.new.call(@order, @card)
-    if @payment.authorize
-      Subscription.transaction do
-        @subscription.activate
-        @subscription.save
-        @order.save
-        @payment.save
-        OrderPaymentApplication.create(:order_id => @order.id, :payment_id => @payment.id, :applied_amount => @payment.amount)
-      end
-      redirect_to my_account_path
+    SubscriptionServices::SetDayOfPeriod.new.call(@subscription)
+    if Date.today - Date.send('beginning_of_' + @subscritpion.frequency) > Date.send('end_of_' + @subscritpion.frequency) - Date.today
+      if @subscription.activate && @subscription.save
+        redirect_to my_account_path
+      else
+        render "details"
+      end        
     else
-      render "details"
+      @order = SubscriptionServices::GenerateOrderFromSubscription.new.call(@subscription)
+      @payment = SubscriptionServices::GeneratePayment.new.call(@order, @card)
+      if @payment.authorize
+        Subscription.transaction do
+          @subscription.activate
+          @subscription.save
+          @order.save
+          @payment.save
+          OrderPaymentApplication.create(:order_id => @order.id, :payment_id => @payment.id, :applied_amount => @payment.amount)
+        end
+        redirect_to my_account_path
+      else
+        render "details"
+      end
     end
   end
   

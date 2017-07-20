@@ -8,7 +8,7 @@
 
 		<div id="frequency" class="col-md-6">
 			<%= f.label :frequency, class: "control-label" %>
-			<%= f.select :frequency, (1..6).to_a.map{|i| [pluralize(i, 'month'), i]}, {}, {class: "form-control"} %>
+			<%= f.select :frequency, Subscription::FREQUENCIES, {}, {class: "form-control"} %>
 		</div>
 		
 		<%= f.hidden_field :item_id %>	

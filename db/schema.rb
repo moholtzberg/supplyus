@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170719175252) do
+ActiveRecord::Schema.define(version: 20170720172651) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -36,13 +36,16 @@ ActiveRecord::Schema.define(version: 20170719175252) do
     t.string  "email"
     t.boolean "active"
     t.integer "group_id"
-    t.float   "credit_limit",  default: 0.0
+    t.float   "credit_limit",             default: 0.0
     t.integer "credit_terms"
-    t.boolean "credit_hold",   default: true
+    t.boolean "credit_hold",              default: true
     t.string  "bill_to_email"
     t.boolean "is_taxable"
     t.integer "sales_rep_id"
-    t.boolean "replace_items", default: false, null: false
+    t.boolean "replace_items",            default: false, null: false
+    t.integer "subscription_week_day"
+    t.integer "subscription_month_day"
+    t.integer "subscription_quarter_day"
   end
 
   create_table "addresses", force: :cascade do |t|
