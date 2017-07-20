@@ -14,6 +14,10 @@ class Payment < ActiveRecord::Base
   def account_name=(name)
     self.account = Account.find_by(:name => name) if name.present?
   end
+
+  def authorize
+    true
+  end
   
   def total_applications
     OrderPaymentApplication.where(payment_id: self.id).map(&:applied_amount).sum.to_d

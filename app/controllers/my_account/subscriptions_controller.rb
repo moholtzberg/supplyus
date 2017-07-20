@@ -26,46 +26,30 @@ class MyAccount::SubscriptionsController < ApplicationController
     @subscription.ship_to_address = Address.find_or_create_by(subscription_params[:ship_to_address_attributes].merge(account_id: @subscription.account_id))
     @subscription.bill_to_address = Address.find_or_create_by(subscription_params[:bill_to_address_attributes].merge(account_id: @subscription.account_id))
     @subscription.payment_method = params[:payment_method]
-    @subscription.set_address
-    @order = @subscription.build_order
-    @payment = @order.payments.new
-    @payment.account = @subscription.account
-    @payment.amount = @subscription.quantity * @subscription.item.prices.select{|p| p._type == 'Recurring'}[0].price
-    if (params[:payment_method] == "terms" || params[:payment_method] == "check")
-      @payment.payment_type = "CheckPayment"
-      if @subscription.save && @order.save && @payment.save
+    @card = SubscriptionServices::CardByData.new.call({
+        cardholder_name: params[:cardholder_name],
+        number: params[:credit_card_number],
+        cvv: params[:card_security_code],
+        expiration_month: params[:expiration_month],
+        expiration_year: params[:expiration_year],
+        customer_id: current_user.account.main_service.service_id,
+        account_payment_service_id: current_user.account.main_service.id
+      }, @subscription, params[:credit_card_token])
+    @subscription.credit_card = @card
+    @cards = @subscription.account.main_service.credit_cards
+    @order = SubscriptionServices::GenerateOrderFromSubscription.new.call(@subscription)
+    @payment = SubscriptionServices::GeneratePayment.new.call(@order, @card)
+    if @payment.authorize
+      Subscription.transaction do
         @subscription.activate
+        @subscription.save
+        @order.save
+        @payment.save
         OrderPaymentApplication.create(:order_id => @order.id, :payment_id => @payment.id, :applied_amount => @payment.amount)
-        redirect_to my_account_path
-      else
-        render "details"
       end
+      redirect_to my_account_path
     else
-      @payment.payment_type = "CreditCardPayment"
-      if params[:payment_method] == "credit_card"
-        @card = CreditCard.store({
-          cardholder_name: params[:cardholder_name],
-          number: params[:credit_card_number],
-          cvv: params[:card_security_code],
-          expiration_month: params[:expiration_month],
-          expiration_year: params[:expiration_year],
-          customer_id: @subscription.account.main_service.service_id,
-          account_payment_service_id: @subscription.account.main_service.id
-        })
-      else
-        @card = CreditCard.find_by(account_payment_service_id: @subscription.account.main_service.id, service_card_id: params[:credit_card_token])
-      end
-      @payment.credit_card = @card
-      @subscription.credit_card = @card
-      @subscription.set_credit_card
-      @cards = @subscription.account.main_service.credit_cards
-      if @payment.authorize && @subscription.save && @order.save && @payment.save
-        @subscription.activate
-        OrderPaymentApplication.create(:order_id => @order.id, :payment_id => @payment.id, :applied_amount => @payment.amount)
-        redirect_to my_account_path
-      else
-        render "details"
-      end
+      render "details"
     end
   end
   
