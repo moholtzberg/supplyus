@@ -11,9 +11,10 @@
 	</div>
 	<% end %>
 	
-	
-	<%= render :partial => "my_account/subscriptions/form", :locals => {:subscription => @subscription}%>
 
+  <%= form_for [:my_account, @subscription], :remote => true, :html => {:class => "form-horizontal"} do |f| %>
+    <%= render :partial => "my_account/subscriptions/form", :locals => {:f => f}%>
+  <% end %>	
 	
 </div>
 

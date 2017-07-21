@@ -182,9 +182,6 @@
           <% end %>
           <option value="credit_card">New Credit Card</option>
           <option value="check">Check</option>
-          <% if current_user.account and current_user.account.has_credit %>
-          <option value="terms">Net <%= current_user.account.credit_terms %></option>
-          <% end %>
         </select>
 
         <script>

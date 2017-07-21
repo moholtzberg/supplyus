@@ -1,18 +1,55 @@
-<%= form_for subscription, :url => my_account_subscriptions_path, remote: true, :html => {:class => "form-horizontal"} do |f| %>
-	<fieldset>	
+<fieldset>	
 
-		<div id="quantity" class="col-md-6">
-			<%= f.label :quantity, class: "control-label" %>
-			<%= f.text_field :quantity, class: "form-control" %>
+	<div id="quantity" class="col-md-6">
+		<%= f.label :quantity, class: "control-label" %>
+		<%= f.text_field :quantity, class: "form-control" %>
+	</div>
+
+	<div id="frequency" class="col-md-6">
+		<%= f.label :frequency, class: "control-label" %>
+		<%= f.select :frequency, Subscription::FREQUENCIES, {}, {class: "form-control"} %>
+	</div>
+
+	<% if ['edit', 'update'].include?(params[:action]) %>
+		<div id="ship_to_address" class="col-md-6">
+			<%= f.label :address_id, class: "control-label" %>
+			<%= f.select :address_id, current_user.account.addresses.map{ |addr| [addr.address_1, addr.id] }, {}, {class: "form-control"} %>
 		</div>
 
-		<div id="frequency" class="col-md-6">
-			<%= f.label :frequency, class: "control-label" %>
-			<%= f.select :frequency, Subscription::FREQUENCIES, {}, {class: "form-control"} %>
+		<div id="bill_to_address" class="col-md-6">
+			<%= f.label :bill_address_id, class: "control-label" %>
+			<%= f.select :bill_address_id, current_user.account.addresses.map{ |addr| [addr.address_1, addr.id] }, {}, {class: "form-control"} %>
 		</div>
-		
-		<%= f.hidden_field :item_id %>	
-		<%= f.hidden_field :account_id %>	
-		
-	</fieldset>
-<% end %>
+
+		<div id="payment_method" class="col-md-6">
+			<%= f.label :payment_method, class: "control-label" %>
+			<%= f.select :payment_method, Subscription::PAYMENT_METHODS, {}, {class: "form-control"} %>
+		</div>
+
+		<div id="credit_card" class="col-md-6">
+			<%= f.label :credit_card_id, class: "control-label" %>
+			<%= f.select :credit_card_id, options_for_select(current_user.account.main_service.credit_cards.map{ |c| [c.last_4, c.id, {'data-content'=>('<span class="' + c.logo_class + '" style="margin-right: 5px;"></span><span class="text">  **** **** **** ' + c.last_4 + '</span>')}] }), {}, {class: "form-control selectpicker"} %>
+		</div>
+
+		<div id="state" class="col-md-6">
+			<%= f.label :state, class: "control-label" %>
+			<%= f.select :state, [:active, :paused], {}, {class: "form-control"} %>
+		</div>
+	<% end %>
+	
+	<%= f.hidden_field :item_id %>	
+	<%= f.hidden_field :account_id %>	
+	
+</fieldset>
+<script>
+	$('.selectpicker').selectpicker();
+	$('select#subscription_payment_method').change(function(){
+    var m = this.value;
+    if (m == 'credit_card') { 
+    	$('select#subscription_credit_card_id').attr('disabled', false);
+    } else {
+    	$('select#subscription_credit_card_id').attr('disabled', true);
+    }
+    $('.selectpicker').selectpicker('refresh');
+	})
+</script>

@@ -1,4 +1,5 @@
 class MyAccount::SubscriptionsController < ApplicationController
+  layout 'shop'
   respond_to :html, :json
   
   def index
@@ -81,11 +82,26 @@ class MyAccount::SubscriptionsController < ApplicationController
       format.js
     end
   end
+
+  def edit
+    authorize! :update, Subscription
+    @subscription = Subscription.find_by(id: params[:id])
+  end
+
+  def update
+    authorize! :update, Subscription
+    @subscription = Subscription.find_by(id: params[:id])
+    if @subscription.update_attributes(subscription_params)
+      flash[:notice] = "\"#{@subscription.item.name}\" has been updated"
+    else
+      flash[:error] = "There were some problems with the form you submitted"
+    end
+  end
   
   private
 
   def subscription_params
-    prms = params.require(:subscription).permit(:account_id, :item_id, :quantity, :frequency,
+    prms = params.require(:subscription).permit(:account_id, :item_id, :quantity, :frequency, :address_id, :bill_address_id, :payment_method, :credit_card_id, :state,
       ship_to_address_attributes: [:address_1, :address_2, :city, :state, :zip, :phone],
       bill_to_address_attributes: [:address_1, :address_2, :city, :state, :zip, :phone]
     )

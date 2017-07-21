@@ -1,6 +1,8 @@
 class Subscription < ActiveRecord::Base
 
   FREQUENCIES = ['monthly', 'quarterly']
+  PAYMENT_METHODS = ['check', 'credit_card']
+
   belongs_to :account
   belongs_to :ship_to_address, foreign_key: :address_id, class_name: Address
   belongs_to :bill_to_address, foreign_key: :bill_address_id, class_name: Address
@@ -15,16 +17,22 @@ class Subscription < ActiveRecord::Base
   accepts_nested_attributes_for :ship_to_address
   accepts_nested_attributes_for :bill_to_address
 
+  before_save :check_payment_method
+
   state_machine initial: :new do
     state :active do
       validates :ship_to_address, presence: true
       validates :bill_to_address, presence: true
-      validates :credit_card, presence: true, if: Proc.new{ |f| f.payment_method == "credit_card"  }
+      validates :credit_card, presence: true, if: Proc.new{ |f| f.payment_method == "credit_card"  }, inclusion: {in: proc { |f| f.account.main_service.credit_cards }}
     end
 
     event :activate do
       transition any => :active
     end
+  end
+
+  def check_payment_method
+    self.credit_card_id = nil if self.payment_method == 'check'
   end
 
 end
