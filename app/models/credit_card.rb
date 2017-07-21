@@ -6,11 +6,12 @@ class CreditCard < ActiveRecord::Base
   attr_accessor :credit_card_number
   attr_accessor :expiration_month
   attr_accessor :expiration_year
-    
+
   belongs_to :account_payment_service
   has_many :credit_card_payments
   before_update :update_gateway
   before_destroy :remove_gateway
+  after_update :check_failed_payments
 
   scope :expiring_soon, -> { where(expiration: 30.days.ago..90.days.from_now) }
   scope :active, -> { where("expiration >= ?", Date.today) }
@@ -72,6 +73,21 @@ class CreditCard < ActiveRecord::Base
   def remove_gateway
     response = GATEWAY.unstore(nil, {credit_card_token: self.service_card_id})
     response.success?
+  end
+
+  def check_failed_subscription_payments
+    self.subscriptions.each do |subscription|
+      subscription.orders.where(state: 'hold').each do |order|
+        order.payments.where(success: false).each do |payment|
+          if payment.authorize
+            order.resume
+          else
+            OrderMailer.order_failed_authorization(order.id).deliver_later
+            SubscriptionMailer.update_cc(self).devliver_later
+          end
+        end
+      end
+    end
   end
 
   def logo_class

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170721154006) do
+ActiveRecord::Schema.define(version: 20170721195907) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -521,6 +521,7 @@ ActiveRecord::Schema.define(version: 20170721154006) do
     t.boolean  "credit_hold",                                   default: false
     t.decimal  "discount_total",       precision: 10, scale: 2, default: 0.0
     t.integer  "subscription_id"
+    t.string   "state"
   end
 
   add_index "orders", ["account_id"], name: "order_customer_id_ix"

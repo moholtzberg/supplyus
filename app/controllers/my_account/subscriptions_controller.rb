@@ -54,7 +54,6 @@ class MyAccount::SubscriptionsController < ApplicationController
           @subscription.save
           @order.save
           @payment.save
-          OrderPaymentApplication.create(:order_id => @order.id, :payment_id => @payment.id, :applied_amount => @payment.amount)
         end
         redirect_to my_account_path
       else

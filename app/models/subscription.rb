@@ -18,6 +18,7 @@ class Subscription < ActiveRecord::Base
   accepts_nested_attributes_for :bill_to_address
 
   before_save :check_payment_method
+  after_update :check_failed_payments, if: Proc.new { |s| s.credit_card_id_changed? && s.credit_card_id }
 
   state_machine initial: :new do
     state :active do
@@ -33,6 +34,19 @@ class Subscription < ActiveRecord::Base
 
   def check_payment_method
     self.credit_card_id = nil if self.payment_method == 'check'
+  end
+
+  def check_failed_payments
+    self.orders.where(state: 'hold').each do |order|
+      order.payments.where(success: false).each do |payment|
+        if payment.authorize
+          order.resume
+        else
+          OrderMailer.order_failed_authorization(order.id).deliver_later
+          SubscriptionMailer.update_cc(self).devliver_later
+        end
+      end
+    end
   end
 
 end

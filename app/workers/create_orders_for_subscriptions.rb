@@ -14,13 +14,12 @@ class CreateOrdersForSubscriptions
         payment = SubscriptionServices::GeneratePayment.new.call(order, subscription.card)
         order.save
         payment.save
-        if payment.authorize
-          OrderPaymentApplication.create(:order_id => order.id, :payment_id => payment.id, :applied_amount => payment.amount)
-        else
+        if !payment.authorize
           order.hold
           OrderMailer.order_failed_authorization(order.id).deliver_later
           SubscriptionMailer.update_cc(subscription).devliver_later
         end
+      end
     end
   end
 end
