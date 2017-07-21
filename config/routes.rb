@@ -149,9 +149,10 @@ Rails.application.routes.draw do
   }
 
   namespace :my_account do
-    resources :item_lists
-    resources :item_item_lists, only: [:create, :destroy]
     resources :addresses, only: [:index, :new, :create, :destroy]
+    resources :credit_cards
+    resources :item_item_lists, only: [:create, :destroy]
+    resources :item_lists
     resources :subscriptions do
       member do
         get :details

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170720172651) do
+ActiveRecord::Schema.define(version: 20170721154006) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -131,6 +131,8 @@ ActiveRecord::Schema.define(version: 20170720172651) do
     t.string  "expiration"
     t.string  "last_4"
     t.string  "card_type"
+    t.string  "unique_number_identifier"
+    t.string  "cardholder_name"
   end
 
   create_table "discount_code_effects", force: :cascade do |t|

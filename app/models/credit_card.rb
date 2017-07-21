@@ -9,6 +9,8 @@ class CreditCard < ActiveRecord::Base
     
   belongs_to :account_payment_service
   has_many :credit_card_payments
+  before_update :update_gateway
+  before_destroy :remove_gateway
 
   scope :expiring_soon, -> { where(expiration: 30.days.ago..90.days.from_now) }
   scope :active, -> { where("expiration >= ?", Date.today) }
@@ -23,31 +25,53 @@ class CreditCard < ActiveRecord::Base
 
   def self.store(params)
     if GATEWAY.class == ActiveMerchant::Billing::BraintreeBlueGateway
+      unique_numbers = AccountPaymentService.find(params[:account_payment_service_id]).credit_cards.map(&:unique_number_identifier)
       resp = Braintree::CreditCard.create(
         customer_id: params[:customer_id],
         cardholder_name: params[:cardholder_name],
         number: params[:number],
         cvv: params[:cvv],
         expiration_month: params[:expiration_month],
-        expiration_year: params[:expiration_year],
-        options: { fail_on_duplicate_payment_method: true }
+        expiration_year: params[:expiration_year]
       )
       if resp.class == Braintree::SuccessfulResult
-        self.create(
-          account_payment_service_id: params[:account_payment_service_id],
-          service_card_id: resp.credit_card.token,
-          expiration: "#{params[:expiration_month]}/#{params[:expiration_year]}",
-          last_4: resp.credit_card.last_4,
-          card_type: resp.credit_card.card_type
-        )
-      elsif resp.class == Braintree::ErrorResult && resp.errors.select{ |error| error.code == '81724' }.size > 0 && resp.errors.size == 1
-        self.find_by(
+        if unique_numbers.include?(resp.credit_card.unique_number_identifier)
+          Braintree::CreditCard.delete(resp.credit_card.token)
+          self.find_by(
             account_payment_service_id: params[:account_payment_service_id],
-            expiration: "#{params[:expiration_month]}/#{params[:expiration_year]}",
-            last_4: params[:number][-4..-1]
+            unique_number_identifier: resp.credit_card.unique_number_identifier
           )
+        else
+          self.create(
+            unique_number_identifier: resp.credit_card.unique_number_identifier,
+            cardholder_name: params[:cardholder_name],
+            account_payment_service_id: params[:account_payment_service_id],
+            service_card_id: resp.credit_card.token,
+            expiration: "#{params[:expiration_month]}/#{params[:expiration_year]}",
+            last_4: resp.credit_card.last_4,
+            card_type: resp.credit_card.card_type
+          )
+        end
       end
     end
+  end
+
+  def update_gateway
+    if GATEWAY.class == ActiveMerchant::Billing::BraintreeBlueGateway
+      resp = Braintree::CreditCard.update(self.service_card_id,
+        {
+          cardholder_name: cardholder_name,
+          expiration_month: expiration.try(:split, '/').try(:[], 0),
+          expiration_year: expiration.try(:split, '/').try(:[], 1)
+        }
+      )
+      resp.class == Braintree::SuccessfulResult
+    end
+  end
+
+  def remove_gateway
+    response = GATEWAY.unstore(nil, {credit_card_token: self.service_card_id})
+    response.success?
   end
 
   def logo_class
