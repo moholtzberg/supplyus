@@ -60,10 +60,8 @@ class AccountsController < ApplicationController
     if @account.update_attributes(account_params)
       @accounts = Account.joins(:main_address).order(sort_column + " " + sort_direction).includes(:group)
       @accounts = @accounts.paginate(:page => params[:page], :per_page => 25)
-      respond_to do |format|
-        format.html
-        format.js
-      end
+    else
+      flash[:error] = @account.errors.full_messages.join(', ') if @account.errors.any?
     end
   end
   
@@ -104,7 +102,8 @@ class AccountsController < ApplicationController
   private
 
   def account_params
-    params.require(:account).permit(:name, :sales_rep_name, :email, :group_name, :credit_terms, :credit_limit, :quickbooks_id, :is_taxable, main_address_attributes: [:address_1, :address_2, :city, :state, :zip, :phone, :fax])
+    params.require(:account).permit(:name, :sales_rep_name, :email, :group_name, :credit_terms, :credit_limit, :quickbooks_id, :is_taxable, 
+      :subscription_week_day, :subscription_month_day, :subscription_quarter_day, main_address_attributes: [:address_1, :address_2, :city, :state, :zip, :phone, :fax])
   end
 
   def sort_column
