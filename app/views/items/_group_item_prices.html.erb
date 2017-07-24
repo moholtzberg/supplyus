@@ -1,18 +1,20 @@
 <table class="table table-bordered table-condensed table-striped">
 	
 	<tr>
-		<td colspan="2"><%= link_to "Add Group Item Price", new_group_item_price_path(:item_id => item.id), :class => "btn btn-primary btn-block btn-xs", :remote => true %>
+		<td colspan="3"><%= link_to "Add Group Item Price", new_group_item_price_path(:item_id => item.id), :class => "btn btn-primary btn-block btn-xs", :remote => true %>
 	</tr>
 	
 	<tr>
 		<th>Group</th>
 		<th>Price</th>
+		<th>Delete ID</th>
 	</tr>
 
 	<% item.group_item_prices.each do |it| %>
 	<tr>
 		<td><%= it.group.name %></td>
 		<td><%= number_to_currency(it.price) %></td>
+		<td><%= link_to group_item_price_path(it.id), :method => :delete, :remote => true do %><%= it.id %><% end %></td>
 	</tr>
 	<% end %>
 

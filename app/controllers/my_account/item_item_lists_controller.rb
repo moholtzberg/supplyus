@@ -5,13 +5,13 @@ class MyAccount::ItemItemListsController < ApplicationController
   end
   
   def create
-    authorize! :create, ItemItemList
+    # authorize! :create, ItemItemList
     @item_item_list = ItemItemList.create(item_item_list_params)
   end
 
   def destroy
     @item_item_list = ItemItemList.find(params[:id])
-    authorize! :destroy, @item_item_list
+    # authorize! :destroy, @item_item_list
     @item_item_list.destroy
   end
 
