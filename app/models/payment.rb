@@ -1,11 +1,13 @@
 class Payment < ActiveRecord::Base
   
-  # has_and_belongs_to_many :invoices
+  self.inheritance_column = :payment_type
   belongs_to :account
   belongs_to :payment_method
   has_many :order_payment_applications
   has_many :transactions
   accepts_nested_attributes_for :order_payment_applications
+
+  validates :amount, :presence => true, :numericality => { greater_then: 0 }
   
   def account_name
     account.try(:name)
@@ -13,6 +15,14 @@ class Payment < ActiveRecord::Base
   
   def account_name=(name)
     self.account = Account.find_by(:name => name) if name.present?
+  end
+
+  def completed?
+    if payment_type == "CheckPayment"
+      success?
+    elsif payment_type == "CreditCardPayment"
+      success? && captured?
+    end
   end
   
   def total_applications

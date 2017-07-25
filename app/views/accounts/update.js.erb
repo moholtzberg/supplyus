@@ -3,4 +3,6 @@
 	$('body').removeClass('modal-open')
 	$('.modal-backdrop').remove()
 	$("#accounts").html("<%= j render :template => 'accounts/index.html', :format => 'html' %>")
+<% else %>
+  $(".modal-content").html("<%= j render :template => 'accounts/edit.html', :format => 'html' %>")
 <% end %>

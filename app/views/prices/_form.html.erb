@@ -22,12 +22,12 @@
 
 		<div id="min_qty" class="col-md-6">
 			<%= f.label :min_qty, class: "control-label" %>
-			<%= f.text_field :min_qty, class: "form-control" %>
+			<%= f.text_field :min_qty, class: "form-control", disabled: @price._type != 'Bulk' %>
 		</div>
 
 		<div id="max_qty" class="col-md-6">
 			<%= f.label :max_qty, class: "control-label" %>
-			<%= f.text_field :max_qty, class: "form-control" %>
+			<%= f.text_field :max_qty, class: "form-control", disabled: @price._type != 'Bulk' %>
 		</div>
 
 		<div id="appliable_type" class="col-md-6">
@@ -45,6 +45,18 @@
 			<%= f.check_box :combinable, class: "form-control" %>
 		</div>
 
-		<%= f.hidden_field :item_id %>	
+		<%= f.hidden_field :item_id %>
+
+		<script>
+			$(function() {
+				$('#price__type').change(function() {
+					if ($(this).val() == 'Bulk') {
+						$('#price_min_qty, #price_max_qty').prop('disabled', false);
+					} else {
+						$('#price_min_qty, #price_max_qty').prop('disabled', true);
+					}
+				})
+			})
+		</script>
 	
 </fieldset>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170714193619) do
+ActiveRecord::Schema.define(version: 20170725160436) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -36,13 +36,16 @@ ActiveRecord::Schema.define(version: 20170714193619) do
     t.string  "email"
     t.boolean "active"
     t.integer "group_id"
-    t.float   "credit_limit",  default: 0.0
+    t.float   "credit_limit",             default: 0.0
     t.integer "credit_terms"
-    t.boolean "credit_hold",   default: true
+    t.boolean "credit_hold",              default: true
     t.string  "bill_to_email"
     t.boolean "is_taxable"
     t.integer "sales_rep_id"
-    t.boolean "replace_items", default: false, null: false
+    t.boolean "replace_items",            default: false, null: false
+    t.integer "subscription_week_day",    default: 1
+    t.integer "subscription_month_day",   default: 1
+    t.integer "subscription_quarter_day", default: 1
   end
 
   create_table "addresses", force: :cascade do |t|
@@ -128,6 +131,8 @@ ActiveRecord::Schema.define(version: 20170714193619) do
     t.string  "expiration"
     t.string  "last_4"
     t.string  "card_type"
+    t.string  "unique_number_identifier"
+    t.string  "cardholder_name"
   end
 
   create_table "discount_code_effects", force: :cascade do |t|
@@ -520,6 +525,8 @@ ActiveRecord::Schema.define(version: 20170714193619) do
     t.decimal  "tax_total",            precision: 10, scale: 2, default: 0.0
     t.boolean  "credit_hold",                                   default: false
     t.decimal  "discount_total",       precision: 10, scale: 2, default: 0.0
+    t.integer  "subscription_id"
+    t.string   "state"
   end
 
   add_index "orders", ["account_id"], name: "order_customer_id_ix"
@@ -724,7 +731,12 @@ ActiveRecord::Schema.define(version: 20170714193619) do
     t.integer "address_id"
     t.integer "item_id"
     t.integer "quantity"
-    t.integer "frequency"
+    t.string  "frequency"
+    t.integer "bill_address_id"
+    t.integer "account_id"
+    t.integer "credit_card_id"
+    t.string  "payment_method"
+    t.string  "state"
   end
 
   create_table "tax_rates", force: :cascade do |t|

@@ -100,7 +100,11 @@ Rails.application.routes.draw do
       end
       resources :order_discount_codes
       resources :order_line_items
-      resources :payments
+      resources :payments do
+        member do
+          put :capture
+        end
+      end
       resources :payment_plans
       resources :payment_plan_templates
       resources :prices
@@ -149,9 +153,16 @@ Rails.application.routes.draw do
   }
 
   namespace :my_account do
-    resources :item_lists
-    resources :item_item_lists, only: [:create, :destroy]
     resources :addresses, only: [:index, :new, :create, :destroy]
+    resources :credit_cards
+    resources :item_item_lists, only: [:create, :destroy]
+    resources :item_lists
+    resources :subscriptions do
+      member do
+        get :details
+        patch :details, to: :update_details
+      end
+    end
   end
 
   get   "checkout/address" => "checkout#address"

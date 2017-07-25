@@ -1,0 +1,8 @@
+<% unless flash[:error] %>
+	$('#myModal').modal("hide");
+	$('body').removeClass('modal-open');
+	$('.modal-backdrop').remove();
+  window.location.href = "<%= details_my_account_subscription_path(@subscription) %>";
+<% else %>
+  $("#modal-content").html("<%= j render :template => 'my_account/subscriptions/new.html', :format => 'html' %>");
+<% end %>

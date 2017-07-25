@@ -1,7 +1,6 @@
 class CreditCardPayment < Payment
   require 'active_merchant/billing/rails'
 
-  validates :amount, :presence => true, :numericality => { greater_then: 0 }
   belongs_to :credit_card
   
   def authorize
@@ -30,8 +29,11 @@ class CreditCardPayment < Payment
         errors.add(:base, "The credit card you provided was declined.  Please double check your information and try again.") and return
         false
       end
-      update_columns({authorization_code: transaction.authorization, success: true})
+      update_columns({authorization_code: transaction.authorization, success: true, captured: true})
       true
+    else
+      errors.add(:base, "Payment is not authorized or credit card is missing.") and return
+      false
     end
   end
   
@@ -44,7 +46,7 @@ class CreditCardPayment < Payment
           errors.add(:base, "The credit card you provided was declined.  Please double check your information and try again.") and return
           false
         end
-        update_columns({authorization_code: transaction.authorization, success: true})
+        update_columns({authorization_code: transaction.authorization, success: true, captured: true})
         true
       else
         errors.add(:base, "The credit card you provided was declined.  Please double check your information and try again.") and return

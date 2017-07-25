@@ -21,6 +21,7 @@ class Order < ActiveRecord::Base
   belongs_to :account
   belongs_to :user
   belongs_to :sales_rep, :class_name => "User"
+  belongs_to :subscription
   has_one :order_shipping_method, :dependent => :destroy, :inverse_of => :order
   has_one :order_tax_rate, :dependent => :destroy, :inverse_of => :order
   has_one :order_discount_code
@@ -44,7 +45,17 @@ class Order < ActiveRecord::Base
   # after_update :create_inventory_transactions_for_line_items
   
   # after_commit :sync_with_quickbooks if :persisted
-  
+
+  state_machine initial: :new do
+    event :hold do
+      transition any => :hold
+    end
+
+    event :resume do
+      transition :hold => :active
+    end
+  end
+
   def account_name
     account.try(:name)
   end

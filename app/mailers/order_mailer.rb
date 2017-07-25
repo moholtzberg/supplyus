@@ -46,5 +46,23 @@ class OrderMailer < ApplicationMailer
          :text => render_to_string("order_mailer/invoice_notification").to_str
     )
   end
-  
+
+  def order_failed_authorization(order_id, options = {})
+
+    @order = Order.find_by(:id => order_id)
+
+    defaults = {
+      :from => "24\/7 Office Supply <orders@247officesupply.com>",
+      :to => 'orders@247officesupply.com'
+    }
+    options = defaults.merge(options)
+
+    mail(
+         :to => options[:to],
+         :cc => options[:cc],
+         :bcc => options[:bcc],
+         :subject => "Failed payment authorization for order #{@order.number}",
+         :text => render_to_string("order_mailer/order_failed_authorization").to_str
+    )
+  end
 end
