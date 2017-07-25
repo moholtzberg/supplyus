@@ -1,0 +1,3 @@
+class CheckPayment < Payment
+
+end

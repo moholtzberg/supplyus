@@ -100,7 +100,11 @@ Rails.application.routes.draw do
       end
       resources :order_discount_codes
       resources :order_line_items
-      resources :payments
+      resources :payments do
+        member do
+          put :capture
+        end
+      end
       resources :payment_plans
       resources :payment_plan_templates
       resources :prices

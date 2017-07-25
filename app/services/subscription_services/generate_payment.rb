@@ -6,7 +6,7 @@ module SubscriptionServices
         payment.account = order.account
         payment.amount = order.total
         if card
-          payment.payment_type = "CreditCard"
+          payment.payment_type = "CreditCardPayment"
           payment.credit_card_id = card.id
         else
           payment.payment_type = "CheckPayment"

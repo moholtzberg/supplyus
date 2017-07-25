@@ -22,7 +22,7 @@ class PaymentsController < ApplicationController
   
   def create
     authorize! :create, Payment
-    if PaymentMethod.find(params[:payment][:payment_method]).name == "CreditCard"
+    if PaymentMethod.find(params[:payment][:payment_method]).name == "CreditCardPayment"
       payment = CreditCardPayment.new(
         :first_name => params[:payment][:first_name],
         :last_name => params[:payment][:last_name],
@@ -63,6 +63,12 @@ class PaymentsController < ApplicationController
       flash[:notice] = "Payment saved successfully!"
       @payments = @payments.paginate(:page => params[:page], :per_page => 25)
     end
+  end
+
+  def capture
+    @payment = Payment.find(params[:id])
+    authorize! :update, Payment
+    @payment.capture
   end
   
   private
