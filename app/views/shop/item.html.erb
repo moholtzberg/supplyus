@@ -50,7 +50,13 @@
 
 	<div class="row">
 		<div class="col-md-12 bottom-rule">
-			<h2 class="product-price"><%= number_to_currency(@item.price)%></h2>
+			
+			<%if (current_user and current_user.has_account and @item.actual_price(current_user.account.id).to_f < @item.price.to_f) %>
+			<h5 class="product-price"><span class="hidden-xs">List Price:</span> <span style="text-decoration:line-through;"><%= number_to_currency(@item.price) %></span><h5>
+			<h2 class="product-price"><span class="hidden-xs">Your Price:</span> <%= number_to_currency(@item.actual_price(current_user.account.id)) %><h2>
+			<% else %>
+			<h2 class="product-price">Your Price:</span> <%= number_to_currency(@item.price) %></h2>
+			<% end %>
 		</div>
 	</div><!-- end row -->
 
