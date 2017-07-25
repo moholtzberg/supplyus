@@ -26,7 +26,7 @@ class MyAccount::SubscriptionsController < ApplicationController
     @subscription = Subscription.find(params[:id])
     @subscription.ship_to_address = Address.find_or_create_by(subscription_params[:ship_to_address_attributes].merge(account_id: @subscription.account_id))
     @subscription.bill_to_address = Address.find_or_create_by(subscription_params[:bill_to_address_attributes].merge(account_id: @subscription.account_id))
-    @subscription.payment_method = params[:payment_method]
+    @subscription.payment_method = params[:payment_method] == 'check' ? params[:payment_method] : 'credit_card'
     @card = SubscriptionServices::CardByData.new.call({
         cardholder_name: params[:cardholder_name],
         number: params[:credit_card_number],
@@ -41,7 +41,7 @@ class MyAccount::SubscriptionsController < ApplicationController
     SubscriptionServices::SetDayOfPeriod.new.call(@subscription)
     if @subscription.wait_for_next_order?
       if @subscription.activate && @subscription.save
-        redirect_to my_account_path
+        redirect_to my_account_subscriptions_path
       else
         render "details"
       end        
@@ -53,9 +53,8 @@ class MyAccount::SubscriptionsController < ApplicationController
           @subscription.activate
           @subscription.save
           @order.save
-          @payment.save
         end
-        redirect_to my_account_path
+        redirect_to my_account_subscriptions_path
       else
         render "details"
       end

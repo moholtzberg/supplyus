@@ -4,14 +4,14 @@ module SubscriptionServices
       if order
         payment = order.payments.new
         payment.account = order.account
-        payment.amount = order.total
+        payment.amount = order.order_line_items.inject(0) { |mem, var| mem += var.price * var.quantity  }
         if card
           payment.payment_type = "CreditCardPayment"
           payment.credit_card_id = card.id
         else
           payment.payment_type = "CheckPayment"
         end
-        payment
+        payment.becomes payment.payment_type.constantize
       end
     end
   end

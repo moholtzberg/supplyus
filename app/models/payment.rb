@@ -17,10 +17,6 @@ class Payment < ActiveRecord::Base
     self.account = Account.find_by(:name => name) if name.present?
   end
 
-  def authorize
-    true
-  end
-
   def completed?
     if payment_type == "CheckPayment"
       success?

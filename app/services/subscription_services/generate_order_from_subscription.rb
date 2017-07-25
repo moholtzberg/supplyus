@@ -29,10 +29,6 @@ module SubscriptionServices
           quantity: subscription.quantity,
           price: subscription.item.prices.select{|p| p._type == 'Recurring'}[0].price
         })
-        order.sub_total = order.sub_total_sum
-        order.shipping_total = order.shipping_total_sum
-        order.tax_total = order.tax_total_sum
-        order.discount_total = 0
         order
       end
     end
