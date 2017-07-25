@@ -39,7 +39,7 @@ class MyAccount::SubscriptionsController < ApplicationController
     @subscription.credit_card = @card
     @cards = @subscription.account.main_service.credit_cards
     SubscriptionServices::SetDayOfPeriod.new.call(@subscription)
-    if Date.today - Date.send('beginning_of_' + @subscritpion.frequency) > Date.send('end_of_' + @subscritpion.frequency) - Date.today
+    if @subscription.wait_for_next_order?
       if @subscription.activate && @subscription.save
         redirect_to my_account_path
       else

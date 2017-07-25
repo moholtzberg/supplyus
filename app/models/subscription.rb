@@ -1,6 +1,6 @@
 class Subscription < ActiveRecord::Base
 
-  FREQUENCIES = ['monthly', 'quarterly']
+  FREQUENCIES = ['month', 'quarter']
   PAYMENT_METHODS = ['check', 'credit_card']
 
   belongs_to :account
@@ -24,7 +24,7 @@ class Subscription < ActiveRecord::Base
     state :active do
       validates :ship_to_address, presence: true
       validates :bill_to_address, presence: true
-      validates :credit_card, presence: true, if: Proc.new{ |f| f.payment_method == "credit_card"  }, inclusion: {in: proc { |f| f.account.main_service.credit_cards }}
+      validates :credit_card, presence: true, if: Proc.new{ |f| f.payment_method == "credit_card" }, inclusion: {in: proc { |f| f.account.main_service.credit_cards }}
     end
 
     event :activate do
@@ -46,6 +46,21 @@ class Subscription < ActiveRecord::Base
           SubscriptionMailer.update_cc(self).devliver_later
         end
       end
+    end
+  end
+
+  def wait_for_next_order?
+    today = Date.today
+    subscription_frequency_day = account.send("subscription_" + frequency + "_day")
+    prev_period_subscription_date = today.send('beginning_of_' + frequency).send('prev_' + frequency) + subscription_frequency_day - 1
+    current_period_subscription_date = today.send('beginning_of_' + frequency) + subscription_frequency_day - 1
+    next_period_subscription_date = today.send('beginning_of_' + frequency).send('next_' + frequency) + subscription_frequency_day - 1
+    if today > current_period_subscription_date
+      today - current_period_subscription_date > next_period_subscription_date - today
+    elsif today < current_period_subscription_date
+      today - prev_period_subscription_date < current_period_subscription_date - today
+    else
+      false
     end
   end
 
