@@ -1,8 +1,8 @@
-<% unless flash[:error] %>
+<% if flash[:error] %>
+  $("#modal-content").html("<%= j render :template => 'my_account/subscriptions/edit.html', :format => 'html', :locals => {:subscription => @subscription} %>")
+<% else %>
   $('#myModal').modal("hide")
   $('body').removeClass('modal-open')
   $('.modal-backdrop').remove()
   $("tr[data-item-list-id='<%= @subscription.id %>'").replaceWith("<%= j render :partial => 'my_account/subscriptions/subscription', :format => 'html', :locals => {:subscription => @subscription} %>")
-<% else %>
-  $("#modal-content").html("<%= j render :template => 'my_account/subscriptions/edit.html', :format => 'html', :locals => {:subscription => @subscription} %>")
 <% end %>

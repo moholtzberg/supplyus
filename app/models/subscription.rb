@@ -27,6 +27,8 @@ class Subscription < ActiveRecord::Base
       validates :credit_card, presence: true, if: Proc.new{ |f| f.payment_method == "credit_card" }, inclusion: {in: proc { |f| f.account.main_service.credit_cards }}
     end
 
+    state :paused
+
     event :activate do
       transition any => :active
     end
