@@ -9,9 +9,10 @@ class CreditCard < ActiveRecord::Base
 
   belongs_to :account_payment_service
   has_many :credit_card_payments
+  has_many :subscriptions
   before_update :update_gateway
   before_destroy :remove_gateway
-  after_update :check_failed_payments
+  after_update :check_failed_subscription_payments
 
   scope :expiring_soon, -> { where(expiration: 30.days.ago..90.days.from_now) }
   scope :active, -> { where("expiration >= ?", Date.today) }

@@ -1,5 +1,6 @@
 class MyAccount::CreditCardsController < ApplicationController
   layout 'shop'
+  skip_before_filter :check_authorization
 
   def new
     authorize! :create, CreditCard
@@ -14,12 +15,12 @@ class MyAccount::CreditCardsController < ApplicationController
 
   def edit
     authorize! :update, CreditCard
-    @credit_card = CreditCard.find_by(id: params[:id])
+    @credit_card = CreditCard.find(params[:id])
   end
 
   def update
     authorize! :create, CreditCard
-    @credit_card = CreditCard.find_by(id: params[:id])
+    @credit_card = CreditCard.find(params[:id])
     @credit_card.assign_attributes(cardholder_name: params[:cardholder_name], expiration: "#{params[:expiration_month]}/#{params[:expiration_year]}")
     flash[:error] = 'Credit card data is not valid.' unless @credit_card.save
   end

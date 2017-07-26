@@ -21,6 +21,7 @@
 					<li><%= link_to I18n.t(:my_account), "/my_account" %></li>
 					<% if current_user.account %><li><%= link_to I18n.t(:my_items), "/my_account/items" %></li><% end %>
 					<li><%= link_to 'My Subscriptions', my_account_subscriptions_path %></li>
+					<li><%= link_to 'My Credit Cards', my_account_credit_cards_path %></li>
 					<%= render :partial => "shop/lists" %>
 					<li><%= link_to "Change password", edit_user_registration_path, :remote => true %></li>
 					<li class="divider"></li>

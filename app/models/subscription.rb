@@ -13,7 +13,7 @@ class Subscription < ActiveRecord::Base
   validates :account_id, presence: true
   validates :item_id, presence: true
   validates :quantity, presence: true, numericality: { greater_than: 0 }
-  validates :frequency, presence: true, inclusion: { in: FREQUENCIES }  
+  validates :frequency, presence: true, inclusion: { in: FREQUENCIES }
   accepts_nested_attributes_for :ship_to_address
   accepts_nested_attributes_for :bill_to_address
 
