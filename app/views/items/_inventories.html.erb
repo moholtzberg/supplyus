@@ -6,12 +6,12 @@
 		<th>Quantity</th>
 	</tr>
 
-	<% item.inventories.joins(bin: :warehouse).each do |inv| %>
-	<tr>
-		<td><%= link_to inv.bin.warehouse.name, inv.bin.warehouse %></td>
-		<td><%= link_to inv.bin.name, inv.bin %></td>
-		<td><%= inv.qty_on_hand %></td>
-	</tr>
+	<% item.inventories.includes(bin: :warehouse).each do |inv| %>
+		<tr>
+			<td><%= link_to inv.bin.warehouse.name, inv.bin.warehouse if inv.bin && inv.bin.warehouse %></td>
+			<td><%= link_to inv.bin.name, inv.bin if inv.bin %></td>
+			<td><%= inv.qty_on_hand %></td>
+		</tr>
 	<% end %>
 
 </table>

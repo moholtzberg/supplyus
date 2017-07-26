@@ -91,7 +91,7 @@ class BinsController < ApplicationController
   private
 
   def bin_params
-    params.require(:bin).permit(:name, :_type)
+    params.require(:bin).permit(:name, :_type, :warehouse_id)
   end
   
 end
