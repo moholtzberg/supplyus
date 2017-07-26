@@ -103,10 +103,12 @@ class CheckoutController < ApplicationController
   def update_payment
     puts params[:payment_method]
     @checkout = Checkout.find_by(:id => cookies.permanent.signed[:cart_id])
-    @payment = Order.find_by(:id => cookies.permanent.signed[:cart_id]).credit_card_payments.new
+    @payment = Order.find_by(:id => cookies.permanent.signed[:cart_id]).payments.new
     @payment.account = current_user.account
     @payment.amount = Order.find_by(:id => cookies.permanent.signed[:cart_id]).total
     if (params[:payment_method] == "terms" || params[:payment_method] == "check")
+      @payment.payment_type = 'CheckPayment'
+      @payment.save
       complete
     else
       if params[:payment_method] == "credit_card"
@@ -122,6 +124,7 @@ class CheckoutController < ApplicationController
       else
         @card = CreditCard.find_by(account_payment_service_id: @checkout.account.main_service.id, service_card_id: params[:credit_card_token])
       end
+      @payment = @payment.becomes CreditCardPayment
       @payment.credit_card = @card
       @cards = current_user.account.main_service.credit_cards
       if @payment.authorize
