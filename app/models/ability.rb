@@ -41,6 +41,19 @@ class Ability
           end
         end
       end
+
+      if user.id
+        can :crud, Address, account_id: user.account_id
+        can :crud, CreditCard, account_payment_service_id: user.account.account_payment_services.ids
+        can :crud, ItemList, user_id: user.id
+        can :crud, ItemItemList, item_list_id: user.item_lists.ids
+        can :create, Payment, account_id: user.account_id, credit_card_id: user.account.account_payment_services.map(&:credit_cards).map(&:ids).flatten.uniq
+        can [:create, :read, :update], Subscription
+        can :destroy, Subscription do |subscription|
+          subscription.account_id == user.account_id
+          subscription.orders.is_complete.size >= 3
+        end
+      end
     end
 
 

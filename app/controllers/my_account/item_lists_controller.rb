@@ -2,10 +2,7 @@ class MyAccount::ItemListsController < ApplicationController
   layout 'shop'
   before_filter :find_cart, only: :show
   before_filter :find_categories, only: [:index, :show]
-
-  def check_authorization
-    
-  end
+  skip_before_filter :check_authorization
   
   def new
     authorize! :create, ItemList

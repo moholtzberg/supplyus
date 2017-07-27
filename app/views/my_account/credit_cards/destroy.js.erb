@@ -1,1 +1,5 @@
-$("tr[data-item-list-id='<%= @credit_card.id %>'").remove();
+<% if @credit_card.destroyed? %>
+  $("tr[data-item-list-id='<%= @credit_card.id %>'").remove();
+<% else %>
+  alert("Something is wrong!");
+<% end %>

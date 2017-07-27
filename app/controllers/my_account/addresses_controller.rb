@@ -1,6 +1,7 @@
 class MyAccount::AddressesController < ApplicationController
   respond_to :html, :json
-  
+  skip_before_filter :check_authorization
+
   def new
     authorize! :create, Address
     @address = Address.new(address_params)

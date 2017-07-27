@@ -1,7 +1,8 @@
 class MyAccount::SubscriptionsController < ApplicationController
   layout 'shop'
   respond_to :html, :json
-  
+  skip_before_filter :check_authorization
+
   def index
     authorize! :read, Subscription
     @subscriptions =  Subscription.where(account: current_user.account, state: [:active, :paused])

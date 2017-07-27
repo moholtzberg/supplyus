@@ -13,7 +13,7 @@ class Subscription < ActiveRecord::Base
   validates :account_id, presence: true
   validates :item_id, presence: true
   validates :quantity, presence: true, numericality: { greater_than: 0 }
-  validates :frequency, presence: true, inclusion: { in: FREQUENCIES }  
+  validates :frequency, presence: true, inclusion: { in: FREQUENCIES }
   accepts_nested_attributes_for :ship_to_address
   accepts_nested_attributes_for :bill_to_address
 
@@ -26,6 +26,8 @@ class Subscription < ActiveRecord::Base
       validates :bill_to_address, presence: true
       validates :credit_card, presence: true, if: Proc.new{ |f| f.payment_method == "credit_card" }, inclusion: {in: proc { |f| f.account.main_service.credit_cards }}
     end
+
+    state :paused
 
     event :activate do
       transition any => :active
