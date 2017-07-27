@@ -60,7 +60,7 @@ class Subscription < ActiveRecord::Base
     if today > current_period_subscription_date
       today - current_period_subscription_date > next_period_subscription_date - today
     elsif today < current_period_subscription_date
-      today - prev_period_subscription_date < current_period_subscription_date - today
+      today - prev_period_subscription_date > current_period_subscription_date - today
     else
       false
     end

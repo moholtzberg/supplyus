@@ -6,10 +6,10 @@ class CreateOrdersForSubscriptions
 
   def perform
     today = Date.today
-    days_of_week = [today + 1 - Date.today.beginning_of_week]
+    days_of_week = [(today + 1 - Date.today.beginning_of_week).to_i]
 
     current_month_day_count = Date.today.end_of_month.day
-    current_month_day = today + 1 - Date.today.beginning_of_month
+    current_month_day = (today + 1 - Date.today.beginning_of_month).to_i
     days_of_month = [current_month_day]
 
     case current_month_day_count
@@ -22,7 +22,7 @@ class CreateOrdersForSubscriptions
     end
 
     current_quarter_day_count = Date.today.end_of_quarter.day
-    current_quarter_day = today + 1 - Date.today.beginning_of_quarter
+    current_quarter_day = (today + 1 - Date.today.beginning_of_quarter).to_i
     days_of_quarter = [current_quarter_day]
 
     case current_quarter_day_count
@@ -32,17 +32,20 @@ class CreateOrdersForSubscriptions
       days_of_quarter = [91,92] if current_quarter_day == 91
     end
 
-    accounts_with_active_subscriptions = Account.where('subscription_week_day IN (?) OR subscription_month_day IN (?) OR subscription_quarter_day IN (?)', 
-      days_of_week, days_of_month, days_of_quarter)
-    accounts_with_active_subscriptions.each do |account|
-      account.subscriptions.includes(:orders).where.not(orders: {created_at: (Date.today.beginning_of_day..Date.today.end_of_day)}).where(state: 'active').each do |subscription|
-        order = SubscriptionServices::GenerateOrderFromSubscription.new.call(subscription)
-        payment = SubscriptionServices::GeneratePayment.new.call(order, subscription.credit_card)
-        order.save
-        if !payment.authorize
-          OrderMailer.order_failed_authorization(order.id).deliver_later
-          SubscriptionMailer.update_cc(subscription).devliver_later
-        end
+    subscriptions = Subscription.where.not(id: Subscription.includes(:orders).where(orders: {created_at: (Date.today.beginning_of_day..Date.today.end_of_day)}).ids).
+      where(state: 'active').joins(:account).where('("subscriptions"."frequency" = ? AND "accounts"."subscription_week_day" IN (?)) OR '\
+                                                    '("subscriptions"."frequency" = ? AND "accounts"."subscription_month_day" IN (?)) OR '\
+                                                    '("subscriptions"."frequency" = ? AND "accounts"."subscription_quarter_day" IN (?))', 
+                                                    'week', days_of_week, 'month', days_of_month, 'quarter', days_of_quarter)
+    subscriptions.each do |subscription|
+      order = SubscriptionServices::GenerateOrderFromSubscription.new.call(subscription)
+      order.save
+      payment = SubscriptionServices::GeneratePayment.new.call(order, subscription.credit_card)
+      if payment.authorize
+        payment.save
+      else
+        OrderMailer.order_failed_authorization(order.id).deliver_later
+        SubscriptionMailer.update_cc(subscription).devliver_later
       end
     end
   end
