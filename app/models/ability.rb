@@ -42,7 +42,7 @@ class Ability
         end
       end
 
-      if user.id
+      if user.has_role?(:customer)
         can :crud, Address, account_id: user.account_id
         can :crud, CreditCard, account_payment_service_id: user.account.account_payment_services.ids
         can :crud, ItemList, user_id: user.id

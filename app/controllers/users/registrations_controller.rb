@@ -46,7 +46,9 @@ class Users::RegistrationsController < Devise::RegistrationsController
       main: true
       })
     super
-    User.find_by(:email => params[:user][:email]).update_attributes(:account_id => a.id, :first_name => params[:user][:first_name], :last_name => params[:user][:last_name])
+    user = User.find_by(:email => params[:user][:email])
+    user.update_attributes(:account_id => a.id, :first_name => params[:user][:first_name], :last_name => params[:user][:last_name])
+    user.add_role :customer
   end
 
   # GET /resource/edit
