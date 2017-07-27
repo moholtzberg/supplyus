@@ -7,7 +7,7 @@
 	
 	<div id="_type" class="col-md-8">
 		<%= f.label :_type, :class => "control-label" %>
-		<%= f.text_field :_type, :class => "form-control" %>
+		<%= f.select :_type, Bin::TYPES, {}, {:class => "form-control"} %>
 	</div>
 
 	<div id="warehouse" class="col-md-8">

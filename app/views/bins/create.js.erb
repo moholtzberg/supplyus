@@ -1,6 +1,8 @@
-<% unless flash[:error] %>
-	$('#myModal').modal("hide")
-	$('body').removeClass('modal-open')
-	$('.modal-backdrop').remove()
-	$("#bins").replaceWith("<%= j render :template => 'bins/index.html', :format => 'html', :locals => {:bins => @bins} %>")
+<% if flash[:error] %>
+  $(".modal-content").html("<%= j render :template => 'bins/new.html', :format => 'html' %>")
+<% else %>
+  $('#myModal').modal("hide")
+  $('body').removeClass('modal-open')
+  $('.modal-backdrop').remove()
+  $("#bins").replaceWith("<%= j render :template => 'bins/index.html', :format => 'html', :locals => {:bins => @bins} %>")
 <% end %>
