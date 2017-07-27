@@ -153,14 +153,11 @@ ActiveRecord::Schema.define(version: 20170726142452) do
     t.integer "requirable_id"
     t.string  "requirable_type"
     t.integer "discount_code_id"
-    t.string  "user_appliable_type"
-    t.integer "user_appliable_id"
   end
 
   create_table "discount_codes", force: :cascade do |t|
     t.string  "code"
     t.integer "times_of_use"
-    t.boolean "automatic",    default: false
   end
 
   create_table "equipment", force: :cascade do |t|
@@ -341,22 +338,22 @@ ActiveRecord::Schema.define(version: 20170726142452) do
     t.integer  "category_id"
     t.integer  "model_id"
     t.boolean  "is_serialized"
-    t.string   "number",                                                null: false
+    t.string   "number",                                                          null: false
     t.string   "name"
     t.string   "slug"
     t.text     "description"
-    t.decimal  "price",         precision: 10, scale: 2
-    t.decimal  "sale_price",    precision: 10, scale: 2
-    t.decimal  "cost_price",    precision: 10, scale: 2
+    t.decimal  "price",                   precision: 10, scale: 2
+    t.decimal  "sale_price",              precision: 10, scale: 2
+    t.decimal  "cost_price",              precision: 10, scale: 2
     t.float    "weight"
     t.float    "height"
     t.float    "width"
     t.float    "length"
-    t.datetime "created_at",                                            null: false
-    t.datetime "updated_at",                                            null: false
+    t.datetime "created_at",                                                      null: false
+    t.datetime "updated_at",                                                      null: false
     t.integer  "brand_id"
-    t.boolean  "active",                                 default: true, null: false
-    t.decimal  "list_price",    precision: 10, scale: 2
+    t.boolean  "active",                                           default: true, null: false
+    t.decimal  "list_price",              precision: 10, scale: 2
     t.boolean  "green_indicator"
     t.boolean  "recycle_indicator"
     t.boolean  "small_package_indicator"
@@ -604,7 +601,6 @@ ActiveRecord::Schema.define(version: 20170726142452) do
     t.integer  "quantity_received"
     t.datetime "date"
     t.integer  "bin_id"
-    t.integer  "item_id"
   end
 
   create_table "purchase_order_line_items", force: :cascade do |t|

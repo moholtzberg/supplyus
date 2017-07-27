@@ -1,5 +1,6 @@
 class MyAccount::CreditCardsController < ApplicationController
   layout 'shop'
+  before_filter :find_categories
   skip_before_filter :check_authorization
 
   def new
@@ -34,6 +35,10 @@ class MyAccount::CreditCardsController < ApplicationController
   def index
     authorize! :read, CreditCard
     @credit_cards = current_user.account.main_service.credit_cards
+  end
+  
+  def find_categories
+     @menu = Category.is_parent.is_active.show_in_menu
   end
 
   def credit_card_params

@@ -72,3 +72,8 @@ gem "bullet", :group => "development"
 gem 'quiet_assets', '~> 1.1', group: :development
 gem "letter_opener", :group => :development
 gem 'raindrops', '~> 0.15.0'
+
+
+gem 'bootstrap-select-rails'
+gem 'state_machines'
+gem 'state_machines-activerecord'
