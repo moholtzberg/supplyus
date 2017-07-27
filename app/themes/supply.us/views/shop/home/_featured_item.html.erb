@@ -1,0 +1,49 @@
+<!-- item -->
+<div class="shop-item nomargin col-lg-2 col-sm-4">
+	
+	<div class="thumbnail">
+		
+		<!-- product image(s) -->
+		<a class="shop-item-image" href="shop-single-left.html">
+			<%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/#{item.default_image_path}", :class => "media-object", :height => "450", :width => "300" %>
+		</a>
+		<!-- /product image(s) -->
+		
+	</div>
+	
+	<div class="shop-item-summary text-center">
+		<h2><%= item.name %></h2>
+		
+		<!-- rating -->
+		<div class="shop-item-rating-line">
+			<div class="rating rating-4 size-13"><!-- rating-0 ... rating-5 --></div>
+		</div>
+		<!-- /rating -->
+		
+		<!-- price -->
+		<div class="shop-item-price">
+			<% if current_user and current_user.has_account and item.actual_price(current_user.account.id).to_f <= item.price.to_f %>
+				<span class="line-through"><%= number_to_currency(item.price) %></span>
+				<%= number_to_currency(item.actual_price(current_user.account.id)) %>
+			<% else %>
+				<%= number_to_currency(item.price) %>
+			<% end %>
+		</div>
+		<!-- /price -->
+		
+	</div>
+	
+	<!-- buttons -->
+	<%= form_for @cart, url: add_to_cart_path, :class => "form-inline", :remote => true do |f| %>
+		<%= f.hidden_field :item_id, :value => item.id %>
+		<%= f.hidden_field :quantity, :value => 1 %>
+		<div class="shop-item-buttons text-center">
+			<%= f.button :submit, :class => "btn btn-primary btn-sm btn-block" do %>
+				<i class='fa fa-cart-plus'></i> Add to Cart
+			<% end %>
+		</div>
+	<% end %>
+	<!-- /buttons -->
+	
+</div>
+<!-- /item -->

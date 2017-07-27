@@ -25,17 +25,22 @@
 		<%= f.text_field :category_name, :class => "form-control", data: {autocomplete_source: categories_path} %>
 	</div>
 	
-	<div id="price" class="col-md-4">
+	<div id="list_price" class="col-md-3">
+		<%= f.label :list_price, :class => "control-label" %>
+		<%= f.text_field :list_price, :class => "form-control" %>
+	</div>
+	
+	<div id="price" class="col-md-3">
 		<%= f.label :price, :class => "control-label" %>
 		<%= f.text_field :price, :class => "form-control" %>
 	</div>
 	
-	<div id="cost_price" class="col-md-4">
+	<div id="cost_price" class="col-md-3">
 		<%= f.label :cost_price, :class => "control-label" %>
 		<%= f.text_field :cost_price, :class => "form-control" %>
 	</div>
 	
-	<div id="sale_price" class="col-md-4">
+	<div id="sale_price" class="col-md-3">
 		<%= f.label :sale_price, :class => "control-label" %>
 		<%= f.text_field :sale_price, :class => "form-control" %>
 	</div>

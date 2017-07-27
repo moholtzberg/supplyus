@@ -98,7 +98,6 @@ class MyAccount::SubscriptionsController < ApplicationController
     end
   end
   
-  
   def find_categories
      @menu = Category.is_parent.is_active.show_in_menu
   end

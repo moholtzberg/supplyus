@@ -1,0 +1,46 @@
+<div class="col-lg-3 col-md-3 col-sm-3 col-lg-pull-9 col-md-pull-9 col-sm-pull-9">
+
+	<!-- CATEGORIES -->
+	<% if items.facet(:specs) and items.facet(:specs).rows.count > 0 %>
+	
+		
+	<div class="side-nav margin-bottom-60">
+		
+		<div class="side-nav-head">
+			<button class="fa fa-bars"></button>
+			<h4>CATEGORIES</h4>
+		</div>
+
+		<ul class="list-group list-group-bordered list-group-noicon uppercase">
+			<% Item.dynamic_facets(items.facet(:specs)).each do |prop_name,val_hash| %>
+			<% if val_hash.values.size > 1 %>
+			
+			<li class="list-group-item">
+				<a class="dropdown-toggle" href="#<%= prop_name.gsub(/[^\w-]/, '') %>_filter"><%= prop_name %></a>
+				<ul id="<%= prop_name.gsub(/[^\w-]/, '') %>_filter">
+					<% val_hash.each do |val_name,count| %>
+					
+						<% if val_name %>
+						<li>
+							<% if params[:specs].blank? || !params[:specs].include?("#{prop_name}|#{val_name}") %>
+								<%= link_to params.merge(:specs => params[:specs].to_a + ["#{prop_name}|#{val_name}"]) do %>
+									<span class="size-11 text-muted pull-right">(<%= count %>)</span> <%= val_name %></a></li>
+								<% end %>
+							<% else %>
+								<strong><%= val_name %></strong> (<%# link_to "remove", :specs params[:specs].to_a - ["#{prop_name}|#{val_name}"] %>)
+							<% end %>
+						</li>
+						<% end %>
+					
+					<% end %>
+				</ul>
+			</li>
+			<% end %>
+			<% end %>
+		</ul>
+	</div>
+	
+	<% end %>
+	<!-- /CATEGORIES -->
+	
+</div>

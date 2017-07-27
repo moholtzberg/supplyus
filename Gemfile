@@ -1,5 +1,4 @@
 source 'https://rubygems.org'
-
 gem 'rails', '4.2.3'
 
 gem 'sqlite3', group: :development
@@ -20,7 +19,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # gem 'searchkick'
 # gem 'ransack'
 gem 'progress_bar'
-gem 'sunspot_rails'
+gem 'sunspot_rails', '2.2.5'
 gem 'sunspot_solr', :group => "development"
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
@@ -34,7 +33,7 @@ gem 'devise'
 gem 'simple_token_authentication', '~> 1.0'
 gem "recaptcha", require: "recaptcha/rails"
 gem 'roo'
-gem 'will_paginate-bootstrap'
+gem 'will_paginate-bootstrap', :github => "cd-rum/will_paginate-bootstrap"
 gem 'twitter-typeahead-rails', :git => "git://github.com/yourabi/twitter-typeahead-rails.git"
 gem 'best_in_place'
 gem 'rack-mini-profiler'
@@ -73,7 +72,4 @@ gem 'quiet_assets', '~> 1.1', group: :development
 gem "letter_opener", :group => :development
 gem 'raindrops', '~> 0.15.0'
 
-
-gem 'bootstrap-select-rails'
-gem 'state_machines'
-gem 'state_machines-activerecord'
+gem 'themes_on_rails'

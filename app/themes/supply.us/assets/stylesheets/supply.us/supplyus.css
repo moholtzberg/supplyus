@@ -1,0 +1,6 @@
+.shop-item > .thumbnail {
+	border: none;
+}
+.shop-item-summary > h2 {
+	height: 110px;
+}

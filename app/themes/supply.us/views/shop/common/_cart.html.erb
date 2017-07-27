@@ -1,0 +1,36 @@
+<a href="#">
+	<span class="badge badge-aqua btn-xs badge-corner">
+		<% if @cart.nil? or @cart.empty? %>
+		<% else %>
+			<%= @cart.item_count.to_i %>
+		<% end %>
+	</span>
+	<i class="fa fa-shopping-cart"></i> 
+</a>
+<div class="quick-cart-box">
+	<h4>Shop Cart</h4>
+
+	<div class="quick-cart-wrapper">
+		<% if @cart.item_count.to_i > 0 %>
+			<% @cart.contents.active.each do |line| %>
+				<a href="#">
+					<%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/#{line.item.default_image_path}", :class => "media-object", :height => "45", :width => "45" %>
+					<h6><span><%= line.actual_quantity %>x</span> <%= line.item.name %></h6>
+					<small><%= line.price %></small>
+				</a>
+			<% end %>
+		<% else %>
+			<a class="text-center" href="#">
+				<h6>0 ITEMS ON YOUR CART</h6>
+			</a>
+		<% end %>
+	</div>
+
+	<!-- quick cart footer -->
+	<div class="quick-cart-footer clearfix">
+		<%= link_to cart_path, :class => "btn btn-primary btn-xs pull-right" do %>VIEW CART<% end %>
+		<span class="pull-left"><strong>TOTAL:</strong> <%= @cart.sub_total %></span>
+	</div>
+	<!-- /quick cart footer -->
+
+</div>

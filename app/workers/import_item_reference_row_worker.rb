@@ -1,5 +1,3 @@
-require 'sidekiq-scheduler'
-
 class ImportItemReferenceRowWorker
   
   include Sidekiq::Worker
