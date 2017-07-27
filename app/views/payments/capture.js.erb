@@ -1,0 +1,5 @@
+<% if @payment.errors.any? %>
+  alert("<%= @payment.errors.full_messages.join(', ') %>");
+<% else %>
+  $("tr[data-payment-id='<%= @payment.id %>']").replaceWith("<%= j render partial: 'payment', locals: {payment: @payment} %>")
+<% end %>

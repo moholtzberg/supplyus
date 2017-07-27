@@ -1,0 +1,24 @@
+<tr data-item-list-id="<%= subscription.id %>">
+  <td><%= subscription.item.name %></td>
+  <td><%= subscription.item.prices.select{|p| p._type == 'Recurring'}[0].price %></td>
+  <td><%= subscription.quantity %></td>
+  <td><%= subscription.frequency %></td>
+  <td class="hidden-xs"><%= subscription.ship_to_address.address_1 %></td>
+  <td class="hidden-xs"><%= subscription.bill_to_address.address_1 %></td>
+  <td class="hidden-xs"><%= subscription.payment_method %></td>
+  <td class="hidden-xs"><%= "#{subscription.credit_card.card_type}: **** #{subscription.credit_card.last_4}" if subscription.credit_card %></td>
+  <td><%= subscription.state %></td>
+  <td class="text-center">
+    <div class="dropdown">
+      <button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+        <li><%= link_to("Edit", edit_my_account_subscription_path(subscription), :remote => true)  %></li>
+        <% if subscription.orders.size >= 3 %>
+          <li><%= link_to("Delete", my_account_subscription_path(subscription), :method => "delete", :remote => true)  %></li>
+        <% end %>        
+      </ul>
+    </div>
+  </td>
+</tr>

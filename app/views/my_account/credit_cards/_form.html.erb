@@ -1,0 +1,74 @@
+<div id="credit_card" class="panel panel-default bootstrap-basic">
+  
+  <input type="hidden" id="payment_method" name="payment_method" value="credit_card" />
+  <input type="hidden" id="credit_card_token" name="credit_card_token" value="<%= @credit_card.service_card_id %>" />
+  <input type="hidden" id="order_id" name="order_id" value="" />
+  
+  <div class="panel-heading">
+    <h3 class="panel-title">Enter Card Details</h3>
+  </div>
+  
+  <div class="panel-body">
+    
+    <div class="row">
+      <div class="form-group col-md-12">
+        <label class="control-label col-xs-12" style="text-align: left">Cardholder Name</label>
+        <div class="col-xs-12">
+          <input type="text" id="cardholder_name" name="cardholder_name" class="form-control" placeholder="Name on Card" value="<%= @credit_card.cardholder_name %>"/>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="form-group col-xs-12">
+        <label class="control-label col-xs-12" style="text-align: left">Card Number</label>
+        <!--  Hosted Fields div container -->
+        <!-- <div class="form-control" id="card-number"></div> -->
+        <span class="helper-text"></span>
+        <div class="col-xs-12">
+          <%= number_field_tag 'number', '', class: 'form-control', disabled: ['edit', 'update'].include?(params[:action]), placeholder: "Enter Credit Card Number" %>
+        </div>
+      </div>        
+    </div>
+    
+    <div class="row">
+      <div class="form-group col-xs-6">
+        <label class="control-label col-xs-12" style="text-align: left">Expiration Date</label>
+        <div class="col-xs-6">
+          <!--  Hosted Fields div container -->
+          <!-- <div class="form-control" id="expiration-month"></div> -->
+          <!-- <select id="expiration_month" name="expiration_month" class="form-control">
+            <% Date::MONTHNAMES.compact.each do |month| %>
+            <option value="<%= Date::MONTHNAMES.index(month) %>"><%= month %></option>
+            <% end %>
+          </select> -->
+          <input type="number" id="expiration_month" name="expiration_month" class="form-control" placeholder="MM" value="<%= @credit_card.expiration.split('/')[0] if @credit_card.expiration %>"/>
+        </div>
+        
+        <div class="col-xs-6">
+          <!--  Hosted Fields div container -->
+          <!-- <div class="form-control" id="expiration-year"></div> -->
+          <!-- <select id="expiration_year" name="expiration_year" class="form-control">
+            <option value="2016">2016</option>
+            <option value="2017">2017</option>
+            <option value="2018">2018</option>
+            <option value="2019">2019</option>
+            <option value="2020">2020</option>
+            <option value="2021">2021</option>
+            <option value="2022">2022</option>
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+          </select>
+            -->
+          <input type="number" id="expiration_year" name="expiration_year" class="form-control" placeholder="YYYY" value="<%= @credit_card.expiration.split('/')[1] if @credit_card.expiration %>"/>
+        </div>              
+      </div>
+      <div class="form-group col-xs-6">
+        <label class="control-label">Security Code</label>
+        <!--  Hosted Fields div container -->
+        <!-- <div class="form-control" id="cvv"></div> -->
+        <%= text_field_tag 'cvv', '', class: 'form-control', placeholder: 'Enter CVV', disabled: ['edit', 'update'].include?(params[:action]) %>
+      </div>
+    </div>
+  </div>
+</div>

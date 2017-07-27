@@ -1,0 +1,24 @@
+<% content_for :title do %>Credit Cards<% end %>
+
+<div class="page-header">
+  <h1>Credit Cards</h1>
+</div>
+
+<div class="row col-md-12">
+  <table id="credit_cards" class="table table-bordered table-condensed table-striped">
+
+    <tr>
+      <td colspan="5"><%= link_to "Add Credit Card", new_my_account_credit_card_path(credit_card: {account_payment_service_id: current_user.account.main_service.id}), class: "btn btn-primary btn-block btn-xs", remote: true %>
+    </tr>
+
+    <tr>
+      <th>Card Type</th>
+      <th>Cardholder Name</th>
+      <th>Expiration</th>
+      <th>Last 4 digits</th>
+      <th></th>
+    </tr>
+    
+    <%= render partial: 'credit_card', collection: @credit_cards %>
+  </table>
+</div>

@@ -1,0 +1,16 @@
+<h3>Subscriptions</h3>
+<table class="table table-bordered">
+  <tr>
+    <th>Item</th>
+    <th>Item Price</th>
+    <th>Quantity</th>
+    <th>Frequency</th>
+    <th class="hidden-xs">Ship To Address</th>
+    <th class="hidden-xs">Bill To Address</th>
+    <th class="hidden-xs">Payment Method</th>
+    <th class="hidden-xs">Credit Card</th>
+    <th>State</th>
+    <th>&nbsp;</th>
+  </tr>
+  <%= render partial: 'my_account/subscriptions/subscription', collection: @subscriptions %>
+</table>
