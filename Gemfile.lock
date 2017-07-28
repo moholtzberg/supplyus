@@ -77,7 +77,6 @@ GEM
     bootstrap-sass (3.3.5.1)
       autoprefixer-rails (>= 5.0.0.1)
       sass (>= 3.3.0)
-    bootstrap-select-rails (1.12.1)
     braintree (2.47.0)
       builder (>= 2.0.0)
     builder (3.2.2)
@@ -359,7 +358,6 @@ DEPENDENCIES
   aws-sdk (< 2.0)
   best_in_place
   bootstrap-sass (~> 3.3.5)
-  bootstrap-select-rails
   braintree
   bullet
   byebug
