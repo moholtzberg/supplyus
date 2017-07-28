@@ -1,21 +1,22 @@
 <fieldset>	
 
 	<div id="name" class="col-md-12">
-		<%= f.label :payment_method, :class => "control-label" %>
-		<%= f.select :payment_method, [["Check", 1], ["Credit Card", 2]], {}, {:class => "form-control"}%>
+		<%= f.label :payment_type, :class => "control-label" %>
+		<%= f.select :payment_type, ['CreditCardPayment', 'CheckPayment'], {}, {:class => "form-control"}%>
 	</div>
 	
 	<script>
-	jQuery(function(){
-		$("select#payment_payment_method").change(function(){
-			console.log()
-			if ($("select#payment_payment_method option:selected").text() == "Credit Card") {
-				$("#credit_card_info").show();
-			} else {
-				$("#credit_card_info").hide();
-			}
+		$(function() {
+			$('#payment_payment_type').change(function() {
+				if ($(this).val() == "CreditCardPayment") {
+					$('#payment_credit_card_id').prop('disabled', false);
+					$('#payment_check_number').prop('disabled', true);
+				} else {
+					$('#payment_credit_card_id').prop('disabled', true);
+					$('#payment_check_number').prop('disabled', false);
+				}
+			})
 		})
-	});
 	</script>
 
 	<div id="address" class="col-md-12">
@@ -28,13 +29,14 @@
 		<%= f.text_field :account_name, :class => "form-control", data: {autocomplete_source: accounts_path} %>
 	</div>
 	
-	
-	<div id="applications">
+	<div id="credit_card_id" class="col-md-12">
+		<%= f.label :credit_card, :class => "control-label" %>
+		<%= f.select :credit_card_id, [], {}, :class => "form-control", disabled: @payment.payment_type != 'CreditCardPayment' %>
 	</div>
 	
 	<div id="check_number" class="col-md-6">
 		<%= f.label :check_number, :class => "control-label" %>
-		<%= f.text_field :check_number, :class => "form-control" %>
+		<%= f.text_field :check_number, :class => "form-control", disabled: @payment.payment_type != 'CheckPayment' %>
 	</div>
 	
 	<div id="check_number" class="col-md-6">
@@ -46,7 +48,17 @@
 	<script>
 	jQuery(function() {
 		return $('#payment_account_name').autocomplete({
-			source: $('#payment_account_name').data('autocomplete-source')
+			source: $('#payment_account_name').data('autocomplete-source'),
+      select: function( event, ui ) {
+				var $el = $("#payment_credit_card_id");
+				$el.empty(); // remove old options
+				$.each(ui.item.credit_cards, function(key,value) {
+				  $el.append($("<option></option>")
+				     .attr("value", value).text(key));
+				});
+				$("#payment_account_name" ).val(ui.item.label);
+        return false;
+      }
 		})
 	});
 	
