@@ -32,7 +32,7 @@
 
 		<div id="appliable_type" class="col-md-6">
 			<%= f.label :appliable_type, class: "control-label" %>
-			<%= f.select :appliable_type, ['Account', 'Group'], {include_blank: true}, class: "form-control" %>
+			<%= f.select :appliable_type, ['Account', 'Group'], {include_blank: true, default: nil}, class: "form-control" %>
 		</div>
 
 		<div id="appliable_id" class="col-md-6">

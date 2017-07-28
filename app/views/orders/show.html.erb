@@ -128,14 +128,30 @@
 		</tr>
 		
 		<tr>
-			<td colspan="6">Payments</td>
-			<td colspan="3" class="text-center"><strong> <%= @order.payments.blank? ? number_to_currency(0) : number_to_currency(@order.payments_total.to_d) %></strong></td>
-		</tr>
-		<tr>
 			<td colspan="6">Balance Due</th>
 			<td colspan="3" class="text-center"><strong> <%=  number_to_currency(@order.balance_due) %></strong></td>
 		</tr>
 		
+	</table>
+	
+	<table class="table table-bordered table-condensed">
+		
+		<tr class="line_items">
+			<th class="bg-primary">Date</th>
+			<th class="bg-primary">Payment Type</th>
+			<th class="bg-primary">Payent Amount</th>
+			<th class="bg-primary">Authorization Code</th>
+			<th class="bg-primary">Completed?</th>
+		</tr>
+		<% @order.payments.each do |payment| %>
+			<tr class="line_items">
+				<td><%= payment.created_at.to_date %></td>
+				<td><%= payment.payment_type %></td>
+				<td><%= payment.amount %></td>
+				<td><%= link_to payment.number, payment_path(payment) %></td>
+				<td><%= payment.completed? %></td>
+			</tr>
+		<% end %>
 	</table>
 	
 	<table class="table table-bordered table-condensed">

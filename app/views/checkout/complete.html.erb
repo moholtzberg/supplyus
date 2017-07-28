@@ -1,0 +1,41 @@
+<table class="table table-bordered">
+  <div id="checkout_errors" class="alert alert-success alert-dismissible">
+    Thank you for your order!
+  </div>  
+  <tr>
+    <th width="5%" class="text-center"></th>
+    <th>Item Number/Item Name</th>
+    <th width="10%" class="text-center">Quantity</th>
+    <th width="10%" class="text-center">Price</th>
+    <th width="10%" class="text-center">Subtotal</th>
+  </tr>
+  
+  <% @cart.contents.active.each_with_index do |li, idx| %>
+  <tr>
+    <td class="text-center"><%= li.order_line_number %></td>
+    <td><strong><%= li.item.number %></strong> - <%= li.item.name %></td>
+    <td class="text-center">
+      <%= li.quantity.to_i %>
+    </td>
+    <td class="text-center"><%= number_to_currency(li.price) %></td>
+    <td class="text-center"><%= number_to_currency(li.sub_total) %></td>
+  <tr>
+  <% end %>
+  
+  <tr>
+    <td colspan="3">Sub Total</td>
+    <td colspan="2" class="text-center"><strong><%= number_to_currency(@cart.sub_total) %></strong></td>
+  </tr>
+  <tr>
+    <td colspan="3">Sales Tax</td>
+    <td colspan="2" class="text-center"><strong><%= number_to_currency(@cart.tax_total) %></strong></td>
+  </tr>
+  <tr>
+    <td colspan="3"><%= @checkout.order_shipping_method.name %> - Shipping</td>
+    <td colspan="2" class="text-center"><strong> <%= number_to_currency(@checkout.shipping_total) %></strong></td>
+  </tr>
+  <tr id="order_total">
+    <td colspan="3">Order Total</td>
+    <td colspan="2" class="text-center"><strong> <%= number_to_currency(@checkout.total) %></strong></td>
+  </tr>
+</table>

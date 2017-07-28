@@ -16,6 +16,7 @@
 //= require jquery.tokeninput
 //= require best_in_place
 //= require bootstrap
+//= require bootstrap-select.min
 //= require turbolinks
 //= require_tree .
 
