@@ -34,26 +34,22 @@ class BrandImport
     spreadsheet = CSV.read(file.path, :headers => true, :encoding => 'ISO-8859-1')
     # header = spreadsheet[0]
     spreadsheet.map do |row|
+      puts row["name"]
       unless Brand.find_by(:prefix => row["prefix"])
         item = Brand.new
         item.attributes = row.to_hash.slice(*Brand.attribute_names())
+        item.name = row["name"]
+        item.prefix = row["prefix"]
       else
         item = Brand.find_by(:prefix => row["prefix"])
         id = item.id
         item.attributes = row.to_hash.slice(*Brand.attribute_names())
+        item.name = row["name"]
+        item.prefix = row["prefix"]
         item.id = id
       end
       puts "----> #{item.inspect}"
       item
-    end
-  end
-
-  def open_spreadsheet
-    case File.extname(file.original_filename)
-    when ".csv" then Roo::Spreadsheet.open(file.path, csv_options: {encoding: Encoding::ISO_8859_1})
-    when ".xls" then Roo::Excel.new(file.path, nil, :ignore)
-    when ".xlsx" then Roo::Excelx.new(file.path, nil, :ignore)
-    else raise "Unknown file type: #{file.original_filename}"
     end
   end
 

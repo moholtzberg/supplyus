@@ -5,6 +5,8 @@ class ShopController < ApplicationController
   
   before_action :authenticate_user!, :only => [:my_account, :my_items, :view_account, :view_order, :view_invoice, :pay_invoice, :edit_account]
   
+  # theme "supply.us"
+  
   def check_authorization
     
   end

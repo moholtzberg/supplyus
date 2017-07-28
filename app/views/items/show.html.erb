@@ -11,7 +11,7 @@
 		</tr>
 		
 		<tr>
-			<td width="50%" rowspan="<%= @item.item_properties.size + 1 %>">
+			<td width="50%" rowspan="<%= @item.item_properties.size + 7 %>">
 				
 				<div class="col-md-3">
 					<% @item.images.each do |img| %>
@@ -38,9 +38,35 @@
 		</tr>
 		
 		<tr>
+			<th width="25%">Small Package Indicator</th>
+			<th width="25%"><span class="label label-<%= (@item.small_package_indicator == true) ? "success" : "danger"  %>"><%= (@item.small_package_indicator == true) ? "Yes" : "No" %></span></th>
+		</tr>
+		
+		<tr>
+			<th width="25%">Green Indicator</th>
+			<th width="25%"><span class="label label-<%= (@item.green_indicator == true) ? "success" : "danger"  %>"><%= (@item.green_indicator == true) ? "Yes" : "No" %></span></th>
+		</tr>
+		
+		<tr>
+			<th width="25%">Recycle Indicator</th>
+			<th width="25%"><span class="label label-<%= (@item.recycle_indicator == true) ? "success" : "danger"  %>"><%= (@item.recycle_indicator == true) ? "Yes" : "No" %></span></th>
+		</tr>
+		
+		<tr>
+			<th width="25%">Assembly Code</th>
+			<th width="25%"><%= @item.assembly_code %></th>
+		</tr>
+		
+		<tr>
+			<th width="25%">Non Returnable Code</th>
+			<th width="25%"><%= @item.non_returnable_code %></th>
+		</tr>
+		
+		<tr>
 			<th width="25%">Key</th>
 			<th width="25%">Value</th>
 		</tr>	
+		
 		<% @item.item_properties.each  do |ip| %>
 		<tr>
 			<td><%= ip.key %></td>
@@ -50,8 +76,6 @@
 			
 			</td>
 		</tr>
-
-
 		
 	</table>
 	
@@ -60,10 +84,18 @@
 		<tr>
 			<th width="10%">Number</th>
 			<th width="50%">Name</th>
+<<<<<<< HEAD
 			<th width"10%">Slug</th>
 			<th width"10%">List Price</th>
 			<th width"10%">Sale Price</th>
 			<th width"10%">Cost</th>
+=======
+			<th width"9%">Slug</th>
+			<th width"9%">List Price</th>
+			<th width"9%">Price</th>
+			<th width"9%">Sale Price</th>
+			<th width"9%">Cost</th>
+>>>>>>> a5a18a857de2d0880c14aae29ccadeee161fddcb
 		</tr>
 		
 		<tr>
@@ -71,11 +103,15 @@
 			<td><%= @item.name %></td>
 			<td><%= @item.slug %></td>
 			<td><%= number_to_currency(@item.list_price) %></td>
+<<<<<<< HEAD
+=======
+			<td><%= number_to_currency(@item.price) %></td>
+>>>>>>> a5a18a857de2d0880c14aae29ccadeee161fddcb
 			<td><%= number_to_currency(@item.sale_price) %></td>
 			<td><%= number_to_currency(@item.cost_price) %></td>
 		</tr>
 		<tr>
-			<td colspan="6"><%= best_in_place @item, :description %></td>
+			<td colspan="7"><%= best_in_place @item, :description %></td>
 		<tr>
 		
 	</table>
