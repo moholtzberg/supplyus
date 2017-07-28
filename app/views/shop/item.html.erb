@@ -64,6 +64,11 @@
 				</div>
 			<% end %>
 		</div>
+		<div class="col-md-4 bottom-rule">
+			<% if @item.prices.recurring.any? %>
+				<%= link_to "Subscribe (#{number_to_currency(@item.prices.select{|p| p._type == 'Recurring'}[0].price)})", new_my_account_subscription_path(subscription: {item_id: @item.id, account_id: current_user.account_id, state: 'new'}), remote: true, class: "btn btn-primary btn-sm btn-block margin-top margin-bottom" %>
+			<% end %>
+		</div>
 	</div><!-- end row -->
 
 	<hr/>
@@ -98,10 +103,7 @@
 		</script>
 		
 		<div class="col-md-4">
-			<button type="submit" class="btn btn-lg btn-brand btn-full-width margin-bottom">Add to Cart</button>
-			<% if @item.prices.recurring.any? %>
-				<input type="submit" name="commit" value="Subscribe (<%= number_to_currency(@item.prices.recurring.first.price) %>)" class="btn btn-primary btn-lg">
-			<% end %>
+			<button type="submit" class="btn btn-lg btn-brand btn-full-width">Add to Cart</button>
 		</div>
 		<% end %>
 		<div class="col-md-3">
