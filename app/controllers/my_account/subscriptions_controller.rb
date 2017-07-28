@@ -50,11 +50,8 @@ class MyAccount::SubscriptionsController < ApplicationController
       @order = SubscriptionServices::GenerateOrderFromSubscription.new.call(@subscription)
       @payment = SubscriptionServices::GeneratePayment.new.call(@order, @card)
       if @payment.authorize
-        Subscription.transaction do
-          @subscription.activate
-          @subscription.save
-          @order.save
-        end
+        @subscription.activate
+        @order.order_payment_applications.first.update_attribute(:applied_amount, @payment.amount)
         redirect_to my_account_subscriptions_path
       else
         render "details"
