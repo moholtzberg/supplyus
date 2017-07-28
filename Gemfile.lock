@@ -77,15 +77,14 @@ GEM
     bootstrap-sass (3.3.5.1)
       autoprefixer-rails (>= 5.0.0.1)
       sass (>= 3.3.0)
+    bootstrap-select-rails (1.12.1)
     braintree (2.47.0)
       builder (>= 2.0.0)
     builder (3.2.2)
     bullet (5.0.0)
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.9.0)
-    byebug (2.7.0)
-      columnize (~> 0.3)
-      debugger-linecache (~> 1.2)
+    byebug (9.0.6)
     cancancan (1.15.0)
     climate_control (0.0.3)
       activesupport (>= 3.0)
@@ -99,12 +98,10 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.9.1.1)
-    columnize (0.9.0)
     concurrent-ruby (1.0.1)
     connection_pool (2.2.0)
     dalli (2.7.6)
     debug_inspector (0.0.2)
-    debugger-linecache (1.2.0)
     devise (3.5.2)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -195,13 +192,13 @@ GEM
     progress_bar (1.0.5)
       highline (~> 1.6)
       options (~> 2.3.0)
-    pry (0.9.12.6)
-      coderay (~> 1.0)
-      method_source (~> 0.8)
+    pry (0.10.4)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
       slop (~> 3.4)
-    pry-byebug (1.3.2)
-      byebug (~> 2.7)
-      pry (~> 0.9.12)
+    pry-byebug (3.4.2)
+      byebug (~> 9.0)
+      pry (~> 0.10)
     qbo_api (1.1.0)
       faraday
       faraday-detailed_logger
@@ -211,8 +208,10 @@ GEM
     quiet_assets (1.1.0)
       railties (>= 3.1, < 5.0)
     rack (1.6.4)
-    rack-mini-profiler (0.9.8)
-      rack (>= 1.1.3)
+    rack-mini-profiler (0.10.2)
+      rack (>= 1.2.0)
+    rack-protection (1.5.3)
+      rack
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (4.2.3)
@@ -291,6 +290,10 @@ GEM
       actionmailer (>= 3.2.6, < 6)
       actionpack (>= 3.2.6, < 6)
       devise (>= 3.2, < 6)
+    sinatra (1.4.7)
+      rack (~> 1.5)
+      rack-protection (~> 1.4)
+      tilt (>= 1.3, < 3)
     slop (3.6.0)
     sprockets (3.4.0)
       rack (> 1, < 3)
@@ -299,6 +302,13 @@ GEM
       activesupport (>= 3.0)
       sprockets (>= 2.8, < 4.0)
     sqlite3 (1.3.10)
+    state_machines (0.5.0)
+    state_machines-activemodel (0.5.0)
+      activemodel (>= 4.1, < 5.2)
+      state_machines (>= 0.5.0)
+    state_machines-activerecord (0.5.0)
+      activerecord (>= 4.1, < 5.2)
+      state_machines-activemodel (>= 0.5.0)
     stripe (1.29.1)
       json (~> 1.8.1)
       rest-client (~> 1.4)
@@ -349,6 +359,7 @@ DEPENDENCIES
   aws-sdk (< 2.0)
   best_in_place
   bootstrap-sass (~> 3.3.5)
+  bootstrap-select-rails
   braintree
   bullet
   byebug
@@ -386,7 +397,10 @@ DEPENDENCIES
   sidekiq-scheduler
   simple_form (~> 3.2, >= 3.2.1)
   simple_token_authentication (~> 1.0)
+  sinatra
   sqlite3
+  state_machines
+  state_machines-activerecord
   stripe
   sunspot_rails
   sunspot_solr
