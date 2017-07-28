@@ -1,6 +1,7 @@
 class Price < ActiveRecord::Base
 
   PRICE_TYPES = ['Default', 'Sale', 'Bulk', 'Recurring']
+  APPLIABLE_TYPES = ['User', 'Group']
 
   belongs_to :item
   belongs_to :appliable, polymorphic: true
@@ -9,6 +10,10 @@ class Price < ActiveRecord::Base
   validates :price, presence: true, numericality: { greater_than: 0 }
   validates :min_qty, :max_qty, presence: true, if: Proc.new { |price| price._type == 'Bulk' }
   validates :min_qty, :max_qty, absence: true, if: Proc.new { |price| price._type != 'Bulk' }
+  validates :appliable_id, numericality: { greater_than: 0 }, allow_nil: true
+  validates :appliable_type, inclusion: { in: APPLIABLE_TYPES }, allow_nil: true
+
+  before_validation :set_blank_to_nil
 
   default_scope { where('(start_date < ? OR start_date IS NULL) AND (end_date > ? OR end_date IS NULL)', Date.today, Date.today)}
   scope :by_account, -> (account_id) { where('(appliable_type = ? AND appliable_id = ?) OR (appliable_type = ? AND appliable_id = ?)', 'Account', account_id, 'Group', Account.find(account_id).group_id) }
@@ -21,4 +26,7 @@ class Price < ActiveRecord::Base
   scope :singular, -> () { where(_type: ['Default', 'Sale'])}
   scope :default, -> () { where(_type: 'Default') }
 
+  def set_blank_to_nil
+    self.appliable_type = nil if self.appliable_type == ''
+  end
 end
