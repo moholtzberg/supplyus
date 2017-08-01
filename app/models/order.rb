@@ -46,14 +46,42 @@ class Order < ActiveRecord::Base
   
   # after_commit :sync_with_quickbooks if :persisted
 
-  state_machine initial: :new do
-    event :hold do
-      transition any => :hold
+  state_machine initial: :incomplete do
+    event :submit do
+      transition :incomplete => :pending
     end
 
-    event :resume do
-      transition :hold => :active
+    event :cancel do
+      transition [:incomplete, :pending] => :canceled
     end
+
+    event :approve do
+      transition :pending => :awaiting_payment, unless: :terms_payment?
+      transition :pending => :awaiting_shipment, if: :terms_payment?
+    end
+
+    event :confirm_payment do
+      transition [:awaiting_payment, :partially_paid] => :awaiting_shipment, if: :paid
+      transition [:awaiting_payment, :partially_paid] => :partially_paid, unless: :paid
+    end
+
+    event :confirm_shipment do
+      transition [:awaiting_shipment, :partially_shipped] => :awaiting_fulfillment, if: -> (order) {order.shipped && order.terms_payment?}
+      transition [:awaiting_shipment, :partially_shipped] => :completed, if: -> (order) {order.shipped && !order.terms_payment?}
+      transition [:awaiting_shipment, :partially_shipped] => :partially_shipped, unless: :shipped
+    end
+
+    event :fulfill do
+      transition :awaiting_fulfillment => :fulfilled
+    end
+
+    event :finish do
+      transition :fulfilled => :completed
+    end
+  end
+
+  def terms_payment?
+    payments.pluck(:payment_type).uniq.size == 1 && payments.pluck(:payment_type).first == 'TermsPayment'
   end
 
   def account_name
