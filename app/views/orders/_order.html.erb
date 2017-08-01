@@ -27,23 +27,21 @@
 		</button>
 		<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
 			<li><%= link_to("View", order_path(order.id))  %></li>
-			<% unless order.locked %>
-			<li><%= link_to("Edit", edit_order_path(order.id)) %></li>
-			<li><%= link_to("Lock", lock_order_path(order.id), :remote => true, :method => "put") %></li>
-			<li><%= link_to("Toggle Credit Hold", credit_hold_order_path(order.id), :remote => true, :method => "put")  %></li>
-			<% else %>
-				
-				<% unless order.shipped %>
-				<li><%= link_to("Ship", new_order_shipment_path(order.id))  %></li>
-				<li><%= link_to("Toggle Credit Hold", credit_hold_order_path(order.id), :remote => true, :method => "put")  %></li>
+			<% if order.locked? %>
+				<% if !order.shipped %>
+					<li><%= link_to("Ship", new_order_shipment_path(order.id))  %></li>
+					<li><%= link_to("Toggle Credit Hold", credit_hold_order_path(order.id), :remote => true, :method => "put")  %></li>
 				<% end %>
-				
-				<% unless order.fulfilled %>
-				<li><%= link_to("Fulfill", new_order_invoice_path(order.id))  %></li>
-				<li><%= link_to("Resend Order Notification", resend_order_order_path(:id => order.id), :remote => true, :method => "put") %></li>
+				<% if order.fulfilled %>
+					<li><%= link_to("Resend Invoice Notification", resend_invoice_order_path(:id => order.id), :remote => true, :method => "put") %></li>
 				<% else %>
-				<li><%= link_to("Resend Invoice Notification", resend_invoice_order_path(:id => order.id), :remote => true, :method => "put") %></li>
+					<li><%= link_to("Fulfill", new_order_invoice_path(order.id))  %></li>
+					<li><%= link_to("Resend Order Notification", resend_order_order_path(:id => order.id), :remote => true, :method => "put") %></li>
 				<% end %>
+			<% else %>
+				<li><%= link_to("Edit", edit_order_path(order.id)) %></li>
+				<li><%= link_to("Lock", lock_order_path(order.id), :remote => true, :method => "put") %></li>
+				<li><%= link_to("Toggle Credit Hold", credit_hold_order_path(order.id), :remote => true, :method => "put")  %></li>
 			<% end %>
 		</ul>
 	</div>
