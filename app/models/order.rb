@@ -50,6 +50,14 @@ class Order < ActiveRecord::Base
       transition :incomplete => :pending
     end
 
+    event :failed_authorization do
+      transition :pending => :failed_authorization
+    end
+
+    event :passed_authorization do
+      transition :failed_authorization => :pending
+    end
+
     event :cancel do
       transition [:incomplete, :pending] => :canceled
     end

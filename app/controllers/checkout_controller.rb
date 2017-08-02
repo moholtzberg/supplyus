@@ -165,6 +165,7 @@ class CheckoutController < ApplicationController
     if c.save
       if c.complete
         c.submit
+        @cart.reload
         cookies.permanent.signed[:cart_id] = nil
         puts "GOING INTO THE MAILER"
         render 'complete'

@@ -7,5 +7,11 @@ class Shipment < ActiveRecord::Base
 
   accepts_nested_attributes_for :line_item_shipments
   accepts_nested_attributes_for :tracking_numbers
+
+  after_save :confirm_order_shipment
+
+  def confirm_order_shipment
+    orders.each(&:confirm_shipment)
+  end
   
 end

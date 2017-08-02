@@ -39,10 +39,10 @@ class Subscription < ActiveRecord::Base
   end
 
   def check_failed_payments
-    self.orders.where(state: 'hold').each do |order|
+    self.orders.where(state: :pending).each do |order|
       order.payments.where(success: false).each do |payment|
         if payment.authorize
-          order.resume
+          order.passed_authorization
         else
           OrderMailer.order_failed_authorization(order.id).deliver_later
           SubscriptionMailer.update_cc(self).devliver_later

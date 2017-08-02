@@ -132,7 +132,7 @@
 			
 			<div id="credit_card" class="panel panel-default bootstrap-basic <%= 'hidden' if @cards.any? %>">
 				
-				<input type="hidden" id="payment_method" name="payment_method" value="credit_card" />
+				<input type="hidden" id="payment_method" name="payment_method" value="<%= 'credit_card' if @cards.empty? %>" />
 				<input type="hidden" id="credit_card_token" name="credit_card_token" value="<%= @cards.first.try(:service_card_id) %>" />
 				<input type="hidden" id="order_id" name="order_id" value="<%= @checkout.id %>" />
 				

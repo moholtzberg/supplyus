@@ -46,6 +46,7 @@ class CreateOrdersForSubscriptions
         payment.save
         OrderPaymentApplication.create(payment: payment, order: order, applied_amount: payment.amount)
       else
+        order.failed_authorization
         OrderMailer.order_failed_authorization(order.id).deliver_later
         SubscriptionMailer.update_cc(subscription).devliver_later
       end

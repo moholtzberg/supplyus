@@ -59,7 +59,7 @@ class Payment < ActiveRecord::Base
   end
 
   def confirm_order_payment
-    orders.first.confirm_payment if orders.size == 1
+    orders.each(&:confirm_payment)
   end
   
 end
