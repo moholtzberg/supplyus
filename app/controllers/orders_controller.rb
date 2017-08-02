@@ -245,6 +245,20 @@ class OrdersController < ApplicationController
     @order.save
   end
   
+  def approve
+    authorize! :update, Order
+    @order_id = params[:id]
+    @order = Order.find_by(:id => @order_id)
+    @order.approve
+  end
+  
+  def cancel
+    authorize! :update, Order
+    @order_id = params[:id]
+    @order = Order.find_by(:id => @order_id)
+    @order.cancel
+  end
+  
   def credit_hold
     authorize! :update, Order
     @order_id = params[:id]

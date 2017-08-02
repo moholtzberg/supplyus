@@ -86,6 +86,8 @@ Rails.application.routes.draw do
           get :returnable_items
         end
         member do
+          put :approve
+          put :cancel
           put :lock
           put :resend_invoice
           post :resend_invoice_notification
@@ -102,7 +104,7 @@ Rails.application.routes.draw do
       resources :order_line_items
       resources :payments do
         member do
-          put :capture
+          put :finalize
         end
       end
       resources :payment_plans

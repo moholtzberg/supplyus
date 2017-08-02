@@ -65,10 +65,10 @@ class PaymentsController < ApplicationController
     end
   end
 
-  def capture
+  def finalize
     @payment = Payment.find(params[:id])
     authorize! :update, Payment
-    @payment.capture
+    @payment.finalize
   end
   
   private

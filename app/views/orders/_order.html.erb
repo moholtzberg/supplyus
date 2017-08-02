@@ -7,26 +7,18 @@
 <td class="hidden-xs"><%= number_to_currency(order.amount_fulfilled) %></td>
 <td><%= number_to_currency(order.balance_due) %></td>
 <td class="text-center hidden-xs"><%= order.completed_at.strftime("%m/%d/%y %I:%M %p") unless order.completed_at.nil? %></td>
-<td class="locked hidden-xs">
-	<% if order.locked %> 
-	<i class="fa fa-lock" aria-hidden="true"></i>
-	<% end %>
-	
-	<% if order.is_taxable? %>
-	<i class="fa fa-balance-scale" aria-hidden="true"></i>
-	<% end %>
-	
-	<% if order.credit_hold == true %> 
-	<i class="fa fa-ban text-danger" aria-hidden="true"></i>
-	<% end %>
+<td class="locked hidden-xs"><%= order.state %></td>
 <td>
-
 	<div class="dropdown">
 		<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 			<span class="caret"></span>
 		</button>
 		<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
 			<li><%= link_to("View", order_path(order.id))  %></li>
+			<% if order.pending? %>
+				<li><%= link_to("Approve", approve_order_path(order.id), :remote => true, :method => "put") %></li>
+				<li><%= link_to("Cancel", cancel_order_path(order.id), :remote => true, :method => "put") %></li>
+			<% end %>
 			<% if order.locked? %>
 				<% if !order.shipped %>
 					<li><%= link_to("Ship", new_order_shipment_path(order.id))  %></li>
@@ -45,5 +37,4 @@
 			<% end %>
 		</ul>
 	</div>
-
 </td>

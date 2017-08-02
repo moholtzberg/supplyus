@@ -66,8 +66,8 @@ class Order < ActiveRecord::Base
     end
 
     event :confirm_shipment do
-      transition [:awaiting_shipment, :partially_shipped] => :awaiting_fulfillment, if: -> (order) {order.shipped && order.terms_payment?}
-      transition [:awaiting_shipment, :partially_shipped] => :completed, if: -> (order) {order.shipped && !order.terms_payment?}
+      transition [:awaiting_shipment, :partially_shipped] => :awaiting_fulfillment, if: -> (order) { order.shipped && order.terms_payment? }
+      transition [:awaiting_shipment, :partially_shipped] => :completed, if: -> (order) { order.shipped && !order.terms_payment? }
       transition [:awaiting_shipment, :partially_shipped] => :partially_shipped, unless: :shipped
     end
 
@@ -81,7 +81,7 @@ class Order < ActiveRecord::Base
   end
 
   def terms_payment?
-    payments.pluck(:payment_type).uniq.size == 1 && payments.pluck(:payment_type).first == 'TermsPayment'
+    payments.size > 0 && payments.pluck(:payment_type).uniq.size == 1 && payments.pluck(:payment_type).first == 'TermsPayment'
   end
 
   def account_name
