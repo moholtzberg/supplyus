@@ -1,0 +1,6 @@
+<% unless flash[:error] %>
+	$('#myModal').modal("hide")
+	$('body').removeClass('modal-open')
+	$('.modal-backdrop').remove()
+	$("#warehouses").replaceWith("<%= j render :template => 'warehouses/index.html', :format => 'html', :locals => {:warehouses => @warehouses} %>")
+<% end %>

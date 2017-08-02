@@ -1,0 +1,5 @@
+// fix partial -> template
+$("#bins").replaceWith("<%= j render :template => 'bins/index.html', :format => 'html', :locals => {:bins => @bins} %>");
+$("#confirmModal").modal("hide");
+// flash example
+Recurring.flash.showMsg('notice', "Bin was deleted.");

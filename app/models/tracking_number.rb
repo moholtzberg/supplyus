@@ -1,6 +1,7 @@
 class TrackingNumber < ActiveRecord::Base
   
   belongs_to :shipment
+  validates :number, presence: true, allow_blank: false
   
   def link
     if shipment.carrier == "UPS"

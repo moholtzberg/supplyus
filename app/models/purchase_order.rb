@@ -4,17 +4,11 @@ class PurchaseOrder < ActiveRecord::Base
   
   belongs_to :vendor, :class_name => "Account"
   has_many :purchase_order_line_items, :inverse_of => :purchase_order, :dependent => :destroy
+  has_many :purchase_order_receipts, :dependent => :destroy
   has_one :purchase_order_shipping_method, :dependent => :destroy, :inverse_of => :purchase_order
   
   before_save :make_record_number
-  after_commit :create_inventory_transactions_for_line_items
-  
-  def create_inventory_transactions_for_line_items
-    unless completed_at.blank?
-      purchase_order_line_items.each {|a| a.create_inventory_transactions }
-    end
-  end
-  
+
   def shipping_method
     purchase_order_shipping_method.try(:shipping_method_id)
   end

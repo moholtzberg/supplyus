@@ -1,0 +1,70 @@
+<div id="warehouse" class="col-md-12">
+		
+	<table class="table table-bordered table-striped">
+		
+		<tr>
+			<th width="20%">ID</th>
+			<th width="40%">Name</th>
+			<th width="40%">Remaining</th>
+		</tr>
+		
+		<tr>
+			<td><%= @warehouse.id %></td>
+			<td><%= @warehouse.name %></td>
+			<td><%= @warehouse._type %></td>
+		</tr>
+		
+	</table>
+	
+	<table class="table table-bordered table-condensed table-striped">
+		<tr class="line_items">
+			<th colspan="2" class="bg-primary">Bins</th>
+		</tr>
+		<tr>
+			<th>Name</th>
+			<th>Type</th>
+		</tr>
+		<% @warehouse.bins.each do |bin| %>
+			<tr>
+				<td><%= link_to bin.name, bin %></td>
+				<td><%= bin._type %></td>
+			</tr>
+		<% end %>
+	</table>
+
+	<table class="table table-bordered table-condensed table-striped">
+		<tr class="line_items">
+			<th colspan="3" class="bg-primary">Inventories</th>
+		</tr>
+		<tr>
+			<td colspan="8">
+				<form id="searchBox" accept-charset="UTF-8" action="/admin/warehouses/<%= @warehouse.id %>" method="get" role="search">
+					<input type="text" class="form-control" id="term" name="term" placeholder="Search for inventory" value="">
+				</form>
+			</td>
+		</tr>
+		<tr>
+			<th>Item Number</th>
+			<th>Bin Name</th>
+			<th>Quantity On Hand</th>
+		</tr>
+		<% @inventories.each do |inv| %>
+			<tr>
+				<td><%= link_to inv.item.number, inv.item %></td>
+				<td><%= inv.bin.name %></td>
+				<td><%= inv.qty_on_hand %></td>
+			</tr>
+		<% end %>
+	</table>
+
+	<%= will_paginate @inventories, renderer: BootstrapPagination::Rails %>
+	
+</div>
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div

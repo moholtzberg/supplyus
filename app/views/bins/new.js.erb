@@ -1,0 +1,4 @@
+$(".modal-content").html("<%= j render :template => 'bins/new.html', :format => 'html' %>")
+<% unless flash[:error] %>
+$('#myModal').modal("toggle")
+<% end %>

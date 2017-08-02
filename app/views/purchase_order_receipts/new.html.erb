@@ -1,57 +1,239 @@
 <% content_for :app_location do %>Purchase Order Receipts / New<% end %>
 <div id="orders" class="col-md-12">
-	
-	<%= form_for @purchase_order_receipt, url: purchase_order_purchase_order_receipts_path(:purchase_order_id => @purchase_order.id), :remote => false do |f| %>
-	
-	<table class="table table-bordered">
-		
-		<tr>
-			<th>Purchase Order Number</th>
-			<th>Ship To Account Name</th>
-			<th>Ship Date</th>
-			<th>Carrier</th>
-		</tr>
-		
-		<tr>
-			<td><%= @purchase_order.number %></td>
-			<td><%= @purchase_order.ship_to_account_name %></td>
-			<td><%= f.date_field :ship_date, :class => "form-control", :value => Date.today %></td>
-		</tr>
-		
-	</table>
-	
-	<table class="table table-bordered">
-		
-		<tr>
-			<th>ID</th>
-			<th>Item Name/Description</th>
-			<th>Quantity Ordered</th>
-			<th>Quantity Shipped</th>
-			<th>Quantity To Ship Now</th>
-		<tr>
-		
-		<%= hidden_field_tag :purchase_order_id, params[:purchase_order_id].to_i %>
-		
-		<% @line_items.each_with_index do |li, idx| %>
-			<% if li.quantity_received.to_i != li.quantity and li.quantity != 0 %>
-				<%= hidden_field_tag "lines[#{idx}][purchase_order_line_item_id]", li.id.to_i %>
-				<tr>
-					<td><%= li.id %></td>
-					<td><%= "#{li.item.number} / #{li.item.name}" unless li.item.nil? %></td>
-					<td><%= li.quantity %></td>
-					<td><%= li.quantity_received %></td>
-					<td><%= text_field_tag "lines[#{idx}][quantity_receive_now]", (li.quantity.to_i - li.quantity_received.to_i), :class => "form-control" %></td>
-				<tr>
-			<% end %>
-		<% end %>
-		
-	</talbe>
-	
-	<table>
-		<tr>
-			<td colspan="5"><%= f.submit "Create Shipment", :class => "btn btn-primary pull-right" %></td>
-		</tr>
-	</table>
-	<% end %>
-	
+  
+  <%= form_for @purchase_order_receipt, url: purchase_order_purchase_order_receipts_path(:purchase_order_id => @purchase_order.id), :remote => false do |f| %>
+  
+  <table class="table table-bordered">
+    
+    <tr>
+      <th>Purchase Order Number</th>
+      <th>Ship To Account Name</th>
+      <th>Ship Date</th>
+      <th>Carrier</th>
+    </tr>
+    
+    <tr>
+      <td><%= @purchase_order.number %></td>
+      <td><%= @purchase_order.ship_to_account_name %></td>
+      <td><%= f.date_field :date, :class => "form-control", :value => Date.today %></td>
+    </tr>
+    
+  </table>
+
+  <table class="table table-bordered">
+    
+    <tr class="receipts-labels">
+      <th>Item Name/Description</th>
+      <th>Bin</th>
+      <th>Quantity To Ship Now</th>
+    <tr>
+    
+    <%= f.hidden_field :purchase_order_id, value: params[:purchase_order_id].to_i %>
+    
+    <tr class="receipts-form">
+      <td><%= select_tag :purchase_order_line_item_id, options_for_select(@line_items.select{|li| (li.quantity.to_i - li.quantity_received.to_i) > 0}.map {|li| ["#{li.item.number} / #{li.item.name}", li.id ] }), {include_blank: true, class: 'form-control'} %></td>
+      <td><%= select_tag :bin_id, options_from_collection_for_select(Bin.all, 'id', 'name'), {include_blank: true, class: 'form-control'} %></td>
+      <td><%= text_field_tag :quantity_received, nil, class: 'form-control' %></td>
+      <td><%= button_tag "Add Item", class: "btn btn-primary add-item" %></td>
+    </tr>
+
+  </talbe>
+  
+  <table>
+    <tr>
+      <td colspan="5"><%= f.submit "Create Shipment", :class => "btn btn-primary pull-right" %></td>
+    </tr>
+  </table>
+  <% end %>
+  
 </div>
+
+<script>
+  $(function() {
+
+    var FORMBUILDER = FORMBUILDER || {};
+
+    FORMBUILDER.purchase_order_line_items = <%= raw @line_items.map{ |li| {id: li.id, name: "#{li.item.number} / #{li.item.name}", quantity: li.quantity.to_i - li.quantity_received.to_i, remaining_quantity: li.quantity.to_i - li.quantity_received.to_i} }.to_json %>;
+    FORMBUILDER.bins = <%= raw Bin.all.to_json %>;
+    FORMBUILDER.purchase_order_line_item_receipts = [];
+    FORMBUILDER.current_receipt = {};
+
+    FORMBUILDER.actions = {
+
+      init: function(){
+
+        FORMBUILDER.actions.findLineItem(receipt);
+        FORMBUILDER.actions.findBin(receipt);
+        FORMBUILDER.actions.addItem();
+        FORMBUILDER.actions.removeItem();
+        FORMBUILDER.actions.validateForm();
+        FORMBUILDER.actions.fieldValid(key);
+	      FORMBUILDER.actions.recalculateLineItems();
+        FORMBUILDER.actions.clearErrors();
+        FORMBUILDER.actions.renderReceipts();
+        FORMBUILDER.actions.resetForm();
+        FORMBUILDER.actions.updateLineItemSelectOptions();
+        FORMBUILDER.actions.updateCurrentReceipt();
+        FORMBUILDER.actions.updateQuantityToShip();
+
+      },
+
+      findLineItem: function(receipt){
+      	return FORMBUILDER.purchase_order_line_items.filter(function(item){return item.id == receipt.purchase_order_line_item_id})[0]
+      },
+
+      findBin: function(receipt){
+      	return FORMBUILDER.bins.filter(function(item){return item.id == receipt.bin_id})[0]
+      },
+
+      addItem: function(){
+      	FORMBUILDER.actions.clearErrors();
+      	if (FORMBUILDER.actions.validateForm()) {
+	        FORMBUILDER.purchase_order_line_item_receipts.push($.extend({}, FORMBUILDER.current_receipt));
+	        FORMBUILDER.actions.recalculateLineItems();
+	        FORMBUILDER.actions.resetForm();
+	        FORMBUILDER.actions.renderReceipts();
+      	}
+      },
+
+      removeItem: function(e){
+      	var index = parseInt($(e.target).closest('tr').data( "index" ));
+      	FORMBUILDER.purchase_order_line_item_receipts.splice(index, 1);
+	      FORMBUILDER.actions.recalculateLineItems();
+	      FORMBUILDER.actions.resetForm();
+	      FORMBUILDER.actions.renderReceipts();
+      },
+
+      validateForm: function(){
+      	var valid = true;
+      	Object.keys(FORMBUILDER.current_receipt).forEach(function(key){
+      		if (!FORMBUILDER.actions.fieldValid(key)) { 
+      			$('.receipts-form #' + key).parent().addClass('has-error');
+      			valid = false;
+      		}
+      	})
+      	return valid;
+      },
+
+      fieldValid: function(key) {
+      	var value = FORMBUILDER.current_receipt[key]
+      	switch(key) {
+      		case 'purchase_order_line_item_id':
+      			return value
+      			break;
+      		case 'bin_id':
+      			return value
+      			break;
+      		case 'quantity_received':
+      			return value && value > 0 && value <= FORMBUILDER.actions.findLineItem(FORMBUILDER.current_receipt).remaining_quantity
+      			break;
+      	}
+      },
+
+      recalculateLineItems: function() {
+      	FORMBUILDER.purchase_order_line_items.forEach(function(el) {
+      		el.remaining_quantity = el.quantity - FORMBUILDER.purchase_order_line_item_receipts.filter(function(item){return item.purchase_order_line_item_id == el.id}).reduce(function(acc, receipt) {
+  					return acc + parseInt(receipt.quantity_received);
+					}, 0);
+      	})
+      },
+
+      clearErrors: function() {
+      	$('.receipts-form td').removeClass('has-error');
+      },
+
+      renderReceipts: function() {
+      	$('tr.polir').remove();
+      	FORMBUILDER.purchase_order_line_item_receipts.forEach(function(el, i) {
+	        var item = document.createElement("tr");
+	        item.className = "polir";
+	        item.setAttribute('data-index', i)
+	        $(item)
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<input type="hidden" name="purchase_order_receipt[purchase_order_line_item_receipts_attributes][' + i + '][purchase_order_line_item_id]" value="' + el.purchase_order_line_item_id + '" />')
+	          )
+	          .append(
+	            FORMBUILDER.actions.findLineItem(el).name
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<input type="hidden" name="purchase_order_receipt[purchase_order_line_item_receipts_attributes][' + i + '][bin_id]" value="' + el.bin_id + '" />')
+	          )
+	          .append(
+	            FORMBUILDER.actions.findBin(el).name
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<input type="hidden" name="purchase_order_receipt[purchase_order_line_item_receipts_attributes][' + i + '][quantity_received]" value="' + el.quantity_received + '" />')
+	          )
+	          .append(
+	            el.quantity_received
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<a href="#" class="remove-item"><i class="fa fa-remove"></i></a>')
+	          )
+	        )
+	        $('.receipts-labels').after(item)
+      	})
+		    $('.remove-item').click(function(e){
+		    	e.stopPropagation();
+		    	e.preventDefault();
+		      FORMBUILDER.actions.removeItem(e);
+		    })
+      },
+
+      resetForm: function() {
+      	$('.receipts-form :input').val('');
+      	FORMBUILDER.actions.updateLineItemSelectOptions();
+      	FORMBUILDER.actions.updateCurrentReceipt();
+      },
+
+      updateLineItemSelectOptions: function() {
+      	$el = $(':input#purchase_order_line_item_id')
+      	$el.find('option:not([value=""])').remove()
+      	FORMBUILDER.purchase_order_line_items.filter(function(item){return item.remaining_quantity > 0}).forEach(function(el) {
+	        var item = document.createElement("option");
+	        item.setAttribute('value', el.id);
+	        item.innerHTML = el.name;
+	        $el.append(item);
+	      });
+      },
+
+      updateCurrentReceipt: function() {
+      	var receipt = FORMBUILDER.current_receipt
+        receipt.purchase_order_line_item_id = $(':input#purchase_order_line_item_id').val();
+        receipt.bin_id = $(':input#bin_id').val();
+        receipt.quantity_received = $(':input#quantity_received').val();
+      },
+
+      updateQuantityToShip: function() {
+        var target = FORMBUILDER.actions.findLineItem(FORMBUILDER.current_receipt);
+        $(':input#quantity_received').val(target ? target.remaining_quantity : '').change();
+      }
+
+    }
+
+    $('.add-item').click(function(e){
+    	e.stopPropagation();
+    	e.preventDefault();
+      FORMBUILDER.actions.addItem();
+    })
+
+    $('.receipts-form :input').change(function(){
+      FORMBUILDER.actions.updateCurrentReceipt();
+    })
+
+    $('.receipts-form :input#purchase_order_line_item_id').change(function(){
+      FORMBUILDER.actions.updateQuantityToShip();
+    })
+  });
+</script>
