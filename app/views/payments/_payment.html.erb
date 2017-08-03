@@ -5,8 +5,8 @@
   <td><%= number_to_currency(payment.applied_amount) %></td>
   <td><%= number_to_currency(payment.unapplied_amount) %></td>
   <td><%= payment.number %></td>
-  <td><%= payment.completed? %></td>
-  <td><%= link_to('finalize', finalize_payment_path(payment), method: :put, remote: true) if !payment.completed? %></td>
+  <td><%= payment.success? %></td>
+  <td><%= link_to('finalize', finalize_payment_path(payment), method: :put, remote: true) if !payment.success? %></td>
   <td>
     <div class="dropdown">
       <button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">

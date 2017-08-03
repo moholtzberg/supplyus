@@ -9,7 +9,6 @@ class CreditCardPayment < Payment
 
       if response.authorization and response.success?
         self.authorization_code = response.authorization
-        self.success = response.success?
         true
       else
         errors.add(:base, "The credit card you provided was declined. Please double check your information and try again.") and return

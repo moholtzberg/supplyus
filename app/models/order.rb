@@ -63,8 +63,8 @@ class Order < ActiveRecord::Base
     end
 
     event :approve do
+      transition :pending => :awaiting_shipment, if: -> (order) { order.terms_payment? || order.paid }
       transition :pending => :awaiting_payment, unless: :terms_payment?
-      transition :pending => :awaiting_shipment, if: :terms_payment?
     end
 
     event :confirm_payment do
@@ -78,8 +78,9 @@ class Order < ActiveRecord::Base
       transition [:awaiting_shipment, :partially_shipped] => :partially_shipped, unless: :shipped
     end
 
-    event :fulfill do
-      transition :awaiting_fulfillment => :fulfilled
+    event :confirm_fulfillment do
+      transition [:awaiting_fulfillment, :partially_fulfilled] => :partially_fulfilled, if: :unfulfilled
+      transition [:awaiting_fulfillment, :partially_fulfilled] => :fulfilled
     end
 
     event :finish do
@@ -257,11 +258,11 @@ class Order < ActiveRecord::Base
     #   Order.is_complete.where.not(:id => OrderPaymentApplication.select(:order_id).uniq).order(:due_date)
     # }
     # order_ids = OrderPaymentApplication.select(:order_id).uniq
-    ids = Order.is_complete
-    .joins("LEFT OUTER JOIN order_payment_applications ON order_payment_applications.order_id = orders.id")
-    .group("orders.id")
-    .having("SUM(COALESCE(sub_total,0) + COALESCE(shipping_total,0) + COALESCE(tax_total,0)) <> SUM(COALESCE(order_payment_applications.applied_amount,0))").ids
-    where(id: ids)
+    #ids = Order.is_complete
+    #.joins("LEFT OUTER JOIN order_payment_applications ON order_payment_applications.order_id = orders.id")
+    #.group("orders.id")
+    #.having("SUM(COALESCE(sub_total,0) + COALESCE(shipping_total,0) + COALESCE(tax_total,0) - COALESCE(discount_total,0)) <> (SELECT COALESCE(SUM(applied_amount),0) FROM order_payment_applications JOIN payments ON order_payment_applications.payment_id = payments.id WHERE payments.success = 't')").ids
+    #where(id: ids)
   end
   
   def self.empty
@@ -363,7 +364,7 @@ class Order < ActiveRecord::Base
   def payments_total
     Rails.cache.fetch([self, "#{self.class.to_s.downcase}_payments_total"]) {
       total_paid = 0.0
-      self.order_payment_applications.each {|a| total_paid = total_paid + a.applied_amount}
+      self.order_payment_applications.includes(:payment).each {|a| total_paid = total_paid + a.applied_amount if a.payment.success? }
       total_paid
     }
   end
@@ -372,7 +373,7 @@ class Order < ActiveRecord::Base
     Rails.cache.fetch([self, "#{self.class.to_s.downcase}_paid"]) {
       Rails.cache.delete("#{self.class.to_s.downcase}_paid")
       total_paid = 0.0
-      self.order_payment_applications.each {|a| total_paid = total_paid + a.applied_amount}
+      self.order_payment_applications.includes(:payment).each {|a| total_paid = total_paid + a.applied_amount if a.payment.success? }
       total_paid.to_d == self.total.to_d ? true : false
     }
   end
@@ -381,7 +382,7 @@ class Order < ActiveRecord::Base
     # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_balance_due"]) {
       # Rails.cache.delete("#{self.class.to_s.downcase}_balance_due")
       total_paid = 0.0
-      self.order_payment_applications.each {|a| total_paid = total_paid + a.applied_amount}
+      self.order_payment_applications.includes(:payment).each {|a| total_paid = total_paid + a.applied_amount if a.payment.success? }
       puts total_paid.to_d.to_s
       puts self.total.to_d.to_s
       return (self.total.to_d - total_paid.to_d)

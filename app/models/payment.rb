@@ -20,14 +20,6 @@ class Payment < ActiveRecord::Base
     self.account = Account.find_by(:name => name) if name.present?
   end
 
-  def completed?
-    if payment_type == "CheckPayment"
-      success?
-    elsif payment_type == "CreditCardPayment"
-      success? && captured?
-    end
-  end
-
   def finalize
     if !completed?
       if payment_type == "CheckPayment"
