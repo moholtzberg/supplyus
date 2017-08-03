@@ -4,8 +4,8 @@ class Order < ActiveRecord::Base
   
   scope :is_locked, -> () { where(:locked => true) }
   scope :is_unlocked, -> () { where.not(:locked => true) }
-  scope :is_complete, -> () { where.not(:completed_at => nil)}
-  scope :is_incomplete, -> () { where(:completed_at => nil)}
+  scope :is_submitted, -> () { where.not(:submitted_at => nil)}
+  scope :not_submitted, -> () { where(:submitted_at => nil)}
   scope :is_canceled, -> () { where(:canceled => true)}
   scope :not_canceled, -> () { where(:canceled => nil)}
   scope :has_account, -> () { where.not(:account_id => nil) }
@@ -46,6 +46,10 @@ class Order < ActiveRecord::Base
   # after_commit :sync_with_quickbooks if :persisted
 
   state_machine initial: :incomplete do
+    before_transition on: :submit do |order|
+      order.submitted_at = Time.now
+    end
+
     event :submit do
       transition :incomplete => :pending
     end
@@ -394,9 +398,9 @@ class Order < ActiveRecord::Base
       self.due_date
     else
       if account.payment_terms
-        self.completed_at + account.payment_terms
+        self.submitted_at + account.payment_terms
       else
-        self.completed_at + 30.days
+        self.submitted_at + 30.days
       end
     end
   end
@@ -406,9 +410,9 @@ class Order < ActiveRecord::Base
       (Date.today.to_date - self.due_date.to_date).to_i
     else
       if account.payment_terms
-        (Date.today.to_date - (self.completed_at + account.payment_terms).to_date).to_i
+        (Date.today.to_date - (self.submitted_at + account.payment_terms).to_date).to_i
       else
-        (Date.today.to_date - (self.completed_at + 30.days).to_date).to_i
+        (Date.today.to_date - (self.submitted_at + 30.days).to_date).to_i
       end
     end
   end
@@ -474,7 +478,7 @@ class Order < ActiveRecord::Base
     
     invoice = {
       DueDate: due_date.to_s,
-      TxnDate: completed_at.to_s,
+      TxnDate: submitted_at.to_s,
       DocNumber: number,
       Line: line_items_array,
       CustomerRef: {

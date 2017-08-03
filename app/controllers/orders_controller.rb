@@ -5,7 +5,7 @@ class OrdersController < ApplicationController
   def index
     authorize! :read, Order
     
-    @orders = Order.is_complete.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).unshipped
+    @orders = Order.is_submitted.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).unshipped
     
     # if params[:account_name].present?
     #   puts "ACCOUNTS -"
@@ -54,7 +54,7 @@ class OrdersController < ApplicationController
   
   def shipped
     authorize! :read, Order
-    @orders = Order.is_complete.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).shipped
+    @orders = Order.is_submitted.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).shipped
     
     if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
     else
@@ -71,7 +71,7 @@ class OrdersController < ApplicationController
   
   def fulfilled
     authorize! :read, Order
-    @orders = Order.is_complete.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).fulfilled
+    @orders = Order.is_submitted.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).fulfilled
     
     if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
     else
@@ -88,7 +88,7 @@ class OrdersController < ApplicationController
   
   def unfulfilled
     authorize! :read, Order
-    @orders = Order.is_complete.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).unfulfilled
+    @orders = Order.is_submitted.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).unfulfilled
     
     if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
     else
@@ -105,7 +105,7 @@ class OrdersController < ApplicationController
   
   def locked
     authorize! :read, Order
-    @orders = Order.is_complete.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).is_locked
+    @orders = Order.is_submitted.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).is_locked
     
     if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
     else
@@ -135,9 +135,9 @@ class OrdersController < ApplicationController
     render "index"
   end
   
-  def incomplete
+  def not_submitted
     authorize! :read, Order
-    @orders = Order.is_incomplete.not_canceled.includes(:account, :order_line_items, :order_tax_rate)
+    @orders = Order.not_submitted.not_canceled.includes(:account, :order_line_items, :order_tax_rate)
     
     if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
     else
@@ -294,7 +294,7 @@ class OrdersController < ApplicationController
 
   def order_params
     temp_params = params.require(:order).permit(:account_name, :sales_rep_name, :number, :email, :po_number, 
-      :completed_at, :notes, :credit_hold, :shipping_method, :shipping_amount, :tax_rate, :tax_amount, 
+      :submitted_at, :notes, :credit_hold, :shipping_method, :shipping_amount, :tax_rate, :tax_amount, 
       :bill_to_account_name, :bill_to_attention, :bill_to_address_1, :bill_to_address_2, :bill_to_city, 
       :bill_to_state, :bill_to_zip, :bill_to_phone, :bill_to_email, :ship_to_account_name, :ship_to_attention, 
       :ship_to_address_1, :ship_to_address_2, :ship_to_city, :ship_to_state, :ship_to_zip, :ship_to_phone,

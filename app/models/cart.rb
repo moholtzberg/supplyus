@@ -1,6 +1,6 @@
 class Cart < Order
   
-  default_scope { where(completed_at: nil) }
+  default_scope { where(submitted_at: nil) }
   
   has_many :contents, :class_name => "OrderLineItem", :foreign_key => :order_id
   

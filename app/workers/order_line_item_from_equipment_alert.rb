@@ -25,7 +25,7 @@ class OrderLineItemFromEquipmentAlert
         
           customer = equipment.customer
         
-          order = Order.where(:locked => nil, :completed_at => nil, :customer => equipment.account_id).first
+          order = Order.where(:locked => nil, :submitted_at => nil, :customer => equipment.account_id).first
         
           if order.nil?
             order = Order.new(:customer => customer)

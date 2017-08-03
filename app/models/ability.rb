@@ -51,7 +51,7 @@ class Ability
         can [:create, :read, :update], Subscription
         can :destroy, Subscription do |subscription|
           subscription.account_id == user.account_id
-          subscription.orders.is_complete.size >= 3
+          subscription.orders.where(state: :completed).size >= 3
         end
       end
     end

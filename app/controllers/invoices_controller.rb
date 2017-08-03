@@ -20,7 +20,7 @@ class InvoicesController < ApplicationController
   def new
     authorize! :create, Invoice
     @order = Order.find_by(:id => params[:order_id])
-    puts @order.completed_at
+    puts @order.submitted_at
     @invoice = Invoice.new(:order_id => @order.id)
     @line_items = OrderLineItem.where(:order_id => @order.id)
   end

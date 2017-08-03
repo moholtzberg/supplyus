@@ -6,7 +6,7 @@
 <td class="hidden-xs"><%= number_to_currency(order.amount_shipped) %></td>
 <td class="hidden-xs"><%= number_to_currency(order.amount_fulfilled) %></td>
 <td><%= number_to_currency(order.balance_due) %></td>
-<td class="text-center hidden-xs"><%= order.completed_at.strftime("%m/%d/%y %I:%M %p") unless order.completed_at.nil? %></td>
+<td class="text-center hidden-xs"><%= order.submitted_at.strftime("%m/%d/%y %I:%M %p") unless order.submitted_at.nil? %></td>
 <td class="locked hidden-xs"><%= order.state %></td>
 <td>
 	<div class="dropdown">

@@ -109,7 +109,7 @@ class CheckoutController < ApplicationController
     if (params[:payment_method] == "terms" || params[:payment_method] == "check")
       @payment.payment_type = 'CheckPayment'
       @payment.save
-      complete
+      submit
     else
       if params[:payment_method] == "credit_card"
         @card = CreditCard.store({
@@ -130,7 +130,7 @@ class CheckoutController < ApplicationController
       if @payment.authorize
         @payment.save
         OrderPaymentApplication.create(:order_id => @checkout.id, :payment_id => @payment.id, :applied_amount => @payment.amount)
-        complete
+        submit
       else
         render "payment"
       end
@@ -152,26 +152,22 @@ class CheckoutController < ApplicationController
     @checkout = Checkout.find_by(:id => cookies.permanent.signed[:cart_id])
   end
   
-  def complete
+  def submit
     c = Checkout.find_by(:id => cookies.permanent.signed[:cart_id])
     c.email             = current_user.email if c.email.nil?
     c.user_id           = current_user.id if c.user_id.nil?
-    c.completed_at = Time.now
     if c.account.present? and c.account.credit_hold == false
       c.credit_hold = false
     else
       c.credit_hold = true
     end
     if c.save
-      if c.complete
-        c.submit
-        @cart.reload
-        cookies.permanent.signed[:cart_id] = nil
-        puts "GOING INTO THE MAILER"
-        render 'complete'
-        # OrderMailer.order_confirmation(c.id, :bcc => "sales@247officesupply.com").deliver_later
-      end
-      
+      c.submit
+      @cart.reload
+      cookies.permanent.signed[:cart_id] = nil
+      puts "GOING INTO THE MAILER"
+      render 'submit'
+      # OrderMailer.order_confirmation(c.id, :bcc => "sales@247officesupply.com").deliver_later
     end
   end
   

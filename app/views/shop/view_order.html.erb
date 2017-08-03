@@ -38,7 +38,7 @@
 	</tr>
 	<tr>
 		<td width="33%"><%= @order.number %></td>
-		<td width="34%"><%= @order.completed_at.strftime("%m/%d/%Y %I:%M %p") unless @order.completed_at.nil? %></td>
+		<td width="34%"><%= @order.submitted_at.strftime("%m/%d/%Y %I:%M %p") unless @order.submitted_at.nil? %></td>
 		<td width="33%"><%= @order.po_number %></td>
 	</tr>
 </table>

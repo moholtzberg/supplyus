@@ -80,7 +80,7 @@ Rails.application.routes.draw do
       resources :meter_readings
       resources :orders do
         collection do
-          get :incomplete
+          get :not_submitted
           get :locked
           get :shipped
           get :fulfilled
@@ -179,7 +179,7 @@ Rails.application.routes.draw do
   get   "checkout/payment" => "checkout#payment"
   patch "checkout/payment" => "checkout#update_payment"
   get   "checkout/confirm" => "checkout#confirm"
-  patch "checkout/complete"=> "checkout#complete"
+  patch "checkout/submit"=> "checkout#submit"
   post  "checkout/apply_code" => "checkout#apply_code"
   delete  "checkout/remove_code" => "checkout#remove_code"
 

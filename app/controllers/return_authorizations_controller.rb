@@ -8,7 +8,7 @@ class ReturnAuthorizationsController < ApplicationController
   
   def new
     @return_authorization = ReturnAuthorization.new
-    @orders = Order.is_complete.shipped
+    @orders = Order.is_submitted.shipped
   end
   
 end

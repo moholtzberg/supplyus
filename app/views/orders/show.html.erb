@@ -45,7 +45,7 @@
 		</tr>
 		<tr>
 			<td><%= @order.number %></td>
-			<td><%= @order.completed_at.strftime("%m/%d/%Y %I:%M %p") unless @order.completed_at.nil? %></td>
+			<td><%= @order.submitted_at.strftime("%m/%d/%Y %I:%M %p") unless @order.submitted_at.nil? %></td>
 			<td><%= @order.locked ? "Yes" : "No" %></td>
 			<td><%= @order.po_number %></td>
 			<td><%= "#{@order.sales_rep.first_name} #{@order.sales_rep.last_name}" unless @order.sales_rep.blank? %></td>
@@ -141,7 +141,7 @@
 			<th class="bg-primary">Payment Type</th>
 			<th class="bg-primary">Payent Amount</th>
 			<th class="bg-primary">Authorization Code</th>
-			<th class="bg-primary">Completed?</th>
+			<th class="bg-primary">Submitted?</th>
 		</tr>
 		<% @order.payments.each do |payment| %>
 			<tr class="line_items">
@@ -149,7 +149,7 @@
 				<td><%= payment.payment_type %></td>
 				<td><%= payment.amount %></td>
 				<td><%= link_to payment.number, payment_path(payment) %></td>
-				<td><%= payment.completed? %></td>
+				<td><%= payment.success? %></td>
 			</tr>
 		<% end %>
 	</table>

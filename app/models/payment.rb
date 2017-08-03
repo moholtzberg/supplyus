@@ -21,7 +21,7 @@ class Payment < ActiveRecord::Base
   end
 
   def finalize
-    if !completed?
+    if !success?
       if payment_type == "CheckPayment"
         update_attribute(:success, true)
       elsif payment_type == "CreditCardPayment"
