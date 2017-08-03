@@ -4,10 +4,10 @@ class Order < ActiveRecord::Base
   
   scope :is_locked, -> () { where(:locked => true) }
   scope :is_unlocked, -> () { where.not(:locked => true) }
-  scope :is_submitted, -> () { where.not(:submitted_at => nil)}
-  scope :not_submitted, -> () { where(:submitted_at => nil)}
-  scope :is_canceled, -> () { where(:canceled => true)}
-  scope :not_canceled, -> () { where(:canceled => nil)}
+  scope :is_submitted, -> () { where.not(:submitted_at => nil) }
+  scope :not_submitted, -> () { where(:submitted_at => nil) }
+  scope :is_canceled, -> () { where(:state => :canceled) }
+  scope :not_canceled, -> () { where.not(:state => :canceled) }
   scope :has_account, -> () { where.not(:account_id => nil) }
   scope :no_account, -> () { where(:account_id => nil) }
   scope :by_date_range, -> (from, to) { where("due_date >= ? AND due_date <= ?", from, to) }
@@ -48,6 +48,12 @@ class Order < ActiveRecord::Base
   state_machine initial: :incomplete do
     before_transition on: :submit do |order|
       order.submitted_at = Time.now
+    end
+
+    before_transition on: :cancel do |order|
+      order.order_line_items.each do |oli|
+        oli.update_attribute(:quantity_canceled, oli.quantity)
+      end
     end
 
     event :submit do

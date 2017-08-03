@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170803121148) do
+ActiveRecord::Schema.define(version: 20170803131336) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -493,7 +493,6 @@ ActiveRecord::Schema.define(version: 20170803121148) do
     t.datetime "date"
     t.datetime "due_date"
     t.datetime "submitted_at"
-    t.boolean  "canceled"
     t.boolean  "locked"
     t.string   "po_number"
     t.string   "ip_address"
