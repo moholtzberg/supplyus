@@ -56,6 +56,20 @@ class Order < ActiveRecord::Base
       end
     end
 
+    before_transition on: :remove_hold do |order|
+      order.credit_hold = false
+    end
+
+    before_transition any => :awaiting_payment do |order|
+      order.update_attribute(:locked, true)
+    end
+
+    before_transition any => :awaiting_shipment do |order|
+      if !order.terms_payment?
+        order.create_full_invoice
+      end
+    end
+
     event :submit do
       transition :incomplete => :pending
     end
@@ -73,33 +87,37 @@ class Order < ActiveRecord::Base
     end
 
     event :approve do
-      transition :pending => :awaiting_shipment, if: -> (order) { order.terms_payment? || order.paid }
-      transition :pending => :awaiting_payment, unless: :terms_payment?
+      transition :pending => :credit_hold, if: -> (order) { order.terms_payment? and order.credit_hold? }
+      transition :pending => :awaiting_shipment, if: -> (order) { order.terms_payment? or order.paid }
+      transition :pending => :awaiting_payment
+    end
+
+    event :remove_hold do
+      transition :credit_hold => :awaiting_shipment, if: -> (order) { order.terms_payment? }
     end
 
     event :confirm_payment do
       transition [:awaiting_payment, :partially_paid] => :awaiting_shipment, if: :paid
-      transition [:awaiting_payment, :partially_paid] => :partially_paid, unless: :paid
+      transition [:awaiting_payment, :partially_paid] => :partially_paid
+      transition :fulfilled => :completed
     end
 
     event :confirm_shipment do
-      transition [:awaiting_shipment, :partially_shipped] => :awaiting_fulfillment, if: -> (order) { order.shipped && order.terms_payment? }
-      transition [:awaiting_shipment, :partially_shipped] => :completed, if: -> (order) { order.shipped && !order.terms_payment? }
-      transition [:awaiting_shipment, :partially_shipped] => :partially_shipped, unless: :shipped
+      transition [:awaiting_shipment, :partially_shipped] => :completed, if: -> (order) { order.shipped and order.fulfilled }
+      transition [:awaiting_shipment, :partially_shipped] => :awaiting_fulfillment, if: -> (order) { order.shipped }
+      transition [:awaiting_shipment, :partially_shipped] => :partially_shipped
     end
 
     event :confirm_fulfillment do
-      transition [:awaiting_fulfillment, :partially_fulfilled] => :partially_fulfilled, if: :unfulfilled
-      transition [:awaiting_fulfillment, :partially_fulfilled] => :fulfilled
+      transition [:awaiting_fulfillment, :partially_fulfilled] => :completed, if: -> (order) { order.paid and order.fulfilled }
+      transition [:awaiting_fulfillment, :partially_fulfilled] => :fulfilled, if: :fulfilled
+      transition [:awaiting_fulfillment, :partially_fulfilled] => :partially_fulfilled
     end
 
-    event :finish do
-      transition :fulfilled => :completed
-    end
   end
 
   def terms_payment?
-    payments.size > 0 && payments.pluck(:payment_type).uniq.size == 1 && payments.pluck(:payment_type).first == 'TermsPayment'
+    payments.map {|p| p.payment_method.name }.uniq == ['terms'] and account.has_enough_credit
   end
 
   def account_name
@@ -523,6 +541,17 @@ class Order < ActiveRecord::Base
     secret = Setting.find_by(:key => "qb_secret").value
     realm_id = Setting.find_by(:key => "qb_realm").value
     $qbo_api = QboApi.new(token: token, token_secret: secret, realm_id: realm_id, consumer_key: QB_KEY, consumer_secret: QB_SECRET)
+  end
+
+  def create_full_invoice
+    invoice = Invoice.new(date: Date.today, order_id: id, due_date: Date.today)
+    invoice.order_line_items = order_line_items
+    invoice.line_item_fulfillments.each do |lif|
+      lif.quantity_fulfilled = lif.order_line_item.actual_quantity
+    end
+    if invoice.save
+      self.update_attributes(date: invoice.date, due_date: invoice.due_date)
+    end
   end
    
 end

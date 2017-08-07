@@ -19,21 +19,24 @@
 				<li><%= link_to("Approve", approve_order_path(order.id), :remote => true, :method => "put") %></li>
 				<li><%= link_to("Cancel", cancel_order_path(order.id), :remote => true, :method => "put") %></li>
 			<% end %>
-			<% if order.locked? %>
-				<% if !order.shipped %>
-					<li><%= link_to("Ship", new_order_shipment_path(order.id))  %></li>
-					<li><%= link_to("Toggle Credit Hold", credit_hold_order_path(order.id), :remote => true, :method => "put")  %></li>
-				<% end %>
-				<% if order.fulfilled %>
-					<li><%= link_to("Resend Invoice Notification", resend_invoice_order_path(:id => order.id), :remote => true, :method => "put") %></li>
-				<% else %>
-					<li><%= link_to("Fulfill", new_order_invoice_path(order.id))  %></li>
-					<li><%= link_to("Resend Order Notification", resend_order_order_path(:id => order.id), :remote => true, :method => "put") %></li>
-				<% end %>
-			<% else %>
+			<% if order.awaiting_payment? %>
+				<li><%= link_to("Toggle lock", lock_order_path(order.id), :remote => true, :method => "put") %></li>
+			<% end %>
+			<% if !order.locked? %>
 				<li><%= link_to("Edit", edit_order_path(order.id)) %></li>
-				<li><%= link_to("Lock", lock_order_path(order.id), :remote => true, :method => "put") %></li>
-				<li><%= link_to("Toggle Credit Hold", credit_hold_order_path(order.id), :remote => true, :method => "put")  %></li>
+			<% end %>
+			<% if order.credit_hold? %>
+				<li><%= link_to("Remove Credit Hold", credit_hold_remove_order_path(order.id), :remote => true, :method => "put")  %></li>
+			<% end %>
+			<% if order.awaiting_shipment? or order.partially_shipped? %>
+				<li><%= link_to("Ship", new_order_shipment_path(order.id))  %></li>
+			<% end %>
+			<% if order.awaiting_fulfillment? or order.partially_fulfilled? %>
+				<li><%= link_to("Fulfill", new_order_invoice_path(order.id))  %></li>
+				<li><%= link_to("Resend Order Notification", resend_order_order_path(:id => order.id), :remote => true, :method => "put") %></li>
+			<% end %>
+			<% if order.fulfilled? %>
+				<li><%= link_to("Resend Invoice Notification", resend_invoice_order_path(:id => order.id), :remote => true, :method => "put") %></li>
 			<% end %>
 		</ul>
 	</div>

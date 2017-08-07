@@ -1,7 +1,7 @@
 class Invoice < ActiveRecord::Base
   include ApplicationHelper
   
-  has_many :line_item_fulfillments
+  has_many :line_item_fulfillments, dependent: :destroy
   has_many :order_line_items, :through => :line_item_fulfillments
   belongs_to :order
   has_many :charges
@@ -21,6 +21,7 @@ class Invoice < ActiveRecord::Base
   before_save :make_record_number
   
   after_save :update_total
+  after_save :confirm_order_fulfillment
   
   def self.by_order(order_id)
     includes(:order_line_items).where(:order_line_items => {:order_id => order_id}).references(:order_line_items)
@@ -110,6 +111,10 @@ class Invoice < ActiveRecord::Base
         self.date + 30.days
       end
     end
+  end
+
+  def confirm_order_fulfillment
+    order.confirm_fulfillment
   end
   
 end

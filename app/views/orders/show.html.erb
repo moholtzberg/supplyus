@@ -37,15 +37,17 @@
 	
 	<table class="table table-bordered table-condensed">
 		<tr class="bg-primary">
-			<th width="20%">Order Number</th>
-			<th width="20%">Order Date</th>
-			<th width="20%">Locked</th>
-			<th width="20%">PO Number</th>
-			<th width="20%">Sales Rep</th>
+			<th>Order Number</th>
+			<th>Order Date</th>
+			<th>State</th>
+			<th>Locked</th>
+			<th>PO Number</th>
+			<th>Sales Rep</th>
 		</tr>
 		<tr>
 			<td><%= @order.number %></td>
 			<td><%= @order.submitted_at.strftime("%m/%d/%Y %I:%M %p") unless @order.submitted_at.nil? %></td>
+			<td><%= @order.state %></td>
 			<td><%= @order.locked ? "Yes" : "No" %></td>
 			<td><%= @order.po_number %></td>
 			<td><%= "#{@order.sales_rep.first_name} #{@order.sales_rep.last_name}" unless @order.sales_rep.blank? %></td>

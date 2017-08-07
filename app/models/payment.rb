@@ -9,8 +9,7 @@ class Payment < ActiveRecord::Base
   accepts_nested_attributes_for :order_payment_applications
 
   validates :amount, :presence => true, :numericality => { greater_then: 0 }
-
-  after_save :confirm_order_payment
+  validates :payment_method, :presence => true
   
   def account_name
     account.try(:name)
@@ -22,10 +21,9 @@ class Payment < ActiveRecord::Base
 
   def finalize
     if !success?
-      if payment_type == "CheckPayment"
-        update_attribute(:success, true)
-      elsif payment_type == "CreditCardPayment"
-        capture
+      if capture
+        confirm_order_payment
+        true
       end
     end
   end

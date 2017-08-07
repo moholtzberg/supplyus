@@ -100,26 +100,22 @@
 				<% end %>
 				<option value="credit_card">New Credit Card</option>
 				<option value="check">Check</option>
-				<% if current_user.account and current_user.account.has_credit %>
-				<option value="terms">Net <%= current_user.account.credit_terms %></option>
+				<% if current_user.account and current_user.account.has_enough_credit %>
+					<option value="terms">Net <%= current_user.account.credit_terms %></option>
 				<% end %>
 			</select>
 
 			<script>
 				$("select#payment_type").change(function(){
 					var m = this.value;
-					if (m == 'credit_card') { 
-						$("#payment_method").val(m);
-						$("#credit_card_token").val('');
-						$("#credit_card").removeClass('hidden');
-					} else if (m == 'check') {
+					if (m == 'check' || m == 'terms') {
 						$("#payment_method").val(m);
 						$("#credit_card_token").val('');
 						$("#credit_card").addClass('hidden');
 					} else { 
-						$("#payment_method").val('');
-						$("#credit_card_token").val(m);
-						$("#credit_card").addClass('hidden');
+						$("#payment_method").val('credit_card');
+						$("#credit_card_token").val(m == 'credit_card' ? '' : m);
+						$("#credit_card").removeClass('hidden');
 					}
 				})
 			</script>
@@ -132,7 +128,7 @@
 			
 			<div id="credit_card" class="panel panel-default bootstrap-basic <%= 'hidden' if @cards.any? %>">
 				
-				<input type="hidden" id="payment_method" name="payment_method" value="<%= 'credit_card' if @cards.empty? %>" />
+				<input type="hidden" id="payment_method" name="payment_method" value="<%= 'credit_card' %>" />
 				<input type="hidden" id="credit_card_token" name="credit_card_token" value="<%= @cards.first.try(:service_card_id) %>" />
 				<input type="hidden" id="order_id" name="order_id" value="<%= @checkout.id %>" />
 				

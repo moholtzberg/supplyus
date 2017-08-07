@@ -241,7 +241,7 @@ class OrdersController < ApplicationController
     authorize! :update, Order
     @order_id = params[:id]
     @order = Order.find_by(:id => @order_id)
-    @order.locked = true
+    @order.locked = !@order.locked
     @order.save
   end
   

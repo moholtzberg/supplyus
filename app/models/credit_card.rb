@@ -25,8 +25,10 @@ class CreditCard < ActiveRecord::Base
   #   end
   # end
 
-  def self.store(params)
-    if GATEWAY.class == ActiveMerchant::Billing::BraintreeBlueGateway
+  def self.find_or_store(params)
+    if !params[:service_card_id].blank?
+      self.find_by(account_payment_service_id: params[:account_payment_service_id], service_card_id: params[:service_card_id])
+    elsif !params[:number].blank? && GATEWAY.class == ActiveMerchant::Billing::BraintreeBlueGateway
       unique_numbers = AccountPaymentService.find(params[:account_payment_service_id]).credit_cards.map(&:unique_number_identifier)
       resp = Braintree::CreditCard.create(
         customer_id: params[:customer_id],
