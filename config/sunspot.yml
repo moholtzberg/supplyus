@@ -4,8 +4,9 @@ production:
     port: 80
     log_level: WARNING
     path: <%= SECRET["WEBSOLR"]["PROD_PATH"] %>
-    # read_timeout: 2
-    # open_timeout: 0.5
+    read_timeout: 2
+    open_timeout: 0.5
+    # auto_commit_after_request: false
 
 development:
   solr:

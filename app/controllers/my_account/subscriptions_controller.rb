@@ -1,6 +1,7 @@
 class MyAccount::SubscriptionsController < ApplicationController
   layout 'shop'
   respond_to :html, :json
+  before_filter :find_categories
   skip_before_filter :check_authorization
 
   def index
@@ -93,6 +94,10 @@ class MyAccount::SubscriptionsController < ApplicationController
     else
       flash[:error] = "There were some problems with the form you submitted"
     end
+  end
+  
+  def find_categories
+     @menu = Category.is_parent.is_active.show_in_menu
   end
   
   private
