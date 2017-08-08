@@ -1,11 +1,18 @@
 class CustomersController < ApplicationController
   layout "admin"
-  helper_method :sort_column, :sort_direction
   respond_to :html, :json
   
   def index
     authorize! :read, Customer
-    @customers = Customer.joins(:main_address).order(sort_column + " " + sort_direction).includes(:group)
+    respond_to do |format|
+      format.html
+      format.json { render json: CustomerDatatable.new(view_context) }
+    end
+  end
+
+  def autocomplete
+    authorize! :read, Customer
+    @customers = Customer.joins(:main_address).includes(:group)
     if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
     else
       @customers = @customers.where(:sales_rep_id => current_user.id)
@@ -14,18 +21,16 @@ class CustomersController < ApplicationController
       @customers = @customers.lookup(params[:term]) if params[:term].present?
     end
     @customers = @customers.paginate(:page => params[:page], :per_page => 10)
+    msg = @customers.map {|a| 
+      {
+        :label => "#{a.name} #{a.group_name.present? ? "(" + a.group_name + ")" : nil}", :value => "#{a.name}",
+        :name => "#{a.name}",
+        :address_1 => "#{a.address_1}", :address_2 => "#{a.address_2}", :city => "#{a.city}", 
+        :state => "#{a.state}", :zip => "#{a.zip}", :phone => "#{a.phone}", :email => "#{a.email}"
+      } 
+    }
     respond_to do |format|
-      format.html
-      msg = @customers.map {|a| 
-        {
-          :label => "#{a.name} #{a.group_name.present? ? "(" + a.group_name + ")" : nil}", :value => "#{a.name}",
-          :name => "#{a.name}",
-          :address_1 => "#{a.address_1}", :address_2 => "#{a.address_2}", :city => "#{a.city}", 
-          :state => "#{a.state}", :zip => "#{a.zip}", :phone => "#{a.phone}", :email => "#{a.email}"
-        } 
-      }
       format.json {render :json => msg}
-      
     end
   end
   
@@ -53,38 +58,20 @@ class CustomersController < ApplicationController
     params[:customer][:is_taxable] = true unless params[:customer][:is_taxable] != 1
     params[:customer][:sales_rep_name] = current_user.email unless !params[:customer][:sales_rep_name].blank?
     @customer = Customer.new(account_params)
-    if @customer.save
-      @customers = Customer.joins(:main_address).order(sort_column + " " + sort_direction).includes(:group)
-      
-      if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
-      else
-        @customers = @customers.where(:sales_rep_id => current_user.id)
-      end
-      
-      @customers = @customers.lookup(@customer.name)
-      @customers = @customers.paginate(:page => params[:page], :per_page => 10)
-    end
+    @customer.save
   end
   
   def update
     authorize! :update, Customer
     params[:customer][:is_taxable] = true unless params[:customer][:is_taxable] != 1
     @customer = Customer.find_by(:id => params[:id])
-    if @customer.update_attributes(account_params)
-      @customers = Customer.joins(:main_address).order(sort_column + " " + sort_direction).includes(:group)
-      
-      if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
-      else
-        @customers = @customers.where(:sales_rep_id => current_user.id)
-      end
-      
-      @customers = @customers.lookup(@customer.name)
-      @customers = @customers.paginate(:page => params[:page], :per_page => 10)
-      respond_to do |format|
-        format.html
-        format.js
-      end
-    end
+    @customer.update_attributes(account_params)
+  end
+
+  def destroy
+    authorize! :destroy, Customer
+    @customer = Customer.find_by(:id => params[:id])
+    @customer.destroy
   end
   
   def statements
@@ -105,14 +92,6 @@ class CustomersController < ApplicationController
 
   def account_params
     params.require(:customer).permit(:name, :sales_rep_name, :email, :group_name, :credit_terms, :credit_limit, :quickbooks_id, :is_taxable, :replace_items, main_address_attributes: [:address_1, :address_2, :city, :state, :zip, :phone, :fax])
-  end
-
-  def sort_column
-    (Customer.column_names + Address.column_names).include?(params[:sort]) ? params[:sort] : "accounts.name"
-  end
-  
-  def sort_direction
-    %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
   end
   
 end

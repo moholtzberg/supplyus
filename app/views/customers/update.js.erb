@@ -2,5 +2,5 @@
 	$('#myModal').modal("hide")
 	$('body').removeClass('modal-open')
 	$('.modal-backdrop').remove()
-	$("#customers").html("<%= j render :template => 'customers/index.html', :format => 'html' %>")
+	$("#customers-table").DataTable().draw('full-hold');
 <% end %>

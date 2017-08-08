@@ -40,7 +40,11 @@ Rails.application.routes.draw do
       resources :charges
       resources :contacts
       resources :credit_cards
-      resources :customers
+      resources :customers do
+        collection do
+          get :autocomplete
+        end
+      end
       resources :discount_codes
       resources :discount_code_effects, only: [:edit, :update]
       resources :discount_code_rules, only: [:new, :create, :destroy]

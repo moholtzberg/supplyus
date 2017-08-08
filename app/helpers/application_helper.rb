@@ -55,5 +55,9 @@ module ApplicationHelper
   def range_to_currency(range)
     number_to_currency(range.begin) + ' - ' + number_to_currency(range.end)
   end
+
+  def dropdown(class_name, id)
+    render partial: "#{class_name.to_s.pluralize}/dropdown", locals: {id: id}, formats: [:html]
+  end
   
 end
