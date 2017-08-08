@@ -34,15 +34,6 @@ class OrderLineItem < ActiveRecord::Base
     approve
   end
   
-  def create_inventory_transactions
-    if InventoryTransaction.find_by(:inv_transaction_id => id, :inv_transaction_type => "OrderLineItem")
-      i = InventoryTransaction.find_by(:inv_transaction_id => id, :inv_transaction_type => "OrderLineItem")
-    else
-      i = InventoryTransaction.new
-    end
-    i.update_attributes(:inv_transaction_id => id, :inv_transaction_type => "OrderLineItem", :item_id => item_id, :quantity => quantity)
-  end
-  
   def update_shipped_fulfilled
     qs = calculate_quantity_shipped
     qf = calculate_quantity_fulfilled

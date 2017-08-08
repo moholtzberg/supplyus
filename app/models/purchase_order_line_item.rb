@@ -5,7 +5,6 @@ class PurchaseOrderLineItem < ActiveRecord::Base
   belongs_to :purchase_order, :touch => true
   belongs_to :item
   belongs_to :order_line_item
-  # has_many :inventory_transactions, :class_name => "InventoryTransaction", :dependent => :destroy
   has_many :purchase_order_line_item_receipts
   
   scope :by_item, -> (item) { where(:item_id => item) }
@@ -52,15 +51,6 @@ class PurchaseOrderLineItem < ActiveRecord::Base
       self.purchase_order_line_item_receipts.each {|i| total += i.quantity_received.to_f }
       total
     end
-  end
-  
-  def create_inventory_transactions
-    if InventoryTransaction.find_by(:inv_transaction_id => id, :inv_transaction_type => "PurchaseOrderLineItem")
-      i = InventoryTransaction.find_by(:inv_transaction_id => id, :inv_transaction_type => "PurchaseOrderLineItem")
-    else
-      i = InventoryTransaction.new
-    end
-    i.update_attributes(:inv_transaction_id => id, :inv_transaction_type => "PurchaseOrderLineItem", :item_id => item_id, :quantity => quantity)
   end
   
   def make_line_number

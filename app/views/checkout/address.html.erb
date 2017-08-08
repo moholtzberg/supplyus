@@ -70,7 +70,7 @@
 
         <div id="select_address" class="col-md-12 shipping">
           <label for="checkout_{:class=>&quot;control-label&quot;}">Select Address</label>
-          <%= select_tag("Select Address", options_from_collection_for_select(current_user.account.addresses, "id", "address_1"), {include_blank: true, class: "shipping_address form-control"}) %>
+          <%= select_tag("Select Address", options_from_collection_for_select(current_user.account.addresses, "id", "address_1"), {include_blank: true, class: "shipping_address form-control selectpicker"}) %>
           <script>
             var addresses = <%= raw current_user.account.addresses.to_a.push(Address.new).to_json %>;
             $('select.shipping_address').change(function(){
@@ -163,7 +163,7 @@
 
         <div id="select_address" class="col-md-12 shipping">
           <label for="checkout_{:class=>&quot;control-label&quot;}">Select Address</label>
-          <%= select_tag("Select Address", options_from_collection_for_select(current_user.account.addresses, "id", "address_1"), {include_blank: true, class: "billing_address form-control bill_to"}) %>
+          <%= select_tag("Select Address", options_from_collection_for_select(current_user.account.addresses, "id", "address_1"), {include_blank: true, class: "billing_address form-control bill_to selectpicker"}) %>
           <script>
             var addresses = <%= raw current_user.account.addresses.to_a.push(Address.new).to_json %>;
             $('select.billing_address').change(function(){

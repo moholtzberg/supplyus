@@ -1,0 +1,5 @@
+// fix partial -> template
+$("#warehouses").replaceWith("<%= j render :template => 'warehouses/index.html', :format => 'html', :locals => {:warehouses => @warehouses} %>");
+$("#confirmModal").modal("hide");
+// flash example
+Recurring.flash.showMsg('notice', "Warehouse was deleted.");

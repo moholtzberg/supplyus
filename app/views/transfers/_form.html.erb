@@ -1,0 +1,39 @@
+<fieldset>  
+      
+  <div id="bin_name" class="col-md-6">
+    <%= f.label :bin_name, :class => "control-label" %>
+    <%= f.text_field :bin_name, :class => "form-control", data: {autocomplete_source: bins_path} %>
+  </div>
+  
+  <div id="quantity" class="col-md-6">
+    <%= f.label :quantity, :class => "control-label" %>
+    <%= f.text_field :quantity, :class => "form-control" %>
+  </div>
+
+  <%= f.hidden_field :from_id %>  
+
+  <script>
+    jQuery(function() {
+      $('#transfer_bin_name').autocomplete({
+        source: function (request, response) {
+          $.ajax({
+            url: $('#transfer_bin_name').data('autocomplete-source'),
+            dataType: "json",
+            data: {
+              term: request.term
+            },
+            success: function( data ) {
+              response( data.filter(function(item){return item.id != <%= @transfer.from.bin_id %>}) );
+            }
+          });
+        }
+      });
+      $('form#new_transfer').submit(function(e){
+        if ( $(this).find(':input#transfer_quantity').val() > <%= @transfer.quantity %> ) {
+          return confirm('It will cause inventory quantity to become negative. Are you sure?');
+        }
+      });
+    });
+  </script>
+  
+</fieldset>

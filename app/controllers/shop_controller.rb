@@ -106,7 +106,7 @@ class ShopController < ApplicationController
     puts "SESSION --------> #{cookies.permanent.signed[:cart_id]}"
     if !cookies.permanent.signed[:cart_id].blank? and cookies.permanent.signed[:cart_id].is_a? Numeric
       @cart = Cart.find_by(:id => cookies.permanent.signed[:cart_id])
-      unless @cart.completed_at.nil?
+      unless @cart.submitted_at.nil?
         @cart = Cart.create
         cookies.permanent.signed[:cart_id] = @cart.id
       end
@@ -167,7 +167,7 @@ class ShopController < ApplicationController
     # @items = Item.where(id: @items).joins(:order_line_items).group(:item_id).order("order_line_items.quantity DESC")
     
     if current_user.account
-      order_ids = Order.where(:account_id => current_user.account.id).where.not(:completed_at => nil).map(&:id)
+      order_ids = Order.where(:account_id => current_user.account.id).where.not(:submitted_at => nil).map(&:id)
     end
     
     item_ids = OrderLineItem.where(:order_id => order_ids, :quantity => 1..Float::INFINITY).map {|q| q.item_id unless q.actual_quantity < 1}
@@ -178,7 +178,7 @@ class ShopController < ApplicationController
   def view_account
     @account = Customer.find_by(:id => params[:account_id])
     if current_user.my_account_ids.include?(@account.id)
-      @orders = @account.orders.is_complete.includes(:order_shipping_method).order(:completed_at).paginate(:page => params[:page], :per_page => 10)
+      @orders = @account.orders.is_submitted.includes(:order_shipping_method).order(:submitted_at).paginate(:page => params[:page], :per_page => 10)
     else
       redirect_to "/"
     end

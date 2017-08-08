@@ -7,7 +7,7 @@
 	<% s = month_offset.months.ago.beginning_of_month %>
 	<% e = month_offset.months.ago.end_of_month %>
 	
-	<% order_ids = Order.where("COALESCE(tax_total,0) <> 0").where(completed_at: s..e).fulfilled %>
+	<% order_ids = Order.where("COALESCE(tax_total,0) <> 0").where(submitted_at: s..e).fulfilled %>
 	
 	<% order_tax_rates = OrderTaxRate.where(order_id: order_ids) %>
 	

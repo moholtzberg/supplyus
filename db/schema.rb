@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170728122345) do
+ActiveRecord::Schema.define(version: 20170803131336) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -489,8 +489,7 @@ ActiveRecord::Schema.define(version: 20170728122345) do
     t.integer  "sales_rep_id"
     t.datetime "date"
     t.datetime "due_date"
-    t.datetime "completed_at"
-    t.boolean  "canceled"
+    t.datetime "submitted_at"
     t.boolean  "locked"
     t.string   "po_number"
     t.string   "ip_address"
@@ -691,6 +690,14 @@ ActiveRecord::Schema.define(version: 20170728122345) do
 
   add_index "roles", ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id"
   add_index "roles", ["name"], name: "index_roles_on_name"
+
+  create_table "schedules", force: :cascade do |t|
+    t.string "cron"
+    t.string "worker"
+    t.string "status"
+    t.string "name"
+    t.string "arguments"
+  end
 
   create_table "settings", force: :cascade do |t|
     t.string "key"

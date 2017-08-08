@@ -1,0 +1,24 @@
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <h4 class="modal-title" id="myModalLabel">New Transfer</h4>
+</div>
+
+<div class="modal-body" id="modal-body">
+  
+  <% if flash[:error] %>
+  <div id="flash_messages" class="aelrt alert-danger" role="alert">
+    <strong><%= flash[:error] %></strong>
+  </div>
+  <% end %>
+  
+  <%= form_for @transfer, :url => inventory_transfers_path, :html => {:class => "form-horizontal"} do |f| %>
+    <%= render :partial => "transfers/form", :locals => {:f => f}%>
+  <% end %>
+  
+</div>
+
+<div class="modal-footer">
+  <%= button_tag(:name => :commit, :type => :submit, :class => "btn btn-primary", :form => "new_transfer") do %>
+  Create Transfer
+  <% end %>
+</div>

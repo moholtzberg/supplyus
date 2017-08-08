@@ -22,7 +22,7 @@
 		<% @orders.each do |order|%>
 		<tr>
 			<td><%= order.number %></td>
-			<td><%= order.completed_at.strftime("%m/%d/%Y") %></td>
+			<td><%= order.submitted_at.strftime("%m/%d/%Y") %></td>
 			<td><%= order.po_number %></td>
 			<td><%= number_to_currency(order.total) %></td>
 			<td><%= order.paid ? "Yes" : "No" %></td>

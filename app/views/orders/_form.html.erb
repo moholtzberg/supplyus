@@ -53,15 +53,15 @@
 			</div>
 			
 			<div class="col-md-2">
-				<%= f.label :completed_at %>
+				<%= f.label :submitted_at %>
 				
-				<% if @order.completed_at.blank? %>
+				<% if @order.submitted_at.blank? %>
 	
-				<%= f.date_field(:completed_at, :class => "form-control") %>
+				<%= f.date_field(:submitted_at, :class => "form-control") %>
 				
 				<% else %>
 				
-				<%= f.datetime_field(:completed_at, :disabled => true, :class => "form-control", :value => @order.completed_at.strftime("%m/%d/%Y %I:%M %p")) %>
+				<%= f.datetime_field(:submitted_at, :disabled => true, :class => "form-control", :value => @order.submitted_at.strftime("%m/%d/%Y %I:%M %p")) %>
 				
 				<% end %>
 			</div>

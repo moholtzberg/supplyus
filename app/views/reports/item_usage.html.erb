@@ -11,7 +11,7 @@
 
         </tr>
 				<% start = 0%>
-        <% items = OrderLineItem.unscoped.joins("INNER JOIN orders ON orders.id = order_line_items.order_id").joins("RIGHT OUTER JOIN items ON items.id = order_line_items.item_id").where("orders.completed_at BETWEEN ? AND ?", @from_date, @to_date).where("quantity_shipped >= 0").group("item_id, items.number").select("SUM(COALESCE(quantity, 0) - COALESCE(quantity_canceled, 0)) AS qty, item_id AS item_id, items.number AS number").having("item_id = item_id").order("qty DESC") %>
+        <% items = OrderLineItem.unscoped.joins("INNER JOIN orders ON orders.id = order_line_items.order_id").joins("RIGHT OUTER JOIN items ON items.id = order_line_items.item_id").where("orders.submitted_at BETWEEN ? AND ?", @from_date, @to_date).where("quantity_shipped >= 0").group("item_id, items.number").select("SUM(COALESCE(quantity, 0) - COALESCE(quantity_canceled, 0)) AS qty, item_id AS item_id, items.number AS number").having("item_id = item_id").order("qty DESC") %>
 
         <% items.each do |i|%>
 				

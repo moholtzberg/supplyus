@@ -53,6 +53,7 @@ class MyAccount::SubscriptionsController < ApplicationController
       if @payment.authorize
         @subscription.activate
         @order.order_payment_applications.first.update_attribute(:applied_amount, @payment.amount)
+        @order.submit
         redirect_to my_account_subscriptions_path
       else
         render "details"

@@ -20,95 +20,87 @@
 		</tr>
 		
 	</table>
-	
-	<table class="table table-bordered">
-		
-		<tr>
-			<th>ID</th>
-			<th>Item Name/Description</th>
-			<th>Quantity Ordered</th>
-			<th>Quantity Shipped</th>
-			<th>Quantity To Ship Now</th>
-		<tr>
-		
-		<%= hidden_field_tag :order_id, params[:order_id].to_i %>
-		
-		<% @line_items.each_with_index do |li, idx| %>
-			<% if li.quantity_shipped.to_i != li.actual_quantity and li.actual_quantity != 0 %>
-				<%= hidden_field_tag "lines[#{idx}][order_line_item_id]", li.id.to_i %>
-				<tr>
-					<td><%= li.id %></td>
-					<td><%= "#{li.item.number} / #{li.item.name}" unless li.item.nil? %></td>
-					<td><%= li.actual_quantity %></td>
-					<td><%= li.quantity_shipped %></td>
-					<td><%= text_field_tag "lines[#{idx}][quantity_ship_now]", (li.actual_quantity.to_i - li.quantity_shipped.to_i), :class => "form-control" %></td>
-				<tr>
-			<% end %>
-		<% end %>
-		
-	</talbe>
+
+  <table class="table table-bordered">
+    
+    <tr class="line-item-shipments-labels">
+      <th>Item Name/Description</th>
+      <th>Bin</th>
+      <th>Quantity To Ship Now</th>
+    <tr>
+    
+    <%= f.hidden_field :order_id, value: params[:order_id].to_i %>
+    
+    <tr class="line-item-shipments-form">
+      <td><%= select_tag :order_line_item_id, options_for_select(@line_items.select{|li| (li.actual_quantity.to_i - li.quantity_shipped.to_i) > 0}.map {|li| ["#{li.item.number} / #{li.item.name}", li.id ] }), {include_blank: true, class: 'form-control'} %></td>
+      <td><%= select_tag :bin_id, nil, {include_blank: true, class: 'form-control', disabled: true} %></td>
+      <td><%= text_field_tag :quantity_shipped, nil, class: 'form-control', disabled: true %></td>
+      <td><%= button_tag "Add Item", class: "btn btn-primary add-item" %></td>
+    </tr>
+
+  </talbe>
 	
 	<table class="table table-bordered table-condensed">
 		
 		<tr>
 			<td>Tracking Number 1</td>
-			<td><%= text_field_tag "tracking_numbers[0][number]" %></td>
+			<td><%= text_field_tag "shipment[tracking_numbers_attributes][0][number]" %></td>
 		</tr>
 		<tr>
 			<td>Tracking Number 2</td>
-			<td><%= text_field_tag "tracking_numbers[1][number]" %></td>
+			<td><%= text_field_tag "shipment[tracking_numbers_attributes][1][number]" %></td>
 		</tr>
 		<tr>
 			<td>Tracking Number 3</td>
-			<td><%= text_field_tag "tracking_numbers[2][number]" %></td>
+			<td><%= text_field_tag "shipment[tracking_numbers_attributes][2][number]" %></td>
 		</tr>
 		<tr>
 			<td>Tracking Number 4</td>
-			<td><%= text_field_tag "tracking_numbers[3][number]" %></td>
+			<td><%= text_field_tag "shipment[tracking_numbers_attributes][3][number]" %></td>
 		</tr>
 		<tr>
 			<td>Tracking Number 5</td>
-			<td><%= text_field_tag "tracking_numbers[4][number]" %></td>
+			<td><%= text_field_tag "shipment[tracking_numbers_attributes][4][number]" %></td>
 		</tr>
 		<tr>
 			<td>Tracking Number 6</td>
-			<td><%= text_field_tag "tracking_numbers[5][number]" %></td>
+			<td><%= text_field_tag "shipment[tracking_numbers_attributes][5][number]" %></td>
 		</tr>
 		<tr>
 			<td>Tracking Number 7</td>
-			<td><%= text_field_tag "tracking_numbers[6][number]" %></td>
+			<td><%= text_field_tag "shipment[tracking_numbers_attributes][6][number]" %></td>
 		</tr>
 		<tr>
 			<td>Tracking Number 8</td>
-			<td><%= text_field_tag "tracking_numbers[7][number]" %></td>
+			<td><%= text_field_tag "shipment[tracking_numbers_attributes][7][number]" %></td>
 		</tr>
 		<tr>
 			<td>Tracking Number 9</td>
-			<td><%= text_field_tag "tracking_numbers[8][number]" %></td>
+			<td><%= text_field_tag "shipment[tracking_numbers_attributes][8][number]" %></td>
 		</tr>
 		<tr>
 			<td>Tracking Number 10</td>
-			<td><%= text_field_tag "tracking_numbers[9][number]" %></td>
+			<td><%= text_field_tag "shipment[tracking_numbers_attributes][9][number]" %></td>
 		</tr>
 		<tr>
 			<td>Tracking Number 11</td>
-			<td><%= text_field_tag "tracking_numbers[10][number]" %></td>
+			<td><%= text_field_tag "shipment[tracking_numbers_attributes][10][number]" %></td>
 		</tr>
 		<tr>
 			<td>Tracking Number 12</td>
-			<td><%= text_field_tag "tracking_numbers[11][number]" %></td>
+			<td><%= text_field_tag "shipment[tracking_numbers_attributes][11][number]" %></td>
 		</tr>
 		<tr>
 			<td>Tracking Number 13</td>
-			<td><%= text_field_tag "tracking_numbers[12][number]" %></td>
+			<td><%= text_field_tag "shipment[tracking_numbers_attributes][12][number]" %></td>
 		</tr>
 		<tr>
 			<td>Tracking Number 14</td>
-			<td><%= text_field_tag "tracking_numbers[13][number]" %></td>
+			<td><%= text_field_tag "shipment[tracking_numbers_attributes][13][number]" %></td>
 		</tr>
 		<tr>
 			<td>Tracking Number 15</td>
-			<td><%= text_field_tag "tracking_numbers[14][number]" %></td>
+			<td><%= text_field_tag "shipment[tracking_numbers_attributes][14][number]" %></td>
 		</tr>
 		
 	</table>
@@ -121,3 +113,239 @@
 	<% end %>
 	
 </div>
+
+<script>
+  $(function() {
+
+    var FORMBUILDER = FORMBUILDER || {};
+
+    FORMBUILDER.shipment_line_items = <%= raw @line_items.map{ |li| {id: li.id, name: "#{li.item.number} / #{li.item.name}", quantity: li.actual_quantity.to_i - li.quantity_shipped.to_i, remaining_quantity: li.actual_quantity.to_i - li.quantity_shipped.to_i, item_id: li.item_id} }.to_json %>;
+    FORMBUILDER.bins = <%= raw Bin.joins(:inventories).where(inventories: {item_id: @line_items.pluck(:item_id).uniq}).uniq.sort.map{|bin| {id: bin.id, name: bin.name, items: bin.inventories.where(item_id: @line_items.pluck(:item_id).uniq).map{|inv| {id: inv.item_id, quantity: inv.qty_on_hand, remaining_quantity: inv.qty_on_hand} } } }.to_json %>;
+    FORMBUILDER.line_item_shipments = [];
+    FORMBUILDER.current_line_item_shipment = {};
+
+    FORMBUILDER.actions = {
+
+      init: function(){
+
+        FORMBUILDER.actions.findLineItem(line_item_shipment);
+        FORMBUILDER.actions.findBin(line_item_shipment);
+        FORMBUILDER.actions.addItem();
+        FORMBUILDER.actions.removeItem();
+        FORMBUILDER.actions.validateForm();
+        FORMBUILDER.actions.fieldValid(key);
+	      FORMBUILDER.actions.recalculateRemainingQty();
+        FORMBUILDER.actions.clearErrors();
+        FORMBUILDER.actions.renderList();
+        FORMBUILDER.actions.resetForm();
+        FORMBUILDER.actions.updateItemSelectOptions();
+        FORMBUILDER.actions.updateCurrentItem();
+        FORMBUILDER.actions.updateQuantityToShip();
+        FORMBUILDER.actions.updateBinSelectOptions();
+
+      },
+
+      findLineItem: function(line_item_shipment){
+      	return FORMBUILDER.shipment_line_items.filter(function(item){return item.id == line_item_shipment.order_line_item_id})[0]
+      },
+
+      findBin: function(line_item_shipment){
+      	return FORMBUILDER.bins.filter(function(item){return item.id == line_item_shipment.bin_id})[0]
+      },
+
+      addItem: function(){
+      	FORMBUILDER.actions.clearErrors();
+      	if (FORMBUILDER.actions.validateForm()) {
+	        FORMBUILDER.line_item_shipments.push($.extend({}, FORMBUILDER.current_line_item_shipment));
+	        FORMBUILDER.actions.recalculateRemainingQty();
+	        FORMBUILDER.actions.resetForm();
+	        FORMBUILDER.actions.renderList();
+      	}
+      },
+
+      removeItem: function(e){
+      	var index = parseInt($(e.target).closest('tr').data( "index" ));
+      	FORMBUILDER.line_item_shipments.splice(index, 1);
+	      FORMBUILDER.actions.recalculateRemainingQty();
+	      FORMBUILDER.actions.resetForm();
+	      FORMBUILDER.actions.renderList();
+      },
+
+      validateForm: function(){
+      	var valid = true;
+      	Object.keys(FORMBUILDER.current_line_item_shipment).forEach(function(key){
+      		if (!FORMBUILDER.actions.fieldValid(key)) { 
+      			$('.line-item-shipments-form #' + key).parent().addClass('has-error');
+      			valid = false;
+      		}
+      	})
+      	return valid;
+      },
+
+      fieldValid: function(key) {
+      	var value = FORMBUILDER.current_line_item_shipment[key]
+      	switch(key) {
+      		case 'order_line_item_id':
+      			return value
+      			break;
+      		case 'bin_id':
+      			return value
+      			break;
+      		case 'quantity_shipped':
+      			return value && value > 0 && value <= FORMBUILDER.actions.maxQuantity()
+      			break;
+      	}
+      },
+
+      recalculateRemainingQty: function() {
+      	FORMBUILDER.shipment_line_items.forEach(function(el) {
+      		el.remaining_quantity = el.quantity - FORMBUILDER.line_item_shipments.filter(function(item){return item.order_line_item_id == el.id}).reduce(function(acc, lis) {
+  					return acc + parseInt(lis.quantity_shipped);
+					}, 0);
+      	})
+      	FORMBUILDER.bins.forEach(function(bin) {
+      		bin.items.forEach(function(item) {
+	      		item.remaining_quantity = item.quantity - FORMBUILDER.line_item_shipments.filter(function(li){return li.bin_id == bin.id && FORMBUILDER.shipment_line_items.filter(function(sli){ return sli.id == li.order_line_item_id })[0].item_id == item.id}).reduce(function(acc, lis) {
+	  					return acc + parseInt(lis.quantity_shipped);
+						}, 0);
+      		})
+      	})
+      },
+
+      clearErrors: function() {
+      	$('.line-item-shipments-form td').removeClass('has-error');
+      },
+
+      renderList: function() {
+      	$('tr.polir').remove();
+      	FORMBUILDER.line_item_shipments.forEach(function(el, i) {
+	        var item = document.createElement("tr");
+	        item.className = "polir";
+	        item.setAttribute('data-index', i)
+	        $(item)
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<input type="hidden" name="shipment[line_item_shipments_attributes][' + i + '][order_line_item_id]" value="' + el.order_line_item_id + '" />')
+	          )
+	          .append(
+	            FORMBUILDER.actions.findLineItem(el).name
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<input type="hidden" name="shipment[line_item_shipments_attributes][' + i + '][bin_id]" value="' + el.bin_id + '" />')
+	          )
+	          .append(
+	            FORMBUILDER.actions.findBin(el).name
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<input type="hidden" name="shipment[line_item_shipments_attributes][' + i + '][quantity_shipped]" value="' + el.quantity_shipped + '" />')
+	          )
+	          .append(
+	            el.quantity_shipped
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<a href="#" class="remove-item"><i class="fa fa-remove"></i></a>')
+	          )
+	        )
+	        $('.line-item-shipments-labels').after(item)
+      	})
+		    $('.remove-item').click(function(e){
+		    	e.stopPropagation();
+		    	e.preventDefault();
+		      FORMBUILDER.actions.removeItem(e);
+		    })
+      },
+
+      resetForm: function() {
+      	$('.line-item-shipments-form :input').val('');
+      	FORMBUILDER.actions.updateCurrentItem();
+      	FORMBUILDER.actions.updateItemSelectOptions();
+      	FORMBUILDER.actions.updateBinSelectOptions();
+      },
+
+      updateItemSelectOptions: function() {
+      	$el = $(':input#order_line_item_id')
+      	$el.find('option:not([value=""])').remove()
+      	FORMBUILDER.shipment_line_items.filter(function(item){return item.remaining_quantity > 0}).forEach(function(el) {
+	        var item = document.createElement("option");
+	        item.setAttribute('value', el.id);
+	        item.innerHTML = el.name;
+	        $el.append(item);
+	      });
+      },
+
+      updateBinSelectOptions: function() {
+      	$el = $(':input#bin_id')
+      	$el.find('option:not([value=""])').remove()
+      	item_id = '';
+      	if (FORMBUILDER.current_line_item_shipment.order_line_item_id) {
+	      	item_id = FORMBUILDER.shipment_line_items.filter(function(item){return item.id == FORMBUILDER.current_line_item_shipment.order_line_item_id})[0].item_id
+      	}
+      	FORMBUILDER.bins.filter(function(bin){return bin.items.filter(function(item){return item.id == item_id && item.remaining_quantity > 0}).length != 0 }).forEach(function(el) {
+	        var item = document.createElement("option");
+	        item.setAttribute('value', el.id);
+	        item.innerHTML = el.name;
+	        $el.append(item);
+	      });
+      },
+
+      updateCurrentItem: function() {
+      	var line_item_shipment = FORMBUILDER.current_line_item_shipment
+        line_item_shipment.order_line_item_id = $(':input#order_line_item_id').val();
+        line_item_shipment.bin_id = $(':input#bin_id').val();
+        line_item_shipment.quantity_shipped = $(':input#quantity_shipped').val();
+      },
+
+      updateQuantityToShip: function() {
+        $(':input#quantity_shipped').val(FORMBUILDER.actions.maxQuantity()).change();
+      },
+
+      maxQuantity: function() {
+        var line_item = FORMBUILDER.actions.findLineItem(FORMBUILDER.current_line_item_shipment);
+        var line_item_qty = line_item.remaining_quantity
+        var bin = FORMBUILDER.actions.findBin(FORMBUILDER.current_line_item_shipment);
+        var bin_qty = bin.items.filter(function(item){ return item.id == line_item.item_id })[0].remaining_quantity
+      	return line_item_qty < bin_qty ? line_item_qty : bin_qty
+      }
+
+    }
+
+    $('.add-item').click(function(e){
+    	e.stopPropagation();
+    	e.preventDefault();
+      FORMBUILDER.actions.addItem();
+    })
+
+    $('.line-item-shipments-form :input').change(function(){
+      FORMBUILDER.actions.updateCurrentItem();
+      FORMBUILDER.actions.clearErrors()
+    	switch(this.id) {
+    		case 'order_line_item_id':
+		    	if ($(this).val()) {
+		    		$(':input#bin_id').prop( "disabled", false );
+		    		FORMBUILDER.actions.updateBinSelectOptions();
+		    	} else {
+		    		$(':input#bin_id').prop( "disabled", true );
+		    	}
+    			break;
+    		case 'bin_id':
+		    	if ($(this).val()) {
+		    		$(':input#quantity_shipped').prop( "disabled", false );
+		    		FORMBUILDER.actions.updateQuantityToShip();
+		    	} else {
+		    		$(':input#quantity_shipped').prop( "disabled", true );
+		    	}
+    			break;
+    	}
+    })
+  });
+</script>

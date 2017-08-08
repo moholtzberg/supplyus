@@ -4,10 +4,12 @@ class Payment < ActiveRecord::Base
   belongs_to :account
   belongs_to :payment_method
   has_many :order_payment_applications
+  has_many :orders, through: :order_payment_applications
   has_many :transactions
   accepts_nested_attributes_for :order_payment_applications
 
   validates :amount, :presence => true, :numericality => { greater_then: 0 }
+  validates :payment_method, :presence => true
   
   def account_name
     account.try(:name)
@@ -17,11 +19,12 @@ class Payment < ActiveRecord::Base
     self.account = Account.find_by(:name => name) if name.present?
   end
 
-  def completed?
-    if payment_type == "CheckPayment"
-      success?
-    elsif payment_type == "CreditCardPayment"
-      success? && captured?
+  def finalize
+    if !success?
+      if capture
+        confirm_order_payment
+        true
+      end
     end
   end
   
@@ -43,6 +46,10 @@ class Payment < ActiveRecord::Base
     elsif payment_type == "CreditCardPayment"
       "AUTH# #{authorization_code}"
     end
+  end
+
+  def confirm_order_payment
+    orders.each(&:confirm_payment)
   end
   
 end

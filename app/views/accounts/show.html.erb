@@ -58,7 +58,7 @@
 				Total Sales
 			</div>
 			<div class="panel-body text-center">
-				<%= number_to_currency(@orders.includes(:order_line_items).is_complete.map(&:sub_total).sum) %>
+				<%= number_to_currency(@orders.includes(:order_line_items).is_submitted.map(&:sub_total).sum) %>
 			</div>
 		</div>
 	</div>
@@ -69,7 +69,7 @@
 				Total Orders
 			</div>
 			<div class="panel-body text-center">
-				<%= number_to_human(@orders.is_complete.count) %>
+				<%= number_to_human(@orders.is_submitted.count) %>
 			</div>
 		</div>
 	</div>
@@ -80,7 +80,7 @@
 				Total Outstanding Balance
 			</div>
 			<div class="panel-body text-center">
-				<%= number_to_currency(@orders.includes(:order_line_items).is_complete.map(&:balance_due).sum) %>
+				<%= number_to_currency(@orders.includes(:order_line_items).is_submitted.map(&:balance_due).sum) %>
 			</div>
 		</div>
 	</div>
@@ -103,30 +103,30 @@
 					</tr>
 					<tr>
 						<td>Revenue</td>
-						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(Date.today.beginning_of_month, Date.today).map(&:sub_total).sum) %></td>
-						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(1.month.ago, 1.day.ago).map(&:sub_total).sum) %></td>
-						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(1.month.ago.beginning_of_month, 1.month.ago.end_of_month).map(&:sub_total).sum) %></td>
-						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(2.month.ago.beginning_of_month, 2.month.ago.end_of_month).map(&:sub_total).sum) %></td>
-						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(3.month.ago.beginning_of_month, 3.month.ago.end_of_month).map(&:sub_total).sum) %></td>
-						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(Date.today.beginning_of_year, Date.today).map(&:sub_total).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(Date.today.beginning_of_month, Date.today).map(&:sub_total).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(1.month.ago, 1.day.ago).map(&:sub_total).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(1.month.ago.beginning_of_month, 1.month.ago.end_of_month).map(&:sub_total).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(2.month.ago.beginning_of_month, 2.month.ago.end_of_month).map(&:sub_total).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(3.month.ago.beginning_of_month, 3.month.ago.end_of_month).map(&:sub_total).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(Date.today.beginning_of_year, Date.today).map(&:sub_total).sum) %></td>
 					</tr>
 					<tr>
 						<td>Orders</td>
-						<td><%= @orders.includes(:order_line_items => [:item]).is_complete.by_date_range(Date.today.beginning_of_month, Date.today).count %></td>
-						<td><%= @orders.includes(:order_line_items => [:item]).is_complete.by_date_range(1.month.ago, 1.day.ago).count %></td>
-						<td><%= @orders.includes(:order_line_items => [:item]).is_complete.by_date_range(1.month.ago.beginning_of_month, 1.month.ago.end_of_month).count %></td>
-						<td><%= @orders.includes(:order_line_items => [:item]).is_complete.by_date_range(2.month.ago.beginning_of_month, 2.month.ago.end_of_month).count %></td>
-						<td><%= @orders.includes(:order_line_items => [:item]).is_complete.by_date_range(3.month.ago.beginning_of_month, 3.month.ago.end_of_month).count %></td>
-						<td><%= @orders.includes(:order_line_items => [:item]).is_complete.by_date_range(Date.today.beginning_of_year, Date.today).count %></td>
+						<td><%= @orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(Date.today.beginning_of_month, Date.today).count %></td>
+						<td><%= @orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(1.month.ago, 1.day.ago).count %></td>
+						<td><%= @orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(1.month.ago.beginning_of_month, 1.month.ago.end_of_month).count %></td>
+						<td><%= @orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(2.month.ago.beginning_of_month, 2.month.ago.end_of_month).count %></td>
+						<td><%= @orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(3.month.ago.beginning_of_month, 3.month.ago.end_of_month).count %></td>
+						<td><%= @orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(Date.today.beginning_of_year, Date.today).count %></td>
 					</tr>
 					<tr>
 						<td>Profit</td>
-						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(Date.today.beginning_of_month, Date.today).map(&:profit).sum) %></td>
-						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(1.month.ago, 1.day.ago).map(&:profit).sum) %></td>
-						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(1.month.ago.beginning_of_month, 1.month.ago.end_of_month).map(&:profit).sum) %></td>
-						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(2.month.ago.beginning_of_month, 2.month.ago.end_of_month).map(&:profit).sum) %></td>
-						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(3.month.ago.beginning_of_month, 3.month.ago.end_of_month).map(&:profit).sum) %></td>
-						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(Date.today.beginning_of_year, Date.today).map(&:profit).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(Date.today.beginning_of_month, Date.today).map(&:profit).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(1.month.ago, 1.day.ago).map(&:profit).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(1.month.ago.beginning_of_month, 1.month.ago.end_of_month).map(&:profit).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(2.month.ago.beginning_of_month, 2.month.ago.end_of_month).map(&:profit).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(3.month.ago.beginning_of_month, 3.month.ago.end_of_month).map(&:profit).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(Date.today.beginning_of_year, Date.today).map(&:profit).sum) %></td>
 					</tr>
 				</table>
 			</div>
@@ -150,8 +150,8 @@
 		
 			<table class="table table-bordered table-condensed table-striped">
 				<tr>
-					<th>Complete</th>
-					<th>Completed At</th>
+					<th>Submitted</th>
+					<th>Submitted At</th>
 					<th>Last Update</th>
 					<th>Number</th>
 					<th width="7%">Sub Total</th>
@@ -165,8 +165,8 @@
 				</tr>
 				<% @orders.each do |it| %>
 				<tr>
-					<td><%= it.completed_at.nil? ? "No" : "Yes" %></td>
-					<td><%= it.completed_at.strftime("%m/%d/%Y %I:%M %p") unless it.completed_at.nil? %>
+					<td><%= it.submitted_at.nil? ? "No" : "Yes" %></td>
+					<td><%= it.submitted_at.strftime("%m/%d/%Y %I:%M %p") unless it.submitted_at.nil? %>
 					<td><%= it.updated_at.strftime("%m/%d/%Y %I:%M %p") %>
 					<td><%= link_to it.number, it %></td>
 					<td><%= number_to_currency(it.sub_total) %></td>

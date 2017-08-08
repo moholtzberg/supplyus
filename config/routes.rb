@@ -33,6 +33,7 @@ Rails.application.routes.draw do
       end
       resources :addresses
       resources :assets
+      resources :bins
       resources :brands
       resources :brand_imports
       resources :categories
@@ -56,7 +57,10 @@ Rails.application.routes.draw do
           get :statements
         end
       end
-      resources :inventories
+      resources :group_item_prices
+      resources :inventories do
+        resources :transfers, only: [:new, :create]
+      end
       resources :invoices
       resources :items do
         collection do
@@ -76,7 +80,7 @@ Rails.application.routes.draw do
       resources :meter_readings
       resources :orders do
         collection do
-          get :incomplete
+          get :not_submitted
           get :locked
           get :shipped
           get :fulfilled
@@ -86,6 +90,8 @@ Rails.application.routes.draw do
           get :returnable_items
         end
         member do
+          put :approve
+          put :cancel
           put :lock
           put :resend_invoice
           post :resend_invoice_notification
@@ -102,7 +108,7 @@ Rails.application.routes.draw do
       resources :order_line_items
       resources :payments do
         member do
-          put :capture
+          put :finalize
         end
       end
       resources :payment_plans
@@ -116,7 +122,7 @@ Rails.application.routes.draw do
           put :resend_invoice
           put :resend_order
         end
-        resources :purchase_order_receipts, :only => [:new, :create]
+        resources :purchase_order_receipts, :only => [:new, :create, :destroy]
       end
       resources :purchase_order_line_items
       resource :reports, :only => :index do
@@ -140,6 +146,7 @@ Rails.application.routes.draw do
         get :reset_password
       end
       resources :vendors
+      resources :warehouses
       get "items/delete/:id" => "items#delete"
       get "/" => "home#show"
       get "/check_for_import" => "item_imports#check_for_import"
@@ -172,7 +179,7 @@ Rails.application.routes.draw do
   get   "checkout/payment" => "checkout#payment"
   patch "checkout/payment" => "checkout#update_payment"
   get   "checkout/confirm" => "checkout#confirm"
-  patch "checkout/complete"=> "checkout#complete"
+  patch "checkout/submit"=> "checkout#submit"
   post  "checkout/apply_code" => "checkout#apply_code"
   delete  "checkout/remove_code" => "checkout#remove_code"
 
