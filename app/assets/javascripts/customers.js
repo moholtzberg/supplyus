@@ -17,8 +17,5 @@ jQuery(document).ready(function() {
       {"data": "phone", className: "min-desktop"},
       {"data": "dropdown", sortable: false, className: "all"}
     ]
-    // pagingType is optional, if you want full pagination controls.
-    // Check dataTables documentation to learn more about
-    // available options.
   });
 });

@@ -27,7 +27,7 @@ class CustomerDatatable < AjaxDatatablesRails::Base
         state: record.state,
         zip: record.zip,
         phone: record.phone,
-        dropdown: dropdown(record.class, record.id)
+        dropdown: dropdown(record.class, record)
       }
     end
   end
