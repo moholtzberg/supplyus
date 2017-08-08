@@ -5,6 +5,7 @@ jQuery(document).ready(function() {
     "responsive": true,
     "ajax": $('#customers-table').data('source'),
     "pagingType": "full_numbers",
+    "autoWidth": false,
     "columns": [
       {"data": "id", className: "min-desktop"},
       {"data": "group", className: "all"},
