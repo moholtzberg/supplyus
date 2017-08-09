@@ -7,7 +7,7 @@
 			<div class="col-md-4">
 				<%= f.label :vendor %>
 				<%= f.select :vendor_id, @vendors.collect {|p| [p.name, p.id, 
-					:vendor_name => p.name, :ship_to_address_1 => p.ship_to_address_1, :ship_to_address_2 => p.ship_to_address_2, :ship_to_city => p.ship_to_city, :ship_to_state => p.ship_to_state, :ship_to_zip => p.ship_to_zip, :ship_to_phone => p.ship_to_phone
+					:vendor_name => p.name, :ship_to_address_1 => p.address_1, :ship_to_address_2 => p.address_2, :ship_to_city => p.city, :ship_to_state => p.state, :ship_to_zip => p.zip, :ship_to_phone => p.phone
 					]}, {:include_blank => "Select Vendor"}, {:class => "form-control"} %>
 			</div>
 	

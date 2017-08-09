@@ -33,3 +33,11 @@ jQuery(function() {
 $(document).ready(function() {
   $("[data-toggle=tooltip").tooltip();
 });
+
+$(document).on('turbolinks:load', function () {
+  $('.selectpicker').each(function (i, el) {
+    if (!$(el).parent().hasClass('bootstrap-select')) {
+      $(el).selectpicker('refresh');
+    }
+  });
+});

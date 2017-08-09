@@ -28,7 +28,7 @@ class MyAccount::SubscriptionsController < ApplicationController
     @subscription = Subscription.find(params[:id])
     @subscription.ship_to_address = Address.find_or_create_by(subscription_params[:ship_to_address_attributes].merge(account_id: @subscription.account_id))
     @subscription.bill_to_address = Address.find_or_create_by(subscription_params[:bill_to_address_attributes].merge(account_id: @subscription.account_id))
-    @subscription.payment_method = params[:payment_method] == 'check' ? params[:payment_method] : 'credit_card'
+    @subscription.payment_method = params[:payment_method]
     @card = SubscriptionServices::CardByData.new.call({
         cardholder_name: params[:cardholder_name],
         number: params[:credit_card_number],
@@ -49,11 +49,11 @@ class MyAccount::SubscriptionsController < ApplicationController
       end        
     else
       @order = SubscriptionServices::GenerateOrderFromSubscription.new.call(@subscription)
-      @payment = SubscriptionServices::GeneratePayment.new.call(@order, @card)
+      @payment = SubscriptionServices::GeneratePayment.new.call(@order, @subscription, @card)
       if @payment.authorize
         @subscription.activate
-        @order.order_payment_applications.first.update_attribute(:applied_amount, @payment.amount)
         @order.submit
+        @order.order_payment_applications.first.update_attribute(:applied_amount, @payment.amount)
         redirect_to my_account_subscriptions_path
       else
         render "details"

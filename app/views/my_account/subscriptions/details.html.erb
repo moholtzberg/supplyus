@@ -182,23 +182,26 @@
           <% end %>
           <option value="credit_card">New Credit Card</option>
           <option value="check">Check</option>
+          <% if current_user.account and current_user.account.has_enough_credit %>
+            <option value="terms">Net <%= current_user.account.credit_terms %></option>
+          <% end %>
         </select>
 
         <script>
           $("select#payment_type").change(function(){
             var m = this.value;
-            if (m == 'credit_card') { 
-              $("#payment_method").val(m);
-              $("#credit_card_token").val('');
-              $("#credit_card").removeClass('hidden');
-            } else if (m == 'check') {
+            if (m == 'check' || m == 'terms') {
               $("#payment_method").val(m);
               $("#credit_card_token").val('');
               $("#credit_card").addClass('hidden');
             } else { 
-              $("#payment_method").val('');
-              $("#credit_card_token").val(m);
-              $("#credit_card").addClass('hidden');
+              $("#payment_method").val('credit_card');
+              $("#credit_card_token").val(m == 'credit_card' ? '' : m);
+              if (m == 'credit_card') {
+                $("#credit_card").removeClass('hidden');
+              } else {
+                $("#credit_card").addClass('hidden');
+              }
             }
           })
         </script>

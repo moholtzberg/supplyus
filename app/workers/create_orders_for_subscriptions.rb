@@ -41,7 +41,7 @@ class CreateOrdersForSubscriptions
       order = SubscriptionServices::GenerateOrderFromSubscription.new.call(subscription)
       order.save
       order.submit
-      payment = SubscriptionServices::GeneratePayment.new.call(order, subscription.credit_card)
+      payment = SubscriptionServices::GeneratePayment.new.call(order, subscription, subscription.credit_card)
       if payment.authorize
         payment.save
         OrderPaymentApplication.create(payment: payment, order: order, applied_amount: payment.amount)
