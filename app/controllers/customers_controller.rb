@@ -7,7 +7,7 @@ class CustomersController < ApplicationController
     render json: CustomerDatatable.new(view_context)
   end
 
-  def index
+  def autocomplete
     authorize! :read, Customer
     @customers = Customer.joins(:main_address).includes(:group)
     if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
@@ -26,10 +26,11 @@ class CustomersController < ApplicationController
         :state => "#{a.state}", :zip => "#{a.zip}", :phone => "#{a.phone}", :email => "#{a.email}"
       } 
     }
-    respond_to do |format|
-      format.html
-      format.json {render :json => msg}
-    end
+    render :json => msg
+  end
+
+  def index
+    authorize! :read, Customer
   end
   
   def new

@@ -42,6 +42,7 @@ Rails.application.routes.draw do
       resources :credit_cards
       resources :customers do
         collection do
+          get :autocomplete
           post :datatables
         end
       end
