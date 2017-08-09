@@ -3,6 +3,7 @@ jQuery(document).ready(function() {
     "processing": true,
     "serverSide": true,
     "responsive": true,
+    "sServerMethod": 'POST', 
     "ajax": $('#customers-table').data('source'),
     "pagingType": "full_numbers",
     "autoWidth": false,

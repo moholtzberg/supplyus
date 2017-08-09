@@ -2,15 +2,12 @@ class CustomersController < ApplicationController
   layout "admin"
   respond_to :html, :json
   
-  def index
+  def datatables
     authorize! :read, Customer
-    respond_to do |format|
-      format.html
-      format.json { render json: CustomerDatatable.new(view_context) }
-    end
+    render json: CustomerDatatable.new(view_context)
   end
 
-  def autocomplete
+  def index
     authorize! :read, Customer
     @customers = Customer.joins(:main_address).includes(:group)
     if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
@@ -30,6 +27,7 @@ class CustomersController < ApplicationController
       } 
     }
     respond_to do |format|
+      format.html
       format.json {render :json => msg}
     end
   end

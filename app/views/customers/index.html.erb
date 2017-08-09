@@ -1,7 +1,7 @@
 <% content_for :app_location do %>Admin / Customers / Index<% end %>
 <div id="customers" class="col-md-12">
 	
-	<table class="table table-bordered table-condensed" id="customers-table" data-source="<%= customers_path(format: :json) %>">
+	<table class="table table-bordered table-condensed" id="customers-table" data-source="<%= datatables_customers_path(format: :json) %>">
   	<thead>
 			<tr>
 				<th>ID</th>
