@@ -85,6 +85,8 @@ Rails.application.routes.draw do
       resources :meter_readings
       resources :orders do
         collection do
+          get :autocomplete
+          post :datatables
           get :not_submitted
           get :locked
           get :shipped

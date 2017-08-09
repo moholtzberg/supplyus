@@ -10,40 +10,25 @@
 		<li><%= link_to not_submitted_orders_url do %>Not Submitted Orders <span class="badge"><%= orders.not_submitted.not_canceled.count %></span><% end %></li>
 	</ul>
 
-	<table class="table table-bordered table-condensed">
-		
-		<tr>
-			<td colspan="12">
-				<form id="searchBox" accept-charset="UTF-8" action="<%= request.env['PATH_INFO'] %>" method="get" role="search">
-					<input type="text" class="form-control" id="term" name="term" placeholder="Enter user name" value="<%= params[:term] %>">
-				</form>
-			</td>
-		</tr>
-		
-		<tr>
-			
-			<th width="4%"><%= sortable "orders.number", "Number" %></th>
-			<th width="20%"><%= sortable "accounts.name", "Account" %></th>
-			<th width="6%">Total</th>
-			<th width="6%"><%= sortable "orders.sub_total", "Sub Total" %></th>
-			<th width="6%" class="hidden-xs">Shipped</th>
-			<th width="6%" class="hidden-xs">Fulfilled</th>
-			<th width="6%" class="hidden-xs">Balance Due</th>
-			<th width="10%" class="text-center hidden-xs"><%= sortable "orders.submitted_at", "Submitted At" %></th>
-			<th width="3%" class="hidden-xs rotate"><%= sortable "orders.state", "State" %></th>
-			<th width="2%">&nbsp;</th>
-		</tr>
-		
-		<% @orders.each do |order| %>
-		<tr id="order_<%= order.id %>">
-			<%= render :partial => "orders/order", :locals => {:order => order}%>
-		<tr>
-		<% end %>
-
+	<table class="table table-bordered table-condensed" id="orders-table" data-source="<%= datatables_orders_path(format: :json, from: params[:action]) %>">
+  	<thead>
+			<tr>
+				<th>Number</th>
+				<th>Account</th>
+				<th>Total</th>
+				<th>Sub Total</th>
+				<th>Shipped</th>
+				<th>Fulfilled</th>
+				<th>Balance Due</th>
+				<th>Submitted At</th>
+				<th>State</th>
+				<th>&nbsp;</th>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
 	</table>
-	
-	<%= will_paginate @orders, renderer: BootstrapPagination::Rails %>
-	
+
 	<%= link_to new_order_path, :class => "btn btn-default pull-right", :remote => false do %><span class="glyphicon glyphicon-plus"></span><% end %>
 	
 </div>

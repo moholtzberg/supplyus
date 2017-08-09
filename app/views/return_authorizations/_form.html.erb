@@ -7,7 +7,7 @@
 	
 	<div id="order_number" class="col-md-12">
 		<%= f.label :order_number, :class => "control-label" %>
-		<%= f.text_field :order_number, :class => "form-control", data: {autocomplete_source: orders_path} %>
+		<%= f.text_field :order_number, :class => "form-control", data: {autocomplete_source: autocomplete_orders_path} %>
 	</div>
 	
 	<div id="applications">
