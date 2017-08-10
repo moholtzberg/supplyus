@@ -1,6 +1,7 @@
 class OrdersController < ApplicationController
   layout "admin"
   helper_method :sort_column, :sort_direction
+  before_action :set_order, only: [:show, :invoice, :resend_order, :resend_invoice, :edit, :update, :destroy, :lock, :approve, :submit, :cancel, :credit_hold, :credit_hold_remove]
 
   def datatables
     authorize! :read, Order
@@ -78,7 +79,6 @@ class OrdersController < ApplicationController
   
   def show
     authorize! :read, Order
-    @order = Order.find(params[:id])
     @order_line_items = @order.order_line_items.includes(:item)
     @shipments = Shipment.where(:order_id => @order.id)
     respond_to do |format|
@@ -91,7 +91,6 @@ class OrdersController < ApplicationController
   
   def invoice
     authorize! :read, Order
-    @order = Order.find(params[:id])
     @order_line_items = @order.order_line_items.includes(:item, :line_item_fulfillments)
     @shipments = Shipment.where(:order_id => @order.id)
     respond_to do |format|
@@ -103,7 +102,6 @@ class OrdersController < ApplicationController
   end
   
   def resend_order
-    @order = Order.find_by(:id => params[:id])
   end
   
   def resend_order_confirmation
@@ -111,7 +109,6 @@ class OrdersController < ApplicationController
   end
   
   def resend_invoice
-    @order = Order.find_by(:id => params[:id])
   end
   
   def resend_invoice_notification
@@ -120,7 +117,6 @@ class OrdersController < ApplicationController
   
   def edit
     authorize! :update, Order
-    @order = Order.find(params[:id])
     @order.build_order_discount_code if !@order.order_discount_code
     @accounts = Customer.all.order(:name)
     @order_line_item = OrderLineItem.new
@@ -129,8 +125,6 @@ class OrdersController < ApplicationController
   
   def update
     authorize! :update, Order
-    @order = Order.find(params[:id])
-    byebug
     params[:order][:sales_rep_id] = @order.account&.sales_rep_id unless !params[:order][:sales_rep_name].blank?
     params[:order][:credit_hold]  = @order.account&.credit_hold unless @order.account.nil?
     respond_to do |format|
@@ -146,49 +140,45 @@ class OrdersController < ApplicationController
   
   def create
     authorize! :create, Order
-    byebug
   end
 
   def destroy
     authorize! :destroy, Order
-    @order = Order.find(params[:id])
     @order.destroy
   end
   
   def lock
     authorize! :update, Order
-    @order_id = params[:id]
-    @order = Order.find_by(:id => @order_id)
-    @order.locked = !@order.locked
-    @order.save
+    @order.update_attribute(:locked, !@order.locked)
+    render 'update'
   end
   
   def approve
     authorize! :update, Order
-    @order_id = params[:id]
-    @order = Order.find_by(:id => @order_id)
     @order.approve
+    render 'update'
   end
-  
+
+  def submit
+    authorize! :update, Order
+    @order.submit
+    render 'update'
+  end
+
   def cancel
     authorize! :update, Order
-    @order_id = params[:id]
-    @order = Order.find_by(:id => @order_id)
     @order.cancel
+    render 'update'
   end
   
   def credit_hold
     authorize! :update, Order
-    @order_id = params[:id]
-    @order = Order.find_by(:id => @order_id)
     @order.credit_hold = !@order.credit_hold
     @order.save
   end
   
   def credit_hold_remove
     authorize! :update, Order
-    @order_id = params[:id]
-    @order = Order.find_by(:id => @order_id)
     @order.credit_hold = false
     @order.save
   end
@@ -227,6 +217,10 @@ class OrdersController < ApplicationController
       temp_params.delete(:order_discount_code_attributes)
     end
     temp_params
+  end
+
+  def set_order
+    @order = Order.find(params[:id])
   end
 
   def sort_column
