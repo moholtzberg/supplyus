@@ -40,7 +40,7 @@ class CustomersController < ApplicationController
   end
   
   def edit
-    authorize! :create, Customer
+    authorize! :update, Customer
     @customer = Customer.find(params[:id])
   end
   

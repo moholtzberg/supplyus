@@ -1,47 +1,51 @@
 <fieldset>	
 
-	<div id="name" class="col-md-12">
-		<%= f.label :payment_type, :class => "control-label" %>
-		<%= f.select :payment_type, ['CreditCardPayment', 'CheckPayment'], {}, {:class => "form-control"}%>
-	</div>
+	<%= f.hidden_field :payment_type %>
 	
 	<script>
 		$(function() {
-			$('#payment_payment_type').change(function() {
-				if ($(this).val() == "CreditCardPayment") {
+			$('#payment_payment_method').change(function() {
+				if ($('#payment_payment_method option:selected').text() == "credit_card") {
 					$('#payment_credit_card_id').prop('disabled', false);
 					$('#payment_check_number').prop('disabled', true);
+					$('#payment_payment_type').val('CreditCardPayment')
 				} else {
 					$('#payment_credit_card_id').prop('disabled', true);
 					$('#payment_check_number').prop('disabled', false);
+					$('#payment_payment_type').val('CheckPayment')
 				}
 			})
 		})
 	</script>
 
+	<div id="name" class="col-md-12">
+		<%= f.label :payment_method, :class => "control-label" %>
+		<%= f.select :payment_method, PaymentMethod.where(active: true).map{ |pm| [pm.name, pm.id] }, {}, {:class => "form-control", :disabled => params[:action] != 'new' }%>
+	</div>
+	
 	<div id="address" class="col-md-12">
 		<%= f.label :amount, :class => "control-label" %>
-		<%= f.text_field :amount, :class => "form-control" %>
+		<%= f.text_field :amount, :class => "form-control", :disabled => params[:action] != 'new' %>
 	</div>
 	
 	<div id="account_name" class="col-md-12">
 		<%= f.label :account_name, :class => "control-label" %>
-		<%= f.text_field :account_name, :class => "form-control", data: {autocomplete_source: accounts_path} %>
+		<%= f.text_field :account_name, :class => "form-control", data: {autocomplete_source: accounts_path}, :disabled => params[:action] != 'new' %>
 	</div>
 	
 	<div id="credit_card_id" class="col-md-12">
 		<%= f.label :credit_card, :class => "control-label" %>
-		<%= f.select :credit_card_id, [], {}, :class => "form-control", disabled: @payment.payment_type != 'CreditCardPayment' %>
+		<%= f.select :credit_card_id, [], {}, :class => "form-control", disabled: @payment.payment_type != 'CreditCardPayment' || params[:action] != 'new' %>
 	</div>
 	
 	<div id="check_number" class="col-md-6">
 		<%= f.label :check_number, :class => "control-label" %>
-		<%= f.text_field :check_number, :class => "form-control", disabled: @payment.payment_type != 'CheckPayment' %>
+		<%= f.text_field :check_number, :class => "form-control", disabled: @payment.payment_type == 'CreditCardPayment' %>
 	</div>
 	
 	<div id="check_number" class="col-md-6">
 		<%= f.label :date, :class => "control-label" %>
-		<%= f.date_field :date, :class => "form-control" %>
+		<%= f.date_field :date, :class => "form-control", :disabled => params[:action] != 'new' %>
 	</div>
 	
 	

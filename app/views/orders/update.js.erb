@@ -3,5 +3,4 @@
 	$('body').removeClass('modal-open')
 	$('.modal-backdrop').remove()
   $("#orders-table").DataTable().draw('full-hold');
-	$("#orders").html("<%= j render :template => 'orders/index.html', :format => 'html' %>")
 <% end %>
