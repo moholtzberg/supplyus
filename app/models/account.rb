@@ -26,9 +26,9 @@ class Account < ActiveRecord::Base
   has_one :main_service, -> { where(name: AccountPaymentService::PROVIDERS_HASH[GATEWAY.class.to_s]) }, :class_name => "AccountPaymentService"
 
   validates :name, :presence => true
-  validates :subscription_week_day, numericality: true, inclusion: {in: (1..7).to_a}
-  validates :subscription_month_day, numericality: true, inclusion: {in: (1..31).to_a}
-  validates :subscription_quarter_day, numericality: true, inclusion: {in: (1..92).to_a}
+  validates :subscription_week_day, numericality: true, inclusion: {in: (1..7).to_a}, allow_nil: true
+  validates :subscription_month_day, numericality: true, inclusion: {in: (1..31).to_a}, allow_nil: true
+  validates :subscription_quarter_day, numericality: true, inclusion: {in: (1..92).to_a}, allow_nil: true
   before_create :set_payment_services
   accepts_nested_attributes_for :main_address
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170810121415) do
+ActiveRecord::Schema.define(version: 20170810122216) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -43,9 +43,9 @@ ActiveRecord::Schema.define(version: 20170810121415) do
     t.boolean "is_taxable"
     t.integer "sales_rep_id"
     t.boolean "replace_items",            default: false, null: false
-    t.integer "subscription_week_day",    default: 1
-    t.integer "subscription_month_day",   default: 1
-    t.integer "subscription_quarter_day", default: 1
+    t.integer "subscription_week_day"
+    t.integer "subscription_month_day"
+    t.integer "subscription_quarter_day"
   end
 
   create_table "addresses", force: :cascade do |t|
