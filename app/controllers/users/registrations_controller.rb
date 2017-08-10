@@ -39,6 +39,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
       name: params["account"]["name"]
       })
     a.addresses.create({
+      name: params["address"]["name"],
       address_1: params["address"]["address_1"], 
       address_2: params["address"]["address_2"], 
       city: params["address"]["city"], 
