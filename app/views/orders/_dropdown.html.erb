@@ -1,0 +1,36 @@
+<div class="dropdown">
+  <button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+    <li><%= link_to("View", order_path(item.id))  %></li>
+    <li><%= link_to("Destroy", order_path(item.id), :remote => true, :method => 'delete' ) %></li>
+    <% if item.incomplete? %>
+      <li><%= link_to("Submit", submit_order_path(item.id), :remote => true, :method => "put") %></li>
+    <% end %>
+    <% if item.pending? %>
+      <li><%= link_to("Approve", approve_order_path(item.id), :remote => true, :method => "put") %></li>
+      <li><%= link_to("Cancel", cancel_order_path(item.id), :remote => true, :method => "put") %></li>
+    <% end %>
+    <% if item.awaiting_payment? %>
+      <li><%= link_to("Toggle lock", lock_order_path(item.id), :remote => true, :method => "put") %></li>
+      <li><%= link_to("Capture payment", finalize_payment_path(item.payments.where.not(success: true).first.id), :remote => true, :method => "put") %></li>
+    <% end %>
+    <% if !item.locked? %>
+      <li><%= link_to("Edit", edit_order_path(item.id)) %></li>
+    <% end %>
+    <% if item.credit_hold? %>
+      <li><%= link_to("Remove Credit Hold", credit_hold_remove_order_path(item.id), :remote => true, :method => "put")  %></li>
+    <% end %>
+    <% if item.awaiting_shipment? or item.partially_shipped? %>
+      <li><%= link_to("Ship", new_order_shipment_path(item.id))  %></li>
+    <% end %>
+    <% if item.awaiting_fulfillment? or item.partially_fulfilled? %>
+      <li><%= link_to("Fulfill", new_order_invoice_path(item.id))  %></li>
+      <li><%= link_to("Resend Order Notification", resend_order_order_path(:id => item.id), :remote => true, :method => "put") %></li>
+    <% end %>
+    <% if item.fulfilled? %>
+      <li><%= link_to("Resend Invoice Notification", resend_invoice_order_path(:id => item.id), :remote => true, :method => "put") %></li>
+    <% end %>
+  </ul>
+</div>

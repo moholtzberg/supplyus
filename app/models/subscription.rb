@@ -1,7 +1,7 @@
 class Subscription < ActiveRecord::Base
 
   FREQUENCIES = ['month', 'quarter']
-  PAYMENT_METHODS = ['check', 'credit_card']
+  PAYMENT_METHODS = ['check', 'credit_card', 'terms']
 
   belongs_to :account
   belongs_to :ship_to_address, foreign_key: :address_id, class_name: Address
@@ -35,7 +35,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def check_payment_method
-    self.credit_card_id = nil if self.payment_method == 'check'
+    self.credit_card_id = nil if self.payment_method == 'check' || self.payment_method == 'terms'
   end
 
   def check_failed_payments

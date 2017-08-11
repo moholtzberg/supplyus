@@ -1,38 +1,17 @@
 class OrdersController < ApplicationController
   layout "admin"
   helper_method :sort_column, :sort_direction
-  
-  def index
+  before_action :set_order, only: [:show, :invoice, :resend_order, :resend_invoice, :edit, :update, :destroy, :lock, :approve, :submit, :cancel, :credit_hold, :credit_hold_remove]
+
+  def datatables
+    authorize! :read, Order
+    render json: OrderDatatable.new(view_context, { from: params[:from] })
+  end
+
+  def autocomplete
     authorize! :read, Order
     
     @orders = Order.is_submitted.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).unshipped
-    
-    # if params[:account_name].present?
-    #   puts "ACCOUNTS -"
-    #   account_id = Account.find_by(:name => params[:account_name])
-    #   @orders = @orders.where(account_id: account_id)
-    # end
-    #
-    # if params[:is_complete].present?
-    #    puts "ORDERS - COMPLETE"
-    #    @orders = @orders.is_complete
-    # end
-    #
-    # if params[:shipped].present?
-    #   puts "ORDERS - SHIPPED"
-    #   @orders = @orders.shipped
-    # else
-    #   puts "ORDERS - UNSHIPPED"
-    #   @orders = @orders.unshipped
-    # end
-    #
-    # if params[:fulfilled].present?
-    #   puts "ORDERS - FULFILLED"
-    #   @orders = @orders.fulfilled
-    # else
-    #   puts "ORDERS - UNFULFILLED"
-    #   @orders = @orders.unfulfilled
-    # end
     
     if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
     else
@@ -46,108 +25,40 @@ class OrdersController < ApplicationController
     
     @orders = @orders.order(sort_column + " " + sort_direction)
     @orders = @orders.paginate(:page => params[:page], :per_page => 20)
-    respond_to do |format|
-      format.html
-      format.json { render :json => @orders.map(&:number) }
-    end
+    render :json => @orders.map(&:number)
+  end
+
+  def index
+    authorize! :read, Order
   end
   
   def shipped
     authorize! :read, Order
-    @orders = Order.is_submitted.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).shipped
-    
-    if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
-    else
-      @orders = @orders.where(:sales_rep_id => current_user.id)
-    end
-    
-    unless params[:term].blank?
-      @orders = @orders.lookup(params[:term]) if params[:term].present?
-    end
-    @orders = @orders.order(sort_column + " " + sort_direction)
-    @orders = @orders.paginate(:page => params[:page], :per_page => 20)
     render "index"
   end
   
   def fulfilled
     authorize! :read, Order
-    @orders = Order.is_submitted.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).fulfilled
-    
-    if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
-    else
-      @orders = @orders.where(:sales_rep_id => current_user.id)
-    end
-    
-    unless params[:term].blank?
-      @orders = @orders.lookup(params[:term]) if params[:term].present?
-    end
-    @orders = @orders.order(sort_column + " " + sort_direction)
-    @orders = @orders.paginate(:page => params[:page], :per_page => 20)
     render "index"
   end
   
   def unfulfilled
     authorize! :read, Order
-    @orders = Order.is_submitted.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).unfulfilled
-    
-    if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
-    else
-      @orders = @orders.where(:sales_rep_id => current_user.id)
-    end
-    
-    unless params[:term].blank?
-      @orders = @orders.lookup(params[:term]) if params[:term].present?
-    end
-    @orders = @orders.order(sort_column + " " + sort_direction)
-    @orders = @orders.paginate(:page => params[:page], :per_page => 20)
     render "index"
   end
   
   def locked
     authorize! :read, Order
-    @orders = Order.is_submitted.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).is_locked
-    
-    if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
-    else
-      @orders = @orders.where(:sales_rep_id => current_user.id)
-    end
-    
-    unless params[:term].blank?
-      @orders = @orders.lookup(params[:term]) if params[:term].present?
-    end
-    @orders = @orders.paginate(:page => params[:page], :per_page => 20)
     render "index"
   end
   
   def canceled
     authorize! :read, Order
-    @orders = Order.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).is_canceled
-    
-    if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
-    else
-      @orders = @orders.where(:sales_rep_id => current_user.id)
-    end
-    
-    unless params[:term].blank?
-      @orders = @orders.lookup(params[:term]) if params[:term].present?
-    end
-    @orders = @orders.paginate(:page => params[:page], :per_page => 20)
     render "index"
   end
   
   def not_submitted
     authorize! :read, Order
-    @orders = Order.not_submitted.not_canceled.includes(:account, :order_line_items, :order_tax_rate)
-    
-    if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
-    else
-      @orders = @orders.where(:sales_rep_id => current_user.id)
-    end
-    
-    unless params[:term].blank?
-      @orders = @orders.lookup(params[:term]) if params[:term].present?
-    end
-    @orders = @orders.paginate(:page => params[:page], :per_page => 20)
     render "index"
   end
   
@@ -168,7 +79,6 @@ class OrdersController < ApplicationController
   
   def show
     authorize! :read, Order
-    @order = Order.find(params[:id])
     @order_line_items = @order.order_line_items.includes(:item)
     @shipments = Shipment.where(:order_id => @order.id)
     respond_to do |format|
@@ -181,7 +91,6 @@ class OrdersController < ApplicationController
   
   def invoice
     authorize! :read, Order
-    @order = Order.find(params[:id])
     @order_line_items = @order.order_line_items.includes(:item, :line_item_fulfillments)
     @shipments = Shipment.where(:order_id => @order.id)
     respond_to do |format|
@@ -193,7 +102,6 @@ class OrdersController < ApplicationController
   end
   
   def resend_order
-    @order = Order.find_by(:id => params[:id])
   end
   
   def resend_order_confirmation
@@ -201,7 +109,6 @@ class OrdersController < ApplicationController
   end
   
   def resend_invoice
-    @order = Order.find_by(:id => params[:id])
   end
   
   def resend_invoice_notification
@@ -210,7 +117,6 @@ class OrdersController < ApplicationController
   
   def edit
     authorize! :update, Order
-    @order = Order.find(params[:id])
     @order.build_order_discount_code if !@order.order_discount_code
     @accounts = Customer.all.order(:name)
     @order_line_item = OrderLineItem.new
@@ -219,9 +125,8 @@ class OrdersController < ApplicationController
   
   def update
     authorize! :update, Order
-    @order = Order.find(params[:id])
-    params[:order][:sales_rep_id] = @order.account.sales_rep_id unless !params[:order][:sales_rep_name].blank?
-    params[:order][:credit_hold]  = @order.account.credit_hold unless @order.account.nil?
+    params[:order][:sales_rep_id] = @order.account&.sales_rep_id unless !params[:order][:sales_rep_name].blank?
+    params[:order][:credit_hold]  = @order.account&.credit_hold unless @order.account.nil?
     respond_to do |format|
       if @order.update_attributes(order_params)
         format.html { redirect_to @order, notice: "Order #{@order.number} was successfully updated!" }
@@ -236,41 +141,44 @@ class OrdersController < ApplicationController
   def create
     authorize! :create, Order
   end
+
+  def destroy
+    authorize! :destroy, Order
+    @order.destroy
+  end
   
   def lock
     authorize! :update, Order
-    @order_id = params[:id]
-    @order = Order.find_by(:id => @order_id)
-    @order.locked = !@order.locked
-    @order.save
+    @order.update_attribute(:locked, !@order.locked)
+    render 'update'
   end
   
   def approve
     authorize! :update, Order
-    @order_id = params[:id]
-    @order = Order.find_by(:id => @order_id)
     @order.approve
+    render 'update'
   end
-  
+
+  def submit
+    authorize! :update, Order
+    @order.submit
+    render 'update'
+  end
+
   def cancel
     authorize! :update, Order
-    @order_id = params[:id]
-    @order = Order.find_by(:id => @order_id)
     @order.cancel
+    render 'update'
   end
   
   def credit_hold
     authorize! :update, Order
-    @order_id = params[:id]
-    @order = Order.find_by(:id => @order_id)
     @order.credit_hold = !@order.credit_hold
     @order.save
   end
   
   def credit_hold_remove
     authorize! :update, Order
-    @order_id = params[:id]
-    @order = Order.find_by(:id => @order_id)
     @order.credit_hold = false
     @order.save
   end
@@ -309,6 +217,10 @@ class OrdersController < ApplicationController
       temp_params.delete(:order_discount_code_attributes)
     end
     temp_params
+  end
+
+  def set_order
+    @order = Order.find(params[:id])
   end
 
   def sort_column

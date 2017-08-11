@@ -152,7 +152,7 @@
 				<% @orders.each do |it| %>
 				<tr>
 					<td><%= it.submitted_at.nil? ? "No" : "Yes" %></td>
-					<td><%= it.submitted_at.strftime("%m/%d/%Y %I:%M %p") unless itsubmitted_at.nil? %>
+					<td><%= it.submitted_at.strftime("%m/%d/%Y %I:%M %p") unless it.submitted_at.nil? %>
 					<td><%= it.updated_at.strftime("%m/%d/%Y %I:%M %p") %>
 					<td><%= link_to it.number, it %></td>
 					<td><%= number_to_currency(it.sub_total) %></td>

@@ -1,10 +1,11 @@
 <table class="table table-bordered table-condensed table-striped">
 
   <tr>
-    <td colspan="9"><%= link_to "Add Address", new_address_path(address: {account_id: account.id }), class: "btn btn-primary btn-block btn-xs", remote: true %>
+    <td colspan="10"><%= link_to "Add Address", new_address_path(address: {account_id: account.id }), class: "btn btn-primary btn-block btn-xs", remote: true %>
   </tr>
 
   <tr>
+    <th>Name</th>
     <th>Address 1</th>
     <th>Address 2</th>
     <th>City</th>
@@ -17,6 +18,7 @@
   </tr>
   <% account.addresses.each do |addr| %>
   <tr>
+    <td><%= addr.name %></td>
     <td><%= addr.address_1 %></td>
     <td><%= addr.address_2 %></td>
     <td><%= addr.city %></td>

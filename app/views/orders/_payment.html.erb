@@ -1,0 +1,12 @@
+<tr class="line_items"  data-payment-id-order="<%= payment.id %>">
+  <td><%= payment.created_at.to_date %></td>
+  <td><%= payment.payment_type %></td>
+  <td><%= payment.amount %></td>
+  <td><%= link_to payment.number, edit_payment_path(payment), remote: true %></td>
+  <td><%= payment.success? %></td>
+  <td>
+    <% if !payment.success? %>
+      <%= link_to('finalize', finalize_payment_path(payment), method: :put, remote: true, class: 'btn btn-default btn-sm') %>
+    <% end %>
+  </td>
+</tr>

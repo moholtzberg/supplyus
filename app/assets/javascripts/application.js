@@ -18,6 +18,9 @@
 //= require bootstrap
 //= require bootstrap-select.min
 //= require turbolinks
+//= require dataTables/jquery.dataTables
+//= require dataTables/bootstrap/3/jquery.dataTables.bootstrap
+//= require dataTables/extras/dataTables.responsive
 //= require_tree .
 
 // Create Recurring object first.
@@ -29,4 +32,12 @@ jQuery(function() {
 
 $(document).ready(function() {
   $("[data-toggle=tooltip").tooltip();
+});
+
+$(document).on('turbolinks:load', function () {
+  $('.selectpicker').each(function (i, el) {
+    if (!$(el).parent().hasClass('bootstrap-select')) {
+      $(el).selectpicker('refresh');
+    }
+  });
 });

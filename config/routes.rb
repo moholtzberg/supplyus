@@ -40,7 +40,12 @@ Rails.application.routes.draw do
       resources :charges
       resources :contacts
       resources :credit_cards
-      resources :customers
+      resources :customers do
+        collection do
+          get :autocomplete
+          post :datatables
+        end
+      end
       resources :discount_codes
       resources :discount_code_effects, only: [:edit, :update]
       resources :discount_code_rules, only: [:new, :create, :destroy]
@@ -80,6 +85,8 @@ Rails.application.routes.draw do
       resources :meter_readings
       resources :orders do
         collection do
+          get :autocomplete
+          post :datatables
           get :not_submitted
           get :locked
           get :shipped
@@ -90,6 +97,7 @@ Rails.application.routes.draw do
           get :returnable_items
         end
         member do
+          put :submit
           put :approve
           put :cancel
           put :lock
@@ -189,7 +197,7 @@ Rails.application.routes.draw do
   patch "/update_cart" => "shop#update_cart"
   
   get "/my_account/items" => "shop#my_items"
-  get "/my_account/order/:order_number" => "shop#view_order"
+  get "/my_account/order/:order_number" => "shop#view_order", as: :my_account_order
   get "/my_account/invoice/:invoice_number/pay" => "shop#pay_invoice"
   get "/my_account/invoice/:invoice_number" => "shop#view_invoice"
   get "/my_account/:account_id" => "shop#view_account"

@@ -68,8 +68,18 @@ class PaymentsController < ApplicationController
   def finalize
     @payment = Payment.find(params[:id])
     authorize! :update, Payment
-    @payment.check_number = params.dig(:check_payment, :check_number)
     @payment.finalize
+  end
+
+  def edit
+    authorize! :update, Payment
+    @payment = Payment.find(params[:id])
+  end
+
+  def update
+    authorize! :update, Payment
+    @payment = Payment.find(params[:id])
+    @payment.update_attributes(payment_params)
   end
   
   private

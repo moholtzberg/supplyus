@@ -13,12 +13,12 @@
 	<% if ['edit', 'update'].include?(params[:action]) %>
 		<div id="ship_to_address" class="col-md-6">
 			<%= f.label :address_id, class: "control-label" %>
-			<%= f.select :address_id, current_user.account.addresses.map{ |addr| [addr.address_1, addr.id] }, {}, {class: "form-control"} %>
+			<%= f.select :address_id, current_user.account.addresses.map{ |addr| [addr.name, addr.id] }, {}, {class: "form-control"} %>
 		</div>
 
 		<div id="bill_to_address" class="col-md-6">
 			<%= f.label :bill_address_id, class: "control-label" %>
-			<%= f.select :bill_address_id, current_user.account.addresses.map{ |addr| [addr.address_1, addr.id] }, {}, {class: "form-control"} %>
+			<%= f.select :bill_address_id, current_user.account.addresses.map{ |addr| [addr.name, addr.id] }, {}, {class: "form-control"} %>
 		</div>
 
 		<div id="payment_method" class="col-md-6">

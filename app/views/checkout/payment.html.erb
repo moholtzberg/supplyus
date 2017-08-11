@@ -115,7 +115,11 @@
 					} else { 
 						$("#payment_method").val('credit_card');
 						$("#credit_card_token").val(m == 'credit_card' ? '' : m);
-						$("#credit_card").removeClass('hidden');
+            if (m == 'credit_card') {
+              $("#credit_card").removeClass('hidden');
+            } else {
+              $("#credit_card").addClass('hidden');
+            }
 					}
 				})
 			</script>
@@ -128,7 +132,7 @@
 			
 			<div id="credit_card" class="panel panel-default bootstrap-basic <%= 'hidden' if @cards.any? %>">
 				
-				<input type="hidden" id="payment_method" name="payment_method" value="<%= 'credit_card' %>" />
+				<input type="hidden" id="payment_method" name="payment_method" value="credit_card" />
 				<input type="hidden" id="credit_card_token" name="credit_card_token" value="<%= @cards.first.try(:service_card_id) %>" />
 				<input type="hidden" id="order_id" name="order_id" value="<%= @checkout.id %>" />
 				
@@ -209,8 +213,12 @@
 		</td>
 		<td>
 			<!-- <button value="submit" id="submit" class="btn btn-success btn-lg center-block">Pay with <span id="card-type">Card</span></button> -->
-			<%= f.submit "Continue", :class => "btn btn-primary pull-right" %></td>
+			<%= f.submit "Place Order", :class => "btn btn-primary pull-right" %></td>
 		<% end %>
 	</tr>
 </table>
-	
+<script>
+	$('form.edit_checkout').submit(function(){
+		$('input[value="Place Order"]').prop('disabled', true)
+	});
+</script>

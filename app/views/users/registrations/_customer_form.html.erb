@@ -7,6 +7,8 @@
 	<div class="col-md-12">
 		<%= fields_for :address, resource.account do |b| %>
 
+			<%= b.hidden_field :name, value: 'main' %>
+
 			<div id="address" class="form-group col-md-12">
 				<%= b.text_field :address_1, :class => "form-control", :placeholder => "Address" %>
 			</div>
