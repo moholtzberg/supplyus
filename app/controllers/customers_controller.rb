@@ -90,7 +90,7 @@ class CustomersController < ApplicationController
   private
 
   def account_params
-    params.require(:customer).permit(:name, :sales_rep_name, :email, :group_name, :credit_terms, :credit_limit, :quickbooks_id, :is_taxable, :replace_items, main_address_attributes: [:name, :address_1, :address_2, :city, :state, :zip, :phone, :fax])
+    params.require(:customer).permit(:name, :sales_rep_name, :email, :group_name, :credit_terms, :credit_limit, :quickbooks_id, :is_taxable, :replace_items, main_address_attributes: [:id, :name, :address_1, :address_2, :city, :state, :zip, :phone, :fax])
   end
   
 end
