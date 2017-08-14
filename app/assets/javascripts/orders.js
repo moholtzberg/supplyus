@@ -1,5 +1,13 @@
 $(document).on('turbolinks:load', function() {
   $('#orders-table').dataTable({
+    "initComplete": function () {
+      var self = this;
+      $('.filters input, .filters select').on('change', function(e) {
+        th = $(e.target).closest("th")
+        console.log($(e.target).val());
+        self.api().column(th.index()).search($(e.target).val()).draw()   
+      });
+    },
     "processing": true,
     "serverSide": true,
     "responsive": true,
@@ -7,6 +15,7 @@ $(document).on('turbolinks:load', function() {
     "ajax": $('#orders-table').data('source'),
     "pagingType": "full_numbers",
     "autoWidth": false,
+    "sDom": 'rt<"row"<"col-sm-2"l><"col-sm-5"i><"col-sm-5"p>>',
     "columns": [
       {"data": "number", className: "all"},
       {"data": "account", className: "all"},

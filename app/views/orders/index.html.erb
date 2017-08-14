@@ -1,17 +1,22 @@
 <% content_for :app_location do %>Admin / Orders / Index<% end %>
 <div id="orders" class="col-md-12">
-	<% orders = Order.unscoped %>
-	<ul class="nav nav-pills">
-		<li><%= link_to orders_url do %>Submitted Orders <span class="badge"><%# orders.unshipped.count %></span><% end %></li>
-		<li><%= link_to locked_orders_url do %>Locked Orders <span class="badge"><%# orders.locked.count %></span><% end %></li>
-		<li><%= link_to shipped_orders_url do %>Shipped Orders <span class="badge"><%# orders.shipped.count %></span><% end %></li>
-		<li><%= link_to fulfilled_orders_url do %>Fulfilled Orders <span class="badge"><%# Order.is_complete.fulfilled.count %></span><% end %></li>
-		<li><%= link_to unfulfilled_orders_url do %>UnFulfilled Orders <span class="badge"><%= orders.unfulfilled.count %></span><% end %></li>
-		<li><%= link_to not_submitted_orders_url do %>Not Submitted Orders <span class="badge"><%= orders.not_submitted.not_canceled.count %></span><% end %></li>
-	</ul>
 
 	<table class="table table-bordered table-condensed" id="orders-table" data-source="<%= datatables_orders_path(format: :json, from: params[:action]) %>">
   	<thead>
+      <tr class="filters">
+        <th><input class="form-control"/></th>
+        <th><input class="form-control"/></th>
+        <th></th>
+        <th><input class="form-control"/></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th><input class="form-control"/></th>
+        <th>
+          <%= collection_select(:order, :state, Order.state_machine.states, :name, :name, {include_blank: true}, {class: 'form-control'}) %>
+        </th>
+        <th></th>
+      </tr>
 			<tr>
 				<th>Number</th>
 				<th>Account</th>
