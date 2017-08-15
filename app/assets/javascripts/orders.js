@@ -1,10 +1,10 @@
+var orders_table = null
 $(document).on('turbolinks:load', function() {
-  $('#orders-table').dataTable({
+  orders_table = $('#orders-table').dataTable({
     "initComplete": function () {
       var self = this;
       $('.filters input, .filters select').on('change', function(e) {
         th = $(e.target).closest("th")
-        console.log($(e.target).val());
         self.api().column(th.index()).search($(e.target).val()).draw()   
       });
     },
@@ -30,3 +30,9 @@ $(document).on('turbolinks:load', function() {
     ]
   });
 });
+
+$(document).on('turbolinks:before-cache', function() {
+  if ($('#orders-table_wrapper').length != 0) {
+    orders_table.fnDestroy();
+  }
+})

@@ -1,5 +1,6 @@
+var customers_table = null
 $(document).on('turbolinks:load', function() {
-  $('#customers-table').dataTable({
+  customers_table = $('#customers-table').dataTable({
     "processing": true,
     "serverSide": true,
     "responsive": true,
@@ -20,3 +21,9 @@ $(document).on('turbolinks:load', function() {
     ]
   });
 });
+
+$(document).on('turbolinks:before-cache', function() {
+  if ($('#customers-table_wrapper').length != 0) {
+    customers_table.fnDestroy();
+  }
+})
