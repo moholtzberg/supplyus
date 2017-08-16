@@ -6,7 +6,7 @@
 
 		<td colspan="2">
 			<%# f.select :item_id, @items.collect {|m| ["#{m.number} - #{m.description}", m.id, :price => m.actual_price(@order.account_id)]}, {:include_blank => "Select Item"},:class => "form-control" %>
-			<%= f.text_field :item_number, :class => "form-control", data: {autocomplete_source: search_items_path} %>
+			<%= f.text_field :item_number, :class => "form-control", data: {autocomplete_source: autocomplete_items_path} %>
 		</td>
 		
 		<td>
@@ -27,7 +27,11 @@
 		<script>
 		jQuery(function() {
 			return $('#order_line_item_item_number').autocomplete({
-				source: $('#order_line_item_item_number').data('autocomplete-source')
+				source: $('#order_line_item_item_number').data('autocomplete-source'),
+	      select: function( event, ui ) {
+	        $("#order_line_item_item_number" ).val(ui.item.number);
+	        return false;
+	      }
 			});
 		});
 		</script>

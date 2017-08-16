@@ -20,13 +20,13 @@
 				<% else %>
 				<h4><span class="text-default"><%= number_to_currency(item.default_price) %></span><h4>
 				<% end %>
-				<% if item.prices.recurring.any? %>
-					<input type="submit" name="commit" value="Subscribe (<%= number_to_currency(item.prices.recurring.first.price) %>)" class="btn btn-primary btn-sm btn-block margin-bottom">
+				<% if item.prices.actual.recurring.any? %>
+					<input type="submit" name="commit" value="Subscribe (<%= number_to_currency(item.prices.actual.recurring.first.price) %>)" class="btn btn-primary btn-sm btn-block margin-bottom">
 				<% end %>
-				<% if item.prices.bulk.any? %>
+				<% if item.prices.actual.bulk.any? %>
 					<div class="well well-sm">
 						<p class="border-bottom">Bulk prices:</p>
-						<% item.prices.bulk.order('min_qty asc').each do |price| %>
+						<% item.prices.actual.bulk.order('min_qty asc').each do |price| %>
 							<p>
 								<%= "#{price.min_qty}-#{price.max_qty} pcs.: #{number_to_currency(price.price)}" %>
 							</p>

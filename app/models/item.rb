@@ -154,11 +154,11 @@ class Item < ActiveRecord::Base
   end
 
   def default_price
-    self.prices._public.default.minimum(:price).to_f
+    self.prices.actual._public.default.minimum(:price).to_f
   end
 
   def actual_price(account_id = nil, quantity = nil)
-    self.prices.where('(appliable_type = ? AND appliable_id = ?) OR (appliable_type = ? AND appliable_id = ?) OR (appliable_type IS NULL AND appliable_id IS NULL)', (account_id ? 'Account' : nil), account_id, (account_id ? 'Group' : nil), (account_id ? Account.find(account_id).group_id : nil)).
+    self.prices.actual.where('(appliable_type = ? AND appliable_id = ?) OR (appliable_type = ? AND appliable_id = ?) OR (appliable_type IS NULL AND appliable_id IS NULL)', (account_id ? 'Account' : nil), account_id, (account_id ? 'Group' : nil), (account_id ? Account.find(account_id).group_id : nil)).
       where('(_type = ? AND min_qty <= ? AND max_qty >= ?) OR (_type IN (?) AND min_qty IS NULL AND max_qty IS NULL)', (quantity ? 'Bulk' : nil), quantity, quantity, ['Default', 'Sale']).
       minimum(:price).to_f
   end

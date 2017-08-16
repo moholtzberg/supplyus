@@ -1,6 +1,6 @@
 <tr data-item-list-id="<%= subscription.id %>">
   <td><%= subscription.item.name %></td>
-  <td><%= subscription.item.prices.select{|p| p._type == 'Recurring'}[0].price %></td>
+  <td><%= subscription.item.prices.actual.select{|p| p._type == 'Recurring'}[0].price %></td>
   <td><%= subscription.quantity %></td>
   <td><%= subscription.frequency %></td>
   <td class="hidden-xs"><%= subscription.ship_to_address.name %></td>

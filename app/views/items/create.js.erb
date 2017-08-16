@@ -4,5 +4,5 @@
   $('#myModal').modal("hide")
   $('body').removeClass('modal-open')
   $('.modal-backdrop').remove()
-  $("#items").replaceWith("<%= j render :template => 'items/index.html', :format => 'html', :locals => {:items => @items} %>")
+  $("#items-table").DataTable().draw('full-reset');
 <% end %>

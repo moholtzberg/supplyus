@@ -23,7 +23,7 @@
 
 		<div id="item_id" class="col-md-4">
 			<%= f.label :item_id, class: "control-label" %>
-			<%= f.text_field :item_term, class: "form-control", data: {autocomplete_source: items_path} %>
+			<%= f.text_field :item_term, class: "form-control", data: {autocomplete_source: autocomplete_items_path} %>
 		</div>
 
 		<div id="appliable_id" class="col-md-4">

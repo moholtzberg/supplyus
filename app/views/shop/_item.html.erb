@@ -43,10 +43,10 @@
 					<% else %>
 						<h4 class="text-center"><span class="hidden-xs">Your Price:</span> <%= number_to_currency(i.default_price) %><h4>
 					<% end %>
-					<% if i.prices.select{|p| p._type == 'Bulk'}.any? %>
+					<% if i.prices.actual.select{|p| p._type == 'Bulk'}.any? %>
 						<div class="well well-sm">
 							<p class="border-bottom">Bulk prices:</p>
-							<% i.prices.select{|p| p._type == 'Bulk'}.sort_by(&:min_qty).each do |price| %>
+							<% i.prices.actual.select{|p| p._type == 'Bulk'}.sort_by(&:min_qty).each do |price| %>
 								<p>
 									<%= "#{price.min_qty}-#{price.max_qty} pcs.: #{number_to_currency(price.price)}" %>
 								</p>
@@ -60,8 +60,8 @@
 				</div>
 				<%= f.submit "Add To Cart", :class => "btn btn-primary btn-sm btn-block margin-bottom" %>
 			<% end %>
-			<% if i.prices.select{|p| p._type == 'Recurring'}.any? %>
-				<%= link_to "Subscribe (#{number_to_currency(i.prices.select{|p| p._type == 'Recurring'}[0].price)})", new_my_account_subscription_path(subscription: {item_id: i.id, account_id: current_user&.account_id, state: 'new'}), remote: true, class: "btn btn-primary btn-sm btn-block" %>
+			<% if i.prices.actual.select{|p| p._type == 'Recurring'}.any? %>
+				<%= link_to "Subscribe (#{number_to_currency(i.prices.actual.select{|p| p._type == 'Recurring'}[0].price)})", new_my_account_subscription_path(subscription: {item_id: i.id, account_id: current_user&.account_id, state: 'new'}), remote: true, class: "btn btn-primary btn-sm btn-block" %>
 			<% end %>
 			<%= render partial: 'shop/list_select', locals: {item: i} %>
 		</div>

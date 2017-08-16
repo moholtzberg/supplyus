@@ -149,7 +149,7 @@
 					<th>&nbsp;</th>
 				</tr>
 
-				<% @group.prices.includes(:item).each do |a| %>
+				<% @group.prices.actual.includes(:item).each do |a| %>
 
 				<tr <% if a.item && (a.price.to_f < a.item.cost_price.to_f) %>class="danger" <% end %>>
 					<td><%= a.item.number unless a.item.nil?  %></td>

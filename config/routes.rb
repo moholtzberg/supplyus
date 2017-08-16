@@ -69,7 +69,8 @@ Rails.application.routes.draw do
       resources :invoices
       resources :items do
         collection do
-          get :search
+          get :autocomplete
+          post :datatables
           get :actual_price_by_item_number_and_account_id
         end
       end
