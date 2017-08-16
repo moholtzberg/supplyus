@@ -36,7 +36,12 @@ Rails.application.routes.draw do
       resources :bins
       resources :brands
       resources :brand_imports
-      resources :categories
+      resources :categories do
+        collection do
+          get :autocomplete
+          post :datatables
+        end
+      end
       resources :charges
       resources :contacts
       resources :credit_cards

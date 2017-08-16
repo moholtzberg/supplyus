@@ -13,7 +13,7 @@
 		
 		<div id="requirable_id" class="col-md-6">
 			<%= f.label :requirable_id, class: "control-label" %>
-			<% sources = {'Item' => items_path, 'Category' => categories_path} %>
+			<% sources = {'Item' => autocomplete_items_path, 'Category' => autocomplete_categories_path} %>
 			<%= f.text_field :requirable_term, class: "form-control", data: {autocomplete_source: sources[rule.requirable_type]}, disabled: rule.requirable_type.blank?, value: rule.requirable&.name %>
 		</div>
 		
