@@ -57,6 +57,7 @@ class ItemsController < ApplicationController
   def create
     authorize! :create, Item
     @item = Item.create(registration_params)
+    flash[:error] = @item.errors.full_messages.join(', ') if @item.errors.any?
     @items = Item.all
     @items = @items.paginate(:page => params[:page], :per_page => 25)
     respond_to do |format|
@@ -69,19 +70,16 @@ class ItemsController < ApplicationController
   
   def edit
     authorize! :update, Item
-    @item = Item.find_by(:id => params[:id])
+    @item = Item.find(params[:id])
     # @brands = Brand.active
     # @categories = Category.all
   end
   
   def update
     authorize! :update, Item
-    @item = Item.find_by(:id => params[:id])
-    if @item.update_attributes(registration_params)
-      flash[:notice] = "\"#{@item.number}\" has been updated"
-    else
-      flash[:error] = "There were some problems with the form you submitted"
-    end
+    @item = Item.find(params[:id])
+    @item.update_attributes(registration_params)
+    flash[:error] = @item.errors.any? ? @item.errors.full_messages.join(', ') : nil
     @items = Item.all
     @items = @items.paginate(:page => params[:page], :per_page => 25)
     respond_to do |format|
@@ -132,7 +130,9 @@ class ItemsController < ApplicationController
   private
 
   def registration_params
-    params.require(:item).permit(:number, :name, :description, :price, :cost_price, :sale_price, :model_id, :is_serialized, :weight, :height, :width, :length, :item_type_id, :category_id, :brand_id, :brand_name, :category_name, :active, :category_tokens)
+    params.require(:item).permit(:number, :name, :description, :price, :cost_price, :sale_price, :model_id, 
+      :is_serialized, :weight, :height, :width, :length, :item_type_id, :category_id, :brand_id, :brand_name, 
+      :category_name, :active, :category_tokens, prices_attributes: [:id, :_type, :price, :start_date, :end_date, :min_qty, :max_qty, :appliable_type, :appliable_id, :combinable, :_destroy])
   end
   
 end

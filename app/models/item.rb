@@ -26,8 +26,10 @@ class Item < ActiveRecord::Base
   belongs_to :model
   has_many :inventories, :class_name => "Inventory"
   attr_reader :category_tokens
+  accepts_nested_attributes_for :prices, allow_destroy: true
   
   validates_uniqueness_of :number
+  validate :default_price
   # validates_uniqueness_of :slug
   
   before_validation :slugger
@@ -228,6 +230,10 @@ class Item < ActiveRecord::Base
   def self.positive_inventory
     ids = joins(:inventory_transactions).group(:id, :item_id).sort_by(&:positive_count_on_hand).map(&:id)
     where(id: ids)
+  end
+
+  def default_price
+    errors.add(:base, "Item needs to have at least one default price") if prices.select { |p| !p.marked_for_destruction? && p._type == 'Default' }.length == 0
   end
   
 end
