@@ -1,29 +1,23 @@
 class BinsController < ApplicationController
-  layout "admin"
-  respond_to :html, :json
+  layout 'admin'
+  helper_method :sort_column, :sort_direction
+  before_action :set_bin, only: [:show, :edit, :update, :destroy]
+  load_and_authorize_resource
+
   def index
-    authorize! :read, Bin
-    @bins = Bin.all
-    unless params[:term].blank?
-      @bins = @bins.lookup(params[:term]) if params[:term].present?
-    end
-    @bins = @bins.paginate(:page => params[:page], :per_page => 25)
+    update_index
     respond_to do |format|
       format.html
+      format.js
       format.json {render :json => @bins.map { |bin| {id: bin.id, label: bin.name } }}
     end
   end
   
   def new
-    authorize! :create, Bin
     @bin = Bin.new
-    # @brands = Brand.active
-    # @categories = Category.all
   end
   
   def show
-    authorize! :read, Bin
-    @bin = Bin.find_by(:id => params[:id])
     @inventories = @bin.inventories.with_items.joins(:item).order(:item_id)
     unless params[:term].blank?
       @inventories = @inventories.lookup(params[:term]) if params[:term].present?
@@ -31,44 +25,17 @@ class BinsController < ApplicationController
     @inventories = @inventories.paginate(:page => params[:page], :per_page => 25)
   end
   
-  def search
-    authorize! :read, Bin
-    @results = Bin.where(nil)
-    search_term = params[:keywords] if params[:keywords].present?
-    search_term = params[:term] if params[:term].present?
-    @results = @results.lookup(search_term).paginate(:page => params[:page], :per_page => 25)
-    respond_to do |format|
-      format.json {render :json => @results.to_json}
-    end
-  end
-  
   def create
-    authorize! :create, Bin
     @bin = Bin.create(bin_params)
-    flash[:error] = @bin.errors.full_messages.join(', ') if @bin.errors.any?
-    @bins = Bin.all
-    @bins = @bins.paginate(:page => params[:page], :per_page => 25)
-    respond_to do |format|
-      format.html
-      format.js
-    end
+    update_index
   end
   
   def edit
-    authorize! :update, Bin
-    @bin = Bin.find_by(:id => params[:id])
   end
   
   def update
-    authorize! :update, Bin
-    @bin = Bin.find_by(:id => params[:id])
-    if @bin.update_attributes(bin_params)
-      flash[:notice] = "\"#{@bin.name}\" has been updated"
-    else
-      flash[:error] = "There were some problems with the form you submitted"
-    end
-    @bins = Bin.all
-    @bins = @bins.paginate(:page => params[:page], :per_page => 25)
+    @bin.update_attributes(bin_params)
+    update_index
     respond_to do |format|
       format.html
       format.js
@@ -79,20 +46,33 @@ class BinsController < ApplicationController
   end
   
   def destroy
-    authorize! :destroy, Bin
-    e = Bin.find_by(:id => params[:id])
-    e.destroy!
-    @bins = Bin.all
-    @bins = @bins.paginate(:page => params[:page], :per_page => 25)
-    respond_to do |format|
-      format.js
-    end
+    @bin.destroy
+    update_index
   end
   
   private
+
+  def set_bin
+    @bin = Bin.find(params[:id])
+  end
+
+  def update_index
+    @bins = Bin.order(sort_column + " " + sort_direction)
+    unless params[:term].blank?
+      @bins = @bins.lookup(params[:term]) if params[:term].present?
+    end
+    @bins = @bins.paginate(:page => params[:page], :per_page => 25)
+  end
 
   def bin_params
     params.require(:bin).permit(:name, :_type, :warehouse_id)
   end
   
+  def sort_column
+    Bin.column_names.include?(params[:sort]) ? params[:sort] : "bins.name"
+  end
+  
+  def sort_direction
+    %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
+  end
 end
