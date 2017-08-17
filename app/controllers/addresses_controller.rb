@@ -8,6 +8,7 @@ class AddressesController < ApplicationController
     update_index
     respond_to do |format|
       format.html
+      format.js
       format.json { render json: @address.to_json }
     end
   end

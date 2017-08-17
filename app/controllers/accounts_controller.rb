@@ -8,6 +8,7 @@ class AccountsController < ApplicationController
     update_index
     respond_to do |format|
       format.html
+      format.js
       msg = @accounts.map {|a| 
         {
           :label => "#{a.name} #{a.group_name.present? ? "(" + a.group_name + ")" : nil}", :value => "#{a.name}",

@@ -4,5 +4,5 @@
 	$('#myModal').modal("hide")
 	$('body').removeClass('modal-open')
 	$('.modal-backdrop').remove()
-	$("#accounts").html("<%= j render :template => 'accounts/index.html', :format => 'html' %>")
+	$("#accounts").replaceWith("<%= j render :template => 'accounts/index.html', :format => 'html' %>")
 <% end %>

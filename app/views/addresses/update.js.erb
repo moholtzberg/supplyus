@@ -5,5 +5,5 @@
   $('body').removeClass('modal-open')
   $('.modal-backdrop').remove()
   $("#account-addresses").html("<%= j render :partial => 'accounts/addresses', :format => 'html', :locals => {:account => @account} %>")
-  $("#addresses").html("<%= j render :template => 'addresses/index.html', :format => 'html' %>")
+  $("#addresses").replaceWith("<%= j render :template => 'addresses/index.html', :format => 'html' %>")
 <% end %>

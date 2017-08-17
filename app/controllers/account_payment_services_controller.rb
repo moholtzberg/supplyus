@@ -8,6 +8,7 @@ class AccountPaymentServicesController < ApplicationController
     update_index
     respond_to do |format|
       format.html
+      format.js
       format.json { render json: @account_payment_services.to_json }
     end
   end
