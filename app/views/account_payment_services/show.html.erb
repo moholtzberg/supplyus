@@ -1,0 +1,56 @@
+<div id="account_payment_service" class="col-md-12">
+		
+	<table class="table table-bordered table-striped">
+	</table>
+	
+	<table class="table table-bordered table-striped">
+		
+		<tr>
+			<th width="20%">ID</th>
+			<th width="30%">Account</th>
+			<th width="20%">Name</th>
+			<th width="30%">Service ID</th>
+		</tr>
+		
+		<tr>
+			<td><%= @account_payment_service.id %></td>
+			<td><%= @account_payment_service.account&.name %></td>
+			<td><%= @account_payment_service.name %></td>
+			<td><%= @account_payment_service.service_id %></td>
+		</tr>
+		
+	</table>
+	
+	<table class="table table-bordered table-condensed table-striped">
+		<tr class="line_items">
+			<th colspan="6" class="bg-primary text-center">Credit Cards</th>
+		</tr>
+		<tr>
+			<th>Service Card ID</th>
+			<th>Cardholder Name</th>
+			<th>Last 4 Digits</th>
+			<th>Expiration</th>
+			<th>Card Type</th>
+			<th>Unique Number Identifier</th>
+		</tr>
+		<% @account_payment_service.credit_cards.each do |cc| %>
+			<tr>
+				<td><%= link_to cc.service_card_id, cc %></td>
+				<td><%= cc.cardholder_name %></td>
+				<td><%= cc.last_4 %></td>
+				<td><%= cc.expiration %></td>
+				<td><%= cc.card_type %></td>
+				<td><%= cc.unique_number_identifier %></td>
+			</tr>
+		<% end %>
+	</table>
+	
+</div>
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div>

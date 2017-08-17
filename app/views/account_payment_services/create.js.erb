@@ -1,0 +1,8 @@
+<% if @account_payment_service.errors.any? %>
+  $(".modal-content").html("<%= j render :template => 'account_payment_services/new.html', :format => 'html' %>")
+<% else %>
+	$('#myModal').modal("hide")
+	$('body').removeClass('modal-open')
+	$('.modal-backdrop').remove()
+	$("#account_payment_services").html("<%= j render :template => 'account_payment_services/index.html', :format => 'html' %>")
+<% end %>
