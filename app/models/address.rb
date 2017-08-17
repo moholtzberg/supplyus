@@ -14,4 +14,12 @@ class Address < ActiveRecord::Base
     errors.add(:main, "address could be only one per account") if account && account.addresses.where.not(id: id).where(main: true).any? && main
   end
   
+  def account_name
+    account.try(:name)
+  end
+  
+  def account_name=(name)
+    self.account = Account.find_by(:name => name) if name.present?
+  end
+  
 end

@@ -1,35 +1,68 @@
 class AddressesController < ApplicationController
-  layout "admin"
-  respond_to :html, :json
+  layout 'admin'
+  helper_method :sort_column, :sort_direction
+  before_action :set_address, only: [:show, :edit, :update, :destroy]
+  load_and_authorize_resource
+  
+  def index
+    update_index
+    respond_to do |format|
+      format.html
+      format.json { render json: @address.to_json }
+    end
+  end
   
   def new
-    authorize! :create, Address
-    @address = Address.new(address_params)
+    @address = Address.new
+    @address.account_id = params[:account_id]
   end
   
   def create
-    authorize! :create, Address
-    @account = Account.find(address_params[:account_id])
     @address = Address.create(address_params)
-    respond_to do |format|
-      format.html
-      format.js
-    end
+    @account = @address.account
+    update_index
   end
   
+  def show
+  end
+  
+  def edit
+  end
+    
+  def update
+    @address.update_attributes(address_params)
+    @account = @address.account
+    update_index
+  end
+
   def destroy
-    authorize! :destroy, Address
-    @address = Address.find_by(:id => params[:id])
     @account = @address.account
     @address.destroy!
-    respond_to do |format|
-      format.js
-    end
   end
   
   private
 
+  def set_address
+    @address = Address.find(params[:id])
+  end
+
+  def update_index
+    @addresses = Address.order(sort_column + " " + sort_direction)
+    unless params[:term].blank?
+      @addresses = @addresses.lookup(params[:term]) if params[:term].present?
+    end
+    @addresses = @addresses.paginate(:page => params[:page], :per_page => 25)
+  end
+
   def address_params
-    params.require(:address).permit(:name, :address_1, :address_2, :city, :state, :zip, :phone, :fax, :main, :account_id)
+    params.require(:address).permit(:name, :address_1, :address_2, :city, :state, :zip, :phone, :fax, :main, :account_id, :account_name)
+  end
+
+  def sort_column
+    Address.column_names.include?(params[:sort]) ? params[:sort] : "addresses.name"
+  end
+  
+  def sort_direction
+    %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
   end
 end

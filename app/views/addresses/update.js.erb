@@ -1,5 +1,5 @@
 <% if @address.errors.any? %>
-  $(".modal-content").html("<%= j render :template => 'addresses/new.html', :format => 'html' %>")
+  $(".modal-content").html("<%= j render :template => 'addresses/edit.html', :format => 'html' %>")
 <% else %>
   $('#myModal').modal("hide")
   $('body').removeClass('modal-open')
