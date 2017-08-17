@@ -9,6 +9,7 @@ class AccountsController < ApplicationController
     unless params[:term].blank?
       @accounts = @accounts.lookup(params[:term]) if params[:term].present?
     end
+    @accounts =  @accounts.paginate(:page => params[:page], :per_page => 25)
     respond_to do |format|
       format.html
       msg = @accounts.map {|a| 
