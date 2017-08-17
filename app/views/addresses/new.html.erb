@@ -6,7 +6,7 @@
 <div class="modal-body" id="modal-body">
 	
 	<% if @address.errors.any? %>
-		<div id="flash_messages" class="aelrt alert-danger" role="alert">
+		<div id="flash_messages" class="alert alert-danger" role="alert">
 			<strong><%= @address.errors.full_messages.join(', ') %></strong>
 		</div>
 	<% end %>
