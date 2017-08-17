@@ -1,0 +1,71 @@
+<div id="category" class="col-md-12">
+    
+  <table class="table table-bordered table-striped">
+  </table>
+  
+  <table class="table table-bordered table-striped">
+    
+    <tr>
+      <th width="10%">ID</th>
+      <th width="10%">Parent</th>
+      <th width="20%">Name</th>
+      <th width="10%">Slug</th>
+      <th width="10%">Active</th>
+      <th width="10%">Show In Menu</th>
+      <th width="10%">Menu ID</th>
+      <th width="10%">Children</th>
+      <th width="10%">Items</th>
+    </tr>
+    
+    <tr>
+      <td><%= @category.id %></td>
+      <td><%= @category.parent&.name %></td>
+      <td><%= @category.name %></td>
+      <td><%= @category.slug %></td>
+      <td><%= @category.active ? "Yes" : "No" %></td>
+      <td><%= @category.show_in_menu ? "Yes" : "No" %></td>
+      <td><%= @category.menu_id %></td>
+      <td><%= @category.children.count %></td>
+      <td><%= @category.items.count %></td>
+    </tr>
+    
+  </table>
+  
+  <table class="table table-bordered table-condensed table-striped">
+    <tr class="line_items">
+      <th colspan="4" class="bg-primary">Items</th>
+    </tr>
+    <tr>
+      <td colspan="4">
+        <form id="searchBox" accept-charset="UTF-8" action="/admin/categories/<%= @category.id %>" method="get" role="search" data-remote="true">
+          <input type="text" class="form-control" id="term" name="term" placeholder="Search for item" value="<%= params[:term] %>">
+        </form>
+      </td>
+    </tr>
+    <tr>
+      <th>Number</th>
+      <th>Name</th>
+      <th>Default Price</th>
+      <th>Times Purchased</th>
+    </tr>
+    <% @items.each do |item| %>
+      <tr>
+        <td><%= link_to item.number, item %></td>
+        <td><%= item.name %></td>
+        <td><%= number_to_currency(item.prices.actual.where(_type: 'Default').first&.price) %></td>
+        <td><%= item.times_sold.to_i %></td>
+      </tr>
+    <% end %>
+  </table>
+
+  <%= will_paginate @items, renderer: BootstrapPagination::Rails %>
+  
+</div>
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      
+    </div>
+  </div>
+</div
