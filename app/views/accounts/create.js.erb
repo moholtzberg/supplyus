@@ -1,4 +1,6 @@
-<% unless flash[:error] %>
+<% if flash[:error] %>
+  $(".modal-content").html("<%= j render :template => 'accounts/new.html', :format => 'html' %>")
+<% else %>
 	$('#myModal').modal("hide")
 	$('body').removeClass('modal-open')
 	$('.modal-backdrop').remove()

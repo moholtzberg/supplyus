@@ -1,6 +1,7 @@
 class AccountsController < ApplicationController
   layout "admin"
   helper_method :sort_column, :sort_direction
+  before_action :set_account, only: [:show, :edit, :update, :destroy, :statements, :statements_all]
   
   def index
     authorize! :read, Account
@@ -31,16 +32,14 @@ class AccountsController < ApplicationController
   end
   
   def show
-    authorize! :read, Account
-    @account = Account.find(params[:id])
+    authorize! :read, @account
     puts @account.inspect
     @orders = Order.where(account_id: @account.id).includes(:order_line_items).order(:submitted_at)
     @item_prices = Price.where(appliable: @account).includes(:item)
   end
   
   def edit
-    authorize! :update, Account
-    @account = Account.find_by(:id => params[:id])
+    authorize! :update, @account
   end
     
   def create
@@ -51,13 +50,14 @@ class AccountsController < ApplicationController
     if @account.save
       @accounts = Account.joins(:main_address).order(sort_column + " " + sort_direction).includes(:group)
       @accounts = @accounts.paginate(:page => params[:page], :per_page => 25)
+    else
+      flash[:error] = @account.errors.full_messages.join(', ') if @account.errors.any?
     end
   end
   
   def update
-    authorize! :update, Account
+    authorize! :update, @account
     params[:account][:is_taxable] = true unless params[:account][:is_taxable] != 1
-    @account = Account.find_by(:id => params[:id])
     if @account.update_attributes(account_params)
       @accounts = Account.joins(:main_address).order(sort_column + " " + sort_direction).includes(:group)
       @accounts = @accounts.paginate(:page => params[:page], :per_page => 25)
@@ -67,7 +67,6 @@ class AccountsController < ApplicationController
   end
   
   def statements
-    @account = Account.find_by(:id => params[:id])
     @from = Date.strptime(params[:from_date], '%m/%d/%y').kind_of?(Date) ? Date.strptime(params[:from_date], '%m/%d/%y') : Date.today
     @to = Date.strptime(params[:to_date], '%m/%d/%y').kind_of?(Date) ? Date.strptime(params[:to_date], '%m/%d/%y') : Date.today
     @orders = Order.where(:account_id => @account.id).unpaid
@@ -84,7 +83,6 @@ class AccountsController < ApplicationController
   end
 
   def statements_all
-    @account = Account.find_by(:id => params[:id])
     @from = Date.strptime(params[:from_date], '%m/%d/%y').kind_of?(Date) ? Date.strptime(params[:from_date], '%m/%d/%y') : Date.today
     @to = Date.strptime(params[:to_date], '%m/%d/%y').kind_of?(Date) ? Date.strptime(params[:to_date], '%m/%d/%y') : Date.today
     @orders = Order.where(:account_id => @account.id)
@@ -101,6 +99,10 @@ class AccountsController < ApplicationController
   end
 
   private
+
+  def set_account
+    @account = Account.find(params[:id])
+  end
 
   def account_params
     params.require(:account).permit(:name, :sales_rep_name, :email, :group_name, :credit_terms, :credit_limit, :quickbooks_id, :is_taxable, 
