@@ -30,6 +30,7 @@ class AccountsController < ApplicationController
     authorize! :create, Account
     @account = Account.new
     @account.build_main_address
+    flash[:error] = @account.errors.any? ? @account.errors.full_messages.join(', ') : nil
   end
   
   def show
@@ -48,23 +49,19 @@ class AccountsController < ApplicationController
     params[:account][:is_taxable] = true unless params[:account][:is_taxable] != 1
     params[:account][:sales_rep_name] = current_user.email unless !params[:account][:sales_rep_name].blank?
     @account = Account.new(account_params)
-    if @account.save
-      @accounts = Account.joins(:main_address).order(sort_column + " " + sort_direction).includes(:group)
-      @accounts = @accounts.paginate(:page => params[:page], :per_page => 25)
-    else
-      flash[:error] = @account.errors.full_messages.join(', ') if @account.errors.any?
-    end
+    @account.save
+    flash[:error] = @account.errors.any? ? @account.errors.full_messages.join(', ') : nil
+    @accounts = Account.joins(:main_address).order(sort_column + " " + sort_direction).includes(:group)
+    @accounts = @accounts.paginate(:page => params[:page], :per_page => 25)
   end
   
   def update
     authorize! :update, @account
     params[:account][:is_taxable] = true unless params[:account][:is_taxable] != 1
-    if @account.update_attributes(account_params)
-      @accounts = Account.joins(:main_address).order(sort_column + " " + sort_direction).includes(:group)
-      @accounts = @accounts.paginate(:page => params[:page], :per_page => 25)
-    else
-      flash[:error] = @account.errors.full_messages.join(', ') if @account.errors.any?
-    end
+    @account.update_attributes(account_params)
+    flash[:error] = @account.errors.any? ? @account.errors.full_messages.join(', ') : nil
+    @accounts = Account.joins(:main_address).order(sort_column + " " + sort_direction).includes(:group)
+    @accounts = @accounts.paginate(:page => params[:page], :per_page => 25)
   end
   
   def statements
