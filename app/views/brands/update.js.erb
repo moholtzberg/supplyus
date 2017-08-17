@@ -1,0 +1,8 @@
+<% if @brand.errors.any? %>
+  $(".modal-content").html("<%= j render :template => 'brands/edit.html', :format => 'html' %>")
+<% else %>
+  $('#myModal').modal("hide")
+  $('body').removeClass('modal-open')
+  $('.modal-backdrop').remove()
+  $("#brands").replaceWith("<%= j render :template => 'brands/index.html', :format => 'html', :locals => {:brands => @brands} %>")
+<% end %>
