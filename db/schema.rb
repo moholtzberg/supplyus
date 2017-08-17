@@ -11,15 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170810124136) do
-
-  create_table "account_item_prices", force: :cascade do |t|
-    t.integer  "account_id"
-    t.integer  "item_id"
-    t.decimal  "price",      precision: 10, scale: 2, null: false
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
-  end
+ActiveRecord::Schema.define(version: 20170817102040) do
 
   create_table "account_payment_services", force: :cascade do |t|
     t.string  "name"
@@ -206,18 +198,6 @@ ActiveRecord::Schema.define(version: 20170810124136) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
-  create_table "group_item_prices", force: :cascade do |t|
-    t.integer  "group_id"
-    t.integer  "item_id"
-    t.decimal  "price",      precision: 10, scale: 2, null: false
-    t.boolean  "active"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "group_item_prices", ["group_id"], name: "index_group_item_prices_on_group_id"
-  add_index "group_item_prices", ["item_id"], name: "index_group_item_prices_on_item_id"
 
   create_table "groups", force: :cascade do |t|
     t.string   "group_type"
