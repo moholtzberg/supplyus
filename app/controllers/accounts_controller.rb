@@ -2,14 +2,10 @@ class AccountsController < ApplicationController
   layout "admin"
   helper_method :sort_column, :sort_direction
   before_action :set_account, only: [:show, :edit, :update, :destroy, :statements, :statements_all]
+  load_and_authorize_resource
   
   def index
-    authorize! :read, Account
-    @accounts = Account.joins(:main_address).order(sort_column + " " + sort_direction).includes(:group)
-    unless params[:term].blank?
-      @accounts = @accounts.lookup(params[:term]) if params[:term].present?
-    end
-    @accounts =  @accounts.paginate(:page => params[:page], :per_page => 25)
+    update_index
     respond_to do |format|
       format.html
       msg = @accounts.map {|a| 
@@ -22,46 +18,35 @@ class AccountsController < ApplicationController
         } 
       }
       format.json {render :json => msg}
-      
     end
   end
   
   def new
-    authorize! :create, Account
     @account = Account.new
     @account.build_main_address
-    flash[:error] = @account.errors.any? ? @account.errors.full_messages.join(', ') : nil
   end
   
   def show
-    authorize! :read, @account
     puts @account.inspect
     @orders = Order.where(account_id: @account.id).includes(:order_line_items).order(:submitted_at)
     @item_prices = Price.where(appliable: @account).includes(:item)
   end
   
   def edit
-    authorize! :update, @account
   end
     
   def create
-    authorize! :create, Account
     params[:account][:is_taxable] = true unless params[:account][:is_taxable] != 1
     params[:account][:sales_rep_name] = current_user.email unless !params[:account][:sales_rep_name].blank?
     @account = Account.new(account_params)
     @account.save
-    flash[:error] = @account.errors.any? ? @account.errors.full_messages.join(', ') : nil
-    @accounts = Account.joins(:main_address).order(sort_column + " " + sort_direction).includes(:group)
-    @accounts = @accounts.paginate(:page => params[:page], :per_page => 25)
+    update_index
   end
   
   def update
-    authorize! :update, @account
     params[:account][:is_taxable] = true unless params[:account][:is_taxable] != 1
     @account.update_attributes(account_params)
-    flash[:error] = @account.errors.any? ? @account.errors.full_messages.join(', ') : nil
-    @accounts = Account.joins(:main_address).order(sort_column + " " + sort_direction).includes(:group)
-    @accounts = @accounts.paginate(:page => params[:page], :per_page => 25)
+    update_index
   end
   
   def statements
@@ -100,6 +85,14 @@ class AccountsController < ApplicationController
 
   def set_account
     @account = Account.find(params[:id])
+  end
+
+  def update_index
+    @accounts = Account.joins(:main_address).order(sort_column + " " + sort_direction).includes(:group)
+    unless params[:term].blank?
+      @accounts = @accounts.lookup(params[:term]) if params[:term].present?
+    end
+    @accounts = @accounts.paginate(:page => params[:page], :per_page => 25)
   end
 
   def account_params
