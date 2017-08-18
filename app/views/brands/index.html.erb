@@ -5,7 +5,7 @@
 
 		<tr>
 			<td colspan="8">
-				<form id="searchBox" accept-charset="UTF-8" action="/admin/brands" method="get" role="search" data-remote="true">
+				<form id="searchBox" accept-charset="UTF-8" action="<%= brands_path(search_params) %>" method="get" role="search" data-remote="true">
 					<input type="text" class="form-control" id="term" name="term" placeholder="Search for brand" value="<%= params[:term] %>">
 				</form>
 			</td>

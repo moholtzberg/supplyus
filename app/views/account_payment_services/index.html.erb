@@ -5,7 +5,7 @@
 		
 		<tr>
 			<td colspan="9">
-				<form id="searchBox" accept-charset="UTF-8" action="/admin/account_payment_services" method="get" role="search" data-remote="true">
+				<form id="searchBox" accept-charset="UTF-8" action="<%= account_payment_services_path(search_params) %>" method="get" role="search" data-remote="true">
 					<input type="text" class="form-control" id="term" name="term" placeholder="Enter account payment service name" value="<%= params[:term] %>">
 				</form>
 			</td>
