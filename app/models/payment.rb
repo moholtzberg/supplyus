@@ -11,6 +11,12 @@ class Payment < ActiveRecord::Base
   validates :amount, :presence => true, :numericality => { greater_then: 0 }
   validates :payment_method, :presence => true
   
+  def self.lookup(word)
+    includes(:account).where('lower(accounts.name) like (?) or lower(payments.amount) like (?)'\
+      ' or lower(payments.check_number) like (?) or lower(payments.authorization_code) like (?)',
+      "%#{word.downcase}%", "%#{word.downcase}%", "%#{word.downcase}%", "%#{word.downcase}%").references(:account)
+  end
+  
   def account_name
     account.try(:name)
   end

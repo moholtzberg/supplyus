@@ -5,20 +5,20 @@
 
 <div class="modal-body" id="modal-body">
 	
-	<% if flash[:error] %>
-	<div id="flash_messages" class="alert alert-danger" role="alert">
-		<strong><%= flash[:error] %></strong>
-	</div>
+	<% if @payment.errors.any? %>
+		<div id="flash_messages" class="alert alert-danger" role="alert">
+			<strong><%= @payment.errors.full_messages.join(', ') %></strong>
+		</div>
 	<% end %>
 	
 	
-	<%= form_for @payment, as: :payment, url: payment_path(@payment), :remote => true, :html => {:class => "form-horizontal", id: "edit_payment_#{@payment.id}"} do |f| %>
+	<%= form_for @payment, as: :payment, url: payment_path(@payment, search_params), :remote => true, :html => {:class => "form-horizontal", id: "edit_payment_#{@payment.id}"} do |f| %>
 		<%= render :partial => "payments/form", :locals => {:f => f}%>
 	<% end %>
 </div>
 
 <div class="modal-footer">
 	<%= button_tag(:name => :commit, :type => :submit, :class => "btn btn-primary", :form => "edit_payment_#{@payment.id}") do %>
-	Update Payment 
+		Update Payment 
 	<% end %>
 </div>

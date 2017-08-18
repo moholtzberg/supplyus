@@ -20,7 +20,7 @@
 
 	<div id="name" class="col-md-12">
 		<%= f.label :payment_method, :class => "control-label" %>
-		<%= f.select :payment_method, PaymentMethod.where(active: true).map{ |pm| [pm.name, pm.id] }, {}, {:class => "form-control", :disabled => params[:action] != 'new' }%>
+		<%= f.select :payment_method_id, PaymentMethod.where(active: true).map{ |pm| [pm.name, pm.id] }, {}, {:class => "form-control", :disabled => params[:action] != 'new' }%>
 	</div>
 	
 	<div id="address" class="col-md-12">
@@ -60,34 +60,12 @@
 				  $el.append($("<option></option>")
 				     .attr("value", value).text(key));
 				});
-				$("#payment_account_name" ).val(ui.item.label);
+				$("#payment_account_name" ).val(ui.item.value);
         return false;
       }
 		})
 	});
-	
-	jQuery(function(){
-		$("input#payment_account_name").blur(function(){
-			var account = $("input#payment_account_name").val();
-			var request = $.ajax({
-				url : '/admin/orders/unpaid.js?account_name=' + account,
-			});
-			
-			
-			request.success(function(data) {
-				
-			});
-			
-			request.error(function(httpObj, textStatus) {
-				if(httpObj.status == 200) {
-					// console.log(httpObj);
-				} else {
-					alert("Failed");
-				}
-			});
-		})
-	});
-	
+
 	</script>
 		
 </fieldset>

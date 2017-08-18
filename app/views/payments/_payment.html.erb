@@ -1,4 +1,6 @@
 <tr data-payment-id="<%= payment.id %>">
+  <td><%= payment.id %></td>
+  <td><%= payment.account&.name %></td>
   <td><%= payment.created_at.to_date %></td>
   <td><%= payment.payment_type %></td>
   <td><%= number_to_currency(payment.amount) %></td>
@@ -7,7 +9,7 @@
   <td><%= payment.number %></td>
   <td>
     <% if !payment.success? %>
-      <%= link_to('finalize', finalize_payment_path(payment), method: :put, remote: true, class: 'btn btn-default btn-sm') %>
+      <%= link_to('finalize', finalize_payment_path(payment, search_params), method: :put, remote: true, class: 'btn btn-default btn-sm') %>
     <% end %>
   </td>
   <td><%= payment.success? %></td>
@@ -30,7 +32,7 @@
       </button>
       <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
         <% if !payment.success? %>
-          <li><%= link_to("Edit", edit_payment_path(payment.id), :remote => true)  %></li>
+          <li><%= link_to("Edit", edit_payment_path(payment.id, search_params), :remote => true)  %></li>
         <% end %>
       </ul>
     </div>
