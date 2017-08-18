@@ -1,5 +1,5 @@
 <% content_for :app_location do %>Admin / Addresses / Index<% end %>
-<div id="addresss" class="col-md-12">
+<div id="addresses" class="col-md-12">
 	
 	<table class="table table-bordered table-condensed">
 		
@@ -13,6 +13,7 @@
 		
 		<tr>
 			<th class="hidden-xs"><%= sortable "id" %></th>
+			<th><%= sortable "accounts.name", 'Account' %></th>
 			<th class="hidden-xs"><%= sortable "name" %></th>
 			<th><%= sortable "address_1" %></th>
 			<th><%= sortable "address_2" %></th>
@@ -28,6 +29,7 @@
 		<% @addresses.each do |a| %>
 			<tr>
 				<td class="hidden-xs"><%= a.id %></td>
+				<td><%= a.account&.name %></td>
 				<td class="hidden-xs"><%= a.name %></td>
 				<td><%= a.address_1 %></td>
 				<td><%= a.address_2 %></td>
