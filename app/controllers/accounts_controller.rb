@@ -104,7 +104,7 @@ class AccountsController < ApplicationController
 
   def account_params
     params.require(:account).permit(:name, :sales_rep_name, :email, :group_name, :credit_terms, :credit_limit, :quickbooks_id, :is_taxable, 
-      :subscription_week_day, :subscription_month_day, :subscription_quarter_day, main_address_attributes: [:name, :address_1, :address_2, :city, :state, :zip, :phone, :fax])
+      :subscription_week_day, :subscription_month_day, :subscription_quarter_day, main_address_attributes: [:id, :name, :address_1, :address_2, :city, :state, :zip, :phone, :fax])
   end
 
   def sort_column

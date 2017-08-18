@@ -26,8 +26,10 @@ class Item < ActiveRecord::Base
   belongs_to :model
   has_many :inventories, :class_name => "Inventory"
   attr_reader :category_tokens
+  accepts_nested_attributes_for :prices, allow_destroy: true
   
   validates_uniqueness_of :number
+  validate :default_price
   # validates_uniqueness_of :slug
   
   before_validation :slugger
@@ -152,11 +154,11 @@ class Item < ActiveRecord::Base
   end
 
   def default_price
-    self.prices._public.default.minimum(:price).to_f
+    self.prices.actual._public.default.minimum(:price).to_f
   end
 
   def actual_price(account_id = nil, quantity = nil)
-    self.prices.where('(appliable_type = ? AND appliable_id = ?) OR (appliable_type = ? AND appliable_id = ?) OR (appliable_type IS NULL AND appliable_id IS NULL)', (account_id ? 'Account' : nil), account_id, (account_id ? 'Group' : nil), (account_id ? Account.find(account_id).group_id : nil)).
+    self.prices.actual.where('(appliable_type = ? AND appliable_id = ?) OR (appliable_type = ? AND appliable_id = ?) OR (appliable_type IS NULL AND appliable_id IS NULL)', (account_id ? 'Account' : nil), account_id, (account_id ? 'Group' : nil), (account_id ? Account.find(account_id).group_id : nil)).
       where('(_type = ? AND min_qty <= ? AND max_qty >= ?) OR (_type IN (?) AND min_qty IS NULL AND max_qty IS NULL)', (quantity ? 'Bulk' : nil), quantity, quantity, ['Default', 'Sale']).
       minimum(:price).to_f
   end
@@ -228,6 +230,10 @@ class Item < ActiveRecord::Base
   def self.positive_inventory
     ids = joins(:inventory_transactions).group(:id, :item_id).sort_by(&:positive_count_on_hand).map(&:id)
     where(id: ids)
+  end
+
+  def default_price
+    errors.add(:base, "Item needs to have at least one default price") if prices.select { |p| !p.marked_for_destruction? && p._type == 'Default' }.length == 0
   end
   
 end

@@ -9,7 +9,7 @@ class Account < ActiveRecord::Base
   belongs_to :group
   belongs_to :sales_rep, :class_name => "User"
   has_many :addresses
-  has_one :main_address, -> { where(main: true) }, :class_name => "Address"
+  has_one :main_address, -> { where(main: true) }, :class_name => "Address", :dependent => :destroy
   has_many :users
   has_many :contacts
   has_many :equipment, :class_name => "Equipment"

@@ -4,14 +4,14 @@ class OrderDatatable < AjaxDatatablesRails::Base
 
   def view_columns
     @view_columns ||= {
-      number: { source: "Order.number", cond: :eq },
+      number: { source: "Order.number" },
       account: { source: "Account.name" },
       total: { source: "", searchable: false },
       sub_total: { source: "Order.sub_total", cond: :eq },
       shipped: { source: "", searchable: false },
       fulfilled: { source: "", searchable: false },
       balance_due: { source: "", searchable: false },
-      submitted_at: { source: "Order.submitted_at", cond: :eq },
+      submitted_at: { source: "Order.submitted_at" },
       state: { source: "Order.state", cond: :eq },
       dropdown: { source: "", searchable: false }
     }
@@ -37,22 +37,7 @@ class OrderDatatable < AjaxDatatablesRails::Base
   private
 
   def get_raw_records
-    case params[:from]
-    when 'index'
-      Order.is_submitted.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).unshipped
-    when 'shipped'
-      Order.is_submitted.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).shipped
-    when 'fulfilled'
-      Order.is_submitted.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).fulfilled
-    when 'unfulfilled'
-      Order.is_submitted.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).unfulfilled
-    when 'locked'
-      Order.is_submitted.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).is_locked
-    when 'canceled'
-      Order.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).is_canceled
-    when 'not_submitted'
-      Order.not_submitted.not_canceled.includes(:account, :order_line_items, :order_tax_rate)
-    end
+    Order.eager_load({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment])
   end
 
 end

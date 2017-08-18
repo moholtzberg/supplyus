@@ -9,6 +9,8 @@
 
 		<%= f.fields_for :main_address, @account.main_address do |b| %>
 
+			<%= b.hidden_field :id %>
+			
 			<div id="address" class="col-md-12">
 				<%= b.label :address_name, :class => "control-label" %>
 				<%= b.text_field :name, :class => "form-control" %>

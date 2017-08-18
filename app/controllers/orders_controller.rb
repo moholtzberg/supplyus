@@ -32,36 +32,6 @@ class OrdersController < ApplicationController
     authorize! :read, Order
   end
   
-  def shipped
-    authorize! :read, Order
-    render "index"
-  end
-  
-  def fulfilled
-    authorize! :read, Order
-    render "index"
-  end
-  
-  def unfulfilled
-    authorize! :read, Order
-    render "index"
-  end
-  
-  def locked
-    authorize! :read, Order
-    render "index"
-  end
-  
-  def canceled
-    authorize! :read, Order
-    render "index"
-  end
-  
-  def not_submitted
-    authorize! :read, Order
-    render "index"
-  end
-  
   def new
     authorize! :create, Order
     if params[:account_id]
@@ -175,12 +145,14 @@ class OrdersController < ApplicationController
     authorize! :update, Order
     @order.credit_hold = !@order.credit_hold
     @order.save
+    render 'update'
   end
   
   def credit_hold_remove
     authorize! :update, Order
     @order.credit_hold = false
     @order.save
+    render 'update'
   end
 
   def unpaid

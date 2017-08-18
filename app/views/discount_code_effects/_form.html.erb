@@ -23,12 +23,12 @@
 
 		<div id="item_id" class="col-md-4">
 			<%= f.label :item_id, class: "control-label" %>
-			<%= f.text_field :item_term, class: "form-control", data: {autocomplete_source: items_path} %>
+			<%= f.text_field :item_term, class: "form-control", data: {autocomplete_source: autocomplete_items_path} %>
 		</div>
 
 		<div id="appliable_id" class="col-md-4">
 			<%= f.label :appliable_id, class: "control-label" %>
-			<% sources = {'Item' => items_path, 'Category' => categories_path} %>
+			<% sources = {'Item' => autocomplete_items_path, 'Category' => autocomplete_categories_path} %>
 			<%= f.text_field :appliable_term, class: "form-control", data: {autocomplete_source: sources[effect.appliable_type]}, disabled: effect.appliable_type.blank?, value: effect.appliable&.name %>
 		</div>
 

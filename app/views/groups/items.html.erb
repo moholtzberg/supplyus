@@ -18,7 +18,7 @@
 		<% order_ids = Order.where(account_id: @ids).ids %>
 		<% start = 0 %>
 	<% @items.each do |i|%>
-	<% group_item_price = i.item.prices.by_group(@group.id).last %>
+	<% group_item_price = i.item.prices.actual.by_group(@group.id).last %>
 	<% if i.qty > 0 %>
 	<% start = start + 1  %>
 	<%# if group_item_price.nil? %>

@@ -1,37 +1,24 @@
 <% content_for :app_location do %>Admin / Categories / Index<% end %>
 <div id="categories" class="col-md-12">
 
-	<table class="table table-bordered table-condensed table-responsive">
-	
-		<tr>
-			<td colspan="9">
-				<form id="searchBox" accept-charset="UTF-8" action="/admin/categories" method="get" role="search">
-					<input type="text" class="form-control" id="term" name="term" placeholder="Search Over 5,000 Products" value="">
-				</form>
-			</td>
-		</tr>
-	
-		<tr>
-			<th class="hidden-xs">ID</th>
-			<th class="hidden-xs">Parent</th>
-			<th>Name</th>
-			<th class="hidden-xs">Slug</th>
-			<th class="hidden-xs">Show In Menu</th>
-			<th class="hidden-xs">Menu ID</th>
-			<th>Children</th>
-			<th>Items</th>
-			<th>&nbsp;</th>
-		</tr>
-	
-		<% @categories.each do |category| %>
-		<tr id="category_<%= category.id %>" <% unless category.active %>class="danger"<% end %>>
-			<%= render :partial => "categories/category", :locals => {:category => category} %>
-		</tr>
-		<% end %>
-		
+	<table class="table table-bordered table-condensed" id="categories-table" data-source="<%= datatables_categories_path(format: :json) %>">
+  	<thead>
+			<tr>
+				<th>ID</th>
+				<th>Parent</th>
+				<th>Name</th>
+				<th>Slug</th>
+				<th>Active</th>
+				<th>Show In Menu</th>
+				<th>Menu ID</th>
+				<th>Children</th>
+				<th>Items</th>
+				<th>&nbsp;</th>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
 	</table>
-	
-	<%= will_paginate @categories, renderer: BootstrapPagination::Rails %>
 	
 	<%= link_to new_category_path, :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
 	

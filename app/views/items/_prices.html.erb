@@ -16,7 +16,7 @@
 		<th>Remove</th>
 	</tr>
 
-	<% item.prices.each do |it| %>
+	<% item.prices.actual.each do |it| %>
 		<tr>
 			<td><%= it._type %></td>
 			<td><%= number_to_currency(it.price) %></td>

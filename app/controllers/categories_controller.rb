@@ -1,8 +1,14 @@
 class CategoriesController < ApplicationController
   layout "admin"
-  helper_method :sort_column, :sort_direction
-  # respond_to :html, :json
-  def index
+  respond_to :html, :json
+  before_action :set_category, only: [:show, :edit, :update, :destroy]
+
+  def datatables
+    authorize! :read, Category
+    render json: CategoryDatatable.new(view_context)
+  end
+
+  def autocomplete
     authorize! :read, Category
     term = params[:keywords]
     @categories = Category.includes(:parent).order(:parent_id)
@@ -10,60 +16,52 @@ class CategoriesController < ApplicationController
       @categories = @categories.lookup(params[:term]) if params[:term].present?
     end
     @categories = @categories.paginate(:page => params[:page], :per_page => 25)
-    respond_to do |format|
-      format.html
-      format.json { render json: @categories.map { |cat| {id: cat.id, label: cat.name } } }
-    end
+    render json: @categories.map { |cat| {id: cat.id, label: cat.name } }
+  end
+  
+  def index
+    authorize! :read, Category
   end
   
   def new
     authorize! :create, Category
     @category = Category.new
-  end
-  
-  def show
-    authorize! :read, Category
-    @category = Category.find_by(:id => params[:id])
+    flash[:error] = @category.errors.any? ? @category.errors.full_messages.join(', ') : nil
   end
   
   def create
-    authorize! :create, Category
-    @category = Category.create(registration_params)
-    @categories = Category.all
-    # expire_fragment("categories")
+    authorize! :create, @category
+    @category = Category.create(category_params)
+    flash[:error] = @category.errors.any? ? @category.errors.full_messages.join(', ') : nil
+  end
+  
+  def show
+    authorize! :read, @category
   end
   
   def edit
-    authorize! :update, Category
-    @category = Category.find_by(:id => params[:id])
+    authorize! :update, @category
   end
   
   def update
-    authorize! :update, Category
-    @category = Category.find_by(:id => params[:id])
-    if @category.update_attributes(registration_params)
-      # expire_fragment("categories")
-      flash[:notice] = "\"#{@category.name}\" has been updated"
-    else
-      flash[:error] = "There were some problems with the form you submitted"
-    end
+    authorize! :update, @category
+    @category.update_attributes(category_params)
+    flash[:error] = @category.errors.any? ? @category.errors.full_messages.join(', ') : nil
   end
   
+  def destroy
+    authorize! :destroy, @category
+    @category.destroy
+  end
+    
   private
 
-  def registration_params
+  def set_category
+    @category = Category.find(params[:id])
+  end
+
+  def category_params
     params.require(:category).permit(:name, :active, :slug, :show_in_menu, :menu_id, :parent_name)
-  end
-  
-  def sort_column
-    related_columns = Category.reflect_on_all_associations(:belongs_to).map {|a| a.klass.column_names.map {|col| "#{a.klass.table_name}.#{col}"}}
-    columns = Category.column_names.map {|a| "categories.#{a}" }
-    columns.push(related_columns).flatten!.uniq!
-    columns.include?(params[:sort]) ? params[:sort] : "categories.id"
-  end
-  
-  def sort_direction
-    %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
   end
   
 end

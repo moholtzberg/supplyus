@@ -7,7 +7,7 @@
 	
 	<div id="group" class="col-xs-6">
 		<%= f.label :item_number, :class => "control-label" %>
-		<%= f.text_field :item_number, :class => "form-control", data: {autocomplete_source: search_items_path} %>
+		<%= f.text_field :item_number, :class => "form-control", data: {autocomplete_source: autocomplete_items_path} %>
 	</div>
 	
 	<script>
@@ -19,7 +19,11 @@
 
 	jQuery(function() {
 		return $('#machine_model_item_item_number').autocomplete({
-			source: $('#machine_model_item_item_number').data('autocomplete-source')
+			source: $('#machine_model_item_item_number').data('autocomplete-source'),
+      select: function( event, ui ) {
+        $("#machine_model_item_item_number" ).val(ui.item.number);
+        return false;
+      }
 		})
 	});
 	</script>

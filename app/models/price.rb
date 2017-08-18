@@ -15,7 +15,6 @@ class Price < ActiveRecord::Base
 
   before_validation :set_blank_to_nil
 
-  default_scope { where('(start_date < ? OR start_date IS NULL) AND (end_date > ? OR end_date IS NULL)', Date.today, Date.today)}
   scope :by_account, -> (account_id) { where('(appliable_type = ? AND appliable_id = ?) OR (appliable_type = ? AND appliable_id = ?)', 'Account', account_id, 'Group', Account.find(account_id).group_id) }
   scope :by_group, -> (group_id) { where(appliable_type: 'Group', appliable_id: group_id)}
   scope :by_item, -> (item_id) { where(item_id: item_id)}
@@ -25,6 +24,7 @@ class Price < ActiveRecord::Base
   scope :bulk, -> () { where(_type: 'Bulk')}
   scope :singular, -> () { where(_type: ['Default', 'Sale'])}
   scope :default, -> () { where(_type: 'Default') }
+  scope :actual, -> () { where('(end_date >= ? OR end_date IS NULL)', Date.today) }
 
   def set_blank_to_nil
     self.appliable_type = nil if self.appliable_type == ''

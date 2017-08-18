@@ -1,6 +1,7 @@
 class CustomersController < ApplicationController
   layout "admin"
   respond_to :html, :json
+  before_action :set_customer, only: [:show, :edit, :update, :destroy, :statements]
   
   def datatables
     authorize! :read, Customer
@@ -39,19 +40,6 @@ class CustomersController < ApplicationController
     @customer.build_main_address
   end
   
-  def edit
-    authorize! :update, Customer
-    @customer = Customer.find(params[:id])
-  end
-  
-  def show
-    authorize! :read, Customer
-    @customer = Customer.find(params[:id])
-    puts @customer.inspect
-    @orders = Order.where(account_id: @customer.id).includes(:order_line_items).order(:submitted_at)
-    @item_prices = Price.where(appliable: @customer).includes(:item)
-  end
-  
   def create
     authorize! :create, Customer
     params[:customer][:is_taxable] = true unless params[:customer][:is_taxable] != 1
@@ -60,22 +48,30 @@ class CustomersController < ApplicationController
     @customer.save
   end
   
+  def show
+    authorize! :read, @customer
+    puts @customer.inspect
+    @orders = Order.where(account_id: @customer.id).includes(:order_line_items).order(:submitted_at)
+    @item_prices = Price.where(appliable: @customer).includes(:item)
+  end
+  
+  def edit
+    authorize! :update, @customer
+  end
+  
   def update
-    authorize! :update, Customer
+    authorize! :update, @customer
     params[:customer][:is_taxable] = true unless params[:customer][:is_taxable] != 1
-    @customer = Customer.find_by(:id => params[:id])
     @customer.update_attributes(account_params)
   end
 
   def destroy
-    authorize! :destroy, Customer
-    @customer = Customer.find_by(:id => params[:id])
+    authorize! :destroy, @customer
     @customer.destroy
   end
   
   def statements
-    authorize! :read, Customer
-    @customer = Customer.find_by(:id => params[:id])
+    authorize! :read, @customer
     puts params[:from_date]
     @from = Time.strptime(params[:from_date], '%m/%d/%y').kind_of?(Date) ? Time.strptime(params[:from_date], '%m/%d/%y') : DateTime.current
     @to = Time.strptime(params[:to_date], '%m/%d/%y').kind_of?(Date) ? Time.strptime(params[:to_date], '%m/%d/%y') : DateTime.current
@@ -89,8 +85,12 @@ class CustomersController < ApplicationController
   
   private
 
+  def set_customer
+    @customer = Customer.find(params[:id])
+  end
+
   def account_params
-    params.require(:customer).permit(:name, :sales_rep_name, :email, :group_name, :credit_terms, :credit_limit, :quickbooks_id, :is_taxable, :replace_items, main_address_attributes: [:name, :address_1, :address_2, :city, :state, :zip, :phone, :fax])
+    params.require(:customer).permit(:name, :sales_rep_name, :email, :group_name, :credit_terms, :credit_limit, :quickbooks_id, :is_taxable, :replace_items, main_address_attributes: [:id, :name, :address_1, :address_2, :city, :state, :zip, :phone, :fax])
   end
   
 end

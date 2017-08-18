@@ -36,7 +36,12 @@ Rails.application.routes.draw do
       resources :bins
       resources :brands
       resources :brand_imports
-      resources :categories
+      resources :categories do
+        collection do
+          get :autocomplete
+          post :datatables
+        end
+      end
       resources :charges
       resources :contacts
       resources :credit_cards
@@ -69,7 +74,8 @@ Rails.application.routes.draw do
       resources :invoices
       resources :items do
         collection do
-          get :search
+          get :autocomplete
+          post :datatables
           get :actual_price_by_item_number_and_account_id
         end
       end

@@ -27,7 +27,7 @@ module SubscriptionServices
           order_line_number: 1,
           item_id: subscription.item_id,
           quantity: subscription.quantity,
-          price: subscription.item.prices.select{|p| p._type == 'Recurring'}[0].price
+          price: subscription.item.prices.actual.select{|p| p._type == 'Recurring'}[0].price
         })
         order
       end
