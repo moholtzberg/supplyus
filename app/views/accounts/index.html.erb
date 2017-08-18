@@ -12,13 +12,13 @@
 		</tr>
 		
 		<tr>
-			<th class="hidden-xs"><%= sortable "id" %></th>
-			<th><%= sortable "group_id", "Group" %></th>
-			<th><%= sortable "name" %></th>
+			<th class="hidden-xs"><%= sortable "accounts.id", 'ID' %></th>
+			<th><%= sortable "accounts.group_id", "Group" %></th>
+			<th><%= sortable "accounts.name", "Name" %></th>
 			<th class="hidden-xs">Address 1</th>
-			<th class="hidden-xs"><%= sortable "city", "City" %></th>
-			<th class="hidden-xs"><%= sortable "state", "State" %></th>
-			<th class="hidden-xs"><%= sortable "zip", "Zip" %></th>
+			<th class="hidden-xs"><%= sortable "addresses.city", "City" %></th>
+			<th class="hidden-xs"><%= sortable "addresses.state", "State" %></th>
+			<th class="hidden-xs"><%= sortable "addresses.zip", "Zip" %></th>
 			<th class="hidden-xs">Taxable</th>
 			<th>&nbsp;</th>
 		</tr>

@@ -102,7 +102,10 @@ class AccountsController < ApplicationController
   end
 
   def sort_column
-    (Account.column_names + Address.column_names).include?(params[:sort]) ? params[:sort] : "accounts.name"
+    related_columns = Account.reflect_on_all_associations(:has_one).map {|a| a.klass.column_names.map {|col| "#{a.klass.table_name}.#{col}"}}
+    columns = Account.column_names.map {|a| "accounts.#{a}" }
+    columns.push(related_columns).flatten!.uniq!
+    columns.include?(params[:sort]) ? params[:sort] : "accounts.name"
   end
   
   def sort_direction

@@ -9,7 +9,7 @@ class AddressesController < ApplicationController
     respond_to do |format|
       format.html
       format.js
-      format.json { render json: @address.to_json }
+      format.json { render json: @addresses.to_json }
     end
   end
   
@@ -48,7 +48,7 @@ class AddressesController < ApplicationController
   end
 
   def update_index
-    @addresses = Address.order(sort_column + " " + sort_direction)
+    @addresses = Address.includes(:account).order(sort_column + " " + sort_direction)
     unless params[:term].blank?
       @addresses = @addresses.lookup(params[:term]) if params[:term].present?
     end
@@ -60,7 +60,10 @@ class AddressesController < ApplicationController
   end
 
   def sort_column
-    Address.column_names.include?(params[:sort]) ? params[:sort] : "addresses.name"
+    related_columns = Address.reflect_on_all_associations(:belongs_to).map {|a| a.klass.column_names.map {|col| "#{a.klass.table_name}.#{col}"}}
+    columns = Address.column_names.map {|a| "addresses.#{a}" }
+    columns.push(related_columns).flatten!.uniq!
+    columns.include?(params[:sort]) ? params[:sort] : "addresses.name"
   end
   
   def sort_direction
