@@ -11,7 +11,7 @@
 		</div>
 	<% end %>
 	
-	<%= form_for @address, as: :address, url: addresses_path(term: params[:term], account_id: params[:account_id]), method: :post, :remote => true, :html => {:class => "form-horizontal"} do |f| %>
+	<%= form_for @address, as: :address, url: addresses_path(search_params, account_id: params[:account_id]), method: :post, :remote => true, :html => {:class => "form-horizontal"} do |f| %>
 		<%= render :partial => "addresses/form", :locals => {:f => f}%>
 	<% end %>
 

@@ -12,7 +12,7 @@
 	<% end %>
 	
 	
-	<%= form_for @account, as: :account, url: account_path(@account, term: params[:term]), :remote => true, :html => {:class => "form-horizontal", id: "edit_account_#{@account.id}"} do |f| %>
+	<%= form_for @account, as: :account, url: account_path(@account, search_params), :remote => true, :html => {:class => "form-horizontal", id: "edit_account_#{@account.id}"} do |f| %>
 		<%= render :partial => "accounts/form", :locals => {:f => f}%>
 	<% end %>
 	

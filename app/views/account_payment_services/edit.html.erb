@@ -11,14 +11,14 @@
 		</div>
 	<% end %>
 	
-	<%= form_for @account_payment_service, as: :account_payment_service, url: account_payment_service_path(@account_payment_service, term: params[:term]), :remote => true, :html => {:class => "form-horizontal", id: "edit_account_payment_service_#{@account_payment_service.id}"} do |f| %>
+	<%= form_for @account_payment_service, as: :account_payment_service, url: account_payment_service_path(@account_payment_service, search_params), :remote => true, :html => {:class => "form-horizontal", id: "edit_account_payment_service_#{@account_payment_service.id}"} do |f| %>
 		<%= render :partial => "account_payment_services/form", :locals => {:f => f}%>
 	<% end %>
 	
 </div>
 
 <div class="modal-footer">
-	<%= button_tag(:name => :commit, :type => :submit, :class => "btn btn-primary", :form => "edit_account_payment_service_#{@account_payment_service.id}", params: { term: params[:term] }) do %>
+	<%= button_tag(:name => :commit, :type => :submit, :class => "btn btn-primary", :form => "edit_account_payment_service_#{@account_payment_service.id}") do %>
 		Update Account Payment Service 
 	<% end %>
 </div>

@@ -11,14 +11,14 @@
 		</div>
 	<% end %>
 	
-	<%= form_for @address, as: :address, url: address_path(@address, term: params[:term]), :remote => true, :html => {:class => "form-horizontal", id: "edit_address_#{@address.id}"} do |f| %>
+	<%= form_for @address, as: :address, url: address_path(@address, search_params), :remote => true, :html => {:class => "form-horizontal", id: "edit_address_#{@address.id}"} do |f| %>
 		<%= render :partial => "addresses/form", :locals => {:f => f}%>
 	<% end %>
 	
 </div>
 
 <div class="modal-footer">
-	<%= button_tag(:name => :commit, :type => :submit, :class => "btn btn-primary", :form => "edit_address_#{@address.id}", params: { term: params[:term] }) do %>
+	<%= button_tag(:name => :commit, :type => :submit, :class => "btn btn-primary", :form => "edit_address_#{@address.id}") do %>
 		Update Address
 	<% end %>
 </div>
