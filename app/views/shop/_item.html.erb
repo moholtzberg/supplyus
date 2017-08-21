@@ -37,7 +37,7 @@
 		<div class="pull-right">
 			<%= form_for @cart, url: add_to_cart_path, :class => "form-inline", :remote => true do |f| %>
 				<div class="form-group">
-					<% if i.actual_price(current_user.try(:account_id)) < i.default_price %>
+					<% if i.actual_price(current_user.try(:account_id)) < i.default_price.to_f.to_d %>
 						<h5 class="text-center"><span class="hidden-xs">List Price:</span> <span style="text-decoration:line-through;"><%= number_to_currency(i.default_price) %></span><h5>
 						<h4 class="text-center"><span class="hidden-xs">Your Price:</span> <%= number_to_currency(i.actual_price(current_user.try(:account_id))) %><h4>
 					<% else %>
