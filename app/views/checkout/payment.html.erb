@@ -81,16 +81,27 @@
 <% end %>
 
 <table class="table table-bordered">
-	<div id="checkout_errors" class="alert alert-warning">
-		<% @checkout.errors.full_messages.each.each do |e| %>
-		<%= e %>
-		<% end %>
-	</div>
-	<div id="payment_errors" class="alert alert-danger">
-		<% @payment.errors.full_messages.each.each do |e| %>
-		<%= e %>
-		<% end %>
-	</div>
+	<% if @checkout && @checkout.errors.any? %>
+		<div id="checkout_errors" class="alert alert-warning">
+			<% @checkout.errors.full_messages.each.each do |e| %>
+			<%= e %>
+			<% end %>
+		</div>
+	<% end %>
+	<% if @payment && @payment.errors.any? %>	
+		<div id="payment_errors" class="alert alert-danger">
+			<% @payment.errors.full_messages.each.each do |e| %>
+			<%= e %>
+			<% end %>
+		</div>
+	<% end %>
+	<% if @card && @card.errors.any? %>
+		<div id="card_errors" class="alert alert-danger">
+			<% @card.errors.full_messages.each.each do |e| %>
+			<%= e %>
+			<% end %>
+		</div>
+	<% end %>
 	<tr>
 		<%= form_for @checkout, :url => checkout_payment_path, :method => :patch do |f| %>
 		<td>

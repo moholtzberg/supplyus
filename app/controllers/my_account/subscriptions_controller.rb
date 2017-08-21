@@ -29,16 +29,18 @@ class MyAccount::SubscriptionsController < ApplicationController
     @subscription.ship_to_address = Address.find_or_create_by(subscription_params[:ship_to_address_attributes].merge(account_id: @subscription.account_id))
     @subscription.bill_to_address = Address.find_or_create_by(subscription_params[:bill_to_address_attributes].merge(account_id: @subscription.account_id))
     @subscription.payment_method = params[:payment_method]
-    @card = CreditCard.find_or_store({
-          cardholder_name: params[:cardholder_name],
-          number: params[:credit_card_number],
-          cvv: params[:card_security_code],
-          expiration_month: params[:expiration_month],
-          expiration_year: params[:expiration_year],
-          customer_id: @subscription.account.main_service.service_id,
-          account_payment_service_id: @subscription.account.main_service.id,
-          service_card_id: params[:credit_card_token]
-        })
+    if !params[:credit_card_token].blank?
+      @card = CreditCard.find_by(account_payment_service_id: @checkout.account.main_service.id, service_card_id: params[:credit_card_token])
+    else
+      @card = CreditCard.create({
+        cardholder_name: params[:cardholder_name],
+        credit_card_number: params[:credit_card_number],
+        card_security_code: params[:card_security_code],
+        expiration_month: params[:expiration_month],
+        expiration_year: params[:expiration_year],
+        account_payment_service_id: @subscription.account.main_service.id
+      })
+    end
     @subscription.credit_card = @card
     @cards = @subscription.account.main_service.credit_cards
     SubscriptionServices::SetDayOfPeriod.new.call(@subscription)

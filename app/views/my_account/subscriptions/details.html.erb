@@ -181,6 +181,13 @@
             <% end %>
           </div>
         <% end %>
+        <% if @card && @card.errors.any? %>
+          <div id="card_errors" class="alert alert-danger">
+            <% @card.errors.full_messages.each do |e| %>
+              <%= e %>
+            <% end %>
+          </div>
+        <% end %>
       </td>
     </tr>
     <tr>

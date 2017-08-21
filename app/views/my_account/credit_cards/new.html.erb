@@ -5,10 +5,10 @@
 
 <div class="modal-body" id="modal-body">
   
-  <% if flash[:error] %>
-  <div id="flash_messages" class="alert alert-danger" role="alert">
-    <strong><%= flash[:error] %></strong>
-  </div>
+  <% if @credit_card.errors.any? %>
+    <div id="flash_messages" class="alert alert-danger" role="alert">
+      <strong><%= @credit_card.errors.full_messages.join(', ') %></strong>
+    </div>
   <% end %>
   
   
