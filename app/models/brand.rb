@@ -7,5 +7,9 @@ class Brand < ActiveRecord::Base
   scope :active, -> () { where(:active => true) }
   
   # validates_uniqueness_of :name
+
+  def self.lookup(word)
+    where("lower(name) like ?", "%#{word.downcase}%")
+  end
   
 end

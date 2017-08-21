@@ -1,3 +1,2 @@
 $('#myModal').modal("hide")
-alert("WE DONE NIGGA")
-$("#accounts").html("<%= j render :template => 'accounts/index.html', :format => 'html' %>")
+$("#accounts").replaceWith("<%= j render :template => 'accounts/index.html', :format => 'html' %>")

@@ -4,6 +4,14 @@
 	<table class="table table-bordered table-condensed table-responsive">
 
 		<tr>
+			<td colspan="8">
+				<form id="searchBox" accept-charset="UTF-8" action="/admin/brands" method="get" role="search" data-remote="true">
+					<input type="text" class="form-control" id="term" name="term" placeholder="Search for brand" value="<%= params[:term] %>">
+				</form>
+			</td>
+		</tr>		
+
+		<tr>
 			<th class="hidden-xs">ID</th>
 			<th>Prefix</th>
 			<th>Name</th>
@@ -13,30 +21,34 @@
 		</tr>
 		
 		<% @brands.each do |a| %>
-		<tr>
-			<td class="hidden-xs"><%= a.id %></td>
-			<td><%= a.prefix %></td>
-			<td><%= a.name %></td>
-			<td class="hidden-xs"><%= a.active ? "Yes" : "No" %></td>
-			<td class="hidden-xs"><%= a.preferred ? "Yes" : "No" %></td>
-			<td class="text-center">
-			
-				<div class="dropdown">
-					<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-						<span class="caret"></span>
-					</button>
-					<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-						<li><%= link_to("Edit", edit_brand_path(a.id), :remote => true)  %></li>
-					</ul>
-				</div>
-			
-			</td>
-		</tr>
+			<tr>
+				<td class="hidden-xs"><%= a.id %></td>
+				<td><%= a.prefix %></td>
+				<td><%= a.name %></td>
+				<td class="hidden-xs"><%= a.active ? "Yes" : "No" %></td>
+				<td class="hidden-xs"><%= a.preferred ? "Yes" : "No" %></td>
+				<td class="text-center">
+				
+					<div class="dropdown">
+						<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+							<li><%= link_to("View", brand_path(a.id))  %></li>
+							<li><%= link_to("Edit", edit_brand_path(a.id, search_params), :remote => true)  %></li>
+							<li><%= link_to("Delete", brand_path(a.id, search_params), :method => "delete", :remote => true)  %></li>
+						</ul>
+					</div>
+				
+				</td>
+			</tr>
 		<% end %>
 
 	</table>
 	
-	<%= link_to new_brand_path, :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
+	<%= will_paginate @brands, params: search_params.except(:page).merge(action: 'index'), renderer: BootstrapPagination::Rails %>
+	
+	<%= link_to new_brand_path(search_params), :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
 	
 </div>
 

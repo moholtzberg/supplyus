@@ -1,6 +1,9 @@
-<% unless flash[:error] %>
-	$('#myModal').modal("hide")
-	$('body').removeClass('modal-open')
-	$('.modal-backdrop').remove()
-	$("#addresses").html("<%= j render :partial => 'accounts/addresses', :format => 'html', :locals => {:account => @account} %>")
+<% if @address.errors.any? %>
+  $(".modal-content").html("<%= j render :template => 'addresses/new.html', :format => 'html' %>")
+<% else %>
+  $('#myModal').modal("hide")
+  $('body').removeClass('modal-open')
+  $('.modal-backdrop').remove()
+  $("#account-addresses").html("<%= j render :partial => 'accounts/addresses', :format => 'html', :locals => {:account => @account} %>")
+  $("#addresses").replaceWith("<%= j render :template => 'addresses/index.html', :format => 'html' %>")
 <% end %>

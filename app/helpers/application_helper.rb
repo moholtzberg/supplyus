@@ -59,5 +59,9 @@ module ApplicationHelper
   def dropdown(class_name, item)
     render partial: "#{class_name.to_s.pluralize}/dropdown", locals: {item: item}, formats: [:html]
   end
+
+  def search_params
+    {term: params[:term], direction: params[:direction], sort: params[:sort], page: params[:page]}
+  end
   
 end

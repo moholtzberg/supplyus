@@ -167,11 +167,20 @@
     </tr>
     <tr>
       <td colspan="2">
-        <div id="payment_errors" class="alert alert-danger">
-          <% @payment.errors.full_messages.each.each do |e| %>
-          <%= e %>
-          <% end %>
-        </div>
+        <% if @payment && @payment.errors.any? %>
+          <div id="payment_errors" class="alert alert-danger">
+            <% @payment.errors.full_messages.each do |e| %>
+              <%= e %>
+            <% end %>
+          </div>
+        <% end %>
+        <% if @subscription && @subscription.errors.any? %>
+          <div id="subscription_errors" class="alert alert-danger">
+            <% @subscription.errors.full_messages.each do |e| %>
+              <%= e %>
+            <% end %>
+          </div>
+        <% end %>
       </td>
     </tr>
     <tr>

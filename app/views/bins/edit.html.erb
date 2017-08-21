@@ -5,14 +5,14 @@
 
 <div class="modal-body" id="modal-body">
 	
-	<% if flash[:error] %>
-	<div id="flash_messages" class="aelrt alert-danger" role="alert">
-		<strong><%= flash[:error] %></strong>
-	</div>
+	<% if @bin.errors.any? %>
+		<div id="flash_messages" class="alert alert-danger" role="alert">
+			<strong><%= @bin.errors.full_messages.join(', ') %></strong>
+		</div>
 	<% end %>
 	
 	
-	<%= form_for @bin, :remote => true, :html => {:class => "form-horizontal"} do |f| %>
+	<%= form_for @bin, url: bin_path(@bin, search_params), :remote => true, :html => {:class => "form-horizontal"} do |f| %>
 		<%= render :partial => "bins/form", :locals => {:f => f}%>
 	<% end %>
 	
@@ -20,6 +20,6 @@
 
 <div class="modal-footer">
 	<%= button_tag(:name => :commit, :type => :submit, :class => "btn btn-primary", :form => "edit_bin_#{@bin.id}") do %>
-	Update Bin
+		Update Bin
 	<% end %>
 </div>

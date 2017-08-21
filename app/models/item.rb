@@ -29,7 +29,7 @@ class Item < ActiveRecord::Base
   accepts_nested_attributes_for :prices, allow_destroy: true
   
   validates_uniqueness_of :number
-  validate :default_price
+  validate :one_default_price
   # validates_uniqueness_of :slug
   
   before_validation :slugger
@@ -232,7 +232,7 @@ class Item < ActiveRecord::Base
     where(id: ids)
   end
 
-  def default_price
+  def one_default_price
     errors.add(:base, "Item needs to have at least one default price") if prices.select { |p| !p.marked_for_destruction? && p._type == 'Default' }.length == 0
   end
   
