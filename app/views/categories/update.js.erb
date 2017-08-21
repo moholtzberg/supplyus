@@ -1,4 +1,4 @@
-<% if flash[:error] %>
+<% if @category.errors.any? %>
   $(".modal-content").html("<%= j render :template => 'categories/edit.html', :format => 'html' %>")
 <% else %>
   $('#myModal').modal("hide")

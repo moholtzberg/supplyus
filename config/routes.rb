@@ -8,6 +8,7 @@ Rails.application.routes.draw do
           get :oauth_callback
         end
       end
+      resources :account_payment_services
       resources :accounts do
         member do
           get :statements

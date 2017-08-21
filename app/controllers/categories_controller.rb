@@ -1,7 +1,8 @@
 class CategoriesController < ApplicationController
-  layout "admin"
+  layout 'admin'
   respond_to :html, :json
   before_action :set_category, only: [:show, :edit, :update, :destroy]
+  load_and_authorize_resource except: [:datatables, :autocomplete]
 
   def datatables
     authorize! :read, Category
@@ -10,7 +11,6 @@ class CategoriesController < ApplicationController
 
   def autocomplete
     authorize! :read, Category
-    term = params[:keywords]
     @categories = Category.includes(:parent).order(:parent_id)
     unless params[:term].blank?
       @categories = @categories.lookup(params[:term]) if params[:term].present?
@@ -20,37 +20,32 @@ class CategoriesController < ApplicationController
   end
   
   def index
-    authorize! :read, Category
   end
   
   def new
-    authorize! :create, Category
     @category = Category.new
-    flash[:error] = @category.errors.any? ? @category.errors.full_messages.join(', ') : nil
   end
   
   def create
-    authorize! :create, @category
     @category = Category.create(category_params)
-    flash[:error] = @category.errors.any? ? @category.errors.full_messages.join(', ') : nil
   end
   
   def show
-    authorize! :read, @category
+    @items = @category.items
+    unless params[:term].blank?
+      @items = @items.lookup(params[:term]) if params[:term].present?
+    end
+    @items = @items.paginate(:page => params[:page], :per_page => 25)
   end
   
   def edit
-    authorize! :update, @category
   end
   
   def update
-    authorize! :update, @category
     @category.update_attributes(category_params)
-    flash[:error] = @category.errors.any? ? @category.errors.full_messages.join(', ') : nil
   end
   
   def destroy
-    authorize! :destroy, @category
     @category.destroy
   end
     

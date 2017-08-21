@@ -1,0 +1,71 @@
+<% content_for :app_location do %>Admin / Addresses / Index<% end %>
+<div id="addresses" class="col-md-12">
+	
+	<table class="table table-bordered table-condensed">
+		
+		<tr>
+			<td colspan="11">
+				<form id="searchBox" accept-charset="UTF-8" action="/admin/addresses" method="get" role="search" data-remote="true">
+					<input type="text" class="form-control" id="term" name="term" placeholder="Enter address name" value="<%= params[:term] %>">
+				</form>
+			</td>
+		</tr>
+		
+		<tr>
+			<th class="hidden-xs"><%= sortable "addresses.id", 'ID' %></th>
+			<th><%= sortable "accounts.name", 'Account' %></th>
+			<th class="hidden-xs"><%= sortable "addresses.name", 'Name' %></th>
+			<th><%= sortable "addresses.address_1", 'Address 1' %></th>
+			<th><%= sortable "addresses.address_2", 'Address 2' %></th>
+			<th><%= sortable "addresses.city", 'City' %></th>
+			<th class="hidden-xs"><%= sortable "addresses.state", 'State' %></th>
+			<th><%= sortable "addresses.zip", 'Zip' %></th>
+			<th class="hidden-xs"><%= sortable "addresses.phone", 'Phone' %></th>
+			<th class="hidden-xs"><%= sortable "addresses.fax", 'Fax' %></th>
+			<th class="hidden-xs"><%= sortable "addresses.main", 'Main' %></th>
+			<th>&nbsp;</th>
+		</tr>
+
+		<% @addresses.each do |a| %>
+			<tr>
+				<td class="hidden-xs"><%= a.id %></td>
+				<td><%= a.account&.name %></td>
+				<td class="hidden-xs"><%= a.name %></td>
+				<td><%= a.address_1 %></td>
+				<td><%= a.address_2 %></td>
+				<td><%= a.city %></td>
+				<td class="hidden-xs"><%= a.state %></td>
+				<td><%= a.zip %></td>
+				<td class="hidden-xs"><%= a.phone %></td>
+				<td class="hidden-xs"><%= a.fax %></td>
+				<td class="hidden-xs"><%= a.main %></td>
+				<td class="text-center">
+					<div class="dropdown">
+						<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+							<li><%= link_to("View", address_path(a.id))  %></li>
+							<li><%= link_to("Edit", edit_address_path(a.id, search_params), :remote => true)  %></li>
+							<li><%= link_to("Destroy", address_path(a.id, search_params), :method => :delete, :remote => true)  %></li>
+						</ul>
+					</div>
+				</td>
+			</tr>
+		<% end %>
+
+	</table>
+		
+	<%= will_paginate @addresses, params: search_params.except(:page).merge(action: 'index'), renderer: BootstrapPagination::Rails %>
+	
+	<%= link_to new_address_path(search_params), :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
+	
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div>

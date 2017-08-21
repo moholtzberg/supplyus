@@ -1,8 +1,8 @@
-<% unless flash[:error] %>
-	$('#myModal').modal("hide")
-	$('body').removeClass('modal-open')
-	$('.modal-backdrop').remove()
-	$("#accounts").html("<%= j render :template => 'accounts/index.html', :format => 'html' %>")
-<% else %>
+<% if @account.errors.any? %>
   $(".modal-content").html("<%= j render :template => 'accounts/edit.html', :format => 'html' %>")
+<% else %>
+  $('#myModal').modal("hide")
+  $('body').removeClass('modal-open')
+  $('.modal-backdrop').remove()
+  $("#accounts").replaceWith("<%= j render :template => 'accounts/index.html', :format => 'html' %>")
 <% end %>
