@@ -31,7 +31,7 @@ class MyAccount::SubscriptionsController < ApplicationController
     @subscription.payment_method = params[:payment_method]
     if !params[:credit_card_token].blank?
       @card = CreditCard.find_by(account_payment_service_id: @checkout.account.main_service.id, service_card_id: params[:credit_card_token])
-    else
+    elsif @subscription.payment_method == 'credit_card'
       @card = CreditCard.create({
         cardholder_name: params[:cardholder_name],
         credit_card_number: params[:credit_card_number],
@@ -66,7 +66,7 @@ class MyAccount::SubscriptionsController < ApplicationController
   
   def create
     authorize! :create, Subscription
-    @subscription = Subscription.create(subscription_params)
+    @subscription = Subscription.create(subscription_params.merge(account_id: current_user.account_id))
     flash[:error] = @subscription.errors.full_messages.join(', ') if @subscription.errors.any?
     respond_to do |format|
       format.html
@@ -106,7 +106,7 @@ class MyAccount::SubscriptionsController < ApplicationController
   private
 
   def subscription_params
-    prms = params.require(:subscription).permit(:account_id, :item_id, :quantity, :frequency, :address_id, :bill_address_id, :payment_method, :credit_card_id, :state,
+    prms = params.require(:subscription).permit(:item_id, :quantity, :frequency, :address_id, :bill_address_id, :payment_method, :credit_card_id, :state,
       ship_to_address_attributes: [:address_1, :address_2, :city, :state, :zip, :phone],
       bill_to_address_attributes: [:address_1, :address_2, :city, :state, :zip, :phone]
     )
