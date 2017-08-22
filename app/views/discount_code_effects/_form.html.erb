@@ -50,8 +50,13 @@
 			var sources = <%= sources.to_json.html_safe %>;
 			var AppliableAutoComplete = function() { $('#discount_code_effect_appliable_term').autocomplete({
 					source: $('#discount_code_effect_appliable_term').data('autocomplete-source'),
+  				response: function( event, ui ) {
+  					ui.content.forEach(function(item) {
+  						item.label = item.name;
+  					})
+  				},
 		      select: function( event, ui ) {
-		        $("#discount_code_effect_appliable_term" ).val(ui.item.label);
+		        $("#discount_code_effect_appliable_term" ).val(ui.item.name);
 		        $("#discount_code_effect_appliable_id" ).val(ui.item.id);
 		        return false;
 		      }
@@ -71,8 +76,13 @@
 			});
 			$('#discount_code_effect_item_term').autocomplete({
 				source: $('#discount_code_effect_item_term').data('autocomplete-source'),
+				response: function( event, ui ) {
+					ui.content.forEach(function(item) {
+						item.label = item.name;
+					})
+				},
 	      select: function( event, ui ) {
-	        $("#discount_code_effect_item_term" ).val(ui.item.label);
+	        $("#discount_code_effect_item_term" ).val(ui.item.name);
 	        $("#discount_code_effect_item_id" ).val(ui.item.id);
 	        return false;
 	      }

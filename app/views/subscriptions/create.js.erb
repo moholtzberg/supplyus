@@ -1,0 +1,8 @@
+<% if @subscription.errors.any? %>
+  $(".modal-content").html("<%= j render :template => 'subscriptions/new.html', :format => 'html' %>")
+<% else %>
+  $('#myModal').modal("hide")
+  $('body').removeClass('modal-open')
+  $('.modal-backdrop').remove()
+  $("#subscriptions").replaceWith("<%= j render :template => 'subscriptions/index.html', :format => 'html', :locals => {:subscriptions => @subscriptions} %>")
+<% end %>

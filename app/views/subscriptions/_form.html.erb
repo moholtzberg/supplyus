@@ -1,0 +1,96 @@
+<fieldset>	
+			
+	<div id="account" class="col-md-6">
+		<%= f.label :account, :class => "control-label" %>
+		<%= f.text_field :account_name, :class => "form-control", data: {autocomplete_source: accounts_path} %>
+	</div>
+
+	<script>
+		jQuery(function() {
+			return $('#subscription_account_name').autocomplete({
+				source: $('#subscription_account_name').data('autocomplete-source'),
+	      select: function( event, ui ) {
+					var $el = $("#subscription_credit_card_id");
+					$el.empty(); // remove old options
+					$.each(ui.item.credit_cards, function(key,value) {
+					  $el.append($("<option></option>")
+					     .attr("value", value).text(key));
+					});
+					var $el = $("#subscription_address_id, #subscription_bill_address_id");
+					$el.empty(); // remove old options
+					$.each(ui.item.addresses, function(key,value) {
+					  $el.append($("<option></option>")
+					     .attr("value", value).text(key));
+					});
+					$("#subscription_account_name" ).val(ui.item.value);
+	        return false;
+	      }
+			})
+		});
+	</script>	
+
+	<div id="item" class="col-md-6">
+		<%= f.label :item, :class => "control-label" %>
+		<%= f.text_field :item_number, :class => "form-control", data: {autocomplete_source: autocomplete_items_path} %>
+	</div>
+
+	<script>
+		$(function() {
+			$('#subscription_item_number').autocomplete({
+				source: $('#subscription_item_number').data('autocomplete-source'),
+	      select: function( event, ui ) {
+	        $("#subscription_item_number" ).val(ui.item.value);
+	        return false;
+	      }
+			});
+		});
+	</script>	
+	
+	<div id="quantity" class="col-md-6">
+		<%= f.label :quantity, :class => "control-label" %>
+		<%= f.text_field :quantity, :class => "form-control" %>
+	</div>
+	
+	<div id="frequency" class="col-md-6">
+		<%= f.label :frequency, :class => "control-label" %>
+		<%= f.select :frequency, Subscription::FREQUENCIES, {}, {class: "form-control"} %>
+	</div>
+	
+	<div id="payment_method" class="col-md-6">
+		<%= f.label :payment_method, :class => "control-label" %>
+		<%= f.select :payment_method, Subscription::PAYMENT_METHODS, {}, {:class => "form-control" }%>
+	</div>
+	
+	<script>
+		$(function() {
+			$('#subscription_payment_method').change(function() {
+				if ($('#subscription_payment_method option:selected').text() == "credit_card") {
+					$('#subscription_credit_card_id').prop('disabled', false);
+				} else {
+					$('#subscription_credit_card_id').prop('disabled', true);
+				}
+			})
+		})
+	</script>
+
+	<div id="credit_card" class="col-md-6">
+		<%= f.label :credit_card, :class => "control-label" %>
+		<%= f.select :credit_card_id, (@subscription.account ? @subscription.account.main_service.credit_cards.map{ |c| [c.last_4, c.id] } : []), {}, :class => "form-control", disabled: @subscription.payment_method != 'credit_card' %>
+	</div>
+
+	<div id="ship_to_address" class="col-md-6">
+		<%= f.label :ship_to_address, :class => "control-label" %>
+		<%= f.select :address_id, (@subscription.account ? @subscription.account.addresses.map{ |addr| [addr.name, addr.id] } : []), {}, :class => "form-control" %>
+	</div>
+
+	<div id="bill_to_address" class="col-md-6">
+		<%= f.label :bill_to_address, :class => "control-label" %>
+		<%= f.select :bill_address_id, (@subscription.account ? @subscription.account.addresses.map{ |addr| [addr.name, addr.id] } : []), {}, :class => "form-control" %>
+	</div>
+
+	<div id="state" class="col-md-6">
+		<%= f.label :state, :class => "control-label" %>
+		<%= f.select :state, Subscription.state_machine.states.map(&:name), {}, {class: "form-control"} %>
+	</div>
+	
+</fieldset>
