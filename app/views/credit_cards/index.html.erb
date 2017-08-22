@@ -1,0 +1,64 @@
+<% content_for :app_location do %>Admin / Credit Cards / Index<% end %>
+<div id="credit_cards" class="col-md-12">
+
+	<table class="table table-bordered table-condensed">
+		
+		<tr>
+			<td colspan="12">
+				<form id="searchBox" accept-charset="UTF-8" action="<%= credit_cards_path(search_params) %>" method="get" role="search" data-remote="true">
+					<input type="text" class="form-control" id="term" name="term" placeholder="Search for credit card" value="<%= params[:term] %>">
+				</form>
+			</td>
+		</tr>		
+
+		<tr>
+			<th class="hidden-xs"><%= sortable "credit_cards.id", "ID" %></th>
+			<th><%= sortable "accounts.name", "Account" %></th>
+			<th><%= sortable "credit_cards.service_card_id", "Service Card ID" %></th>
+			<th><%= sortable "credit_cards.cardholder_name", 'Cardholder Name' %></th>
+			<th><%= sortable "credit_cards.last_4", "Last 4 Digits" %></th>
+			<th class="hidden-xs"><%= sortable "credit_cards.expiration", 'Expiration' %></th>
+			<th class="hidden-xs"><%= sortable "credit_cards.card_type", 'Card Type' %></th>
+			<th class="hidden-xs"><%= sortable "credit_cards.unique_number_identifier", 'Unique Number Identifier' %></th>
+			<th>&nbsp;</th>
+		</tr>
+	
+		<% @credit_cards.each do |a| %>
+			<tr>
+				<td class="hidden-xs"><%= a.id %></td>
+				<td><%= a.account_payment_service&.account&.name %></td>
+				<td><%= a.service_card_id %></td>
+				<td><%= a.cardholder_name %></td>
+				<td><%= a.last_4 %></td>
+				<td class="hidden-xs"><%= a.expiration %></td>
+				<td class="hidden-xs"><%= a.card_type %></td>
+				<td class="hidden-xs"><%= a.unique_number_identifier %></td>
+				<td class="text-center">
+					<div class="dropdown">
+						<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+							<li><%= link_to("View", credit_card_path(a.id))  %></li>
+							<li><%= link_to("Edit", edit_credit_card_path(a.id, search_params), :remote => true)  %></li>
+							<li><%= link_to("Destroy", credit_card_path(a.id, search_params), :method => :delete, :remote => true)  %></li>
+						</ul>
+					</div>
+				</td>
+			</tr>
+		<% end %>
+	</table>
+
+	<%= will_paginate @credit_cardss, params: search_params.except(:page).merge(action: 'index'), renderer: BootstrapPagination::Rails %>
+
+	<%= link_to new_credit_card_path(search_params), :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
+		
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div>

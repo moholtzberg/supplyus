@@ -5,7 +5,7 @@ class DiscountCodeEffect < ActiveRecord::Base
   belongs_to :code, class_name: 'DiscountCode', foreign_key: :discount_code_id
   belongs_to :appliable, polymorphic: true
   belongs_to :item
-  validates :discount_code_id, presence: true, uniqueness: true
+  validates :code, presence: true, uniqueness: true
 
   after_save :recalculate_discounts
 

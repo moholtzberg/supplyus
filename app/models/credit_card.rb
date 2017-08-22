@@ -1,7 +1,5 @@
 class CreditCard < ActiveRecord::Base
 
-  attr_accessor :first_name
-  attr_accessor :last_name
   attr_accessor :card_security_code
   attr_accessor :credit_card_number
   attr_accessor :expiration_month
@@ -10,8 +8,12 @@ class CreditCard < ActiveRecord::Base
   belongs_to :account_payment_service
   has_many :credit_card_payments
   has_many :subscriptions
-  before_update :update_gateway
-  before_destroy :remove_gateway
+
+  validates_presence_of :cardholder_name, :account_payment_service_id, :service_card_id, :expiration, :last_4, :card_type
+
+  before_validation :store_gateway, on: :create
+  before_validation :update_gateway, on: :update
+  before_validation :remove_gateway, on: :destroy
   after_update :check_failed_subscription_payments
 
   scope :expiring_soon, -> { where(expiration: 30.days.ago..90.days.from_now) }
@@ -25,39 +27,45 @@ class CreditCard < ActiveRecord::Base
   #   end
   # end
 
-  def self.find_or_store(params)
-    if !params[:service_card_id].blank?
-      self.find_by(account_payment_service_id: params[:account_payment_service_id], service_card_id: params[:service_card_id])
-    elsif !params[:number].blank? && GATEWAY.class == ActiveMerchant::Billing::BraintreeBlueGateway
-      unique_numbers = AccountPaymentService.find(params[:account_payment_service_id]).credit_cards.map(&:unique_number_identifier)
-      resp = Braintree::CreditCard.create(
-        customer_id: params[:customer_id],
-        cardholder_name: params[:cardholder_name],
-        number: params[:number],
-        cvv: params[:cvv],
-        expiration_month: params[:expiration_month],
-        expiration_year: params[:expiration_year]
-      )
-      if resp.class == Braintree::SuccessfulResult
-        if unique_numbers.include?(resp.credit_card.unique_number_identifier)
-          Braintree::CreditCard.delete(resp.credit_card.token)
-          self.find_by(
-            account_payment_service_id: params[:account_payment_service_id],
-            unique_number_identifier: resp.credit_card.unique_number_identifier
-          )
+  def self.lookup(term)
+    includes(account_payment_service: :account).where('lower(accounts.name) like (?) or lower(credit_cards.cardholder_name) like (?)'\
+      ' or lower(credit_cards.last_4) like (?) or lower(credit_cards.service_card_id) like (?)',
+     "%#{term.downcase}%", "%#{term.downcase}%", "%#{term.downcase}%", "%#{term.downcase}%").references(:account)
+  end
+
+  def store_gateway
+    if GATEWAY.class == ActiveMerchant::Billing::BraintreeBlueGateway
+      if account_payment_service
+        unique_numbers = account_payment_service&.credit_cards&.map(&:unique_number_identifier)
+        resp = Braintree::CreditCard.create(
+          customer_id: account_payment_service&.service_id,
+          cardholder_name: cardholder_name,
+          number: credit_card_number,
+          cvv: card_security_code,
+          expiration_month: expiration_month,
+          expiration_year: expiration_year
+        )
+        if resp.class == Braintree::SuccessfulResult
+          if unique_numbers.include?(resp.credit_card.unique_number_identifier)
+            Braintree::CreditCard.delete(resp.credit_card.token)
+            errors.add(:base, 'Same card exists for this user.')
+          else
+            self.assign_attributes(
+              unique_number_identifier: resp.credit_card.unique_number_identifier,
+              service_card_id: resp.credit_card.token,
+              expiration: "#{expiration_month}/#{expiration_year}",
+              last_4: resp.credit_card.last_4,
+              card_type: resp.credit_card.card_type
+            )
+          end
         else
-          self.create(
-            unique_number_identifier: resp.credit_card.unique_number_identifier,
-            cardholder_name: params[:cardholder_name],
-            account_payment_service_id: params[:account_payment_service_id],
-            service_card_id: resp.credit_card.token,
-            expiration: "#{params[:expiration_month]}/#{params[:expiration_year]}",
-            last_4: resp.credit_card.last_4,
-            card_type: resp.credit_card.card_type
-          )
+          errors.add(:base, resp.errors.map(&:message).join(' '))
         end
+      else
+        errors.add(:base, 'Account is not set.')
       end
     end
+    errors.empty?
   end
 
   def update_gateway
@@ -69,8 +77,9 @@ class CreditCard < ActiveRecord::Base
           expiration_year: expiration.try(:split, '/').try(:[], 1)
         }
       )
-      resp.class == Braintree::SuccessfulResult
+      errors.add(:base, resp.errors.map(&:message).join(' ')) if resp.class != Braintree::SuccessfulResult
     end
+    errors.empty?
   end
 
   def remove_gateway

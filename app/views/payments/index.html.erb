@@ -4,14 +4,24 @@
 	<table class="table table-bordered table-condensed">
 		
 		<tr>
-			<th>Date</th>
-			<th>Payment Type</th>
-			<th>Payent Amount</th>
+			<td colspan="12">
+				<form id="searchBox" accept-charset="UTF-8" action="<%= payments_path(search_params) %>" method="get" role="search" data-remote="true">
+					<input type="text" class="form-control" id="term" name="term" placeholder="Search for payment" value="<%= params[:term] %>">
+				</form>
+			</td>
+		</tr>		
+
+		<tr>
+			<th><%= sortable "payments.id", "ID" %></th>
+			<th><%= sortable "accounts.name", 'Account' %></th>
+			<th><%= sortable "payments.date", "Date" %></th>
+			<th><%= sortable "payments.payment_type", 'Payment Type' %></th>
+			<th><%= sortable "payments.amount", 'Payment Amount' %></th>
 			<th>Applied Amount</th>
 			<th>Unapplied amount</th>
-			<th>Authorization Code</th>
+			<th><%= sortable "payments.number", 'Authorization Code' %></th>
 			<th>Finalize</th>
-			<th>Completed?</th>
+			<th><%= sortable "payments.success", 'Completed?' %></th>
 			<th>View Applications</th>
 			<th>&nbsp;</th>
 		</tr>
@@ -19,9 +29,9 @@
 		<%= render partial: 'payment', collection: @payments %>	
 	</table>
 
-	<%= will_paginate @payments, renderer: BootstrapPagination::Rails %>
+	<%= will_paginate @payments, params: search_params.except(:page).merge(action: 'index'), renderer: BootstrapPagination::Rails %>
 
-	<%= link_to new_payment_path, :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
+	<%= link_to new_payment_path(search_params), :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
 		
 </div>
 

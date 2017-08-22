@@ -1,6 +1,8 @@
-<% unless flash[:error] %>
-	$('#myModal').modal("hide")
-	$('body').removeClass('modal-open')
-	$('.modal-backdrop').remove()
-	$("#discount_code_effect").html("<%= j render :partial => 'discount_codes/discount_code_effect', :format => 'html', :locals => {:effect => @discount_code_effect} %>")
+<% if @discount_code_effect.errors.any? %>
+  $(".modal-content").html("<%= j render :template => 'discount_code_effects/edit.html', :format => 'html' %>")
+<% else %>
+  $('#myModal').modal("hide")
+  $('body').removeClass('modal-open')
+  $('.modal-backdrop').remove()
+  $("#discount_code_effect").html("<%= j render :partial => 'discount_codes/discount_code_effect', :format => 'html', :locals => {:effect => @discount_code_effect} %>")
 <% end %>

@@ -12,14 +12,14 @@
 	<% end %>
 	
 	
-	<%= form_for [:my_account, @credit_card], :remote => true, :html => {:class => "form-horizontal"} do |f| %>
-		<%= render :partial => "my_account/credit_cards/form", :locals => {:f => f}%>
+	<%= form_for @credit_card, url: credit_card_path(@credit_card, search_params), :remote => true, :html => {:class => "form-horizontal"} do |f| %>
+		<%= render :partial => "credit_cards/form", :locals => {:f => f}%>
 	<% end %>
 	
 </div>
 
 <div class="modal-footer">
 	<%= button_tag(:name => :commit, :type => :submit, :class => "btn btn-primary", :form => "edit_credit_card_#{@credit_card.id}") do %>
-	Update Credit Card
+		Update Credit Card
 	<% end %>
 </div>

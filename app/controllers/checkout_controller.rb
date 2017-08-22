@@ -110,23 +110,25 @@ class CheckoutController < ApplicationController
     if params[:payment_method] == 'credit_card'
       @payment.payment_type =  'CreditCardPayment'
       @payment = @payment.becomes CreditCardPayment
+      if !params[:credit_card_token].blank?
+        @card = CreditCard.find_by(account_payment_service_id: @checkout.account.main_service.id, service_card_id: params[:credit_card_token])
+      else
+        @card = CreditCard.create({
+          cardholder_name: params[:cardholder_name],
+          credit_card_number: params[:credit_card_number],
+          card_security_code: params[:card_security_code],
+          expiration_month: params[:expiration_month],
+          expiration_year: params[:expiration_year],
+          account_payment_service_id: @checkout.account.main_service.id
+        })
+      end
+      @payment.credit_card_id = @card&.id
     else
       @payment.payment_type =  'CheckPayment'
       @payment = @payment.becomes CheckPayment
     end
-    @card = CreditCard.find_or_store({
-      cardholder_name: params[:cardholder_name],
-      number: params[:credit_card_number],
-      cvv: params[:card_security_code],
-      expiration_month: params[:expiration_month],
-      expiration_year: params[:expiration_year],
-      customer_id: current_user.account.main_service.service_id,
-      account_payment_service_id: @checkout.account.main_service.id,
-      service_card_id: params[:credit_card_token]
-    })
-    @payment.credit_card_id = @card&.id
     @cards = current_user.account.main_service.credit_cards
-    if @payment.authorize
+    if (@payment.payment_type = 'CheckPayment' or (@card and @card.errors.empty?)) and @payment.authorize
       @payment.save
       OrderPaymentApplication.create(:order_id => @checkout.id, :payment_id => @payment.id, :applied_amount => @payment.amount)
       submit

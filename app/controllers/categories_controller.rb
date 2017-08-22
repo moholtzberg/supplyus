@@ -16,7 +16,7 @@ class CategoriesController < ApplicationController
       @categories = @categories.lookup(params[:term]) if params[:term].present?
     end
     @categories = @categories.paginate(:page => params[:page], :per_page => 25)
-    render json: @categories.map { |cat| {id: cat.id, label: cat.name } }
+    render json: @categories.map { |cat| {id: cat.id, label: cat.name, name: cat.name } }
   end
   
   def index

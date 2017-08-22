@@ -29,16 +29,18 @@ class MyAccount::SubscriptionsController < ApplicationController
     @subscription.ship_to_address = Address.find_or_create_by(subscription_params[:ship_to_address_attributes].merge(account_id: @subscription.account_id))
     @subscription.bill_to_address = Address.find_or_create_by(subscription_params[:bill_to_address_attributes].merge(account_id: @subscription.account_id))
     @subscription.payment_method = params[:payment_method]
-    @card = CreditCard.find_or_store({
-          cardholder_name: params[:cardholder_name],
-          number: params[:credit_card_number],
-          cvv: params[:card_security_code],
-          expiration_month: params[:expiration_month],
-          expiration_year: params[:expiration_year],
-          customer_id: @subscription.account.main_service.service_id,
-          account_payment_service_id: @subscription.account.main_service.id,
-          service_card_id: params[:credit_card_token]
-        })
+    if !params[:credit_card_token].blank?
+      @card = CreditCard.find_by(account_payment_service_id: @checkout.account.main_service.id, service_card_id: params[:credit_card_token])
+    elsif @subscription.payment_method == 'credit_card'
+      @card = CreditCard.create({
+        cardholder_name: params[:cardholder_name],
+        credit_card_number: params[:credit_card_number],
+        card_security_code: params[:card_security_code],
+        expiration_month: params[:expiration_month],
+        expiration_year: params[:expiration_year],
+        account_payment_service_id: @subscription.account.main_service.id
+      })
+    end
     @subscription.credit_card = @card
     @cards = @subscription.account.main_service.credit_cards
     SubscriptionServices::SetDayOfPeriod.new.call(@subscription)
@@ -64,7 +66,7 @@ class MyAccount::SubscriptionsController < ApplicationController
   
   def create
     authorize! :create, Subscription
-    @subscription = Subscription.create(subscription_params)
+    @subscription = Subscription.create(subscription_params.merge(account_id: current_user.account_id))
     flash[:error] = @subscription.errors.full_messages.join(', ') if @subscription.errors.any?
     respond_to do |format|
       format.html
@@ -104,7 +106,7 @@ class MyAccount::SubscriptionsController < ApplicationController
   private
 
   def subscription_params
-    prms = params.require(:subscription).permit(:account_id, :item_id, :quantity, :frequency, :address_id, :bill_address_id, :payment_method, :credit_card_id, :state,
+    prms = params.require(:subscription).permit(:item_id, :quantity, :frequency, :address_id, :bill_address_id, :payment_method, :credit_card_id, :state,
       ship_to_address_attributes: [:address_1, :address_2, :city, :state, :zip, :phone],
       bill_to_address_attributes: [:address_1, :address_2, :city, :state, :zip, :phone]
     )

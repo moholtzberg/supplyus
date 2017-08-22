@@ -5,10 +5,10 @@
 
 <div class="modal-body" id="modal-body">
 	
-	<% if flash[:error] %>
-	<div id="flash_messages" class="alert alert-danger" role="alert">
-		<strong><%= flash[:error] %></strong>
-	</div>
+	<% if @discount_code_rule.errors.any? %>
+		<div id="flash_messages" class="alert alert-danger" role="alert">
+			<strong><%= @discount_code_rule.errors.full_messages.join(', ') %></strong>
+		</div>
 	<% end %>
 	
 	
@@ -19,6 +19,6 @@
 
 <div class="modal-footer">
 	<%= button_tag(:name => :commit, :type => :submit, :class => "btn btn-primary", :form => "new_discount_code_rule") do %>
-	Create Rule
+		Create Rule
 	<% end %>
 </div>

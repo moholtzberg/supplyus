@@ -109,9 +109,9 @@
 	});
 	
 	jQuery(function() {
-		return $('#item_category_tokens').tokenInput("/admin/categories.json", {
+		return $('#item_category_tokens').tokenInput("<%= autocomplete_categories_path %>", {
 			queryParam: "term",
-			 prePopulate: $('#item_category_tokens').data('load')
+			prePopulate: $('#item_category_tokens').data('load')
 		})
 	});
 
