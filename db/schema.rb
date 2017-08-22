@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170810124136) do
+ActiveRecord::Schema.define(version: 20170822161923) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 20170810124136) do
     t.decimal  "price",      precision: 10, scale: 2, null: false
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
+    t.boolean  "migrated",                            default: false
   end
 
   create_table "account_payment_services", force: :cascade do |t|
@@ -214,6 +215,7 @@ ActiveRecord::Schema.define(version: 20170810124136) do
     t.boolean  "active"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "migrated",                            default: false
   end
 
   add_index "group_item_prices", ["group_id"], name: "index_group_item_prices_on_group_id"

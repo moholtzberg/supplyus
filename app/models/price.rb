@@ -1,7 +1,7 @@
 class Price < ActiveRecord::Base
 
   PRICE_TYPES = ['Default', 'Sale', 'Bulk', 'Recurring']
-  APPLIABLE_TYPES = ['User', 'Group']
+  APPLIABLE_TYPES = ['Account', 'Group']
 
   belongs_to :item
   belongs_to :appliable, polymorphic: true
