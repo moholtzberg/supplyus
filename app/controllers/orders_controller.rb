@@ -97,6 +97,7 @@ class OrdersController < ApplicationController
     authorize! :update, Order
     params[:order][:sales_rep_id] = @order.account&.sales_rep_id unless !params[:order][:sales_rep_name].blank?
     params[:order][:credit_hold]  = @order.account&.credit_hold unless @order.account.nil?
+    @order_line_item = OrderLineItem.new
     respond_to do |format|
       if @order.update_attributes(order_params)
         format.html { redirect_to @order, notice: "Order #{@order.number} was successfully updated!" }
