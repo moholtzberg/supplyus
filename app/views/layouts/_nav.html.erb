@@ -11,6 +11,18 @@
 			<li class="<% if current_page?(:accounts) %>active<% end %>"><%= link_to "Accounts", accounts_path %></li>
 			<% end %>
 			
+			<% if a.include?("account_payment_service") %>
+			<li class="<% if current_page?(:account_payment_services) %>active<% end %>"><%= link_to "Account Payment Services", account_payment_services_path %></li>
+			<% end %>
+
+			<% if a.include?("address") %>
+			<li class="<% if current_page?(:addresses) %>active<% end %>"><%= link_to "Addresses", addresses_path %></li>
+			<% end %>
+			
+			<% if a.include?("credit_card") %>
+			<li class="<% if current_page?(:credit_cards) %>active<% end %>"><%= link_to "Credit Cards", credit_cards_path %></li>
+			<% end %>
+
 			<% if a.include?("customer") %>
 			<li class="<% if current_page?(:customers) %>active<% end %>"><%= link_to "Customers", customers_path %></li>
 			<% end %>
@@ -36,6 +48,10 @@
 			
 			<% if a.include?("payment") %>
 			<li class="<% if current_page?(:payments) %>active<% end %>"><%= link_to "Payments", payments_path %></li>
+			<% end %>
+
+			<% if a.include?("subscription") %>
+			<li class="<% if current_page?(:subscriptions) %>active<% end %>"><%= link_to "Subscriptions", subscriptions_path %></li>
 			<% end %>
 		</ul>
 	</li>

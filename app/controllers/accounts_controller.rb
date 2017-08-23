@@ -15,7 +15,8 @@ class AccountsController < ApplicationController
           :name => "#{a.name}",
           :address_1 => "#{a.address_1}", :address_2 => "#{a.address_2}", :city => "#{a.city}", 
           :state => "#{a.state}", :zip => "#{a.zip}", :phone => "#{a.phone}", :email => "#{a.email}",
-          :credit_cards => (a.main_service.credit_cards.map {|cc| ["**** **** **** #{cc.last_4.to_i}", cc.id] }.to_h if a.main_service)
+          :credit_cards => (a.main_service.credit_cards.map {|cc| ["**** **** **** #{cc.last_4.to_i}", cc.id] }.to_h if a.main_service),
+          :addresses => a.addresses.map { |addr| [addr.name, addr.id] }.to_h
         } 
       }
       format.json {render :json => msg}

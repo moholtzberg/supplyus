@@ -155,6 +155,11 @@ Rails.application.routes.draw do
       end
       resources :sales_reps
       resources :settings
+      resources :subscriptions do
+        member do
+          post :generate_order
+        end
+      end
       resources :tax_rates
       resources :users do
         get :edit_password

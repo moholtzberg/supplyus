@@ -29,7 +29,7 @@
 			return $('#order_line_item_item_number').autocomplete({
 				source: $('#order_line_item_item_number').data('autocomplete-source'),
 	      select: function( event, ui ) {
-	        $("#order_line_item_item_number" ).val(ui.item.number);
+	        $("#order_line_item_item_number" ).val(ui.item.value);
 	        return false;
 	      }
 			});

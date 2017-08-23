@@ -34,6 +34,10 @@ class Subscription < ActiveRecord::Base
     end
   end
 
+  def self.lookup(word)
+    includes(:account, :item).where('lower(accounts.name) like (?) or lower(items.number) like (?)', "%#{word.downcase}%", "%#{word.downcase}%").references(:account, :item)
+  end
+  
   def check_payment_method
     self.credit_card_id = nil if self.payment_method == 'check' || self.payment_method == 'terms'
   end
@@ -48,6 +52,16 @@ class Subscription < ActiveRecord::Base
           SubscriptionMailer.update_cc(self).devliver_later
         end
       end
+    end
+  end
+
+  def next_order_date
+    if state == 'active'
+      today = Date.today
+      subscription_frequency_day = account.send("subscription_" + frequency + "_day")
+      current_period_subscription_date = today.send('beginning_of_' + frequency) + subscription_frequency_day - 1
+      next_period_subscription_date = today.send('beginning_of_' + frequency).send('next_' + frequency) + subscription_frequency_day - 1
+      today > current_period_subscription_date ? next_period_subscription_date : current_period_subscription_date
     end
   end
 
@@ -66,4 +80,21 @@ class Subscription < ActiveRecord::Base
     end
   end
 
+  def account_name
+    account.try(:name)
+  end
+  
+  def account_name=(name)
+    self.account = Account.find_by(:name => name) if name.present?
+  end
+  
+  def item_number
+    item.try(:number)
+  end
+  
+  def item_number=(name)
+    puts name
+    self.item = Item.find_by(:number => name) if name.present?
+    puts self.item.number
+  end
 end

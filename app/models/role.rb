@@ -26,6 +26,8 @@ class Role < ActiveRecord::Base
   MODELS_LIST = [
           :user,
           :account,
+          :account_payment_service,
+          :address,
           :role,
           :item,
           :vendor,
@@ -50,6 +52,7 @@ class Role < ActiveRecord::Base
           :price_import,
           :purchase_order,
           :purchase_order_line_item,
+          :subscription,
           :equipment,
           :equipment_alert,
           :make,
