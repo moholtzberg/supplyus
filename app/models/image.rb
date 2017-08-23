@@ -3,9 +3,12 @@ class Image < Asset
   include ApplicationHelper
   require 'open-uri'
   
-  has_attached_file :picture
+  has_attached_file :attachment
+  validates :attachment, attachment_presence: true
+  validates_attachment_content_type :attachment, :content_type => ["image/jpg", "image/jpeg", "image/png", "image/gif"]
   
   belongs_to :item
+  acts_as_list scope: :item
 
   def path
     attachment_file_name

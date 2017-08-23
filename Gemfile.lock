@@ -65,6 +65,8 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
+    acts_as_list (0.9.5)
+      activerecord (>= 3.0)
     addressable (2.5.1)
       public_suffix (~> 2.0, >= 2.0.2)
     ajax-datatables-rails (0.4.0)
@@ -381,6 +383,7 @@ PLATFORMS
 
 DEPENDENCIES
   activemerchant (~> 1.46.0)
+  acts_as_list
   ajax-datatables-rails
   aws-sdk (< 2.0)
   best_in_place

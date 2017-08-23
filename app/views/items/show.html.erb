@@ -12,21 +12,26 @@
 		
 		<tr>
 			<td width="50%" rowspan="<%= @item.item_properties.size + 7 %>">
-				
-				<div class="col-md-3">
-					<% @item.images.each do |img| %>
-					<a><%= image_tag "http://content.oppictures.com/Master_Images/Master_Variants/Variant_500/#{img.attachment_file_name}", :height => "100", :class => "thumbnail", :id => "#{img.id}"%></a>
-					<% end %>	
+
+				<div class="col-md-12">
+					<input type="file" id="images_upload" multiple/>
+					<script>
+					  $(function() {
+					    $("#images_upload").fileinput({
+					      uploadUrl: "<%= add_image_item_path(@item) %>",
+					      deleteUrl: "<%= remove_image_item_path(@item) %>",
+					      dropZoneEnabled: true,
+								initialPreviewAsData: true,
+								overwriteInitial: false,
+								initialPreview: <%= raw @item.images.each.map { |img| img.attachment.url } %>,
+						    initialPreviewConfig: <%= raw @item.images.each.map { |img| {caption: img.attachment_file_name.gsub(/(.*)\.\w*$/, '\1'), key: img.id, extra: img.position} }.to_json %>
+					    });
+							$('#images_upload').on('filesorted', function(event, params) {
+								$.post( "<%= image_position_item_path(@item) %>", {key: params.stack[params.newIndex].key, extra: params.newIndex + 1} );
+							});
+					  });
+					</script>
 				</div>
-				<div class="col-md-9">
-					<%= image_tag "http://content.oppictures.com/Master_Images/Master_Variants/Variant_500/#{@item.default_image_path}", :width => "400", :id => "main_image" %>
-				</div>
-				<script>
-					$(".thumbnail").click(function(event){
-						var src = $("#"+ event.currentTarget.id).attr("src")
-						$("#main_image").attr("src", src)
-					})
-				</script>
 					
 			</td>
 			
@@ -84,31 +89,15 @@
 		<tr>
 			<th width="10%">Number</th>
 			<th width="50%">Name</th>
-<<<<<<< HEAD
-			<th width"10%">Slug</th>
-			<th width"10%">List Price</th>
-			<th width"10%">Sale Price</th>
-			<th width"10%">Cost</th>
-=======
-			<th width"9%">Slug</th>
-			<th width"9%">List Price</th>
-			<th width"9%">Price</th>
-			<th width"9%">Sale Price</th>
-			<th width"9%">Cost</th>
->>>>>>> a5a18a857de2d0880c14aae29ccadeee161fddcb
+			<th width="10%">Slug</th>
+			<th width="10%">Price</th>
 		</tr>
 		
 		<tr>
 			<td><%= best_in_place @item, :number %></td>
 			<td><%= @item.name %></td>
 			<td><%= @item.slug %></td>
-			<td><%= number_to_currency(@item.list_price) %></td>
-<<<<<<< HEAD
-=======
 			<td><%= number_to_currency(@item.price) %></td>
->>>>>>> a5a18a857de2d0880c14aae29ccadeee161fddcb
-			<td><%= number_to_currency(@item.sale_price) %></td>
-			<td><%= number_to_currency(@item.cost_price) %></td>
 		</tr>
 		<tr>
 			<td colspan="7"><%= best_in_place @item, :description %></td>

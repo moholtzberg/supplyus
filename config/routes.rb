@@ -79,6 +79,11 @@ Rails.application.routes.draw do
           post :datatables
           get :actual_price_by_item_number_and_account_id
         end
+        member do
+          post :add_image
+          post :remove_image
+          post :image_position
+        end
       end
       resources :item_categories
       resources :item_imports

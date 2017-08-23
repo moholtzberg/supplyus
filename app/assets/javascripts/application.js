@@ -16,6 +16,9 @@
 //= require jquery.tokeninput
 //= require best_in_place
 //= require bootstrap
+//= require jasny-bootstrap.min
+//= require sortable.min
+//= require fileinput.min
 //= require bootstrap-select.min
 //= require turbolinks
 //= require dataTables/jquery.dataTables
