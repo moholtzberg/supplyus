@@ -11,14 +11,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170822161923) do
+ActiveRecord::Schema.define(version: 20170823211004) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
     t.integer  "item_id"
-    t.decimal  "price",      precision: 10, scale: 2, null: false
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
+    t.decimal  "price",      precision: 10, scale: 2,                 null: false
+    t.datetime "created_at",                                          null: false
+    t.datetime "updated_at",                                          null: false
     t.boolean  "migrated",                            default: false
   end
 
@@ -211,7 +211,7 @@ ActiveRecord::Schema.define(version: 20170822161923) do
   create_table "group_item_prices", force: :cascade do |t|
     t.integer  "group_id"
     t.integer  "item_id"
-    t.decimal  "price",      precision: 10, scale: 2, null: false
+    t.decimal  "price",      precision: 10, scale: 2,                 null: false
     t.boolean  "active"
     t.datetime "created_at"
     t.datetime "updated_at"
