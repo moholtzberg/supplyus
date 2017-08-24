@@ -14,20 +14,26 @@
 			<td width="50%" rowspan="<%= @item.item_properties.size + 7 %>">
 
 				<div class="col-md-12">
-					<input type="file" id="images_upload" multiple/>
+					<input type="file" id="assets_upload" name="asset[attachment]" data-item-id="<%= @item.id %>" multiple/>
 					<script>
 					  $(function() {
-					    $("#images_upload").fileinput({
-					      uploadUrl: "<%= add_image_item_path(@item) %>",
-					      deleteUrl: "<%= remove_image_item_path(@item) %>",
+					    $("#assets_upload").fileinput({
+					      uploadUrl: "<%= assets_path %>",
+					      uploadExtraData: function (previewId, index) {
+								  var obj = {};
+								  obj['item_id'] = $('#assets_upload')[0].dataset['itemId'];
+								  return obj;
+								},
+					      deleteUrl: "<%= delete_assets_path %>",
 					      dropZoneEnabled: true,
 								initialPreviewAsData: true,
 								overwriteInitial: false,
-								initialPreview: <%= raw @item.images.each.map { |img| img.attachment.url } %>,
-						    initialPreviewConfig: <%= raw @item.images.each.map { |img| {caption: img.attachment_file_name.gsub(/(.*)\.\w*$/, '\1'), key: img.id, extra: img.position} }.to_json %>
+								allowedFileExtensions: ['jpg', 'gif', 'png', 'pdf'],
+								initialPreview: <%= raw @item.assets.each.map { |asset| asset.attachment.url } %>,
+						    initialPreviewConfig: <%= raw @item.assets.each.map { |asset| asset.to_fileinput_hash }.to_json %>
 					    });
-							$('#images_upload').on('filesorted', function(event, params) {
-								$.post( "<%= image_position_item_path(@item) %>", {key: params.stack[params.newIndex].key, extra: params.newIndex + 1} );
+							$('#assets_upload').on('filesorted', function(event, params) {
+								$.post( "<%= change_position_assets_path %>", {id: params.stack[params.newIndex].key, asset: {position: params.newIndex + 1}} );
 							});
 					  });
 					</script>

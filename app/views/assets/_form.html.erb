@@ -1,0 +1,36 @@
+<fieldset>	
+	
+	<div id="attachment" class="col-md-6">
+		<%= f.label :attachment, :class => "control-label" %>
+		<%= f.file_field :attachment, :class => "form-control" %>
+	</div>
+	
+	<div id="item" class="col-md-6">
+		<%= f.label :item, :class => "control-label" %>
+		<%= f.text_field :item_number, :class => "form-control", data: {autocomplete_source: autocomplete_items_path} %>
+	</div>
+
+	<script>
+		$('#asset_item_number').autocomplete({
+			source: $('#asset_item_number').data('autocomplete-source')
+		});
+		$('#asset_item_number').change(function(){
+			if ($(this).val() == '') {
+				$('#asset_position').prop('disabled', true)
+			} else {
+				$('#asset_position').prop('disabled', false)
+			}
+		})
+	</script>	
+	
+	<div id="position" class="col-md-6">
+		<%= f.label :position, :class => "control-label" %>
+		<%= f.number_field :position, :class => "form-control", disabled: f.object.item_number.nil? %>
+	</div>
+	
+	<div id="alt" class="col-md-6">
+		<%= f.label :alt, :class => "control-label" %>
+		<%= f.text_field :alt, :class => "form-control" %>
+	</div>
+	
+</fieldset>

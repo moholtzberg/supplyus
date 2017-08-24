@@ -1,0 +1,24 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	<h4 class="modal-title" id="myModalLabel">Edit Asset</h4>
+</div>
+
+<div class="modal-body" id="modal-body">
+	
+	<% if @asset.errors.any? %>
+		<div id="flash_messages" class="alert alert-danger" role="alert">
+			<strong><%= @asset.errors.full_messages.join(', ') %></strong>
+		</div>
+	<% end %>
+	
+	<%= form_for @asset, as: :asset, url: asset_path(@asset, search_params), :remote => true, :html => {:class => "form-horizontal", id: "edit_asset_#{@asset.id}"} do |f| %>
+		<%= render :partial => "assets/form", :locals => {:f => f}%>
+	<% end %>
+	
+</div>
+
+<div class="modal-footer">
+	<%= button_tag(:name => :commit, :type => :submit, :class => "btn btn-primary", :form => "edit_asset_#{@asset.id}") do %>
+		Update Asset
+	<% end %>
+</div>

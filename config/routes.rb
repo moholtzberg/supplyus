@@ -33,7 +33,12 @@ Rails.application.routes.draw do
         end
       end
       resources :addresses
-      resources :assets
+      resources :assets do
+        collection do
+          post :delete, action: :destroy, as: 'delete'
+          post :change_position, action: :update, as: 'change_position'
+        end
+      end
       resources :bins
       resources :brands
       resources :brand_imports
@@ -78,11 +83,6 @@ Rails.application.routes.draw do
           get :autocomplete
           post :datatables
           get :actual_price_by_item_number_and_account_id
-        end
-        member do
-          post :add_image
-          post :remove_image
-          post :image_position
         end
       end
       resources :item_categories
@@ -192,7 +192,7 @@ Rails.application.routes.draw do
     resources :subscriptions do
       member do
         get :details
-        patch :details, to: :update_details
+        patch :details, action: :update_details
       end
     end
   end

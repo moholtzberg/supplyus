@@ -1,0 +1,63 @@
+<% content_for :app_location do %>Admin / Assets / Index<% end %>
+<div id="assets" class="col-md-12">
+	
+	<table class="table table-bordered table-condensed">
+		
+		<tr>
+			<td colspan="9">
+				<form id="searchBox" accept-charset="UTF-8" action="<%= assets_path(search_params) %>" method="get" role="search" data-remote="true">
+					<input type="text" class="form-control" id="term" name="term" placeholder="Enter asset file name" value="<%= params[:term] %>">
+				</form>
+			</td>
+		</tr>
+		
+		<tr>
+			<th class="hidden-xs"><%= sortable "assets.id", "ID" %></th>
+			<th><%= sortable "assets.type", "Type" %></th>
+			<th><%= sortable "items.number", "Item" %></th>
+			<th><%= sortable "assets.position", "Position" %></th>
+			<th><%= sortable "assets.attachment_file_name", "File" %></th>
+			<th class="hidden-xs"><%= sortable "assets.attachment_file_size", "Size" %></th>
+			<th class="hidden-xs"><%= sortable "assets.attachment_content_type", "Content Type" %></th>
+			<th>&nbsp;</th>
+		</tr>
+
+		<% @assets.each do |a| %>
+			<tr>
+				<td class="hidden-xs"><%= a.id %></td>
+				<td><%= a.type %></td>
+				<td><%= a.item&.number %></td>
+				<td><%= a.position %></td>
+				<td><%= a.attachment_file_name %></td>
+				<td><%= a.attachment_file_size %></td>
+				<td><%= a.attachment_content_type %></td>
+				<td class="text-center">
+					<div class="dropdown">
+						<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+							<li><%= link_to("View", asset_path(a.id))  %></li>
+							<li><%= link_to("Edit", edit_asset_path(a.id, search_params), :remote => true)  %></li>
+							<li><%= link_to("Destroy", asset_path(a.id, search_params), :method => :delete, :remote => true)  %></li>
+						</ul>
+					</div>
+				</td>
+			</tr>
+		<% end %>
+
+	</table>
+		
+	<%= will_paginate @assets, params: search_params.except(:page).merge(action: 'index'), renderer: BootstrapPagination::Rails %>
+	
+	<%= link_to new_asset_path(search_params), :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
+	
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div>

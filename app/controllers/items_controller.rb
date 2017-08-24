@@ -1,7 +1,7 @@
 class ItemsController < ApplicationController
   layout "admin"
   respond_to :html, :json
-  before_action :set_item, only: [:show, :edit, :update, :destroy, :add_image, :remove_image]
+  before_action :set_item, only: [:show, :edit, :update, :destroy]
 
   def datatables
     authorize! :read, Item
@@ -66,29 +66,6 @@ class ItemsController < ApplicationController
     account_id = Account.find_by(name: params[:account_name])&.id
     @price = Item.find_by(number: params["item_number"])&.actual_price(account_id)
     render json: @price
-  end
-
-  def add_image
-    authorize! :update, @item
-    @image = @item.images.create(attachment: params[:file_data])
-    render json: {
-      error: (@image.errors.full_messages.join(', ') if @image.errors.any?),
-      initialPreview: [@image.attachment&.url],
-      initialPreviewConfig: [{caption: @image.attachment_file_name.gsub(/(.*)\.\w*$/, '\1'), key: @image.id, extra: @image.position}]
-    }
-  end
-
-  def remove_image
-    authorize! :update, @item
-    @image = Image.find(params[:key]).destroy
-    render json: {
-      error: (@image.errors.full_messages.join(', ') if @image.errors.any?)
-    }
-  end
-
-  def image_position
-    @image = Image.find(params[:key]).update_attribute(:position, params[:extra])
-    head :no_content
   end
   
   # GET

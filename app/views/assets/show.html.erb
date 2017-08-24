@@ -1,0 +1,47 @@
+<div id="asset" class="col-md-12">
+		
+	<% if @asset.image? %>
+		<div class="col-md-12">
+			<%= image_tag @asset.attachment.url, class: 'media-object' %>
+		</div>
+	<% end %>
+	
+	<table class="table table-bordered table-striped">
+		
+		<tr>
+			<th width="10%">ID</th>
+			<th width="10%">Item</th>
+			<th width="10%">Position</th>
+			<th width="10%">Type</th>
+			<th width="10%">Name</th>
+			<th width="10%">Content Type</th>
+			<th width="10%">Size</th>
+			<th width="10%">Width</th>
+			<th width="10%">Height</th>
+			<th width="10%">Alt</th>
+		</tr>
+		
+		<tr>
+			<td><%= @asset.id %></td>
+			<td><%= @asset.item&.number %></td>
+			<td><%= @asset.position %></td>
+			<td><%= @asset.type %></td>
+			<td><%= @asset.attachment_file_name %></td>
+			<td><%= @asset.attachment_content_type %></td>
+			<td><%= @asset.attachment_file_size %></td>
+			<td><%= @asset.attachment_width %></td>
+			<td><%= @asset.attachment_height %></td>
+			<td><%= @asset.alt %></td>
+		</tr>
+		
+	</table>
+	
+</div>
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div>
