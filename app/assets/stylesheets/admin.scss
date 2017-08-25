@@ -10,19 +10,20 @@
  * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
  * file per style scope.
  *
- *= require google_plus
- *= require autocomplete
- *= require nav
- *= require recurring
- *= require token-input
- *= require roles
- *= require jasny-bootstrap.min
- *= require fileinput.min
- *= require_self
  */
+@import "google_plus";
+@import "autocomplete";
+@import "nav";
+@import "recurring";
+@import "token-input";
+@import "roles";
 @import "bootstrap-sprockets";
 @import "bootstrap";
 @import "font-awesome-sprockets";
 @import "font-awesome";
 @import "dataTables/bootstrap/3/jquery.dataTables.bootstrap";
 @import "dataTables/extras/dataTables.responsive";
+@import "jasny-bootstrap.min";
+@import "fileinput.min";
+@import "select2";
+@import "select2-bootstrap";

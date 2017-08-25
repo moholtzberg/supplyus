@@ -297,6 +297,8 @@ GEM
     sdoc (0.4.2)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
+    select2-rails (4.0.3)
+      thor (~> 0.14)
     shrimp (0.0.6)
       json
     sidekiq (4.2.10)
@@ -422,6 +424,7 @@ DEPENDENCIES
   roo
   sass-rails (~> 5.0)
   sdoc (~> 0.4.0)
+  select2-rails
   shrimp
   sidekiq (~> 4.1, >= 4.1.1)
   sidekiq-batch
