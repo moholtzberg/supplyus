@@ -14,7 +14,7 @@ class ItemsController < ApplicationController
     search_term = params[:keywords] if params[:keywords].present?
     search_term = params[:term] if params[:term].present?
     @results = @results.lookup(search_term).paginate(:page => params[:page], :per_page => 25)
-    render json: @results.map { |item| {id: item.id, label: item.number, name: item.name} }
+    render json: @results.map { |item| {id: item.id, label: item.number, name: item.name, text: item.name} }
   end
   
   def index

@@ -7,25 +7,14 @@ class Asset < ActiveRecord::Base
   validates_attachment_content_type :attachment, :content_type => ["image/jpg", "image/jpeg", "image/png", "image/gif", "application/pdf"]
 
   belongs_to :item
-  acts_as_list
+  acts_as_list scope: :item
   before_save :set_dimensions
   before_save :set_type, if: :attachment_changed?
+  after_save :remove_position, if: Proc.new { |asset| asset.item.nil? }
   serialize :dimensions
 
   def self.lookup(term)
     includes(:item).where('lower(assets.attachment_file_name) like (?) or lower(items.number) like (?)', "%#{term.downcase}%", "%#{term.downcase}%").references(:item)
-  end
-
-  def scope_condition
-    ['item_id = ? AND item_id IS NOT NULL', item_id]
-  end
-
-  def item_number
-    Item.find(item_id).try(:number) if item_id
-  end
-
-  def item_number=(name)
-    self.item_id = Item.find_by(:number => name)&.id if name.present?
   end
 
   def to_fileinput_hash
@@ -52,5 +41,9 @@ class Asset < ActiveRecord::Base
       self.attachment_width = geometry.width.to_i
       self.attachment_height = geometry.height.to_i
     end
+  end
+
+  def remove_position
+    update_column(:position, nil)
   end
 end

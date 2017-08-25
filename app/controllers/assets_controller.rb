@@ -64,7 +64,7 @@ class AssetsController < ApplicationController
   end
 
   def asset_params
-    prms = params.require(:asset).permit(:attachment, :item_number, :position, :alt, :item_id)
+    prms = params.require(:asset).permit(:attachment, :position, :alt, :item_id)
     prms[:alt] = prms[:attachment]&.original_filename&.gsub(/(.*)\.\w*$/, '\1') if prms[:attachment] && (!prms[:alt] || prms[:alt].blank?)
     prms[:item_id] = params[:item_id] if params[:item_id]
     prms
