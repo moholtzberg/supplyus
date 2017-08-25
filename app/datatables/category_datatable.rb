@@ -6,6 +6,7 @@ class CategoryDatatable < AjaxDatatablesRails::Base
     @view_columns ||= {
       id:  { source: "Category.id", cond: :eq },
       parent: { source: "", searchable: false },
+      position: { source: "Category.position", cond: :eq },
       name: { source: "Category.name" },
       slug: { source: "Category.slug" },
       active: { source: "Category.active" },
@@ -22,6 +23,7 @@ class CategoryDatatable < AjaxDatatablesRails::Base
       {
         id: record.id,
         parent: record.parent&.name,
+        position: record.position,
         name: record.name,
         slug: record.slug,
         active: record.active,

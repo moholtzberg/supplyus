@@ -46,6 +46,7 @@ Rails.application.routes.draw do
         collection do
           get :autocomplete
           post :datatables
+          post :change_position, action: :update, as: 'change_position'
         end
       end
       resources :charges
