@@ -174,7 +174,7 @@ class OrdersController < ApplicationController
   private
 
   def order_params
-    temp_params = params.require(:order).permit(:account_name, :sales_rep_name, :number, :email, :po_number, 
+    temp_params = params.require(:order).permit(:account_name, :sales_re_id, :sales_rep_name, :number, :email, :po_number, 
       :submitted_at, :notes, :credit_hold, :shipping_method, :shipping_amount, :tax_rate, :tax_amount, 
       :bill_to_account_name, :bill_to_attention, :bill_to_address_1, :bill_to_address_2, :bill_to_city, 
       :bill_to_state, :bill_to_zip, :bill_to_phone, :bill_to_email, :ship_to_account_name, :ship_to_attention, 
