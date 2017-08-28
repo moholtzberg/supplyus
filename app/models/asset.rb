@@ -3,7 +3,7 @@ class Asset < ActiveRecord::Base
   TYPES = ['Image', 'Document']
   ATTACHABLE_TYPES = ['Item', 'Category']
 
-  has_attached_file :attachment
+  has_attached_file :attachment, url: "/system/assets/:attachment/:id_partition/:style/:filename"
   validates :attachment, attachment_presence: true
   validates_attachment_content_type :attachment, :content_type => ["image/jpg", "image/jpeg", "image/png", "image/gif", "application/pdf"]
   validates :attachable_type, presence: true, if: Proc.new { |asset| asset.attachable_id }

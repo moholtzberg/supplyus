@@ -13,7 +13,13 @@ class AssetsController < ApplicationController
   end
   
   def create
-    @asset = Asset.create(asset_params)
+    if params[:acts_as_list_no_update]
+      Asset.acts_as_list_no_update do
+        @asset = Asset.create(asset_params)
+      end
+    else
+      @asset = Asset.create(asset_params)
+    end
     update_index
     respond_to do |format|
       format.js
@@ -66,7 +72,9 @@ class AssetsController < ApplicationController
   def asset_params
     prms = params.require(:asset).permit(:attachment, :position, :alt, :attachable_type, :attachable_id)
     prms[:alt] = prms[:attachment]&.original_filename&.gsub(/(.*)\.\w*$/, '\1') if prms[:attachment] && (!prms[:alt] || prms[:alt].blank?)
-    prms[:item_id] = params[:item_id] if params[:item_id]
+    prms[:attachable_type] = params[:attachable_type] if params[:attachable_type]
+    prms[:attachable_id] = params[:attachable_id] if params[:attachable_id]
+    prms[:position] = params[:position] if params[:position]
     prms
   end
 

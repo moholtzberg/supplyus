@@ -6,8 +6,9 @@ class Item < ActiveRecord::Base
   scope :inactive, -> { where(:active => false)}
   
   has_many :item_vendor_prices
-  has_many :images
-  has_many :assets, -> { order(position: :asc) }
+  has_many :images, as: :attachable
+  has_many :documents, as: :attachable
+  has_many :assets, -> { order(position: :asc) }, as: :attachable
   has_many :order_line_items
   has_many :purchase_order_line_items
   has_many :inventory_transactions
@@ -78,7 +79,7 @@ class Item < ActiveRecord::Base
   end
  
   def self.no_images
-    Item.includes(:images).where(:assets => {:item_id => nil})
+    Item.includes(:images).where(:assets => {:attachable_id => nil})
   end
  
   def brand_name
