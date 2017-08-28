@@ -45,6 +45,7 @@ class CheckoutController < ApplicationController
     if cart.account_id.nil?
       if current_user.has_account
         cart.account_id = current_user.account.id
+        cart.sales_rep_id = current_user.account.sales_rep_id
       end
     end
     cart.order_line_items.each {|c| c.price = c.item.actual_price(cart.account_id, c.quantity)}
