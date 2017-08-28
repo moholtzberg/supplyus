@@ -1,0 +1,8 @@
+<% if @asset.errors.any? %>
+  $(".modal-content").html("<%= j render :template => 'assets/edit.html', :format => 'html' %>")
+<% else %>
+  $('#myModal').modal("hide")
+  $('body').removeClass('modal-open')
+  $('.modal-backdrop').remove()
+  $("#assets").replaceWith("<%= j render :template => 'assets/index.html', :format => 'html' %>")
+<% end %>

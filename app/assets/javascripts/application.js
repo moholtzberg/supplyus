@@ -13,14 +13,19 @@
 //= require jquery
 // require jquery-ui/autocomplete
 //= require jquery_ujs
+//= require jquery.remotipart
 //= require jquery.tokeninput
 //= require best_in_place
 //= require bootstrap
+//= require jasny-bootstrap.min
+//= require sortable.min
+//= require fileinput.min
 //= require bootstrap-select.min
 //= require turbolinks
 //= require dataTables/jquery.dataTables
 //= require dataTables/bootstrap/3/jquery.dataTables.bootstrap
 //= require dataTables/extras/dataTables.responsive
+//= require select2
 //= require_tree .
 
 // Create Recurring object first.

@@ -11,7 +11,8 @@ $(document).on('turbolinks:load', function() {
       "autoWidth": false,
       "columns": [
         {"data": "id", className: "min-desktop"},
-        {"data": "parent", className: "min-desktop", sortable: false},
+        {"data": "parent", className: "all", sortable: false},
+        {"data": "position", className: "min-desktop"},
         {"data": "name", className: "all"},
         {"data": "slug", className: "min-desktop"},
         {"data": "active", className: "min-desktop"},

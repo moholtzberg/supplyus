@@ -1,14 +1,12 @@
 <div id="category" class="col-md-12">
     
   <table class="table table-bordered table-striped">
-  </table>
-  
-  <table class="table table-bordered table-striped">
     
     <tr>
       <th width="10%">ID</th>
       <th width="10%">Parent</th>
-      <th width="20%">Name</th>
+      <th width="10%">Position</th>
+      <th width="10%">Name</th>
       <th width="10%">Slug</th>
       <th width="10%">Active</th>
       <th width="10%">Show In Menu</th>
@@ -20,6 +18,7 @@
     <tr>
       <td><%= @category.id %></td>
       <td><%= @category.parent&.name %></td>
+      <td><%= @category.position %></td>
       <td><%= @category.name %></td>
       <td><%= @category.slug %></td>
       <td><%= @category.active ? "Yes" : "No" %></td>
@@ -31,34 +30,78 @@
     
   </table>
   
-  <table class="table table-bordered table-condensed table-striped">
-    <tr class="line_items">
-      <th colspan="4" class="bg-primary">Items</th>
-    </tr>
-    <tr>
-      <td colspan="4">
-        <form id="searchBox" accept-charset="UTF-8" action="/admin/categories/<%= @category.id %>" method="get" role="search" data-remote="true">
-          <input type="text" class="form-control" id="term" name="term" placeholder="Search for item" value="<%= params[:term] %>">
-        </form>
-      </td>
-    </tr>
-    <tr>
-      <th>Number</th>
-      <th>Name</th>
-      <th>Default Price</th>
-      <th>Times Purchased</th>
-    </tr>
-    <% @items.each do |item| %>
-      <tr>
-        <td><%= link_to item.number, item %></td>
-        <td><%= item.name %></td>
-        <td><%= number_to_currency(item.prices.actual.where(_type: 'Default').first&.price) %></td>
-        <td><%= item.times_sold.to_i %></td>
-      </tr>
-    <% end %>
-  </table>
+  <div class="col-md-4">
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr class="line_items">
+          <th colspan="4" class="bg-primary">Children</th>
+        </tr>
+        <tr>
+          <th style="width:10%"></th>
+          <th style="width:40%">Name</th>
+          <th style="width:40%">Slug</th>
+          <th style="width:10%"></th>
+        </tr>
+      </thead>
+      <tbody id="children-sortable">
+        <% @category.children.each do |child| %>
+          <tr id="category_<%= child.id %>">
+            <td><span class="glyphicon glyphicon-resize-vertical"></span></td>
+            <td><%= child.name %></td>
+            <td><%= child.slug %></td>
+            <td>
+              <%= link_to category_path(child, category: {parent_id: nil}), method: :patch, remote: true do %>
+                <span class="glyphicon glyphicon-remove"></span>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
 
-  <%= will_paginate @items, renderer: BootstrapPagination::Rails %>
+  <script>
+    $('#children-sortable').sortable({
+      update: function( event, ui ) {
+        $( "#children-sortable" ).sortable( "disable" );
+        var jqxhr = $.post( "<%= change_position_categories_path %>", {id: ui.item[0].id.match(/\d*$/)[0], category: {position: ui.item.index() + 1}} );
+        jqxhr.always(function(){
+          $( "#children-sortable" ).sortable( "enable" );
+        })
+      }
+    });
+  </script>
+
+  <div class="col-md-8">  
+    <table class="table table-bordered table-condensed table-striped">
+      <tr class="line_items">
+        <th colspan="4" class="bg-primary">Items</th>
+      </tr>
+      <tr>
+        <td colspan="4">
+          <form id="searchBox" accept-charset="UTF-8" action="/admin/categories/<%= @category.id %>" method="get" role="search" data-remote="true">
+            <input type="text" class="form-control" id="term" name="term" placeholder="Search for item" value="<%= params[:term] %>">
+          </form>
+        </td>
+      </tr>
+      <tr>
+        <th>Number</th>
+        <th>Name</th>
+        <th>Default Price</th>
+        <th>Times Purchased</th>
+      </tr>
+      <% @items.each do |item| %>
+        <tr>
+          <td><%= link_to item.number, item %></td>
+          <td><%= item.name %></td>
+          <td><%= number_to_currency(item.prices.actual.where(_type: 'Default').first&.price) %></td>
+          <td><%= item.times_sold.to_i %></td>
+        </tr>
+      <% end %>
+    </table>
+
+    <%= will_paginate @items, renderer: BootstrapPagination::Rails %>
+  </div>
   
 </div>
 

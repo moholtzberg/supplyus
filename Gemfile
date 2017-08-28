@@ -77,3 +77,6 @@ gem 'state_machines-activerecord'
 gem 'themes_on_rails'
 gem 'jquery-datatables-rails'
 gem 'ajax-datatables-rails'
+gem 'acts_as_list'
+gem 'remotipart', '~> 1.2'
+gem "select2-rails"

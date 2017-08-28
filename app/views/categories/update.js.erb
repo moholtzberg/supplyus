@@ -5,4 +5,7 @@
   $('body').removeClass('modal-open')
   $('.modal-backdrop').remove()
   $("#categories-table").DataTable().draw('full-hold');
+  <% if @category.parent_id.nil? %>
+    $('#category_<%= @category.id %>').remove();
+  <% end %>
 <% end %>
