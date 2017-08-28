@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170824192423) do
+ActiveRecord::Schema.define(version: 20170825151037) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -63,7 +63,6 @@ ActiveRecord::Schema.define(version: 20170824192423) do
   end
 
   create_table "assets", force: :cascade do |t|
-    t.integer  "item_id"
     t.string   "type"
     t.integer  "attachment_width"
     t.integer  "attachment_height"
@@ -75,6 +74,8 @@ ActiveRecord::Schema.define(version: 20170824192423) do
     t.text     "alt"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "attachable_id"
+    t.string   "attachable_type"
   end
 
   create_table "bins", force: :cascade do |t|

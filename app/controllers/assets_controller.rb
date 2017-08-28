@@ -64,16 +64,14 @@ class AssetsController < ApplicationController
   end
 
   def asset_params
-    prms = params.require(:asset).permit(:attachment, :position, :alt, :item_id)
+    prms = params.require(:asset).permit(:attachment, :position, :alt, :attachable_type, :attachable_id)
     prms[:alt] = prms[:attachment]&.original_filename&.gsub(/(.*)\.\w*$/, '\1') if prms[:attachment] && (!prms[:alt] || prms[:alt].blank?)
     prms[:item_id] = params[:item_id] if params[:item_id]
     prms
   end
 
   def sort_column
-    related_columns = Asset.reflect_on_all_associations(:belongs_to).map {|a| a.klass.column_names.map {|col| "#{a.klass.table_name}.#{col}"}}
     columns = Asset.column_names.map {|a| "assets.#{a}" }
-    columns.push(related_columns).flatten!.uniq!
     columns.include?(params[:sort]) ? params[:sort] : "assets.attachment_file_name"
   end
   

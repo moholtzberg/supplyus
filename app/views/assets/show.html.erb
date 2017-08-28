@@ -10,7 +10,7 @@
 		
 		<tr>
 			<th width="10%">ID</th>
-			<th width="10%">Item</th>
+			<th width="10%">Attachable</th>
 			<th width="10%">Position</th>
 			<th width="10%">Type</th>
 			<th width="10%">Name</th>
@@ -23,7 +23,7 @@
 		
 		<tr>
 			<td><%= @asset.id %></td>
-			<td><%= @asset.item&.number %></td>
+			<td><%= link_to @asset.attachable_name, @asset.attachable if @asset.attachable %></td>
 			<td><%= @asset.position %></td>
 			<td><%= @asset.type %></td>
 			<td><%= @asset.attachment_file_name %></td>
