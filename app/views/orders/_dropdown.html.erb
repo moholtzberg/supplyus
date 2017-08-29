@@ -14,7 +14,7 @@
     <% end %>
     <% if item.awaiting_payment? %>
       <li><%= link_to("Toggle lock", lock_order_path(item.id), :remote => true, :method => "put") %></li>
-      <% if item.payments.where.not(success: true).first %>
+      <% if item.payments.where.not(success: true).size > 0 %>
         <li><%= link_to("Capture payment", finalize_payment_path(item.payments.where.not(success: true).first.id), :remote => true, :method => "put") %></li>
       <% end %>
     <% end %>
