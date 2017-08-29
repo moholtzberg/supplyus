@@ -1,0 +1,59 @@
+<div id="item_list" class="col-md-12">
+		
+	<table class="table table-bordered table-striped">
+	</table>
+	
+	<table class="table table-bordered table-striped">
+		
+		<tr>
+			<th width="20%">ID</th>
+			<th width="30%">User</th>
+			<th width="20%">Name</th>
+		</tr>
+		
+		<tr>
+			<td><%= @item_list.id %></td>
+			<td><%= @item_list.user&.email %></td>
+			<td><%= @item_list.name %></td>
+		</tr>
+		
+	</table>
+	
+  <table class="table table-bordered table-condensed table-striped">
+    <tr class="line_items">
+      <th colspan="4" class="bg-primary">Items</th>
+    </tr>
+    <tr>
+      <td colspan="4">
+        <form id="searchBox" accept-charset="UTF-8" action="/admin/item_lists/<%= @item_list.id %>" method="get" role="search" data-remote="true">
+          <input type="text" class="form-control" id="term" name="term" placeholder="Search for item" value="<%= params[:term] %>">
+        </form>
+      </td>
+    </tr>
+    <tr>
+      <th>Number</th>
+      <th>Name</th>
+      <th>Default Price</th>
+      <th>Times Purchased</th>
+    </tr>
+    <% @items.each do |item| %>
+      <tr>
+        <td><%= link_to item.number, item %></td>
+        <td><%= item.name %></td>
+        <td><%= number_to_currency(item.prices.actual.where(_type: 'Default').first&.price) %></td>
+        <td><%= item.times_sold.to_i %></td>
+      </tr>
+    <% end %>
+  </table>
+
+  <%= will_paginate @items, renderer: BootstrapPagination::Rails %>
+	
+</div>
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div>

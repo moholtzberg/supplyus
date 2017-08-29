@@ -88,6 +88,7 @@ Rails.application.routes.draw do
       end
       resources :item_categories
       resources :item_imports
+      resources :item_lists
       resources :item_vendor_prices
       resources :item_vendor_price_imports
       resources :jobs
