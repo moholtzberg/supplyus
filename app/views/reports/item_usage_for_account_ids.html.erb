@@ -1,0 +1,46 @@
+<% content_for :app_location do %>Admin / Groups / Item Usagefor Account Ids<% end %>
+<div id="items" class="col-md-12">
+
+  
+      <table class="table table-bordered table-condensed">
+        <tr>
+          <th colspan="6" class="text-center bg-info">
+						<% @accounts.each do |account| %>
+							<%= account.name %><br/>
+						<% end %>
+					</th>
+        </tr>
+        <tr>
+          <th>Index</th>
+          <th>Item Id</th>
+          <th>QTY Ordered</th>
+          <th>Item Number</th>
+          <th>Current Price</th>
+
+        </tr>
+
+        <% order_ids = Order.where(account_id: @accounts.ids).ids %>
+        <% start = 0 %>
+
+        <% items = OrderLineItem.unscoped.joins("INNER JOIN orders ON orders.id = order_line_items.order_id").joins("RIGHT OUTER JOIN items ON items.id = order_line_items.item_id").where("orders.submitted_at BETWEEN ? AND ?", @from_date, @to_date).where("orders.account_id IN (?)", @accounts.ids).where("quantity_shipped >= 0").group("item_id, items.number").select("SUM(COALESCE(quantity, 0) - COALESCE(quantity_canceled, 0)) AS qty, item_id AS item_id, items.number AS number").having("item_id = item_id").order("qty DESC") %>
+
+        <% items.each do |i|%>
+				
+            <% if i.qty > 0 %>
+                <% start = start + 1  %>
+                <tr>
+                  <td><%= start %></td>
+                  <td><%= i.item_id %></td>
+                  <td><%= number_with_delimiter(i.qty) %></td>
+                  <td><%= i.number %></td>
+                  <td><% prc = group_item_price.nil? ? 0 : group_item_price.price %>
+                    <%= number_to_currency([prc, i.item.default_price.to_f.to_d].min) %>
+                  </td>
+
+                </tr>
+            <% end %>
+						
+        <% end %>
+      </table>
+
+</div>

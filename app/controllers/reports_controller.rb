@@ -18,6 +18,12 @@ class ReportsController < ApplicationController
     @from_date =  params[:from_date] ? Date.strptime(params[:from_date], '%m/%d/%y') : Date.strptime("01/01/16", '%m/%d/%y')
     @to_date =  params[:to_date] ? Date.strptime(params[:to_date], '%m/%d/%y') : Date.today
   end
+  
+  def item_usage_for_account_ids
+    @accounts = Customer.where(id: params[:account_ids]).ids
+    @from_date =  Date.strptime(params[:from_date], '%m/%d/%y')
+    @to_date =  Date.strptime(params[:to_date], '%m/%d/%y')
+  end
 
   def item_usage_by_group
     @group = Group.find(params[:group_id])
