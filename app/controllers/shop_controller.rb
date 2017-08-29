@@ -26,8 +26,8 @@ class ShopController < ApplicationController
   
   def category
     @params = params
-    @category = Category.where("slug = lower(?)", @params[:category].downcase).take
-    if Category.where("slug = lower(?)", @params[:category].downcase).take.nil?
+    @category = Category.friendly.find(@params[:category].downcase)
+    if Category.friendly.find(@params[:category].downcase).nil?
       raise ActionController::RoutingError.new('Not Found')
     end
     categories = []
@@ -61,11 +61,16 @@ class ShopController < ApplicationController
   end
   
   def item
-    @category = Category.where("slug = lower(?)", params[:category].downcase).take
-    if Item.where("slug = lower(?)", params[:item].downcase).take.nil?
+    @category = Category.friendly.find(params[:category].downcase)
+    if Item.friendly.find(params[:item].downcase).nil?
       raise ActionController::RoutingError.new('Not Found')
     end
-    @item = Item.where("slug = lower(?)", params[:item].downcase).includes(:prices, :item_properties, :item_categories => [:category]).take
+    @item = Item.includes(:prices, :item_properties, :item_categories => [:category]).friendly.find(params[:item].downcase)
+  end
+
+  def page
+    @static_page = StaticPage.friendly.find(params[:static_page].downcase)
+    raise ActionController::RoutingError.new('Not Found') if @static_page.nil?
   end
   
   def search

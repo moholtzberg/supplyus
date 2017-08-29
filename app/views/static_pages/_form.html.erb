@@ -1,0 +1,24 @@
+<fieldset>	
+	
+	<div id="title" class="col-md-12">
+		<%= f.label :title, :class => "control-label" %>
+		<%= f.text_field :title, :class => "form-control" %>
+	</div>
+	
+	<div id="slug" class="col-md-12">
+		<%= f.label :slug, :class => "control-label" %>
+		<%= f.text_field :slug, :class => "form-control" %>
+	</div>
+	
+	<div id="content" class="col-md-12">
+		<%= f.label :content, :class => "control-label" %>
+		<%= f.text_area :content, :class => "form-control", :id => "summernote" %>
+	</div>
+	
+	<script>
+		$(document).ready(function() {
+			$('#summernote').summernote({height: 600});
+		});
+	</script>	
+	
+</fieldset>

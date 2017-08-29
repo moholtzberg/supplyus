@@ -1,6 +1,8 @@
 class Item < ActiveRecord::Base
   
   include ApplicationHelper
+  extend FriendlyId
+  friendly_id :number, use: [:slugged, :history]
   
   scope :active, -> { where(:active => true)}
   scope :inactive, -> { where(:active => false)}

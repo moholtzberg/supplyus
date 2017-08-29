@@ -1,0 +1,36 @@
+<div id="static_page" class="col-md-12">
+		
+	<table class="table table-bordered table-striped">
+	</table>
+	
+	<table class="table table-bordered table-striped">
+		
+		<tr>
+			<th width="20%">ID</th>
+			<th width="40%">Title</th>
+			<th width="40%">Slug</th>
+		</tr>
+		
+		<tr>
+			<td><%= @static_page.id %></td>
+			<td><%= @static_page.title %></td>
+			<td><%= @static_page.slug %></td>
+		</tr>
+
+		<tr>
+			<td colspan="3">
+				<%= @static_page.content.html_safe %>
+			</td>
+		</tr>
+		
+	</table>
+	
+</div>
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div>

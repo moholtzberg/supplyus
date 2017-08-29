@@ -132,6 +132,8 @@ GEM
     ffi (1.9.18)
     font-awesome-sass (4.7.0)
       sass (>= 3.2)
+    friendly_id (5.1.0)
+      activerecord (>= 4.0.0)
     globalid (0.4.0)
       activesupport (>= 4.2.0)
     highline (1.7.8)
@@ -343,6 +345,8 @@ GEM
       state_machines-activemodel (>= 0.5.0)
     stripe (3.2.0)
       faraday (~> 0.9)
+    summernote-rails (0.8.3.0)
+      railties (>= 3.1)
     sunspot (2.2.5)
       pr_geohash (~> 1.0)
       rsolr (~> 1.1.1)
@@ -399,6 +403,7 @@ DEPENDENCIES
   dalli
   devise
   font-awesome-sass
+  friendly_id (~> 5.1.0)
   jbuilder (~> 2.0)
   jquery-datatables-rails
   jquery-rails
@@ -436,6 +441,7 @@ DEPENDENCIES
   state_machines
   state_machines-activerecord
   stripe
+  summernote-rails
   sunspot_rails (= 2.2.5)
   sunspot_solr
   themes_on_rails

@@ -26,6 +26,7 @@
 //= require dataTables/bootstrap/3/jquery.dataTables.bootstrap
 //= require dataTables/extras/dataTables.responsive
 //= require select2
+//= require summernote
 //= require_tree .
 
 // Create Recurring object first.

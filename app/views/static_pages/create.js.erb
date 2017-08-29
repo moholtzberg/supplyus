@@ -1,0 +1,8 @@
+<% if @static_page.errors.any? %>
+  $(".modal-content").html("<%= j render :template => 'static_pages/new.html', :format => 'html' %>")
+<% else %>
+	$('#myModal').modal("hide")
+	$('body').removeClass('modal-open')
+	$('.modal-backdrop').remove()
+	$("#static_pages").replaceWith("<%= j render :template => 'static_pages/index.html', :format => 'html' %>")
+<% end %>

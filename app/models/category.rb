@@ -1,5 +1,7 @@
 class Category < ActiveRecord::Base
-  
+  extend FriendlyId
+  friendly_id :name, use: [:slugged, :history]
+
   belongs_to :parent, :class_name => "Category"
   has_many :item_categories
   has_many :items, :through => :item_categories
