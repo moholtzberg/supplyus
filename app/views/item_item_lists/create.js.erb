@@ -1,0 +1,8 @@
+<% if @item_item_list.errors.any? %>
+  $(".modal-content").html("<%= j render :template => 'item_item_lists/new.html', :format => 'html' %>")
+<% else %>
+  $('#myModal').modal("hide")
+  $('body').removeClass('modal-open')
+  $('.modal-backdrop').remove()
+  $("#item_item_lists").html("<%= j render :partial => 'item_lists/item_item_lists', :format => 'html', :locals => {:item_list => @item_list} %>")
+<% end %>

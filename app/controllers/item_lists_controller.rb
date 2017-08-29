@@ -19,11 +19,6 @@ class ItemListsController < ApplicationController
   end
   
   def show
-    @items = @item_list.items
-    unless params[:term].blank?
-      @items = @items.lookup(params[:term]) if params[:term].present?
-    end
-    @items = @items.paginate(:page => params[:page], :per_page => 25)
   end
   
   def edit
