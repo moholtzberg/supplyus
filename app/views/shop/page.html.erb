@@ -1,0 +1,5 @@
+<% content_for :title do %><%= @static_page.title %><% end %>
+
+<div class="col-md-12">
+	<%= @static_page.content.html_safe %>
+</div>

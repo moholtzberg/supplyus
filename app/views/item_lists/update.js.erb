@@ -1,0 +1,8 @@
+<% if @item_list.errors.any? %>
+  $(".modal-content").html("<%= j render :template => 'item_lists/edit.html', :format => 'html' %>")
+<% else %>
+  $('#myModal').modal("hide")
+  $('body').removeClass('modal-open')
+  $('.modal-backdrop').remove()
+  $("#item_lists").replaceWith("<%= j render :template => 'item_lists/index.html', :format => 'html' %>")
+<% end %>

@@ -21,7 +21,10 @@
 					      uploadUrl: "<%= assets_path %>",
 					      uploadExtraData: function (previewId, index) {
 								  var obj = {};
-								  obj['item_id'] = $('#assets_upload')[0].dataset['itemId'];
+								  obj['attachable_type'] = 'Item';
+								  obj['attachable_id'] = $('#assets_upload')[0].dataset['itemId'];
+                  obj['position'] = $('.file-preview-frame.kv-preview-thumb').index($('#' + previewId)) + 1;
+                  obj['acts_as_list_no_update'] = true;
 								  return obj;
 								},
 					      deleteUrl: "<%= delete_assets_path %>",

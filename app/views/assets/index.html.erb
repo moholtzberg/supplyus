@@ -5,8 +5,8 @@
 		
 		<tr>
 			<td colspan="9">
-				<form id="searchBox" accept-charset="UTF-8" action="<%= assets_path(search_params) %>" method="get" role="search" data-remote="true">
-					<input type="text" class="form-control" id="term" name="term" placeholder="Enter asset file name" value="<%= params[:term] %>">
+				<form id="searchBox" accept-charset="UTF-8" action="<%= assets_path(search_params.except(:page)) %>" method="get" role="search" data-remote="true">
+					<input type="text" class="form-control" id="term" name="term" placeholder="Search asset" value="<%= params[:term] %>">
 				</form>
 			</td>
 		</tr>
@@ -14,7 +14,7 @@
 		<tr>
 			<th class="hidden-xs"><%= sortable "assets.id", "ID" %></th>
 			<th><%= sortable "assets.type", "Type" %></th>
-			<th><%= sortable "items.number", "Item" %></th>
+			<th>Attachable</th>
 			<th><%= sortable "assets.position", "Position" %></th>
 			<th><%= sortable "assets.attachment_file_name", "File" %></th>
 			<th class="hidden-xs"><%= sortable "assets.attachment_file_size", "Size" %></th>
@@ -26,7 +26,7 @@
 			<tr>
 				<td class="hidden-xs"><%= a.id %></td>
 				<td><%= a.type %></td>
-				<td><%= a.item&.number %></td>
+				<td><%= link_to a.attachable_name, a.attachable if a.attachable %></td>
 				<td><%= a.position %></td>
 				<td><%= a.attachment_file_name %></td>
 				<td><%= a.attachment_file_size %></td>

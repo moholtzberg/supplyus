@@ -1,0 +1,57 @@
+<% content_for :app_location do %>Admin / Item Lists / Index<% end %>
+<div id="item_lists" class="col-md-12">
+	
+	<table class="table table-bordered table-condensed">
+		
+		<tr>
+			<td colspan="9">
+				<form id="searchBox" accept-charset="UTF-8" action="<%= item_lists_path(search_params.except(:page)) %>" method="get" role="search" data-remote="true">
+					<input type="text" class="form-control" id="term" name="term" placeholder="Search item list" value="<%= params[:term] %>">
+				</form>
+			</td>
+		</tr>
+		
+		<tr>
+			<th class="hidden-xs"><%= sortable "id" %></th>
+			<th><%= sortable "users.email", "User" %></th>
+			<th><%= sortable "item_lists.name", "Name" %></th>
+			<th class="hidden-xs">Item Count</th>
+			<th>&nbsp;</th>
+		</tr>
+
+		<% @item_lists.each do |a| %>
+			<tr>
+				<td class="hidden-xs"><%= a.id %></td>
+				<td><%= link_to a.user&.email, a.user %></td>
+				<td><%= a.name %></td>
+				<td><%= a.items.count %></td>
+				<td class="text-center">
+					<div class="dropdown">
+						<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+							<li><%= link_to("View", item_list_path(a.id))  %></li>
+							<li><%= link_to("Edit", edit_item_list_path(a.id, search_params), :remote => true)  %></li>
+							<li><%= link_to("Destroy", item_list_path(a.id, search_params), :method => :delete, :remote => true)  %></li>
+						</ul>
+					</div>
+				</td>
+			</tr>
+		<% end %>
+
+	</table>
+		
+	<%= will_paginate @item_lists, params: search_params.except(:page).merge(action: 'index'), renderer: BootstrapPagination::Rails %>
+	
+	<%= link_to new_item_list_path(search_params), :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
+	
+</div>
+
+<div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div>

@@ -36,6 +36,7 @@ class AccountPaymentServicesController < ApplicationController
 
   def destroy
     @account_payment_service.destroy
+    update_index
   end
     
   private

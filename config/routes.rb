@@ -88,6 +88,8 @@ Rails.application.routes.draw do
       end
       resources :item_categories
       resources :item_imports
+      resources :item_lists
+      resources :item_item_lists
       resources :item_vendor_prices
       resources :item_vendor_price_imports
       resources :jobs
@@ -161,6 +163,7 @@ Rails.application.routes.draw do
       end
       resources :sales_reps
       resources :settings
+      resources :static_pages
       resources :subscriptions do
         member do
           post :generate_order
@@ -226,6 +229,7 @@ Rails.application.routes.draw do
   get "/search" => "shop#search"
   get "/search_autocomplete" => "shop#search_autocomplete"
   
+  get "/pages/:static_page" => "shop#page"
   get "/categories/:parent_id" => "shop#categories"
   get "/:category/:item" => "shop#item"
   get "/:category" => "shop#category"

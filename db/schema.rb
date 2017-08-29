@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170824192423) do
+ActiveRecord::Schema.define(version: 20170829164233) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -63,7 +63,6 @@ ActiveRecord::Schema.define(version: 20170824192423) do
   end
 
   create_table "assets", force: :cascade do |t|
-    t.integer  "item_id"
     t.string   "type"
     t.integer  "attachment_width"
     t.integer  "attachment_height"
@@ -75,6 +74,8 @@ ActiveRecord::Schema.define(version: 20170824192423) do
     t.text     "alt"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "attachable_id"
+    t.string   "attachable_type"
   end
 
   create_table "bins", force: :cascade do |t|
@@ -105,6 +106,7 @@ ActiveRecord::Schema.define(version: 20170824192423) do
 
   add_index "categories", ["id"], name: "category_id_ix"
   add_index "categories", ["parent_id"], name: "category_parent_id_ix"
+  add_index "categories", ["slug"], name: "index_categories_on_slug", unique: true
 
   create_table "charges", force: :cascade do |t|
     t.integer "account_id"
@@ -208,6 +210,19 @@ ActiveRecord::Schema.define(version: 20170824192423) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "friendly_id_slugs", force: :cascade do |t|
+    t.string   "slug",                      null: false
+    t.integer  "sluggable_id",              null: false
+    t.string   "sluggable_type", limit: 50
+    t.string   "scope"
+    t.datetime "created_at"
+  end
+
+  add_index "friendly_id_slugs", ["slug", "sluggable_type", "scope"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope", unique: true
+  add_index "friendly_id_slugs", ["slug", "sluggable_type"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type"
+  add_index "friendly_id_slugs", ["sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_id"
+  add_index "friendly_id_slugs", ["sluggable_type"], name: "index_friendly_id_slugs_on_sluggable_type"
 
   create_table "group_item_prices", force: :cascade do |t|
     t.integer  "group_id"
@@ -369,6 +384,7 @@ ActiveRecord::Schema.define(version: 20170824192423) do
   end
 
   add_index "items", ["id"], name: "item_id_ix"
+  add_index "items", ["slug"], name: "index_items_on_slug", unique: true
 
   create_table "jobs", force: :cascade do |t|
     t.string   "job_name"
@@ -737,6 +753,14 @@ ActiveRecord::Schema.define(version: 20170824192423) do
     t.float   "minimum_amount"
     t.float   "free_at_amount"
   end
+
+  create_table "static_pages", force: :cascade do |t|
+    t.string "title"
+    t.text   "content"
+    t.string "slug"
+  end
+
+  add_index "static_pages", ["slug"], name: "index_static_pages_on_slug", unique: true
 
   create_table "subscriptions", force: :cascade do |t|
     t.integer "address_id"

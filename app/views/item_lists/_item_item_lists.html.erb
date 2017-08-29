@@ -1,0 +1,28 @@
+<table class="table table-bordered table-condensed table-striped">
+  <tr class="line_items">
+    <th colspan="5" class="bg-primary">Items</th>
+  </tr>
+  <tr>
+    <td colspan="5"><%= link_to "Add Item", new_item_item_list_path(item_item_list: {item_list_id: item_list.id }), class: "btn btn-primary btn-block btn-xs", remote: true %>
+  </tr>
+  <tr>
+    <th>Number</th>
+    <th>Name</th>
+    <th>Default Price</th>
+    <th>Times Purchased</th>
+    <th>Remove</th>
+  </tr>
+  <% item_list.items.each do |item| %>
+    <tr>
+      <td><%= link_to item.number, item %></td>
+      <td><%= item.name %></td>
+      <td><%= number_to_currency(item.prices.actual.where(_type: 'Default').first&.price) %></td>
+      <td><%= item.times_sold.to_i %></td>
+      <td>
+        <%= link_to item_item_list_path(item.item_item_lists.find_by(item_list_id: item_list.id)), method: :delete, remote: true do %>
+          <i class="fa fa-remove"></i>
+        <% end %>
+      </td>
+    </tr>
+  <% end %>
+</table>

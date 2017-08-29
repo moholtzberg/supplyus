@@ -1,9 +1,15 @@
 class Category < ActiveRecord::Base
-  
+  extend FriendlyId
+  friendly_id :name, use: [:slugged, :history]
+
   belongs_to :parent, :class_name => "Category"
   has_many :item_categories
   has_many :items, :through => :item_categories
   has_many :children, -> { order(position: :asc) }, :class_name => "Category", :foreign_key => :parent_id
+  has_many :images, as: :attachable
+  has_many :documents, as: :attachable
+  has_many :assets, -> { order(position: :asc) }, as: :attachable
+
   acts_as_list scope: :parent
   after_save :remove_position, if: Proc.new { |category| category.parent_id.nil? }
   

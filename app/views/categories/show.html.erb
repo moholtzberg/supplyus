@@ -30,7 +30,7 @@
     
   </table>
   
-  <div class="col-md-4">
+  <div class="col-md-5">
     <table class="table table-bordered table-striped">
       <thead>
         <tr class="line_items">
@@ -58,21 +58,61 @@
         <% end %>
       </tbody>
     </table>
+
+    <script>
+      $('#children-sortable').sortable({
+        update: function( event, ui ) {
+          $( "#children-sortable" ).sortable( "disable" );
+          var jqxhr = $.post( "<%= change_position_categories_path %>", {id: ui.item[0].id.match(/\d*$/)[0], category: {position: ui.item.index() + 1}} );
+          jqxhr.always(function(){
+            $( "#children-sortable" ).sortable( "enable" );
+          })
+        }
+      });
+    </script>
+
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr class="line_items">
+          <th colspan="4" class="bg-primary">Assets</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <input type="file" id="assets_upload" name="asset[attachment]" data-category-id="<%= @category.id %>" multiple/>
+            <script>
+              $(function() {
+                $("#assets_upload").fileinput({
+                  uploadUrl: "<%= assets_path %>",
+                  uploadExtraData: function (previewId, index) {
+                    var obj = {};
+                    obj['attachable_type'] = 'Category';
+                    obj['attachable_id'] = $('#assets_upload')[0].dataset['categoryId'];
+                    obj['position'] = $('.file-preview-frame.kv-preview-thumb').index($('#' + previewId)) + 1;
+                    obj['acts_as_list_no_update'] = true;
+                    return obj;
+                  },
+                  deleteUrl: "<%= delete_assets_path %>",
+                  dropZoneEnabled: true,
+                  initialPreviewAsData: true,
+                  overwriteInitial: false,
+                  allowedFileExtensions: ['jpg', 'gif', 'png', 'pdf'],
+                  initialPreview: <%= raw @category.assets.each.map { |asset| asset.attachment.url } %>,
+                  initialPreviewConfig: <%= raw @category.assets.each.map { |asset| asset.to_fileinput_hash }.to_json %>
+                });
+                $('#assets_upload').on('filesorted', function(event, params) {
+                  $.post( "<%= change_position_assets_path %>", {id: params.stack[params.newIndex].key, asset: {position: params.newIndex + 1}} );
+                });
+              });
+            </script>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
-  <script>
-    $('#children-sortable').sortable({
-      update: function( event, ui ) {
-        $( "#children-sortable" ).sortable( "disable" );
-        var jqxhr = $.post( "<%= change_position_categories_path %>", {id: ui.item[0].id.match(/\d*$/)[0], category: {position: ui.item.index() + 1}} );
-        jqxhr.always(function(){
-          $( "#children-sortable" ).sortable( "enable" );
-        })
-      }
-    });
-  </script>
-
-  <div class="col-md-8">  
+  <div class="col-md-7">  
     <table class="table table-bordered table-condensed table-striped">
       <tr class="line_items">
         <th colspan="4" class="bg-primary">Items</th>
