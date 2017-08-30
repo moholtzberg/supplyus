@@ -1,188 +1,182 @@
-<%= form_for @purchase_order, :method => :patch, :html => {:class => "form-horizontal"} do |f| %>
+<fieldset>
+	
+	<div class="col-md-12">
+		
+		<div class="col-md-4">
+			<%= f.label :vendor %>
+			<%= f.select :vendor_id, @vendors.collect {|p| [p.name, p.id, 
+				:vendor_name => p.name, :ship_to_address_1 => p.address_1, :ship_to_address_2 => p.address_2, :ship_to_city => p.city, :ship_to_state => p.state, :ship_to_zip => p.zip, :ship_to_phone => p.phone
+				]}, {:include_blank => "Select Vendor"}, {:class => "form-control"} %>
+		</div>
 
-	<fieldset>
+		<script>
+			$("select#purchase_order_vendor_id").change(function(e){
+				var vendor = $(this).find("option:selected").attr("vendor_name")
+				var address_1 = $(this).find("option:selected").attr("ship_to_address_1")
+				var address_2 = $(this).find("option:selected").attr("ship_to_address_2")
+				var city = $(this).find("option:selected").attr("ship_to_city")
+				var state = $(this).find("option:selected").attr("ship_to_state")
+				var zip = $(this).find("option:selected").attr("ship_to_zip")
+				var phone = $(this).find("option:selected").attr("ship_to_phone")
+				$("input#purchase_order_ship_from_vendor_name").val(vendor)
+				$("input#purchase_order_ship_from_address_1").val(address_1)
+				$("input#purchase_order_ship_from_address_2").val(address_2)
+				$("input#purchase_order_ship_from_city").val(city)
+				$("input#purchase_order_ship_from_state").val(state)
+				$("input#purchase_order_ship_from_zip").val(zip)
+				$("input#purchase_order_ship_from_phone").val(phone)
+			})
+		</script>
+
+		<div class="col-md-4">
+			<%= f.label :number %>
+			<%= f.text_field(:number, :class => "form-control") %>
+		</div>
+	
+		<div class="col-md-4">
+			<%= f.label :completed_at %>
+			
+			<% if @purchase_order.completed_at.blank? %>
+
+			<%= f.date_field(:completed_at, :class => "form-control") %>
+			
+			<% else %>
+			
+			<%= f.datetime_field(:completed_at, :disabled => true, :class => "form-control", :value => @purchase_order.completed_at.strftime("%m/%d/%Y %I:%M %p")) %>
+			
+			<% end %>
+		</div>
 		
 		<div class="col-md-12">
-			
-			<div class="col-md-4">
-				<%= f.label :vendor %>
-				<%= f.select :vendor_id, @vendors.collect {|p| [p.name, p.id, 
-					:vendor_name => p.name, :ship_to_address_1 => p.address_1, :ship_to_address_2 => p.address_2, :ship_to_city => p.city, :ship_to_state => p.state, :ship_to_zip => p.zip, :ship_to_phone => p.phone
-					]}, {:include_blank => "Select Vendor"}, {:class => "form-control"} %>
-			</div>
-	
-			<script>
-				$("select#purchase_order_vendor_id").change(function(e){
-					var vendor = $(this).find("option:selected").attr("vendor_name")
-					var address_1 = $(this).find("option:selected").attr("ship_to_address_1")
-					var address_2 = $(this).find("option:selected").attr("ship_to_address_2")
-					var city = $(this).find("option:selected").attr("ship_to_city")
-					var state = $(this).find("option:selected").attr("ship_to_state")
-					var zip = $(this).find("option:selected").attr("ship_to_zip")
-					var phone = $(this).find("option:selected").attr("ship_to_phone")
-					$("input#purchase_order_ship_from_vendor_name").val(vendor)
-					$("input#purchase_order_ship_from_address_1").val(address_1)
-					$("input#purchase_order_ship_from_address_2").val(address_2)
-					$("input#purchase_order_ship_from_city").val(city)
-					$("input#purchase_order_ship_from_state").val(state)
-					$("input#purchase_order_ship_from_zip").val(zip)
-					$("input#purchase_order_ship_from_phone").val(phone)
-				})
-			</script>
-	
-			<div class="col-md-4">
-				<%= f.label :number %>
-				<%= f.text_field(:number, :class => "form-control") %>
-			</div>
+			<%= f.label :notes %>
+			<%= f.text_area(:notes, :class => "form-control") %>
+		</div>
 		
-			<div class="col-md-4">
-				<%= f.label :completed_at %>
-				
-				<% if @purchase_order.completed_at.blank? %>
-	
-				<%= f.date_field(:completed_at, :class => "form-control") %>
-				
-				<% else %>
-				
-				<%= f.datetime_field(:completed_at, :disabled => true, :class => "form-control", :value => @purchase_order.completed_at.strftime("%m/%d/%Y %I:%M %p")) %>
-				
+		<div class="col-md-12">
+			<select id="order_id" class="form-control">
+				<option>Please Select an Order</option>
+				<% Order.is_submitted.not_linked_to_po.order(:submitted_at).each do |o|%>
+				<option id="<%= o.id %>"><%= o.number %></option>
 				<% end %>
-			</div>
-			
-			<div class="col-md-12">
-				<%= f.label :notes %>
-				<%= f.text_area(:notes, :class => "form-control") %>
-			</div>
-			
-			<div class="col-md-12">
-				<select id="order_id" class="form-control">
-					<option>Please Select an Order</option>
-					<% Order.is_submitted.not_linked_to_po.order(:submitted_at).each do |o|%>
-					<option id="<%= o.id %>"><%= o.number %></option>
-					<% end %>
-				</select>
-				
-			</div>
+			</select>
 			
 		</div>
 		
-	</fieldset>
-	<fieldset>
-		
-		<div class="col-md-6 address">
-			<div class="col-md-12">
-				<%= f.label :ship_from_vendor_name %>
-				<%= f.text_field(:ship_from_vendor_name, :class => " form-control col-md-12 input-sm")%>
-			</div>
-			<div class="col-md-12">
-				<%= f.label :ship_from_attention %>
-				<%= f.text_field(:ship_from_attention, :class => " form-control col-md-12 input-sm")%>
-			</div>
-			<div class="col-md-12">
-				<%= f.label :ship_from_address_1 %>
-				<%= f.text_field(:ship_from_address_1, :class => "form-control col-md-12 input-sm")%>
-			</div>
-			<div class="col-md-12">
-				<%= f.label :ship_from_address_2 %>
-				<%= f.text_field(:ship_from_address_2, :class => "form-control col-md-12 input-sm")%>
-			</div>
-			<div class="col-md-6">
-				<%= f.label :ship_from_city %>
-				<%= f.text_field(:ship_from_city, :class => "form-control col-md-12 input-sm")%>
-			</div>
-			<div class="col-md-3">
-				<%= f.label :ship_from_state %>
-				<%= f.text_field(:ship_from_state, :class => "form-control col-md-12 input-sm")%>
-			</div>
-			<div class="col-md-3">
-				<%= f.label :ship_from_zip %>
-				<%= f.text_field(:ship_from_zip, :class => "form-control col-md-12 input-sm")%>
-			</div>
-			
-		</div>
-		
-		<div class="col-md-6 address">
-			<div class="col-md-12">
-				<%= f.label :ship_to_account_name %>
-				<%= f.text_field(:ship_to_account_name, :class => " form-control col-md-12 input-sm")%>
-			</div>
-			<div class="col-md-12">
-				<%= f.label :ship_to_attention %>
-				<%= f.text_field(:ship_to_attention, :class => " form-control col-md-12 input-sm")%>
-			</div>
-			<div class="col-md-12">
-				<%= f.label :ship_to_address_1 %>
-				<%= f.text_field(:ship_to_address_1, :class => "form-control col-md-12 input-sm")%>
-			</div>
-			<div class="col-md-12">
-				<%= f.label :ship_to_address_2 %>
-				<%= f.text_field(:ship_to_address_2, :class => "form-control col-md-12 input-sm")%>
-			</div>
-			<div class="col-md-6">
-				<%= f.label :ship_to_city %>
-				<%= f.text_field(:ship_to_city, :class => "form-control col-md-12 input-sm")%>
-			</div>
-			<div class="col-md-3">
-				<%= f.label :ship_to_state %>
-				<%= f.text_field(:ship_to_state, :class => "form-control col-md-12 input-sm")%>
-			</div>
-			<div class="col-md-3">
-				<%= f.label :ship_to_zip %>
-				<%= f.text_field(:ship_to_zip, :class => "form-control col-md-12 input-sm")%>
-			</div>
-			
-		</div>
-		
-		<div class="col-md-6">
-			<%= f.label :shipping_method %>
-			<%= f.select(:shipping_method, ShippingMethod.all.collect {|a| [a.name, a.id]}, {:include_blank => "Select Shipping Method"}, {:class => "form-control col-md-12 input-sm"}) %>
-		</div>
-		
-		<div class="col-md-6">
-			<%= f.label :shipping_amount %>
-			<%= f.text_field(:shipping_amount, :class => "form-control col-md-12 input-sm")%>
-		</div>
+	</div>
 	
-	</fieldset>
+</fieldset>
+<fieldset>
+	
+	<div class="col-md-6 address">
+		<div class="col-md-12">
+			<%= f.label :ship_from_vendor_name %>
+			<%= f.text_field(:ship_from_vendor_name, :class => " form-control col-md-12 input-sm")%>
+		</div>
+		<div class="col-md-12">
+			<%= f.label :ship_from_attention %>
+			<%= f.text_field(:ship_from_attention, :class => " form-control col-md-12 input-sm")%>
+		</div>
+		<div class="col-md-12">
+			<%= f.label :ship_from_address_1 %>
+			<%= f.text_field(:ship_from_address_1, :class => "form-control col-md-12 input-sm")%>
+		</div>
+		<div class="col-md-12">
+			<%= f.label :ship_from_address_2 %>
+			<%= f.text_field(:ship_from_address_2, :class => "form-control col-md-12 input-sm")%>
+		</div>
+		<div class="col-md-6">
+			<%= f.label :ship_from_city %>
+			<%= f.text_field(:ship_from_city, :class => "form-control col-md-12 input-sm")%>
+		</div>
+		<div class="col-md-3">
+			<%= f.label :ship_from_state %>
+			<%= f.text_field(:ship_from_state, :class => "form-control col-md-12 input-sm")%>
+		</div>
+		<div class="col-md-3">
+			<%= f.label :ship_from_zip %>
+			<%= f.text_field(:ship_from_zip, :class => "form-control col-md-12 input-sm")%>
+		</div>
+		
+	</div>
+	
+	<div class="col-md-6 address">
+		<div class="col-md-12">
+			<%= f.label :ship_to_account_name %>
+			<%= f.text_field(:ship_to_account_name, :class => " form-control col-md-12 input-sm")%>
+		</div>
+		<div class="col-md-12">
+			<%= f.label :ship_to_attention %>
+			<%= f.text_field(:ship_to_attention, :class => " form-control col-md-12 input-sm")%>
+		</div>
+		<div class="col-md-12">
+			<%= f.label :ship_to_address_1 %>
+			<%= f.text_field(:ship_to_address_1, :class => "form-control col-md-12 input-sm")%>
+		</div>
+		<div class="col-md-12">
+			<%= f.label :ship_to_address_2 %>
+			<%= f.text_field(:ship_to_address_2, :class => "form-control col-md-12 input-sm")%>
+		</div>
+		<div class="col-md-6">
+			<%= f.label :ship_to_city %>
+			<%= f.text_field(:ship_to_city, :class => "form-control col-md-12 input-sm")%>
+		</div>
+		<div class="col-md-3">
+			<%= f.label :ship_to_state %>
+			<%= f.text_field(:ship_to_state, :class => "form-control col-md-12 input-sm")%>
+		</div>
+		<div class="col-md-3">
+			<%= f.label :ship_to_zip %>
+			<%= f.text_field(:ship_to_zip, :class => "form-control col-md-12 input-sm")%>
+		</div>
+		
+	</div>
+	
+	<div class="col-md-6">
+		<%= f.label :shipping_method %>
+		<%= f.select(:shipping_method, ShippingMethod.all.collect {|a| [a.name, a.id]}, {:include_blank => "Select Shipping Method"}, {:class => "form-control col-md-12 input-sm"}) %>
+	</div>
+	
+	<div class="col-md-6">
+		<%= f.label :shipping_amount %>
+		<%= f.text_field(:shipping_amount, :class => "form-control col-md-12 input-sm")%>
+	</div>
+
+</fieldset>
 	
 <hr/>
 
 <fieldset>
 	
-	<div id="line_items">
+	<div>
 		<table class="table table-bordered table-condensed table-striped table-hover table-responsive">
-			<thead>
-				<th>
-					<td width="43%">Item</td>
-					<td width="12%">Qty.</td>
-					<td width="12%">Quantity Canceled</td>
-					<td width="12%">Linked Order Line Item</td>
-					<td width="10%">Price</td>
-					<td width="10%">Subtotal</td>
-					<td width="1%">&nbsp;</td>
-				</th>
-			</thead>
-			<tbody id="line_items">
-			</tbody>
+			<tr class="line-items-lables">
+				<th width="1%">&nbsp;</td>
+				<th width="43%">Item</td>
+				<th width="12%">Qty.</td>
+				<th width="12%">Quantity Canceled</td>
+				<th width="12%">Linked Order Line Item</td>
+				<th width="10%">Price</td>
+				<th width="10%">Subtotal</td>
+				<th width="1%">&nbsp;</td>
+			</tr>
+			<tr id="add_lines_form">
+				<td colspan="2">
+					<%= select_tag :item_id, "", {include_blank: true, class: "form-control", style: "width: 100%"} %>
+				</td>
+				<td>
+					<%= number_field_tag :quantity, nil, :class => "form-control" %>
+				</td>
+				<td colspan="2">
+				</td>
+				<td>
+					<%= text_field_tag :price, nil, :class => "form-control" %>
+				</td>
+				<td colspan="2">
+					<%= button_tag "Add Item", :class => "btn btn-primary btn-sm add-item" %>
+				</td>
+			</tr>
 		</table>
 	</div>
-	
-	<table class="table table-bordered table-condensed">
-		<tr id="add_lines_form">
-			<td colspan="2">
-				<%= select_tag :item_id, [], {include_blank: true}, :class => "form-control", style: "width: 100%" %>
-			</td>
-			<td>
-				<%= number_field_tag :quantity, 1, :class => "form-control" %>
-			</td>
-			<td>
-				<%= text_field_tag :price, :class => "form-control" %>
-			</td>
-			<td colspan="2">
-				<%= button_tag "Add Item", :class => "btn btn-primary btn-sm" %>
-			</td>
-		</tr>
-	</table>
 </fieldset>
 
 <script>
@@ -192,7 +186,7 @@
 
     FORMBUILDER.purchase_order_line_items = <%= raw @purchase_order.purchase_order_line_items.map{ |li| li.to_po_form_hash }.to_json %>;
     FORMBUILDER.current_line_item = {};
-    FORMBUILDER.purchase_order_notes = <%= raw @purchase_order.notes %>;
+    FORMBUILDER.purchase_order_notes = "<%= raw @purchase_order.notes %>";
 
     FORMBUILDER.actions = {
 
@@ -217,7 +211,7 @@
       	var sub_total = 0;
       	FORMBUILDER.purchase_order_line_items.forEach(function(el, i) { sub_total += el.sub_total });
       	return sub_total;
-      }
+      },
 
       addItem: function(){
       	FORMBUILDER.actions.clearErrors();
@@ -241,7 +235,7 @@
 
       validateForm: function(){
       	var valid = true;
-      	Object.keys(FORMBUILDER.current_line_item).forEach(function(key){
+      	['item_id', 'quantity', 'price'].forEach(function(key){
       		if (!FORMBUILDER.actions.fieldValid(key)) { 
       			$('#add_lines_form #' + key).parent().addClass('has-error');
       			valid = false;
@@ -280,8 +274,9 @@
 	        }
 	        item.setAttribute('data-index', i)
 	        $(item)
-	        .append('<input type="hidden" name="purchase_order[purchase_order_line_item_attributes][' + i + '][id]" value="' + el.id + '" />')
-	        .append('<input type="hidden" name="purchase_order[purchase_order_line_item_attributes][' + i + '][_destroy]" value="' + el._destroy + '" />')
+	        .append('<input type="hidden" name="purchase_order[purchase_order_line_items_attributes][' + i + '][id]" value="' + el.id + '" />')
+	        .append('<input type="hidden" name="purchase_order[purchase_order_line_items_attributes][' + i + '][_destroy]" value="' + el._destroy + '" />')
+	        .append('<input type="hidden" name="purchase_order[purchase_order_line_items_attributes][' + i + '][purchase_order_line_number]" value="' + el.purchase_order_line_number + '" />')	        
 	        .append(
 	          $("<td>")
 	          .append(
@@ -291,7 +286,7 @@
 	        .append(
 	          $("<td>")
 	          .append(
-	            $('<input type="hidden" name="purchase_order[purchase_order_line_item_attributes][' + i + '][item_id]" value="' + el.item_id + '" />')
+	            $('<input type="hidden" name="purchase_order[purchase_order_line_items_attributes][' + i + '][item_id]" value="' + el.item_id + '" />')
 	          )
 	          .append(
 	          	el.item_number
@@ -300,29 +295,35 @@
 	        .append(
 	          $("<td>")
 	          .append(
-	            $('<input name="purchase_order[purchase_order_line_item_attributes][' + i + '][quantity]" value="' + el.quantity + '" />')
+	            $('<input name="purchase_order[purchase_order_line_items_attributes][' + i + '][quantity]" value="' + el.quantity + '" />')
 	          )
 	        )
 	        .append(
 	          $("<td>")
 	          .append(
-	            $('<input name="purchase_order[purchase_order_line_item_attributes][' + i + '][quantity_received]" value="' + el.quantity_received + '" />')
+	            $('<input name="purchase_order[purchase_order_line_items_attributes][' + i + '][quantity_received]" value="' + el.quantity_received + '" />')
 	          )
 	        )
 	        .append(
 	          $("<td>")
 	          .append(
-	            $('<input name="purchase_order[purchase_order_line_item_attributes][' + i + '][order_line_item_id]" value="' + el.order_line_item_id + '" />')
+	            $('<input name="purchase_order[purchase_order_line_items_attributes][' + i + '][order_line_item_id]" value="' + (el.order_line_item_id == null ? '' : el.order_line_item_id) + '" />')
 	          )
 	        )
 	        .append(
 	          $("<td>")
 	          .append(
-	            el.subtotal
+	            $('<input name="purchase_order[purchase_order_line_items_attributes][' + i + '][price]" value="' + el.price + '" />')
 	          )
 	        )
 	        .append(
 	          $("<td>")
+	          .append(
+	            el.sub_total
+	          )
+	        )
+	        .append(
+	          $("<td span='10%' class='text-center'>")
 	          .append(
 	            $('<a href="#" class="remove-item"><i class="fa fa-trash"></i></a>')
 	          )
@@ -336,7 +337,7 @@
 	        		$('<td colspan="2">' + FORMBUILDER.actions.subTotal() + '</td>')
 	        	)
 	        )
-	        $('tbody#line_items').after(item)
+	        $('.line-items-lables').after(item)
       	})
 		    $('.remove-item').click(function(e){
 		    	e.stopPropagation();
@@ -346,18 +347,26 @@
       },
 
       resetForm: function() {
-      	$('#add_lines_form :input').val('');
+      	$('#add_lines_form :input').val('').trigger('change');
       	FORMBUILDER.actions.updateCurrentLineItem();
       },
 
       updateCurrentLineItem: function() {
       	var line_item = FORMBUILDER.current_line_item;
         line_item.item_id = $('#add_lines_form :input#item_id').val();
-        line_item.item_number = $.trim($('#add_lines_form :input#item_id').text());
+        line_item.item_number = $.trim($('#add_lines_form :input#item_id option[value="' + line_item.item_id + '"]').text());
         line_item.quantity = $('#add_lines_form :input#quantity').val();
+        line_item.quantity_received = 0;
+        line_item.order_line_item_id = '';
         line_item.price = $('#add_lines_form :input#price').val();
-        line_item.purchase_order_line_number = Math.max(FORMBUILDER.purchase_order_line_items.length, FORMBUILDER.purchase_order_line_items[FORMBUILDER.purchase_order_line_items.length-1].purchase_order_line_number);
-        line_item.sub_total = line_item.quantity * line_item.price;
+        line_item._destroy = false;
+        line_item.id = '';
+        var current_max_line_number = 0
+        if (FORMBUILDER.purchase_order_line_items.length != 0) {
+        	current_max_line_number = FORMBUILDER.purchase_order_line_items[FORMBUILDER.purchase_order_line_items.length-1].purchase_order_line_number
+        }
+        line_item.purchase_order_line_number = Math.max(FORMBUILDER.purchase_order_line_items.length, current_max_line_number) + 1
+        line_item.sub_total = (line_item.quantity * line_item.price).toFixed(2);
       }
 
     }
@@ -383,9 +392,11 @@
 		      };
 		    },
 		    processResults: function (data, params) {
-		      return {
-		        results: data
-		      };
+			    return {
+			        results: $.map(data, function(obj) {
+			            return { id: obj.id, text: obj.label };
+			        })
+			    };
 		    },
 		    cache: true
 		  },
@@ -395,7 +406,7 @@
 		  theme: "bootstrap"
 		});
 
-		$("#add_lines_form :input#item_id").on("blur", function(e){
+		$("#add_lines_form :input#item_id").on('select2:select', function(e){
 			var item_id = $("#add_lines_form :input#item_id").val();
 			var vendor_id = $("#purchase_order_vendor_id").find(":selected").val();
 			var request = $.ajax({
@@ -421,8 +432,9 @@
 			});
 
 			function success_action(data) {
-				
-				$("#add_lines_form :input#price").val(parseFloat(data.price).toFixed(2))
+				if (data.price) {
+					$("#add_lines_form :input#price").val(parseFloat(data.price).toFixed(2))
+				}
 			}
 		});
 
@@ -432,12 +444,15 @@
 				url : '/admin/purchase_orders/line_items_from_order.json?order_id='+ order_id,
 				success : function(data) {
 					FORMBUILDER.purchase_order_notes = data['purchase_order_notes'];
-					$(":input#purchase_order[notes]").val(FORMBUILDER.purchase_order_notes);
+					$(":input#purchase_order_notes").val(FORMBUILDER.purchase_order_notes);
 					FORMBUILDER.purchase_order_line_items = data['purchase_order_line_items'];
 					FORMBUILDER.actions.renderLineItems();
 				}
 			});
 		})
+
+		$(document).ready(function(){
+			FORMBUILDER.actions.renderLineItems();
+		})
   });
 </script>	
-<% end %>

@@ -10,7 +10,7 @@ class PurchaseOrderLineItem < ActiveRecord::Base
   scope :by_item, -> (item) { where(:item_id => item) }
   scope :active,  -> () { where(:quantity => 1..Float::INFINITY) }
   
-  before_create :make_line_number, :on => :create
+  before_create :make_line_number, on: :create, if: Proc.new { |li| !li.purchase_order_line_number }
   
   validates :purchase_order_line_number, :uniqueness => {
     :scope => :purchase_order_id
@@ -25,7 +25,7 @@ class PurchaseOrderLineItem < ActiveRecord::Base
   def linked_order_line_item_is_correct
     puts "trying to validate"
     if order_line_item_id.present?
-      if order_line_item.item_id != item_id
+      if !order_line_item || order_line_item.item_id != item_id
         errors.add(:order_line_item_id, "Item's do not match")
       end
       # if order_line_item.actual_quantity < (PurchaseOrderLineItem.where(:order_line_item_id => order_line_item_id).map(&:quantity).sum + quantity)
@@ -80,7 +80,7 @@ class PurchaseOrderLineItem < ActiveRecord::Base
   end
 
   def to_po_form_hash
-    {id: id, item_id: item_id, item_number: item_number, quantity: quantity.to_i, price: price, line_number: purchase_order_line_number, quantity_received: quantity_received, subtotal: sub_total, order_line_item_id: order_line_item_id, _destroy: false}
+    {id: id, purchase_order_line_number: purchase_order_line_number, item_id: item_id, item_number: item_number, quantity: quantity.to_i, price: price.to_f, quantity_received: quantity_received, sub_total: sub_total, order_line_item_id: order_line_item_id, _destroy: false}
   end
   
 end

@@ -36,15 +36,13 @@ class PurchaseOrdersController < ApplicationController
   end
   
   def line_items_from_order
-    @purchase_order = PurchaseOrder.find(params[:id])
-    @purchase_order.update_columns(:notes => Order.find(params[:order_id]).number)
     @order_line_items = OrderLineItem.where(order_id: params[:order_id]).group("order_line_items.id").having("SUM(COALESCE(quantity_shipped,0)) > 0")
     puts @order_line_items.inspect
     @purchase_order_line_items = []
-    @order_line_items.each do |a|
+    @order_line_items.each_with_index do |a,i|
       qty_for = PurchaseOrderLineItem.where(:order_line_item_id => a.id).map(&:quantity).sum
       if qty_for < a.actual_quantity
-        poli = PurchaseOrderLineItem.new(item_id: a.item_id, price: a.item.cost_price, quantity: a.actual_quantity - (a.quantity_shipped + qty_for), order_line_item_id: a.id, quantity_received: a.calculate_quantity_received)
+        poli = PurchaseOrderLineItem.new(item_id: a.item_id, price: a.item.cost_price, quantity: a.actual_quantity - (a.quantity_shipped + qty_for), order_line_item_id: a.id, purchase_order_line_number: i+1)
         @purchase_order_line_items << poli.to_po_form_hash
       end
     end
@@ -60,8 +58,9 @@ class PurchaseOrdersController < ApplicationController
   end
 
   def create
+    authorize! :create, PurchaseOrder
     @purchase_order = PurchaseOrder.new(purchase_order_params)
-
+    @vendors = Vendor.all
     respond_to do |format|
       if @purchase_order.save
         format.html { redirect_to @purchase_order, notice: 'Purchase order was successfully created.' }
@@ -76,6 +75,7 @@ class PurchaseOrdersController < ApplicationController
   def update
     authorize! :update, PurchaseOrder
     @purchase_order = PurchaseOrder.find(params[:id])
+    @vendors = Vendor.all
     respond_to do |format|
       if @purchase_order.update(purchase_order_params)
         format.html { redirect_to @purchase_order, notice: 'Purchase order was successfully updated.' }
@@ -107,7 +107,10 @@ class PurchaseOrdersController < ApplicationController
   private
 
   def purchase_order_params
-    params.require(:purchase_order).permit(:vendor_id, :number, :email, :po_number, :completed_at, :notes, :ship_from_vendor_name, :ship_from_attention, :ship_from_address_1, :ship_from_address_2, :ship_from_city, :ship_from_state, :ship_from_zip, :ship_to_account_name, :ship_to_attention, :ship_to_address_1, :ship_to_address_2, :ship_to_city, :ship_to_state, :ship_to_zip, :ship_to_phone, :shipping_method, :shipping_amount)
+    params.require(:purchase_order).permit(:vendor_id, :number, :email, :po_number, :completed_at, :notes, :ship_from_vendor_name, :ship_from_attention, 
+      :ship_from_address_1, :ship_from_address_2, :ship_from_city, :ship_from_state, :ship_from_zip, :ship_to_account_name, :ship_to_attention, 
+      :ship_to_address_1, :ship_to_address_2, :ship_to_city, :ship_to_state, :ship_to_zip, :ship_to_phone, :shipping_method, :shipping_amount, 
+      purchase_order_line_items_attributes: [:id, :_destroy, :item_id, :quantity, :quantity_received, :order_line_item_id, :price, :purchase_order_line_number])
   end
   
   def sort_column

@@ -5,9 +5,9 @@ class PurchaseOrder < ActiveRecord::Base
   belongs_to :vendor, :class_name => "Account"
   has_many :purchase_order_line_items, :inverse_of => :purchase_order, :dependent => :destroy
   has_many :purchase_order_receipts, :dependent => :destroy
-  has_one :purchase_order_shipping_method, :dependent => :destroy, :inverse_of => :purchase_order
+  has_one :purchase_order_shipping_method, :dependent => :destroy, :inverse_of => :purchase_order, :autosave => true
 
-  accepts_nested_attributes_for :purchase_order_line_items
+  accepts_nested_attributes_for :purchase_order_line_items, allow_destroy: true
   
   before_save :make_record_number
 
@@ -15,20 +15,24 @@ class PurchaseOrder < ActiveRecord::Base
     purchase_order_shipping_method.try(:shipping_method_id)
   end
   
-  def shipping_method=(method)
-    purchase_order_shipping_method = PurchaseOrderShippingMethod.find_or_create_by(:purchase_order_id => id) if method.present?
-    puts purchase_order_shipping_method.inspect
-    purchase_order_shipping_method.shipping_method_id = method if method.present?
-    purchase_order_shipping_method.save
+  def shipping_method=(method_id)
+    if method_id.present?
+      if purchase_order_shipping_method
+        purchase_order_shipping_method.shipping_method_id = method_id
+      else
+        build_purchase_order_shipping_method(shipping_method_id: method_id)
+      end
+    end
   end
   
   def shipping_amount
     purchase_order_shipping_method.try(:amount)
   end
   
-  def shipping_amount=(name)
-    purchase_order_shipping_method.amount = name if name.present?
-    purchase_order_shipping_method.save
+  def shipping_amount=(amount)
+    if amount.present? && purchase_order_shipping_method
+      purchase_order_shipping_method.amount = amount
+    end
   end
   
   def sub_total
