@@ -78,5 +78,9 @@ class PurchaseOrderLineItem < ActiveRecord::Base
   def amount_received
     quantity_received.to_i * price.to_f.to_d
   end
+
+  def to_po_form_hash
+    {id: id, item_id: item_id, item_number: item_number, quantity: quantity.to_i, price: price, line_number: purchase_order_line_number, quantity_received: quantity_received, subtotal: sub_total, order_line_item_id: order_line_item_id, _destroy: false}
+  end
   
 end

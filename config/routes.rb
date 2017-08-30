@@ -139,8 +139,10 @@ Rails.application.routes.draw do
       resources :prices
       resources :price_imports
       resources :purchase_orders do
-        member do
+        collection do 
           get :line_items_from_order
+        end          
+        member do
           put :lock
           put :resend_invoice
           put :resend_order

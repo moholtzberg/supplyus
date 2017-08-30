@@ -62,15 +62,6 @@
 					<% end %>
 				</select>
 				
-				<script>
-					$("select#order_id").change(function(e){
-						var order_id = $(this).find("option:selected").attr("id")
-						var request = $.ajax({
-							url : '/admin/purchase_orders/<%= @purchase_order.id.to_i %>/line_items_from_order.js?order_id='+ order_id
-						});
-					})
-				</script>
-				
 			</div>
 			
 		</div>
@@ -154,24 +145,299 @@
 	
 	</fieldset>
 	
-<% end %>
-
 <hr/>
 
 <fieldset>
 	
 	<div id="line_items">
-		<%= render "purchase_order_line_items/line_items" %>
+		<table class="table table-bordered table-condensed table-striped table-hover table-responsive">
+			<thead>
+				<th>
+					<td width="43%">Item</td>
+					<td width="12%">Qty.</td>
+					<td width="12%">Quantity Canceled</td>
+					<td width="12%">Linked Order Line Item</td>
+					<td width="10%">Price</td>
+					<td width="10%">Subtotal</td>
+					<td width="1%">&nbsp;</td>
+				</th>
+			</thead>
+			<tbody id="line_items">
+			</tbody>
+		</table>
 	</div>
 	
-	<%= form_for @order_line_item, :remote => true do |form| %>
-	
 	<table class="table table-bordered table-condensed">
-	
-		<%= render "purchase_order_line_items/form", f: form %>
-		
+		<tr id="add_lines_form">
+			<td colspan="2">
+				<%= select_tag :item_id, [], {include_blank: true}, :class => "form-control", style: "width: 100%" %>
+			</td>
+			<td>
+				<%= number_field_tag :quantity, 1, :class => "form-control" %>
+			</td>
+			<td>
+				<%= text_field_tag :price, :class => "form-control" %>
+			</td>
+			<td colspan="2">
+				<%= button_tag "Add Item", :class => "btn btn-primary btn-sm" %>
+			</td>
+		</tr>
 	</table>
-	
-	<% end %>
-	
 </fieldset>
+
+<script>
+  $(function() {
+
+    var FORMBUILDER = FORMBUILDER || {};
+
+    FORMBUILDER.purchase_order_line_items = <%= raw @purchase_order.purchase_order_line_items.map{ |li| li.to_po_form_hash }.to_json %>;
+    FORMBUILDER.current_line_item = {};
+    FORMBUILDER.purchase_order_notes = <%= raw @purchase_order.notes %>;
+
+    FORMBUILDER.actions = {
+
+      init: function(){
+
+        FORMBUILDER.actions.subTotal();
+        FORMBUILDER.actions.addItem();
+        FORMBUILDER.actions.removeItem();
+        FORMBUILDER.actions.validateForm();
+        FORMBUILDER.actions.fieldValid(key);
+	      FORMBUILDER.actions.recalculateLineItems();
+        FORMBUILDER.actions.clearErrors();
+        FORMBUILDER.actions.renderLineItems();
+        FORMBUILDER.actions.resetForm();
+        FORMBUILDER.actions.updateLineItemSelectOptions();
+        FORMBUILDER.actions.updateCurrentLineItem();
+        FORMBUILDER.actions.updateQuantityToShip();
+
+      },
+
+      subTotal: function(){
+      	var sub_total = 0;
+      	FORMBUILDER.purchase_order_line_items.forEach(function(el, i) { sub_total += el.sub_total });
+      	return sub_total;
+      }
+
+      addItem: function(){
+      	FORMBUILDER.actions.clearErrors();
+      	if (FORMBUILDER.actions.validateForm()) {
+	        FORMBUILDER.purchase_order_line_items.push($.extend({}, FORMBUILDER.current_line_item));
+	        FORMBUILDER.actions.resetForm();
+	        FORMBUILDER.actions.renderLineItems();
+      	}
+      },
+
+      removeItem: function(e){
+      	var index = parseInt($(e.target).closest('tr').data( "index" ));
+      	if (FORMBUILDER.purchase_order_line_items[index].id) {
+      		FORMBUILDER.purchase_order_line_items[index]._destroy = true;
+      	} else {
+	      	FORMBUILDER.purchase_order_line_items.splice(index, 1);
+      	}
+	      FORMBUILDER.actions.resetForm();
+	      FORMBUILDER.actions.renderLineItems();
+      },
+
+      validateForm: function(){
+      	var valid = true;
+      	Object.keys(FORMBUILDER.current_line_item).forEach(function(key){
+      		if (!FORMBUILDER.actions.fieldValid(key)) { 
+      			$('#add_lines_form #' + key).parent().addClass('has-error');
+      			valid = false;
+      		}
+      	})
+      	return valid;
+      },
+
+      fieldValid: function(key) {
+      	var value = FORMBUILDER.current_line_item[key]
+      	switch(key) {
+      		case 'item_id':
+      			return value
+      			break;
+      		case 'quantity':
+      			return value && value > 0
+      			break;
+      		case 'price':
+      			return value && value > 0
+      			break;
+      	}
+      },
+
+      clearErrors: function() {
+      	$('#add_lines_form td').removeClass('has-error');
+      },
+
+      renderLineItems: function() {
+      	$('tr.poli').remove();
+      	FORMBUILDER.purchase_order_line_items.forEach(function(el, i) {
+	        var item = document.createElement("tr");
+	        if (el._destroy) {
+	        	item.className = "poli hidden";
+	        } else {
+	        	item.className = "poli";	        	
+	        }
+	        item.setAttribute('data-index', i)
+	        $(item)
+	        .append('<input type="hidden" name="purchase_order[purchase_order_line_item_attributes][' + i + '][id]" value="' + el.id + '" />')
+	        .append('<input type="hidden" name="purchase_order[purchase_order_line_item_attributes][' + i + '][_destroy]" value="' + el._destroy + '" />')
+	        .append(
+	          $("<td>")
+	          .append(
+	          	el.purchase_order_line_number
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<input type="hidden" name="purchase_order[purchase_order_line_item_attributes][' + i + '][item_id]" value="' + el.item_id + '" />')
+	          )
+	          .append(
+	          	el.item_number
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<input name="purchase_order[purchase_order_line_item_attributes][' + i + '][quantity]" value="' + el.quantity + '" />')
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<input name="purchase_order[purchase_order_line_item_attributes][' + i + '][quantity_received]" value="' + el.quantity_received + '" />')
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<input name="purchase_order[purchase_order_line_item_attributes][' + i + '][order_line_item_id]" value="' + el.order_line_item_id + '" />')
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            el.subtotal
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<a href="#" class="remove-item"><i class="fa fa-trash"></i></a>')
+	          )
+	        )
+	        .after(
+	        	$("<tr>")
+	        	.append(
+	        		$('<td colspan="7">Subtotal</td>')
+	        	)
+	        	.append(
+	        		$('<td colspan="2">' + FORMBUILDER.actions.subTotal() + '</td>')
+	        	)
+	        )
+	        $('tbody#line_items').after(item)
+      	})
+		    $('.remove-item').click(function(e){
+		    	e.stopPropagation();
+		    	e.preventDefault();
+		      FORMBUILDER.actions.removeItem(e);
+		    })
+      },
+
+      resetForm: function() {
+      	$('#add_lines_form :input').val('');
+      	FORMBUILDER.actions.updateCurrentLineItem();
+      },
+
+      updateCurrentLineItem: function() {
+      	var line_item = FORMBUILDER.current_line_item;
+        line_item.item_id = $('#add_lines_form :input#item_id').val();
+        line_item.item_number = $.trim($('#add_lines_form :input#item_id').text());
+        line_item.quantity = $('#add_lines_form :input#quantity').val();
+        line_item.price = $('#add_lines_form :input#price').val();
+        line_item.purchase_order_line_number = Math.max(FORMBUILDER.purchase_order_line_items.length, FORMBUILDER.purchase_order_line_items[FORMBUILDER.purchase_order_line_items.length-1].purchase_order_line_number);
+        line_item.sub_total = line_item.quantity * line_item.price;
+      }
+
+    }
+
+    $('.add-item').click(function(e){
+    	e.stopPropagation();
+    	e.preventDefault();
+      FORMBUILDER.actions.addItem();
+    })
+
+    $('#add_lines_form :input').change(function(){
+      FORMBUILDER.actions.updateCurrentLineItem();
+    })
+
+		$("#add_lines_form :input#item_id").select2({
+		  ajax: {
+		    url: "<%= autocomplete_items_path %>",
+		    dataType: 'json',
+		    delay: 250,
+		    data: function (params) {
+		      return {
+		        term: params.term
+		      };
+		    },
+		    processResults: function (data, params) {
+		      return {
+		        results: data
+		      };
+		    },
+		    cache: true
+		  },
+		  minimumInputLength: 1,
+		  placeholder: 'Search item',
+		  allowClear: true,
+		  theme: "bootstrap"
+		});
+
+		$("#add_lines_form :input#item_id").on("blur", function(e){
+			var item_id = $("#add_lines_form :input#item_id").val();
+			var vendor_id = $("#purchase_order_vendor_id").find(":selected").val();
+			var request = $.ajax({
+				url : '/admin/item_vendor_prices?item_id=' + item_id + '&vendor_id=' + vendor_id,
+				dataType : "json"
+			});
+
+			request.success(function(data) {
+				console.log(data)
+				if (data == null) {
+					
+				} else {
+					success_action(data)
+				}
+				
+			});
+
+			request.error(function(httpObj, textStatus) {       
+				if(httpObj.status == 200)
+				success_action(data)
+				else
+				alert("Failed")
+			});
+
+			function success_action(data) {
+				
+				$("#add_lines_form :input#price").val(parseFloat(data.price).toFixed(2))
+			}
+		});
+
+		$("select#order_id").change(function(e){
+			var order_id = $(this).find("option:selected").attr("id")
+			var request = $.ajax({
+				url : '/admin/purchase_orders/line_items_from_order.json?order_id='+ order_id,
+				success : function(data) {
+					FORMBUILDER.purchase_order_notes = data['purchase_order_notes'];
+					$(":input#purchase_order[notes]").val(FORMBUILDER.purchase_order_notes);
+					FORMBUILDER.purchase_order_line_items = data['purchase_order_line_items'];
+					FORMBUILDER.actions.renderLineItems();
+				}
+			});
+		})
+  });
+</script>	
+<% end %>

@@ -28,17 +28,11 @@ class PurchaseOrdersController < ApplicationController
     authorize! :create, PurchaseOrder
     if params[:vendor_id]
       @vendors = Vendor.find_by(:id => params[:vendor_id])
-      @purchase_order = PurchaseOrder.create(:vendor_id => params[:vendor_id])
+      @purchase_order = PurchaseOrder.new(:vendor_id => params[:vendor_id])
     else
       @vendors = Vendor.all
-      @purchase_order = PurchaseOrder.create()
+      @purchase_order = PurchaseOrder.new()
     end
-    # @items = Inventory.out_of_stock.map(&:item)
-    #
-    # @items.each_with_index do |item|
-    #   @purchase_order.purchase_order_line_items.create(:item_number => item.number, :price => item.cost_price, :quantity => item.inventory.qty_on_hand.abs)
-    # end
-    @order_line_item = PurchaseOrderLineItem.new
   end
   
   def line_items_from_order
@@ -46,11 +40,16 @@ class PurchaseOrdersController < ApplicationController
     @purchase_order.update_columns(:notes => Order.find(params[:order_id]).number)
     @order_line_items = OrderLineItem.where(order_id: params[:order_id]).group("order_line_items.id").having("SUM(COALESCE(quantity_shipped,0)) > 0")
     puts @order_line_items.inspect
+    @purchase_order_line_items = []
     @order_line_items.each do |a|
       qty_for = PurchaseOrderLineItem.where(:order_line_item_id => a.id).map(&:quantity).sum
       if qty_for < a.actual_quantity
-        PurchaseOrderLineItem.create(purchase_order_id: @purchase_order.id, item_id: a.item_id, price: a.item.cost_price, quantity: a.actual_quantity - (a.quantity_shipped + qty_for), order_line_item_id: a.id)
+        poli = PurchaseOrderLineItem.new(item_id: a.item_id, price: a.item.cost_price, quantity: a.actual_quantity - (a.quantity_shipped + qty_for), order_line_item_id: a.id, quantity_received: a.calculate_quantity_received)
+        @purchase_order_line_items << poli.to_po_form_hash
       end
+    end
+    respond_to do |format|
+      format.json { render json: {purchase_order_notes: Order.find(params[:order_id]).number, purchase_order_line_items: @purchase_order_line_items}}
     end
   end
   
