@@ -1,19 +1,14 @@
 class PurchaseOrdersController < ApplicationController
-  layout "admin"
-  helper_method :sort_column, :sort_direction
-  
-  def index
+  layout 'admin'
+  before_action :set_purchase_order, only: [:show, :edit, :update, :destroy, :lock]
+  load_and_authorize_resource except: [:datatables, :line_items_from_order, :lock]
+
+  def datatables
     authorize! :read, PurchaseOrder
-    @purchase_orders = PurchaseOrder.all
-    unless params[:term].blank?
-      @purchase_orders = @purchase_orders.lookup(params[:term]) if params[:term].present?
-    end
-    @purchase_orders = @purchase_orders.order(sort_column + " " + sort_direction)
-    @purchase_orders = @purchase_orders.paginate(:page => params[:page], :per_page => 25)
+    render json: PurchaseOrderDatatable.new(view_context)
   end
   
   def show
-    @purchase_order = PurchaseOrder.find(params[:id])
     @purchase_order_line_items = @purchase_order.purchase_order_line_items.includes(:item)
     @receipts = PurchaseOrderReceipt.where(:purchase_order_id => @purchase_order.id)
     respond_to do |format|
@@ -25,7 +20,6 @@ class PurchaseOrdersController < ApplicationController
   end
 
   def new
-    authorize! :create, PurchaseOrder
     if params[:vendor_id]
       @vendors = Vendor.find_by(:id => params[:vendor_id])
       @purchase_order = PurchaseOrder.new(:vendor_id => params[:vendor_id])
@@ -36,6 +30,7 @@ class PurchaseOrdersController < ApplicationController
   end
   
   def line_items_from_order
+    authorize! :create, PurchaseOrder
     @order_line_items = OrderLineItem.where(order_id: params[:order_id]).group("order_line_items.id").having("SUM(COALESCE(quantity_shipped,0)) > 0")
     puts @order_line_items.inspect
     @purchase_order_line_items = []
@@ -53,12 +48,9 @@ class PurchaseOrdersController < ApplicationController
   
   def edit
     @vendors = Vendor.all
-    @purchase_order = PurchaseOrder.find(params[:id])
-    @order_line_item = PurchaseOrderLineItem.new
   end
 
   def create
-    authorize! :create, PurchaseOrder
     @purchase_order = PurchaseOrder.new(purchase_order_params)
     @vendors = Vendor.all
     respond_to do |format|
@@ -73,8 +65,6 @@ class PurchaseOrdersController < ApplicationController
   end
 
   def update
-    authorize! :update, PurchaseOrder
-    @purchase_order = PurchaseOrder.find(params[:id])
     @vendors = Vendor.all
     respond_to do |format|
       if @purchase_order.update(purchase_order_params)
@@ -88,7 +78,6 @@ class PurchaseOrdersController < ApplicationController
   end
 
   def destroy
-    @purchase_order = PurchaseOrder.find(params[:id])
     @purchase_order.destroy
     respond_to do |format|
       format.html { redirect_to purchase_orders_url, notice: 'Purchase order was successfully destroyed.' }
@@ -98,10 +87,8 @@ class PurchaseOrdersController < ApplicationController
 
   def lock
     authorize! :update, PurchaseOrder
-    @order_id = params[:id]
-    @order = PurchaseOrder.find_by(:id => @order_id)
-    @order.locked = true
-    @order.save
+    @purchase_order.locked = true
+    @purchase_order.save
   end
   
   private
@@ -113,15 +100,8 @@ class PurchaseOrdersController < ApplicationController
       purchase_order_line_items_attributes: [:id, :_destroy, :item_id, :quantity, :quantity_received, :order_line_item_id, :price, :purchase_order_line_number])
   end
   
-  def sort_column
-    related_columns = PurchaseOrder.reflect_on_all_associations(:belongs_to).map {|a| a.klass.column_names.map {|col| "#{a.klass.table_name}.#{col}"}}
-    columns = PurchaseOrder.column_names.map {|a| "purchase_orders.#{a}" }
-    columns.push(related_columns).flatten!.uniq!
-    columns.include?(params[:sort]) ? params[:sort] : "purchase_orders.id"
-  end
-
-  def sort_direction
-    %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
+  def set_purchase_order
+    @purchase_order = PurchaseOrder.find(params[:id])
   end
   
 end

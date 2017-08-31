@@ -140,6 +140,7 @@ Rails.application.routes.draw do
       resources :price_imports
       resources :purchase_orders do
         collection do 
+          post :datatables
           get :line_items_from_order
         end          
         member do
