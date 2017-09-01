@@ -31,8 +31,7 @@ class PurchaseOrdersController < ApplicationController
   
   def line_items_from_order
     authorize! :create, PurchaseOrder
-    @order_line_items = OrderLineItem.where(order_id: params[:order_id]).group("order_line_items.id").having("SUM(COALESCE(quantity_shipped,0)) > 0")
-    puts @order_line_items.inspect
+    @order_line_items = OrderLineItem.where(order_id: params[:order_id])
     @purchase_order_line_items = []
     @order_line_items.each_with_index do |a,i|
       qty_for = PurchaseOrderLineItem.where(:order_line_item_id => a.id).map(&:quantity).sum
