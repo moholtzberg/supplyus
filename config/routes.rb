@@ -241,6 +241,11 @@ Rails.application.routes.draw do
   namespace :api, defaults: {format: :json} do
     scope :v1 do
       resources :equipment_alerts, only: [:index, :show, :create, :update]
+      resources :email_deliveries do
+        collection do
+          post :webhook
+        end
+      end
     end
   end
 

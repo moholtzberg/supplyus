@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170829164233) do
+ActiveRecord::Schema.define(version: 20170831194351) do
 
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
@@ -166,6 +166,18 @@ ActiveRecord::Schema.define(version: 20170829164233) do
     t.string  "code"
     t.integer "times_of_use"
     t.boolean "automatic",    default: false
+  end
+
+  create_table "email_deliveries", force: :cascade do |t|
+    t.string   "addressable_type"
+    t.integer  "addressable_id"
+    t.string   "to_email"
+    t.text     "body"
+    t.string   "eventable_type"
+    t.integer  "eventable_id"
+    t.datetime "failed_at"
+    t.datetime "delivered_at"
+    t.datetime "opened_at"
   end
 
   create_table "equipment", force: :cascade do |t|
