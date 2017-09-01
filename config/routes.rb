@@ -61,6 +61,11 @@ Rails.application.routes.draw do
       resources :discount_codes
       resources :discount_code_effects, only: [:edit, :update]
       resources :discount_code_rules, only: [:new, :create, :destroy]
+      resources :email_deliveries do
+        collection do
+          post :datatables
+        end
+      end
       resources :equipment
       resources :equipment_imports
       resources :equipment_alerts

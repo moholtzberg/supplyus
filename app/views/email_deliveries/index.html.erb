@@ -1,0 +1,31 @@
+<% content_for :app_location do %>Admin / Email Deliveries / Index<% end %>
+<div id="email-deliveries" class="col-md-12">
+
+	<table class="table table-bordered table-condensed" id="email-deliveries-table" data-source="<%= datatables_email_deliveries_path(format: :json) %>">
+  	<thead>
+			<tr>
+				<th>ID</th>
+				<th>Addressable Type</th>
+				<th>Addressable Id</th>
+				<th>To Email</th>
+				<th>Eventable Type</th>
+				<th>Eventable Id</th>
+				<th>Failed At</th>
+				<th>Delivered At</th>
+				<th>Opened At</th>
+				<th>&nbsp;</th>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
+		
+</div>
+
+<div id="myModal" class="modal fade" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div>
