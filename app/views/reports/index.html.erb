@@ -1,65 +1,131 @@
 <% content_for :app_location do %>Admin / Payments / Index<% end %>
-<div id="payments" class="col-md-12">
-
-	<table class="table table-bordered table-condensed">
-		
-		<tr>
-			<th>Report Name</th>
-			<th>Description</th>
-			<th>Required Params</th>
-		</tr>
-		
-
-		<tr>
-			<td>Customer Equipment Report</td>
-			<td>Show All Equipment for a given Customer</td>
-			<td>Requires a customer_id</td>
-			<td>
-				<div class="dropdown">
-					<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-						<span class="caret"></span>
-					</button>
-					<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-						
-					</ul>
-				</div>
-			</td>
-		</tr>
-		
-		<tr>
-			<td>Groups Equipment Report</td>
-			<td>Show All Equipment for a given Group</td>
-			<td>Requires a group_id</td>
-			<td>
-				<div class="dropdown">
-					<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-						<span class="caret"></span>
-					</button>
-					<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-						
-					</ul>
-				</div>
-			</td>
-		</tr>
-		
-		<tr>
-			<td>A/R Aging Report</td>
-			<td>Show All outstanding invocies grouped by customer</td>
-			<td>None requred</td>
-			<td>
-				<div class="dropdown">
-					<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-						<span class="caret"></span>
-					</button>
-					<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-						
-					</ul>
-				</div>
-			</td>
-		</tr>
-
-	</table>
-		
+<div id="reports" class="col-md-12">
+	<form class="form-inline" method="get">
+    <div class="col-md-12">
+		  <div class="form-group">
+		    <label for="report_type">Report Type</label>
+		    <select class="form-control" id="report_type" name="report_type">
+		    	<option value=""></option>
+		    	<option value="<%= sales_tax_reports_path %>">Sales Tax</option>
+		    	<option value="<%= item_usage_reports_path %>">Item Usage</option>
+		    	<option value="<%= item_usage_for_account_ids_reports_path %>">Item Usage By Accounts</option>
+		    	<option value="<%= item_usage_by_group_reports_path %>">Item Usage By Group</option>
+		    	<option value="<%= ar_aging_reports_path %>">A/R Aging Report</option>
+		    </select>
+		  </div>
+		  <div class="form-group">
+		    <label for="from_date">From Date</label>
+		    <input type="text" data-provide='datepicker' class="form-control" id="from_date" name="from_date">
+		  </div>
+		  <div class="form-group">
+		    <label for="to_date">To Date</label>
+		    <input type="text" data-provide='datepicker' class="form-control" id="to_date" name="to_date">
+		  </div>
+		  <div class="form-group">
+		    <label for="group_id">Group</label>
+		    <select class="form-control" id="group_id" name="group_id" style="width: 150px"></select>
+		  </div>
+			<script>
+				$("#group_id").select2({
+				  ajax: {
+				    url: "<%= groups_path %>",
+				    dataType: 'json',
+				    delay: 250,
+				    data: function (params) {
+				      return {
+				        term: params.term
+				      };
+				    },
+				    processResults: function (data, params) {
+				      return {
+				        results: data
+				      };
+				    },
+				    cache: true
+				  },
+				  minimumInputLength: 1,
+				  placeholder: 'Search group',
+				  allowClear: true,
+				  theme: "bootstrap"
+				});
+			</script>
+		  <div class="form-group">
+		    <label for="account_ids">Accounts</label>
+		    <select class="form-control" id="account_ids" name="account_ids[]" multiple="multiple" style="width: 250px"></select>
+		  </div>
+			<script>
+				$("#account_ids").select2({
+				  ajax: {
+				    url: "<%= accounts_path %>",
+				    dataType: 'json',
+				    delay: 250,
+				    data: function (params) {
+				      return {
+				        term: params.term
+				      };
+				    },
+				    processResults: function (data, params) {
+				      return {
+				        results: data
+				      };
+				    },
+				    cache: true
+				  },
+				  minimumInputLength: 1,
+				  placeholder: 'Search accounts',
+				  allowClear: true,
+				  theme: "bootstrap"
+				});
+			</script>
+		  <script>
+		  	$(function(){
+		  		var report_type_field_statuses = {
+		  			'': {'from_date': false, 'to_date': false, 'group_id': false, 'account_ids': false},
+		  			"<%= sales_tax_reports_path %>": {'from_date': false, 'to_date': false, 'group_id': false, 'account_ids': false},
+		  			"<%= item_usage_reports_path %>": {'from_date': true, 'to_date': true, 'group_id': false, 'account_ids': false},
+		  			"<%= item_usage_for_account_ids_reports_path %>": {'from_date': true, 'to_date': true, 'group_id': false, 'account_ids': true},
+		  			"<%= item_usage_by_group_reports_path %>": {'from_date': true, 'to_date': true, 'group_id': true, 'account_ids': false},
+		  			"<%= ar_aging_reports_path %>": {'from_date': false, 'to_date': false, 'group_id': false, 'account_ids': false}
+		  		}
+		  		$('#report_type').change(function() {
+		  			var path = $(this).val();
+		  			Object.keys(report_type_field_statuses[path]).forEach(function(key) {
+              $('#' + key).prop('disabled', !report_type_field_statuses[path][key]);
+              $('#' + key).parent().toggleClass('hidden', !report_type_field_statuses[path][key]);
+		  			})
+		  		}).trigger('change');
+          $('#report_type, #account_ids, #group_id').change(function(){
+            $(this).parent().removeClass('has-error');
+          })
+		  		$('#reports form button').click(function(e) {
+		  			e.preventDefault();
+            var valid = true;
+            $.each(['report_type', 'account_ids', 'group_id'], function(i, el) {
+              $el = $('#' + el);
+              if (!$el.prop('disabled') && !$el.val()) {
+                $el.parent().addClass('has-error');
+                valid = false;
+              }
+            });
+            if (valid) {
+              $('#reports form').data('remote', $(this).data('type') == "js");
+              $('#reports form').prop('action', $('#report_type').val() + '.' + $(this).data('type')).submit();              
+            }
+		  		})
+		  	})
+		  </script>
+    </div>
+    <div class="col-md-12 text-center">
+      <div class="btn-group" role="group">
+        <button type="submit" class="btn btn-default" data-type="email">Send email</button>
+        <button type="submit" class="btn btn-default" data-type="pdf">Download PDF</button>
+        <button type="submit" class="btn btn-default" data-type="xls">Download Excel</button>
+        <button type="submit" class="btn btn-default" data-type="js">Render report</button>
+      </div>
+    </div>
+	</form>
+	<div id="items" class="col-md-12">
+	</div>
 </div>
 
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">

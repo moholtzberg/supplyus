@@ -80,7 +80,16 @@
 	<script>
 	jQuery(function() {
 		return $('#account_group_name').autocomplete({
-			source: $('#account_group_name').data('autocomplete-source')
+			source: $('#account_group_name').data('autocomplete-source'),
+			response: function( event, ui ) {
+				ui.content.forEach(function(item) {
+					item.label = item.name;
+				})
+			},
+      select: function( event, ui ) {
+        $("#account_group_name" ).val(ui.item.name);
+        return false;
+      }
 		})
 	});
 	</script>

@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <% number_of_months = (@to_date.year * 12 + @to_date.month) - (@from_date.year * 12 + @from_date.month) %>
+	<% (0..number_of_months).to_a.reverse.each do |month_offset| %>
+		<% s = month_offset.months.ago.beginning_of_month %>
+		<% e = month_offset.months.ago.end_of_month %>
+		<% order_ids = Order.where("COALESCE(tax_total,0) <> 0").where(submitted_at: s..e).fulfilled %>
+		<% order_tax_rates = OrderTaxRate.where(order_id: order_ids) %>
+		<Worksheet ss:Name="<%= Date::MONTHNAMES[s.month] %> <%= s.year %>">			
+			<% if order_tax_rates.map(&:amount).sum > 0 %>
+				<Table>
+					<% sum = 0 %>
+					<% TaxRate.where(id: order_tax_rates.map(&:tax_rate_id)).each do |t| %>
+						<% tax_rate_sum = order_tax_rates.where(tax_rate_id: t.id).map(&:amount).sum %>
+						<% sum += tax_rate_sum %>
+						<Row>
+							<Cell><Data ss:Type="String"><%= "#{t.state_code} - #{t.zip_code}(#{t.region_name}) - #{t.rate}" %></Data></Cell>
+							<Cell><Data ss:Type="String"><%= number_to_currency(tax_rate_sum) %></Data></Cell>
+						</Row>
+					<% end %>
+					<Row>
+						<Cell><Data ss:Type="String"><%= number_to_currency(order_tax_rates.map(&:amount).sum) %></Data></Cell>
+						<Cell><Data ss:Type="String"><%= number_to_currency(sum)%></Data></Cell>
+					</Row>
+					<% if sum != order_tax_rates.map(&:amount).sum %>
+						<Row>
+							<Cell ss:MergeAcross="1"><Data ss:Type="String">
+								<% order_tax_rates.where(tax_rate_id: nil).each do |amt| %>
+									<%= "#{number_to_currency(amt.amount)} -> #{amt.tax_rate_id} -> #{amt.order_id}" if amt.tax_rate_id.nil?  %><br/>
+								<% end %>								
+							</Data></Cell>
+						</Row>
+					<% end %>
+				</Table>
+			<% end %>
+		</Worksheet>
+	<% end %>
+</Workbook>

@@ -3,6 +3,7 @@ class Order < ActiveRecord::Base
   include ApplicationHelper
   
   scope :is_locked, -> () { where(:locked => true) }
+  scope :is_complete, -> () { where(state: [:completed, :fulfilled])}
   scope :is_unlocked, -> () { where.not(:locked => true) }
   scope :is_submitted, -> () { where.not(:submitted_at => nil) }
   scope :not_submitted, -> () { where(:submitted_at => nil) }
@@ -281,16 +282,11 @@ class Order < ActiveRecord::Base
   end
   
   def self.unpaid
-    # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_unpaid_orders"]) {
-    #   Rails.cache.delete("#{self.class.to_s.downcase}_unpaid_orders")
-    #   Order.is_complete.where.not(:id => OrderPaymentApplication.select(:order_id).uniq).order(:due_date)
-    # }
-    # order_ids = OrderPaymentApplication.select(:order_id).uniq
-    #ids = Order.is_complete
-    #.joins("LEFT OUTER JOIN order_payment_applications ON order_payment_applications.order_id = orders.id")
-    #.group("orders.id")
-    #.having("SUM(COALESCE(sub_total,0) + COALESCE(shipping_total,0) + COALESCE(tax_total,0) - COALESCE(discount_total,0)) <> (SELECT COALESCE(SUM(applied_amount),0) FROM order_payment_applications JOIN payments ON order_payment_applications.payment_id = payments.id WHERE payments.success = 't')").ids
-    #where(id: ids)
+    ids = Order.is_complete.where("payments.success = 't'")
+    .joins("LEFT OUTER JOIN order_payment_applications ON order_payment_applications.order_id = orders.id")
+    .joins("LEFT OUTER JOIN payments ON order_payment_applications.payment_id = payments.id")
+    .group("orders.id")
+    .having("SUM(COALESCE(sub_total,0) + COALESCE(shipping_total,0) + COALESCE(tax_total,0) - COALESCE(discount_total,0)) <> (COALESCE(SUM(applied_amount),0))")
   end
   
   def self.empty
@@ -409,8 +405,7 @@ class Order < ActiveRecord::Base
   def balance_due
     # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_balance_due"]) {
       # Rails.cache.delete("#{self.class.to_s.downcase}_balance_due")
-      total_paid = 0.0
-      self.order_payment_applications.includes(:payment).each {|a| total_paid = total_paid + a.applied_amount if a.payment.success? }
+      total_paid = self.order_payment_applications.includes(:payment).inject(0.0) {|sum, a| sum = sum + a.applied_amount if a.payment.success? }
       puts total_paid.to_d.to_s
       puts self.total.to_d.to_s
       return (self.total.to_d - total_paid.to_d)

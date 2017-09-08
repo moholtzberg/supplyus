@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <% @group.accounts.each do |account| %>
+    <Worksheet ss:Name="<%= account.name %>">
+      <Table>
+        <Row>
+          <Cell><Data ss:Type="String">Index</Data></Cell>
+          <Cell><Data ss:Type="String">Item Id</Data></Cell>
+          <Cell><Data ss:Type="String">QTY Ordered</Data></Cell>
+          <Cell><Data ss:Type="String">Item Number</Data></Cell>
+          <Cell><Data ss:Type="String">Current Price</Data></Cell>
+        </Row>        
+        <% OrderLineItem.from_to_by_account_id(@from_date, @to_date, nil).select { |li| li.qty > 0 }.each_with_index do |li, i| %>
+          <% group_item_price = li.item.prices.actual.by_group(@group.id)&.last&.price.to_f %>
+          <Row>
+            <Cell><Data ss:Type="String"><%= i %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= li.item_id %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= number_with_delimiter(li.qty) %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= li.number %></Data></Cell>
+            <Cell><Data ss:Type="String">
+              <%= number_to_currency([group_item_price, li.item.default_price.to_f.to_d].select(&:positive?).min) %>
+            </Data></Cell>
+          </Row>
+        <% end %>
+      </Table>
+    </Worksheet>
+  <% end %>
+</Workbook>

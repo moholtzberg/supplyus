@@ -156,11 +156,14 @@ Rails.application.routes.draw do
         resources :purchase_order_receipts, :only => [:new, :create, :destroy]
       end
       resources :purchase_order_line_items
-      resource :reports, :only => :index do
-        get :sales_tax
-        get :item_usage
-        get :item_usage_by_group
-        get :ar_aging
+      resources :reports, :only => :index do
+        collection do
+          get :sales_tax
+          get :item_usage
+          get :item_usage_for_account_ids
+          get :item_usage_by_group
+          get :ar_aging
+        end
       end
       resources :return_authorizations
       resources :roles do

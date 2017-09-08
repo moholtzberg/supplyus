@@ -82,3 +82,4 @@ gem 'remotipart', '~> 1.2'
 gem "select2-rails"
 gem 'friendly_id', '~> 5.1.0'
 gem 'summernote-rails'
+gem 'bootstrap-datepicker-rails'
