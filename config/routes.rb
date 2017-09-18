@@ -210,6 +210,7 @@ Rails.application.routes.draw do
         patch :details, action: :update_details
       end
     end
+    resources :orders, param: :order_number, only: [:index, :show]
   end
 
   get   "checkout/address" => "checkout#address"
@@ -229,7 +230,6 @@ Rails.application.routes.draw do
   patch "/update_cart" => "shop#update_cart"
   
   get "/my_account/items" => "shop#my_items"
-  get "/my_account/order/:order_number" => "shop#view_order", as: :my_account_order
   get "/my_account/invoice/:invoice_number/pay" => "shop#pay_invoice"
   get "/my_account/invoice/:invoice_number" => "shop#view_invoice"
   get "/my_account/:account_id" => "shop#view_account"

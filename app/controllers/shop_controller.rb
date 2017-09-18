@@ -188,22 +188,7 @@ class ShopController < ApplicationController
       redirect_to "/"
     end
   end
-  
-  def view_order
-    @order = Order.find_by(:number => params[:order_number])
-    @shipments = Shipment.where(:order_id => @order.id)
-    if current_user.my_account_ids.include?(@order.account_id)
-      respond_to do |format|
-        format.html
-        format.pdf do
-          render :pdf => "#{@order.number}", :title => "#{@order.number}", :layout => 'admin_print.html.erb', :page_size => 'Letter', :background => false, :template => 'shop/view_order.html.erb', :print_media_type => true
-        end
-      end
-    else
-      redirect_to "/"
-    end
-  end
-  
+    
   def view_invoice
     @invoice = Order.find_by(:number => params[:invoice_number])
     if current_user.my_account_ids.include?(@invoice.account_id)

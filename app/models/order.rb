@@ -406,9 +406,9 @@ class Order < ActiveRecord::Base
     # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_balance_due"]) {
       # Rails.cache.delete("#{self.class.to_s.downcase}_balance_due")
       total_paid = self.order_payment_applications.includes(:payment).inject(0.0) {|sum, a| sum = sum + a.applied_amount if a.payment.success? }
-      puts total_paid.to_d.to_s
-      puts self.total.to_d.to_s
-      return (self.total.to_d - total_paid.to_d)
+      puts total_paid.to_f.to_d.to_s
+      puts self.total.to_f.to_d.to_s
+      return (self.total.to_f.to_d - total_paid.to_f.to_d)
     # }
   end
   
