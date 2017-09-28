@@ -2,7 +2,7 @@ class ReportMailer < ApplicationMailer
   
   default from: "24\/7 Office Supply <orders@247officesupply.com>"
   
-  def sales_tax_report(emaile)
+  def sales_tax_report(email, _options = {})
     @from_date = 12.months.ago.beginning_of_year
     @to_date = Date.today
 
@@ -17,9 +17,9 @@ class ReportMailer < ApplicationMailer
     )
   end
 
-  def item_usage_report(email, from_date, to_date)
-    @from_date = from_date.present? ? Date.strptime(from_date, '%m/%d/%Y') : Date.strptime("01/01/16", '%m/%d/%Y')
-    @to_date = to_date.present? ? Date.strptime(to_date, '%m/%d/%Y') : Date.today
+  def item_usage_report(email, options = {})
+    @from_date = options[:from_date].present? ? Date.strptime(options[:from_date], '%m/%d/%Y') : Date.strptime("01/01/16", '%m/%d/%Y')
+    @to_date = options[:to_date].present? ? Date.strptime(options[:to_date], '%m/%d/%Y') : Date.today
 
     attachments["item_usage_#{@from_date.strftime('%m_%d_%Y')}-#{@to_date.strftime('%m_%d_%Y')}.pdf"] = WickedPdf.new.pdf_from_string(
       render_to_string(:template => 'reports/item_usage.html.erb', :layout => 'admin_print.html.erb'), :title => "Item Usage",
@@ -32,10 +32,10 @@ class ReportMailer < ApplicationMailer
     )
   end
 
-  def item_usage_for_account_ids_report(email, from_date, to_date, account_ids)
-    @accounts = Customer.where(id: account_ids)
-    @from_date = from_date.present? ? Date.strptime(from_date, '%m/%d/%Y') : Date.strptime("01/01/16", '%m/%d/%Y')
-    @to_date = to_date.present? ? Date.strptime(to_date, '%m/%d/%Y') : Date.today
+  def item_usage_for_account_ids_report(email, options = {})
+    @accounts = Customer.where(id: options[:account_ids])
+    @from_date = options[:from_date].present? ? Date.strptime(options[:from_date], '%m/%d/%Y') : Date.strptime("01/01/16", '%m/%d/%Y')
+    @to_date = options[:to_date].present? ? Date.strptime(options[:to_date], '%m/%d/%Y') : Date.today
 
     attachments["item_usage_for_account_ids_#{@accounts.map(&:id).join('_')}_#{@from_date.strftime('%m_%d_%Y')}-#{@to_date.strftime('%m_%d_%Y')}.pdf"] = WickedPdf.new.pdf_from_string(
       render_to_string(:template => 'reports/item_usage_for_account_ids.html.erb', :layout => 'admin_print.html.erb'), :title => "Item Usage For Account IDs",
@@ -48,10 +48,10 @@ class ReportMailer < ApplicationMailer
     )
   end
 
-  def item_usage_by_group_report(email, from_date, to_date, group_id)
-    @group = Group.find(group_id)
-    @from_date = from_date.present? ? Date.strptime(from_date, '%m/%d/%Y') : Date.strptime("01/01/16", '%m/%d/%Y')
-    @to_date = to_date.present? ? Date.strptime(to_date, '%m/%d/%Y') : Date.today
+  def item_usage_by_group_report(email, options = {})
+    @group = Group.find(options[:group_id])
+    @from_date = options[:from_date].present? ? Date.strptime(options[:from_date], '%m/%d/%Y') : Date.strptime("01/01/16", '%m/%d/%Y')
+    @to_date = options[:to_date].present? ? Date.strptime(options[:to_date], '%m/%d/%Y') : Date.today
 
     attachments["item_usage_by_group_#{@group.name}_#{@from_date.strftime('%m_%d_%Y')}-#{@to_date.strftime('%m_%d_%Y')}.pdf"] = WickedPdf.new.pdf_from_string(
       render_to_string(:template => 'reports/item_usage_by_group.html.erb', :layout => 'admin_print.html.erb'), :title => "Item Usage By Group",
@@ -64,7 +64,7 @@ class ReportMailer < ApplicationMailer
     )
   end
 
-  def ar_aging_report(email)
+  def ar_aging_report(email, _options = {})
     @orders = Order.fulfilled.unpaid
 
     attachments["ar_aging_#{Date.today.strftime('%m_%d_%Y')}.pdf"] = WickedPdf.new.pdf_from_string(
@@ -76,5 +76,23 @@ class ReportMailer < ApplicationMailer
       :to => "#{email}",
       :subject => "AR Aging"
     )
+  end
+
+  def vendor_prices_report(email, _options = {})
+    @items = Item.joins(order_line_items: :order)
+                 .where('orders.state = \'completed\'').group('items.id')
+                 .order('SUM(COALESCE(quantity,0) - COALESCE(quantity_canceled,0)) DESC')
+
+    attachments["vendor_prices_#{Date.today.strftime('%m_%d_%Y')}.pdf"] =
+      WickedPdf.new.pdf_from_string(
+        render_to_string(
+          template: 'reports/vendor_prices.html.erb',
+          layout: 'admin_print.html.erb'
+        ),
+        title: 'Vendor Prices', print_media_type: true,
+        page_size: 'Letter', orientation: 'Landscape'
+      )
+
+    mail(:to => email.to_s, :subject => 'Item Usage Report')
   end
 end

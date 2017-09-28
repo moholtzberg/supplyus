@@ -163,6 +163,7 @@ Rails.application.routes.draw do
           get :item_usage_for_account_ids
           get :item_usage_by_group
           get :ar_aging
+          get :vendor_prices
         end
       end
       resources :return_authorizations

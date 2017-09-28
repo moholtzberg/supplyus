@@ -11,6 +11,7 @@
 		    	<option value="<%= item_usage_for_account_ids_reports_path %>">Item Usage By Accounts</option>
 		    	<option value="<%= item_usage_by_group_reports_path %>">Item Usage By Group</option>
 		    	<option value="<%= ar_aging_reports_path %>">A/R Aging Report</option>
+          <option value="<%= vendor_prices_reports_path %>">Vendor Prices</option>
 		    </select>
 		  </div>
 		  <div class="form-group">
@@ -85,7 +86,8 @@
 		  			"<%= item_usage_reports_path %>": {'from_date': true, 'to_date': true, 'group_id': false, 'account_ids': false},
 		  			"<%= item_usage_for_account_ids_reports_path %>": {'from_date': true, 'to_date': true, 'group_id': false, 'account_ids': true},
 		  			"<%= item_usage_by_group_reports_path %>": {'from_date': true, 'to_date': true, 'group_id': true, 'account_ids': false},
-		  			"<%= ar_aging_reports_path %>": {'from_date': false, 'to_date': false, 'group_id': false, 'account_ids': false}
+		  			"<%= ar_aging_reports_path %>": {'from_date': false, 'to_date': false, 'group_id': false, 'account_ids': false},
+            "<%= vendor_prices_reports_path %>": {'from_date': false, 'to_date': false, 'group_id': false, 'account_ids': false}            
 		  		}
 		  		$('#report_type').change(function() {
 		  			var path = $(this).val();

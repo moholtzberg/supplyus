@@ -1,12 +1,12 @@
 class Item < ActiveRecord::Base
-  
+
   include ApplicationHelper
   extend FriendlyId
   friendly_id :number, use: [:slugged, :history]
-  
+
   scope :active, -> { where(:active => true)}
   scope :inactive, -> { where(:active => false)}
-  
+
   has_many :item_vendor_prices
   has_many :images, as: :attachable
   has_many :documents, as: :attachable
@@ -31,87 +31,86 @@ class Item < ActiveRecord::Base
   has_many :inventories, :class_name => "Inventory"
   attr_reader :category_tokens
   accepts_nested_attributes_for :prices, allow_destroy: true
-  
+
   validates_uniqueness_of :number
   validate :one_default_price
   # validates_uniqueness_of :slug
-  
+
   before_validation :slugger
-  
+
   searchable do
     text :number, :stored => true, :boost => 4
     text :name, :stored => true, :boost => 2
     text :description, :stored => true
-    
+
     text :brand do
-      brand.name if brand
+      brand&.name
     end
-    
+
     # text :item_categories do
     #   item_categories.map { |item_category| item_category.category.name }
     # end
 
     text :item_properties do
-      item_properties.map { |item_property| item_property.value }
+      item_properties.map(&:value)
     end
-    
+
     float :actual_price, :trie => true
-    
+
     string :brand, :stored => true do
-      brand.name if brand
+      brand&.name
     end
-    
+
     integer :category_ids, :multiple => true, :references => Category
 
     string :specs, :multiple => true, :stored => true do
-      specifications.map { |spec| "#{spec.key}|#{spec.value}" unless spec.value.blank?}
+      specifications.map { |spec| "#{spec.key}|#{spec.value}" unless spec.value.blank? }
     end
-    
   end
-  
+
   def self.dynamic_facets(orig_facet)
     new_facet = {}
     orig_facet.rows.each do |facet|
-      k,v = facet.value.split('|')
+      k, v = facet.value.split('|')
       new_facet[k] ||= {}
       new_facet[k][v] ||= 0
       new_facet[k][v] += facet.count
     end
     new_facet
   end
- 
+
   def self.no_images
-    Item.includes(:images).where(:assets => {:attachable_id => nil})
+    Item.includes(:images).where(:assets => { :attachable_id => nil })
   end
- 
+
   def brand_name
     brand.try(:name)
   end
-  
+
   def brand_name=(name)
     self.brand = Brand.find_by(:name => name) if name.present?
   end
-  
+
   def index_async
     ItemIndexWorker.perform_async(id)
   end
-  
+
   def essendant_xml_import_async
     EssendantXmlImportWorker.perform_async(id)
   end
-  
+
   def category_name
     category.try(:name)
   end
-  
+
   def category_name=(name)
     self.category = Category.find_by(:name => name) if name.present?
   end
-  
+
   def category_tokens=(tokens)
     self.category_ids = tokens.split(",")
   end
-  
+
   def default_category
     if !self.categories.first.nil?
       self.categories.first
@@ -119,11 +118,11 @@ class Item < ActiveRecord::Base
       Category.find_or_create_by(:name => "Uncategorized", :slug => "uncategorized")
     end
   end
-  
+
   def self.lookup(word)
     includes(:brand, :categories).where("lower(number) like ? or lower(items.name) like ? or lower(items.description) like ? or lower(brands.name) like ? or lower(categories.name) like ?", "%#{word.downcase}%", "%#{word.downcase}%", "%#{word.downcase}%", "%#{word.downcase}%", "%#{word.downcase}%").references(:brand, :categories)
   end
-  
+
   def self.search_fulltext(word, brand)
     res = Sunspot.search( Item ) do
       fulltext word
@@ -148,17 +147,19 @@ class Item < ActiveRecord::Base
     end
     occurence
   end
-  
+
   self.per_page = 10
-  
+
   def actual_cost_price
-    prices = item_vendor_prices.map {|a| return a.price unless a.price == 0}
-    prices.push(cost_price)
-    return prices.min
+    [cheapest_vendor_price.price, (cost_price if cost_price != 0)].compact.min
+  end
+
+  def cheapest_vendor_price
+    item_vendor_prices.where.not(price: 0).order(price: :asc).first
   end
 
   def default_price
-    self.prices.actual._public.default.minimum(:price).to_f
+    prices.actual._public.default.minimum(:price).to_f
   end
 
   def actual_price(account_id = nil, quantity = nil)
@@ -173,31 +174,33 @@ class Item < ActiveRecord::Base
       images.first.path
     end
   end
-  
+
   def slugger
     self.slug = number.downcase.tr(" ", "-") unless self.number.nil?
   end
-  
+
   def times_sold
-    order_line_items.where(item_id: id).sum("COALESCE(quantity,0) - COALESCE(quantity_canceled,0)")
+    order_line_items.joins(:order)
+                    .where(item_id: id, orders: { state: 'completed' })
+                    .sum('COALESCE(quantity,0) - COALESCE(quantity_canceled,0)')
   end
-  
+
   def times_ordered
     purchase_order_line_items.where(item_id: id).sum("COALESCE(quantity,0)")
   end
-  
+
   def times_shipped
     inventory_transactions.where(:transaction_type => "LineItemShipment", item_id: id).sum("COALESCE(quantity,0)")
   end
-  
+
   def times_received
     inventory_transactions.where(transaction_type: "PurchaseOrderLineItemReceipt", item_id: id).sum("COALESCE(quantity,0)")
   end
-  
+
   def count_on_hand
     times_received.to_i - times_shipped.to_i
   end
-  
+
   def negative_count_on_hand
     if count_on_hand < 0
       return true
@@ -205,7 +208,7 @@ class Item < ActiveRecord::Base
       return false
     end
   end
-  
+
   def positive_count_on_hand
     if count_on_hand > 0
       return true
@@ -213,11 +216,11 @@ class Item < ActiveRecord::Base
       return false
     end
   end
-  
+
   def times_purchased_by(account_id)
     Account.find(account_id).order_line_items.where(item_id: id).map(&:actual_quantity).sum
   end
-  
+
   def self.times_ordered
     joins(:order_line_items)
     .group("items.id, item_id")
@@ -225,12 +228,12 @@ class Item < ActiveRecord::Base
     .select("SUM(COALESCE(order_line_items.quantity,0) - COALESCE(order_line_items.quantity_canceled,0)) AS times_ordered")
     .order("times_ordered DESC")
   end
-  
+
   def self.negative_inventory
     ids = joins(:inventory_transactions).group(:id, :item_id).sort_by(&:negative_count_on_hand).map(&:id)
     where(id: ids)
   end
-  
+
   def self.positive_inventory
     ids = joins(:inventory_transactions).group(:id, :item_id).sort_by(&:positive_count_on_hand).map(&:id)
     where(id: ids)
@@ -239,5 +242,4 @@ class Item < ActiveRecord::Base
   def one_default_price
     errors.add(:base, "Item needs to have at least one default price") if prices.select { |p| !p.marked_for_destruction? && p._type == 'Default' }.length == 0
   end
-  
 end
