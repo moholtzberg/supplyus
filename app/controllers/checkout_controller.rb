@@ -167,6 +167,7 @@ class CheckoutController < ApplicationController
       @cart.reload
       cookies.permanent.signed[:cart_id] = nil
       puts "GOING INTO THE MAILER"
+      flash[:notice] = 'Thank you for your order!'
       redirect_to my_account_order_path(@cart.number)
       # OrderMailer.order_confirmation(c.id, :bcc => "sales@247officesupply.com").deliver_later
     end

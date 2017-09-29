@@ -156,5 +156,16 @@ class OrderLineItem < ActiveRecord::Base
       end
     }
   end
+
+  def self.from_to_by_account_id(from_date, to_date, account_id)
+    list = unscoped
+           .joins('INNER JOIN orders ON orders.id = order_line_items.order_id')
+           .joins('RIGHT OUTER JOIN items ON items.id = order_line_items.item_id')
+           .where('orders.submitted_at BETWEEN ? AND ?', from_date, to_date)
+    list = list.where('orders.account_id IN (?)', account_id) if account_id
+    list = list.where('quantity_shipped >= 0').group('item_id, items.number')
+               .select('SUM(COALESCE(quantity, 0) - COALESCE(quantity_canceled, 0)) AS qty, item_id AS item_id, items.number AS number')
+               .having('item_id = item_id').order('qty DESC')
+  end
   
 end

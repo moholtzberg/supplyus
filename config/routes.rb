@@ -61,6 +61,11 @@ Rails.application.routes.draw do
       resources :discount_codes
       resources :discount_code_effects, only: [:edit, :update]
       resources :discount_code_rules, only: [:new, :create, :destroy]
+      resources :email_deliveries do
+        collection do
+          post :datatables
+        end
+      end
       resources :equipment
       resources :equipment_imports
       resources :equipment_alerts
@@ -139,8 +144,11 @@ Rails.application.routes.draw do
       resources :prices
       resources :price_imports
       resources :purchase_orders do
-        member do
+        collection do 
+          post :datatables
           get :line_items_from_order
+        end          
+        member do
           put :lock
           put :resend_invoice
           put :resend_order
@@ -148,11 +156,15 @@ Rails.application.routes.draw do
         resources :purchase_order_receipts, :only => [:new, :create, :destroy]
       end
       resources :purchase_order_line_items
-      resource :reports, :only => :index do
-        get :sales_tax
-        get :item_usage
-        get :item_usage_by_group
-        get :ar_aging
+      resources :reports, :only => :index do
+        collection do
+          get :sales_tax
+          get :item_usage
+          get :item_usage_for_account_ids
+          get :item_usage_by_group
+          get :ar_aging
+          get :vendor_prices
+        end
       end
       resources :return_authorizations
       resources :roles do
@@ -199,6 +211,7 @@ Rails.application.routes.draw do
         patch :details, action: :update_details
       end
     end
+    resources :orders, param: :order_number, only: [:index, :show]
   end
 
   get   "checkout/address" => "checkout#address"
@@ -218,7 +231,6 @@ Rails.application.routes.draw do
   patch "/update_cart" => "shop#update_cart"
   
   get "/my_account/items" => "shop#my_items"
-  get "/my_account/order/:order_number" => "shop#view_order", as: :my_account_order
   get "/my_account/invoice/:invoice_number/pay" => "shop#pay_invoice"
   get "/my_account/invoice/:invoice_number" => "shop#view_invoice"
   get "/my_account/:account_id" => "shop#view_account"
@@ -238,6 +250,11 @@ Rails.application.routes.draw do
   namespace :api, defaults: {format: :json} do
     scope :v1 do
       resources :equipment_alerts, only: [:index, :show, :create, :update]
+      resources :email_deliveries do
+        collection do
+          post :webhook
+        end
+      end
     end
   end
 

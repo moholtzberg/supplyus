@@ -27,6 +27,7 @@
 //= require dataTables/extras/dataTables.responsive
 //= require select2
 //= require summernote
+//= require bootstrap-datepicker
 //= require_tree .
 
 // Create Recurring object first.

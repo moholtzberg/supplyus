@@ -1,7 +1,9 @@
 <table class="table table-bordered">
-  <div id="checkout_errors" class="alert alert-success alert-dismissible">
-    Thank you for your order!
-  </div>
+	<% if flash[:notice] %>
+	  <div id="checkout_errors" class="alert alert-success alert-dismissible">
+	    <%= flash[:notice] %>
+	  </div>
+	 <% end %>
 	<tr>
 		<th width="33%">Remit To</th>
 		<th width="34%">Shipping Address</th>

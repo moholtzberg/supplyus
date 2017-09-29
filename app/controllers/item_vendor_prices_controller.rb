@@ -3,7 +3,7 @@ class ItemVendorPricesController < ApplicationController
   respond_to :html, :json
   
   def index
-    item_id = Item.find_by(:number => params[:item_number])
+    item_id = params[:item_number] ? Item.find_by(:number => params[:item_number]) : params[:item_id]
     @item_price = ItemVendorPrice.where(:item_id => item_id, :vendor_id => params[:vendor_id]).first
     
     puts "------------------> #{@item_price.inspect}"

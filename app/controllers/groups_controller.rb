@@ -10,7 +10,7 @@ class GroupsController < ApplicationController
     end
     respond_to do |format|
       format.html
-      format.json {render :json => @groups.map(&:name)}
+      format.json {render :json => @groups.map { |g| {id: g.id, name: g.name, text: g.name} }}
     end
   end
   
