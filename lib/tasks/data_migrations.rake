@@ -124,5 +124,17 @@ namespace :data_migrations do
       end
     end
   end
-end
 
+  desc 'ensure category slug uniqueness'
+  task ensure_category_slug_uniqueness: :environment do
+    slugs = []
+    Category.all.each do |cat|
+      i = 1
+      slug = cat.slug
+      while slugs.include?(cat.slug)
+        cat.update_column(:slug, "#{slug}_#{i}")
+      end
+      slugs.push(cat.slug)
+    end
+  end
+end
