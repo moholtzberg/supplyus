@@ -137,4 +137,16 @@ namespace :data_migrations do
       slugs.push(cat.slug)
     end
   end
+
+  task ensure_category_slug_uniqueness: :environment do
+    slugs = []
+    Item.all.each do |item|
+      i = 1
+      slug = item.slug
+      while slugs.include?(item.slug)
+        item.update_column(:slug, "#{slug}_#{i}")
+      end
+      slugs.push(item.slug)
+    end
+  end
 end
