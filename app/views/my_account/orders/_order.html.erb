@@ -11,7 +11,10 @@
         <span class="caret"></span>
       </button>
       <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-        <li><%= link_to("View", my_account_order_path(order.number))  %></li>
+        <li><%= link_to("View", my_account_order_path(order.number)) %></li>
+        <% if order.state == 'completed' %>
+          <li><%= link_to("Return", new_my_account_return_authorization_path(order_id: order.id), remote: true) %></li>
+        <% end %>
       </ul>
     </div>
   </td>

@@ -6,6 +6,7 @@ class OrderLineItem < ActiveRecord::Base
   belongs_to :item
   belongs_to :cart, :class_name => :order, :foreign_key => :order_id
   has_many :line_item_shipments
+  has_many :line_item_returns
   has_many :shipments, :through => :line_item_shipments
   has_many :line_item_fulfillments
   has_many :purchase_order_line_items
@@ -22,7 +23,7 @@ class OrderLineItem < ActiveRecord::Base
   
   validates :item_id, :presence => true
   
-  after_commit :update_shipped_fulfilled, :if => :persisted?
+  after_commit :update_quantities, :if => :persisted?
   after_commit :flush_cache
   
   def line_description_not_same_as_other
@@ -34,10 +35,11 @@ class OrderLineItem < ActiveRecord::Base
     approve
   end
   
-  def update_shipped_fulfilled
+  def update_quantities
     qs = calculate_quantity_shipped
     qf = calculate_quantity_fulfilled
-    self.update_columns(:quantity_shipped => qs, :quantity_fulfilled => qf)
+    qr = calculate_quantity_returned
+    self.update_columns(:quantity_shipped => qs, :quantity_fulfilled => qf, :quantity_returned => qr)
   end
   
   def item_number
@@ -123,6 +125,15 @@ class OrderLineItem < ActiveRecord::Base
     }
   end
   
+  def calculate_quantity_returned
+    if self.line_item_returns
+      total = 0
+      lirs = self.line_item_returns.joins(:return_authorization).where.not(return_authorizations: {status: [:unconfirmed, :canceled]})
+      lirs.each {|i| total += i.quantity.to_f }
+      total
+    end
+  end
+  
   def fulfilled
     Rails.cache.fetch([self, "#{self.class.to_s.downcase}_fulfilled"]) {
       quantity_fulfilled == actual_quantity
@@ -163,9 +174,18 @@ class OrderLineItem < ActiveRecord::Base
            .joins('RIGHT OUTER JOIN items ON items.id = order_line_items.item_id')
            .where('orders.submitted_at BETWEEN ? AND ?', from_date, to_date)
     list = list.where('orders.account_id IN (?)', account_id) if account_id
-    list = list.where('quantity_shipped >= 0').group('item_id, items.number')
-               .select('SUM(COALESCE(quantity, 0) - COALESCE(quantity_canceled, 0)) AS qty, item_id AS item_id, items.number AS number')
-               .having('item_id = item_id').order('qty DESC')
+    list.where('quantity_shipped >= 0').group('item_id, items.number')
+        .select('SUM(COALESCE(quantity, 0) - COALESCE(quantity_canceled, 0)) AS qty, item_id AS item_id, items.number AS number')
+        .having('item_id = item_id').order('qty DESC')
   end
-  
+
+  def applied_discount
+    dc = order.discount_code
+    return nil unless dc && !dc.effect.shipping
+    if dc.effect.amount
+      order.discount_total * sub_total / order.sub_total
+    elsif dc.effect.appliable_items(order).include?(self)
+      sub_total * dc.effect.percent / 100
+    end
+  end
 end

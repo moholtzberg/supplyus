@@ -27,6 +27,7 @@ class Order < ActiveRecord::Base
   has_one :order_tax_rate, :dependent => :destroy, :inverse_of => :order
   has_one :order_discount_code
   has_one :discount_code, through: :order_discount_code, source: :code
+  has_many :return_authorizations
   has_many :order_line_items, :dependent => :destroy, :inverse_of => :order
   has_many :items, :through => :order_line_items
   has_many :shipments, :through => :order_line_items
@@ -66,9 +67,7 @@ class Order < ActiveRecord::Base
     end
 
     before_transition any => :awaiting_shipment do |order|
-      if !order.terms_payment?
-        order.create_full_invoice
-      end
+      order.create_full_invoice unless order.terms_payment?
     end
 
     event :submit do

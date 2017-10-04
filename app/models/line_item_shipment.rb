@@ -18,13 +18,19 @@ class LineItemShipment < ActiveRecord::Base
     i.update_attributes(:inv_transaction_id => id, :inv_transaction_type => "LineItemShipment", :inventory_id => bin.inventories.find_by(item_id: order_line_item.item_id).id, :quantity => quantity_shipped)
   end
   
-  
   def flush_cache
     Rails.cache.delete("open_orders")
   end
 
   def recalculate_line_item
-    self.order_line_item.update_shipped_fulfilled
+    self.order_line_item.update_quantities
   end
-  
+
+  def ancestor
+    order_line_item.order
+  end
+
+  def ancestor_title
+    ancestor.number
+  end
 end

@@ -6,7 +6,7 @@ class LineItemFulfillment < ActiveRecord::Base
   after_save :recalculate_line_item
   
   def recalculate_line_item
-    self.order_line_item.update_shipped_fulfilled
+    self.order_line_item.update_quantities
   end
   
 end

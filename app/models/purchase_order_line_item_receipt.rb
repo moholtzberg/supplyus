@@ -20,5 +20,12 @@ class PurchaseOrderLineItemReceipt < ActiveRecord::Base
   def recalculate_line_item
     self.purchase_order_line_item.update_received
   end
-  
+
+  def ancestor
+    purchase_order_receipt.purchase_order
+  end
+
+  def ancestor_title
+    ancestor.number
+  end
 end

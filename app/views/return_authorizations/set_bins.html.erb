@@ -1,0 +1,39 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	<h4 class="modal-title" id="myModalLabel">Receive Return Authorization</h4>
+</div>
+
+<div class="modal-body" id="modal-body">
+	
+	<% if @return_authorization.errors.any? %>
+		<div id="flash_messages" class="alert alert-danger" role="alert">
+			<strong><%= @return_authorization.errors.full_messages.join(', ') %></strong>
+		</div>
+	<% end %>
+	
+	<%= form_for @return_authorization, as: :return_authorization, url: receive_return_authorization_path(@return_authorization, search_params), :remote => true, method: :put, :html => {:class => "form-horizontal", id: "receive_return_authorization_#{@return_authorization.id}"} do |f| %>
+		<table class="table table-bordered">
+		  
+		  <tr class="line-item-returns-labels">
+		    <th>Item Name/Description</th>
+		    <th>Quantity Received</th>
+		    <th>Bin</th>
+		  </tr>
+		      
+			<%= f.fields_for :line_item_returns do |k| %>
+			  <tr class="line-item-returns-form">
+			    <td><%= k.object.order_line_item.item_number %></td>
+			    <td><%= k.object.quantity %></td>
+			    <td><%= k.select :bin_id, Bin.all.map { |b| [b.name, b.id] }, {include_blank: true}, {class: 'form-control'} %></td>
+			  </tr>
+			<% end %>
+		</table>
+	<% end %>
+	
+</div>
+
+<div class="modal-footer">
+	<%= button_tag(:name => :commit, :type => :submit, :class => "btn btn-primary", :form => "receive_return_authorization_#{@return_authorization.id}") do %>
+		Receive Return Authorization
+	<% end %>
+</div>
