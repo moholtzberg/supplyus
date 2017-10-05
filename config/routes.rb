@@ -166,7 +166,7 @@ Rails.application.routes.draw do
           get :vendor_prices
         end
       end
-      resources :return_authorizations do
+      resources :return_authorizations, except: [:edit, :update] do
         member do
           get :set_bins
           get :set_amount

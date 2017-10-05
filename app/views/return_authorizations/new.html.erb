@@ -5,7 +5,7 @@
 
 <div class="modal-body" id="modal-body">
 	
-	<% if flash[:error] %>
+	<% if @return_authorization.errors.any? %>
 		<div id="flash_messages" class="alert alert-danger" role="alert">
 			<strong><%= @return_authorization.errors.full_messages.join(', ') %></strong>
 		</div>
