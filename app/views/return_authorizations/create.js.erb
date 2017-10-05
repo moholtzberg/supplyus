@@ -1,0 +1,8 @@
+<% if @return_authorization.errors.any? %>
+  $(".modal-content").html("<%= j render :template => 'return_authorizations/new.html', :format => 'html' %>")
+<% else %>
+  $('#myModal').modal("hide")
+  $('body').removeClass('modal-open')
+  $('.modal-backdrop').remove()
+  $("#return_authorizations").replaceWith("<%= j render :template => 'return_authorizations/index.html', :format => 'html' %>")
+<% end %>

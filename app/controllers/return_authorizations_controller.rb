@@ -2,7 +2,8 @@ class ReturnAuthorizationsController < ApplicationController
   layout 'admin'
   helper_method :sort_column, :sort_direction
   before_action :set_return_authorization, only:
-    %i[show edit update destroy confirm cancel set_bins receive set_amount refund]
+    %i[show edit update destroy confirm cancel set_bins receive set_amount
+       refund]
   load_and_authorize_resource except:
     %i[confirm cancel set_bins receive set_amount refund]
 
@@ -47,7 +48,6 @@ class ReturnAuthorizationsController < ApplicationController
       ReturnAuthorizationMailer.confirm(@return_authorization.id).deliver_later
     end
     update_index
-    render 'index'
   end
 
   def cancel
@@ -96,9 +96,11 @@ class ReturnAuthorizationsController < ApplicationController
   end
 
   def return_authorization_params
-    params.require(:return_authorization)
-          .permit(:customer_id, :order_id, :reason, :amount,
-                  line_item_returns_attributes: [:id, :bin_id])
+    params.require(:return_authorization).permit(
+      :customer_id, :order_id, :reason, :amount, :order_number, :customer_name,
+      :notes, line_item_returns_attributes:
+        %i[id order_line_item_id quantity bin_id]
+    )
   end
 
   def sort_column

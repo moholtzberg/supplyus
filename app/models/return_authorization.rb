@@ -70,7 +70,7 @@ class ReturnAuthorization < ActiveRecord::Base
     line_item_returns.each do |lir|
       oli = lir.order_line_item
       if lir.quantity + oli.quantity_returned.to_i > oli.actual_quantity.to_i
-        errors.add(:base, 'Can\'t return more items then it was in order.')
+        return false
       end
     end
   end

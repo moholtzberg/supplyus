@@ -10,6 +10,7 @@ class Payment < ActiveRecord::Base
 
   validates :amount, :presence => true, :numericality => { greater_then: 0 }
   validates :payment_method, :presence => true
+  validate :amount_refunded
   
   def self.lookup(word)
     includes(:account).where('lower(accounts.name) like (?) or lower(payments.amount) like (?)'\
@@ -57,5 +58,9 @@ class Payment < ActiveRecord::Base
   def confirm_order_payment
     orders.each(&:confirm_payment)
   end
-  
+
+  def amount_refunded
+    return if amount.to_f >= refunded.to_f
+    errors.add(:refunded, 'must be less than amount')
+  end
 end

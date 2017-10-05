@@ -21,6 +21,6 @@ class CheckPayment < Payment
   end
 
   def refund(sum)
-    update_columns(refunded: sum)
+    update_attributes(refunded: sum)
   end
 end

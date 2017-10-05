@@ -188,4 +188,14 @@ class OrderLineItem < ActiveRecord::Base
       sub_total * dc.effect.percent / 100
     end
   end
+
+  def to_form_hash
+    {
+      id: id,
+      name: "#{item.number} / #{item.name}",
+      quantity: actual_quantity.to_i - quantity_returned.to_i,
+      remaining_quantity: actual_quantity.to_i - quantity_returned.to_i,
+      item_id: item_id
+    }
+  end
 end

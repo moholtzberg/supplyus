@@ -11,7 +11,8 @@ class LineItemReturn < ActiveRecord::Base
     )
     i.update_attributes(
       quantity: quantity,
-      inventory_id: bin.inventories.find_by(item_id: order_line_item.item_id).id
+      inventory_id: bin.inventories
+                       .find_or_create_by(item_id: order_line_item.item_id).id
     )
   end
 
