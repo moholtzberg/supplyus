@@ -29,13 +29,6 @@ class ReturnAuthorizationsController < ApplicationController
 
   def show; end
 
-  def edit; end
-
-  def update
-    @return_authorization.update_attributes(return_authorization_params)
-    update_index
-  end
-
   def destroy
     @return_authorization.destroy
     update_index
