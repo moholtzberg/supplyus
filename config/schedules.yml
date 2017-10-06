@@ -1,0 +1,8 @@
+TestWorker:
+  cron: '0 * * * *'
+CompleteAutoSupplyOrders:
+  cron: '30 16 * * 1,2,3,4,5'
+OrderLineItemFromEquipmentAlert:
+  cron: '0 * * * *'
+CreateOrdersForSubscriptions:
+  cron: '0 0 * * * *'

@@ -150,4 +150,19 @@ namespace :data_migrations do
       slugs.push(item.slug)
     end
   end
+
+  desc 'create schedule items'
+  task create_schedule_items: :environment do
+    schedules = YAML::load_file(File.join(__dir__, '../../config/schedules.yml'))
+    schedules.each do |k, v|
+      Schedule.create(
+        name: k,
+        worker: v['class'] || k,
+        enabled: v['enabled'] || true,
+        cron: v['cron'],
+        arguments: v['args'],
+        description: v['description']
+      )
+    end
+  end
 end

@@ -17,5 +17,4 @@ else
   Sidekiq.configure_client do |config|
     config.redis = { url: "#{SECRET['REDIS_DEV_URL']}" }
   end
-  
 end
