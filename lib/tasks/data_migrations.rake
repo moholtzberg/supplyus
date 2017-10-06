@@ -138,7 +138,8 @@ namespace :data_migrations do
     end
   end
 
-  task ensure_category_slug_uniqueness: :environment do
+  desc 'ensure item slug uniqueness'
+  task ensure_item_slug_uniqueness: :environment do
     slugs = []
     Item.all.each do |item|
       i = 1
