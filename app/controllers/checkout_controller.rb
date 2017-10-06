@@ -129,7 +129,7 @@ class CheckoutController < ApplicationController
       @payment = @payment.becomes CheckPayment
     end
     @cards = current_user.account.main_service.credit_cards
-    if (@payment.payment_type = 'CheckPayment' or (@card and @card.errors.empty?)) and @payment.authorize
+    if (@payment.payment_type == 'CheckPayment' or (@card and @card.errors.empty?)) and @payment.authorize
       @payment.save
       OrderPaymentApplication.create(:order_id => @checkout.id, :payment_id => @payment.id, :applied_amount => @payment.amount)
       submit

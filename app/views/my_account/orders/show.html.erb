@@ -1,9 +1,4 @@
 <table class="table table-bordered">
-	<% if flash[:notice] %>
-	  <div id="checkout_errors" class="alert alert-success alert-dismissible">
-	    <%= flash[:notice] %>
-	  </div>
-	 <% end %>
 	<tr>
 		<th width="33%">Remit To</th>
 		<th width="34%">Shipping Address</th>
@@ -129,5 +124,22 @@
 		<td><%= shipment.carrier %></td>
 		<td><% shipment.tracking_numbers.each do |tr|%><%= tr.number %><br/><% end %></td>
 	</tr>
+	<% end %>
+</table>
+
+<table class="table table-bordered">
+	
+	<tr>
+		<th>Return Date</th>
+		<th>Status</th>
+		<th>Notes</th>
+	</tr>
+	
+	<% @order.return_authorizations.each do |ra| %>
+		<tr>
+			<td><%= ra.created_at.strftime("%m/%d/%y") %></td>
+			<td><%= ra.status %></td>
+			<td><%= ra.notes %></td>
+		</tr>
 	<% end %>
 </table>

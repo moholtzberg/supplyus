@@ -69,6 +69,7 @@
     <th width="6%" class="text-center">Cancel</th>
     <th width="6%" class="text-center">Ship</th>
     <th width="6%" class="text-center">Billed</th>
+    <th width="6%" class="text-center">Returned</th>
     <th width="6%" class="text-center">Price</th>
     <th width="6%" class="text-center">Subtotal</th>
     <th>Linked PO's</th>
@@ -85,6 +86,7 @@
     <td class="text-center"><%= li.quantity_canceled.to_i %></td>
     <td class="text-center"><%= li.quantity_shipped  %></td>
     <td class="text-center"><%= li.quantity_fulfilled  %></td>
+    <td class="text-center"><%= li.quantity_returned  %></td>
     <td class="text-center"><%= number_to_currency(li.price) %></td>
     <td class="text-center"><%= number_to_currency(li.sub_total) %></td>
     <td>
@@ -107,28 +109,28 @@
   <% end %>
 
   <tr class="line_items">
-    <td colspan="6">Sub Total</td>
+    <td colspan="7">Sub Total</td>
     <td colspan="3" class="text-center"><strong><%= number_to_currency(order.sub_total) %></strong></td>
   </tr>
   <tr class="line_items">
-    <td colspan="6"><%= "#{order.order_shipping_method.name} - " unless  order.order_shipping_method.nil? %>Shipping</td>
+    <td colspan="7"><%= "#{order.order_shipping_method.name} - " unless  order.order_shipping_method.nil? %>Shipping</td>
     <td colspan="3" class="text-center"><strong> <%= number_to_currency(order.order_shipping_method.amount) unless  order.order_shipping_method.nil? %></strong></td>
   </tr>
   <tr class="line_items">
-    <td colspan="6"><%= "#{order.order_tax_rate.name}" unless  order.order_tax_rate.nil? %>Tax</td>
+    <td colspan="7"><%= "#{order.order_tax_rate.name}" unless  order.order_tax_rate.nil? %>Tax</td>
     <td colspan="3" class="text-center"><strong> <%= number_to_currency(order.tax_total)%></strong></td>
   </tr>
   <tr class="line_items">
-    <td colspan="6"><%= "#{order.discount_code.name}" unless  order.discount_code.nil? %> Discount</td>
+    <td colspan="7"><%= "#{order.discount_code.name}" unless  order.discount_code.nil? %> Discount</td>
     <td colspan="3" class="text-center"><strong> <%= number_to_currency(- order.discount_total)%></strong></td>
   </tr>
   <tr class="line_items">
-    <td colspan="6">Order Total</td>
+    <td colspan="7">Order Total</td>
     <td colspan="3" class="text-center"><strong> <%= number_to_currency(order.total) %></strong></td>
   </tr>
   
   <tr>
-    <td colspan="6">Balance Due</th>
+    <td colspan="7">Balance Due</th>
     <td colspan="3" class="text-center"><strong> <%=  number_to_currency(order.balance_due) %></strong></td>
   </tr>
   

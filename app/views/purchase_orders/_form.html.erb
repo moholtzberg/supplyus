@@ -274,7 +274,7 @@
 	        }
 	        item.setAttribute('data-index', i)
 	        $(item)
-	        .append('<input type="hidden" name="purchase_order[purchase_order_line_items_attributes][' + i + '][id]" value="' + el.id + '" />')
+	        .append('<input type="hidden" name="purchase_order[purchase_order_line_items_attributes][' + i + '][id]" value="' + (el.id == null ? '' : el.id) + '" />')
 	        .append('<input type="hidden" name="purchase_order[purchase_order_line_items_attributes][' + i + '][_destroy]" value="' + el._destroy + '" />')
 	        .append('<input type="hidden" name="purchase_order[purchase_order_line_items_attributes][' + i + '][purchase_order_line_number]" value="' + el.purchase_order_line_number + '" />')	        
 	        .append(

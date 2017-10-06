@@ -1,0 +1,64 @@
+<div id="return_authorization" class="col-md-12">
+    
+  <table class="table table-bordered table-striped">
+    
+    <tr>
+      <th width="10%">ID</th>
+      <th width="10%">Created At</th>
+      <th width="10%">Amount</th>
+      <th width="10%">Order Number</th>
+      <th width="10%">Customer Name</th>
+      <th width="10%">Reviewer Name</th>
+      <th width="20%">Reason</th>
+      <th width="20%">Notes</th>
+      <th width="10%">Status</th>
+    </tr>
+    
+    <tr>
+      <td><%= @return_authorization.id %></td>
+      <td><%= @return_authorization.created_at %></td>
+      <td><%= number_to_currency(@return_authorization.amount) %></td>
+      <td><%= @return_authorization.order_number %></td>
+      <td><%= @return_authorization.customer_name %></td>
+      <td><%= @return_authorization.reviewer&.display_name %></td>
+      <td><%= @return_authorization.reason %></td>
+      <td><%= @return_authorization.notes %></td>
+      <td><%= @return_authorization.status %></td>
+    </tr>
+    
+  </table>
+  
+  <div class="col-md-12">
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr class="line_items">
+          <th colspan="4" class="bg-primary">Line Item Returns</th>
+        </tr>
+        <tr>
+          <th style="width:40%">Item Number</th>
+          <th style="width:20%">Quantity returned</th>
+          <th style="width:20%">Quantity remaining</th>
+          <th style="width:20%">Bin</th>
+        </tr>
+      </thead>
+      <tbody id="children-sortable">
+        <% @return_authorization.line_item_returns.each do |lir| %>
+          <tr>
+            <td><%= lir.order_line_item.item_number %></td>
+            <td><%= lir.quantity %></td>
+            <td><%= lir.order_line_item.actual_quantity - lir.order_line_item.quantity_returned %></td>
+            <td><%= lir.bin&.name %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+  </div>
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      
+    </div>
+  </div>
+</div

@@ -12,7 +12,18 @@ class Order < ActiveRecord::Base
   scope :has_account, -> () { where.not(:account_id => nil) }
   scope :no_account, -> () { where(:account_id => nil) }
   scope :by_date_range, -> (from, to) { where("due_date >= ? AND due_date <= ?", from, to) }
-  scope :lookup, -> (q) { joins({:account => [:group]}, {:order_line_items => [:item]}).where("lower(orders.number) like (?) or lower(orders.po_number) like (?) or lower(accounts.name) like (?) or lower(items.number) like (?) or lower(items.name) like (?) or lower(items.description) like (?) or lower(groups.name) like (?)", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%") }
+  scope :lookup, lambda { |q|
+    includes(
+      :account => [:group],
+      :order_line_items => [:item]
+    ).where(
+      'lower(orders.number) like (?) or lower(orders.po_number) like (?) or '\
+      'lower(accounts.name) like (?) or lower(items.number) like (?) or '\
+      'lower(items.name) like (?) or lower(items.description) like (?) or lower(groups.name) like (?)',
+      "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%",
+      "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%"
+    ).references(:account, :group, :order_line_items, :item)
+  }
   # scope :shipped, -> () { where(:id => OrderLineItem.shipped.pluck(:order_id).uniq) }
   # scope :fulfilled, -> () { where(:id => LineItemFulfillment.pluck(:invoice_id).unpaid.uniq) }
   # scope :fulfilled, -> () { where(:id => OrderLineItem.fulfilled.pluck(:order_id).uniq) }
@@ -27,6 +38,7 @@ class Order < ActiveRecord::Base
   has_one :order_tax_rate, :dependent => :destroy, :inverse_of => :order
   has_one :order_discount_code
   has_one :discount_code, through: :order_discount_code, source: :code
+  has_many :return_authorizations
   has_many :order_line_items, :dependent => :destroy, :inverse_of => :order
   has_many :items, :through => :order_line_items
   has_many :shipments, :through => :order_line_items
@@ -66,9 +78,7 @@ class Order < ActiveRecord::Base
     end
 
     before_transition any => :awaiting_shipment do |order|
-      if !order.terms_payment?
-        order.create_full_invoice
-      end
+      order.create_full_invoice unless order.terms_payment?
     end
 
     event :submit do

@@ -2,7 +2,7 @@ class CreditCardPayment < Payment
   require 'active_merchant/billing/rails'
 
   belongs_to :credit_card
-  
+
   def authorize
     if credit_card_id
       response = GATEWAY.authorize(amount * 100, credit_card.service_card_id, {payment_method_token: true})
@@ -20,7 +20,7 @@ class CreditCardPayment < Payment
       false
     end
   end
-  
+
   def capture
     if credit_card_id && authorization_code
       transaction = GATEWAY.capture(amount * 100, authorization_code)
@@ -35,7 +35,7 @@ class CreditCardPayment < Payment
       false
     end
   end
-  
+
   def process
     if credit_card_id
       response = GATEWAY.authorize(amount * 100, credit_card.service_card_id, {payment_method_token: true})
@@ -54,4 +54,14 @@ class CreditCardPayment < Payment
     end
   end
 
+  def refund(sum)
+    return false unless credit_card_id && captured
+    response = GATEWAY.refund(sum * 100, authorization_code)
+    if response.success?
+      update_columns(refunded: sum)
+    else
+      errors.add(:base, 'refund failed.') && return
+      false
+    end
+  end
 end

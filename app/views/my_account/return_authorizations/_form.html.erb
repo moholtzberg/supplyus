@@ -1,0 +1,212 @@
+<table class="table table-bordered">
+  
+  <tr class="line-item-returns-labels">
+    <th>Item Name/Description</th>
+    <th>Quantity To Return</th>
+  <tr>
+      
+  <tr class="line-item-returns-form">
+    <td><%= select_tag :order_line_item_id, options_for_select(@return_authorization.order.order_line_items.select{|li| (li.actual_quantity.to_i - li.quantity_returned.to_i) > 0}.map {|li| ["#{li.item.number} / #{li.item.name}", li.id ] }), {include_blank: true, class: 'form-control'} %></td>
+    <td><%= text_field_tag :quantity, nil, class: 'form-control', disabled: true %></td>
+    <td><%= button_tag "Add Item", class: "btn btn-primary add-item" %></td>
+  </tr>
+
+</table>
+
+<fieldset>	
+
+	<div id="reason" class="col-md-12">
+		<%= f.label :reason, class: "control-label" %>
+		<%= f.text_area :reason, {rows: 5, class: "form-control"} %>
+	</div>
+	
+	<%= f.hidden_field :order_id %>	
+	
+</fieldset>
+
+<script>
+  $(function() {
+
+    var FORMBUILDER = FORMBUILDER || {};
+
+    FORMBUILDER.return_line_items = <%= raw @return_authorization.order.order_line_items.map{ |li| {id: li.id, name: "#{li.item.number} / #{li.item.name}", quantity: li.actual_quantity.to_i - li.quantity_returned.to_i, remaining_quantity: li.actual_quantity.to_i - li.quantity_returned.to_i, item_id: li.item_id} }.to_json %>;
+    FORMBUILDER.line_item_returns = [];
+    FORMBUILDER.current_line_item_return = {};
+
+    FORMBUILDER.actions = {
+
+      init: function(){
+
+        FORMBUILDER.actions.findLineItem(line_item_return);
+        FORMBUILDER.actions.addItem();
+        FORMBUILDER.actions.removeItem();
+        FORMBUILDER.actions.validateForm();
+        FORMBUILDER.actions.fieldValid(key);
+	      FORMBUILDER.actions.recalculateRemainingQty();
+        FORMBUILDER.actions.clearErrors();
+        FORMBUILDER.actions.renderList();
+        FORMBUILDER.actions.resetForm();
+        FORMBUILDER.actions.updateItemSelectOptions();
+        FORMBUILDER.actions.updateCurrentItem();
+        FORMBUILDER.actions.updateQuantityToReturn();
+
+      },
+
+      findLineItem: function(line_item_return){
+      	return FORMBUILDER.return_line_items.filter(function(item){return item.id == line_item_return.order_line_item_id})[0]
+      },
+
+      findBin: function(line_item_return){
+      	return FORMBUILDER.bins.filter(function(item){return item.id == line_item_return.bin_id})[0]
+      },
+
+      addItem: function(){
+      	FORMBUILDER.actions.clearErrors();
+      	if (FORMBUILDER.actions.validateForm()) {
+	        FORMBUILDER.line_item_returns.push($.extend({}, FORMBUILDER.current_line_item_return));
+	        FORMBUILDER.actions.recalculateRemainingQty();
+	        FORMBUILDER.actions.resetForm();
+	        FORMBUILDER.actions.renderList();
+      	}
+      },
+
+      removeItem: function(e){
+      	var index = parseInt($(e.target).closest('tr').data( "index" ));
+      	FORMBUILDER.line_item_returns.splice(index, 1);
+	      FORMBUILDER.actions.recalculateRemainingQty();
+	      FORMBUILDER.actions.resetForm();
+	      FORMBUILDER.actions.renderList();
+      },
+
+      validateForm: function(){
+      	var valid = true;
+      	Object.keys(FORMBUILDER.current_line_item_return).forEach(function(key){
+      		if (!FORMBUILDER.actions.fieldValid(key)) { 
+      			$('.line-item-returns-form #' + key).parent().addClass('has-error');
+      			valid = false;
+      		}
+      	})
+      	return valid;
+      },
+
+      fieldValid: function(key) {
+      	var value = FORMBUILDER.current_line_item_return[key]
+      	switch(key) {
+      		case 'order_line_item_id':
+      			return value
+      			break;
+      		case 'quantity':
+      			return value && value > 0 && value <= FORMBUILDER.actions.maxQuantity()
+      			break;
+      	}
+      },
+
+      recalculateRemainingQty: function() {
+      	FORMBUILDER.return_line_items.forEach(function(el) {
+      		el.remaining_quantity = el.quantity - FORMBUILDER.line_item_returns.filter(function(item){return item.order_line_item_id == el.id}).reduce(function(acc, lis) {
+  					return acc + parseInt(lis.quantity);
+					}, 0);
+      	})
+      },
+
+      clearErrors: function() {
+      	$('.line-item-returns-form td').removeClass('has-error');
+      },
+
+      renderList: function() {
+      	$('tr.lir').remove();
+      	FORMBUILDER.line_item_returns.forEach(function(el, i) {
+	        var item = document.createElement("tr");
+	        item.className = "lir";
+	        item.setAttribute('data-index', i)
+	        $(item)
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<input type="hidden" name="return_authorization[line_item_returns_attributes][' + i + '][order_line_item_id]" value="' + el.order_line_item_id + '" />')
+	          )
+	          .append(
+	            FORMBUILDER.actions.findLineItem(el).name
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<input type="hidden" name="return_authorization[line_item_returns_attributes][' + i + '][quantity]" value="' + el.quantity + '" />')
+	          )
+	          .append(
+	            el.quantity
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<a href="#" class="remove-item"><i class="fa fa-remove"></i></a>')
+	          )
+	        )
+	        $('.line-item-returns-labels').after(item)
+      	})
+		    $('.remove-item').click(function(e){
+		    	e.stopPropagation();
+		    	e.preventDefault();
+		      FORMBUILDER.actions.removeItem(e);
+		    })
+      },
+
+      resetForm: function() {
+      	$('.line-item-returns-form :input').val('');
+      	FORMBUILDER.actions.updateCurrentItem();
+      	FORMBUILDER.actions.updateItemSelectOptions();
+      },
+
+      updateItemSelectOptions: function() {
+      	$el = $(':input#order_line_item_id')
+      	$el.find('option:not([value=""])').remove()
+      	FORMBUILDER.return_line_items.filter(function(item){return item.remaining_quantity > 0}).forEach(function(el) {
+	        var item = document.createElement("option");
+	        item.setAttribute('value', el.id);
+	        item.innerHTML = el.name;
+	        $el.append(item);
+	      });
+      },
+
+      updateCurrentItem: function() {
+      	var line_item_return = FORMBUILDER.current_line_item_return
+        line_item_return.order_line_item_id = $(':input#order_line_item_id').val();
+        line_item_return.quantity = $(':input#quantity').val();
+      },
+
+      updateQuantityToReturn: function() {
+        $(':input#quantity').val(FORMBUILDER.actions.maxQuantity()).change();
+      },
+
+      maxQuantity: function() {
+        var line_item = FORMBUILDER.actions.findLineItem(FORMBUILDER.current_line_item_return);
+        var line_item_qty = line_item.remaining_quantity
+      	return line_item_qty
+      }
+
+    }
+
+    $('.add-item').click(function(e){
+    	e.stopPropagation();
+    	e.preventDefault();
+      FORMBUILDER.actions.addItem();
+    })
+
+    $('.line-item-returns-form :input').change(function(){
+      FORMBUILDER.actions.updateCurrentItem();
+      FORMBUILDER.actions.clearErrors()
+    	switch(this.id) {
+    		case 'order_line_item_id':
+		    	if ($(this).val()) {
+		    		$(':input#quantity').prop( "disabled", false );
+		    		FORMBUILDER.actions.updateQuantityToReturn();
+		    	} else {
+		    		$(':input#quantity').prop( "disabled", true );
+		    	}
+    			break;
+    	}
+    })
+  });
+</script>

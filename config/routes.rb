@@ -144,7 +144,7 @@ Rails.application.routes.draw do
       resources :prices
       resources :price_imports
       resources :purchase_orders do
-        collection do 
+        collection do
           post :datatables
           get :line_items_from_order
         end          
@@ -166,7 +166,16 @@ Rails.application.routes.draw do
           get :vendor_prices
         end
       end
-      resources :return_authorizations
+      resources :return_authorizations, except: [:edit, :update] do
+        member do
+          get :set_bins
+          get :set_amount
+          put :receive
+          put :refund
+          put :confirm
+          put :cancel
+        end
+      end
       resources :roles do
         collection do
           post :add_role_to_user
@@ -211,7 +220,8 @@ Rails.application.routes.draw do
         patch :details, action: :update_details
       end
     end
-    resources :orders, param: :order_number, only: [:index, :show]
+    resources :orders, param: :order_number, only: [:index, :show, :return]
+    resources :return_authorizations, only: [:new, :create]
   end
 
   get   "checkout/address" => "checkout#address"

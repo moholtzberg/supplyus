@@ -6,6 +6,7 @@
   <td><%= number_to_currency(payment.amount) %></td>
   <td><%= number_to_currency(payment.applied_amount) %></td>
   <td><%= number_to_currency(payment.unapplied_amount) %></td>
+  <td><%= number_to_currency(payment.refunded) %></td>
   <td><%= payment.number %></td>
   <td>
     <% if !payment.success? %>

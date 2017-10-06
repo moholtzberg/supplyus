@@ -2,15 +2,15 @@ class MyAccount::OrdersController < ApplicationController
   layout 'shop'
   respond_to :html, :json
   before_filter :find_categories
+  before_filter :set_order, only: [:show]
   skip_before_filter :check_authorization
 
   def index
-    authorize! :read, Order
     @orders = Order.where(account: current_user.account).paginate(:page => params[:page], :per_page => 25)
   end
 
   def show
-    @order = Order.find_by(:number => params[:order_number])
+    authorize! :read, @order
     @shipments = Shipment.where(:order_id => @order.id)
     if current_user.my_account_ids.include?(@order.account_id)
       respond_to do |format|
@@ -24,8 +24,14 @@ class MyAccount::OrdersController < ApplicationController
     end
   end
 
+  private
+
+  def set_order
+    @order = Order.find_by(:number => params[:order_number])
+  end
+
   def find_categories
-     @menu = Category.is_parent.is_active.show_in_menu
+    @menu = Category.is_parent.is_active.show_in_menu
   end  
 
 end

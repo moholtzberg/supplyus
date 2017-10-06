@@ -1,30 +1,25 @@
 class OrdersController < ApplicationController
-  layout "admin"
-  helper_method :sort_column, :sort_direction
-  before_action :set_order, only: [:show, :invoice, :resend_order, :resend_invoice, :edit, :update, :destroy, :lock, :approve, :submit, :cancel, :credit_hold, :credit_hold_remove]
+  layout 'admin'
+  before_action :set_order, only:
+    %i[show invoice resend_order resend_invoice edit update destroy
+       lock approve submit cancel credit_hold credit_hold_remove]
 
   def datatables
     authorize! :read, Order
-    render json: OrderDatatable.new(view_context, { from: params[:from] })
+    render json: OrderDatatable.new(view_context, from: params[:from])
   end
 
   def autocomplete
     authorize! :read, Order
-    
-    @orders = Order.is_submitted.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).unshipped
-    
-    if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
-    else
+    @orders = Order.is_submitted.not_canceled.includes(
+      { account: [:group], order_payment_applications: [:payment],
+        order_line_items: [:line_item_shipments, :line_item_fulfillments] },
+      :order_tax_rate
+    )
+    unless current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
       @orders = @orders.where(:sales_rep_id => current_user.id)
     end
-    
-    if params[:term].present?
-      puts "ORDERS - LOOKUP"
-      @orders = @orders.lookup(params[:term]) if params[:term].present?
-    end
-    
-    @orders = @orders.order(sort_column + " " + sort_direction)
-    @orders = @orders.paginate(:page => params[:page], :per_page => 20)
+    @orders = @orders.lookup(params[:term]) if params[:term].present?
     render :json => @orders.map(&:number)
   end
 
@@ -168,7 +163,8 @@ class OrdersController < ApplicationController
   end
   
   def returnable_items
-    @returnable_items = Order.where(number: params[:order_number]).first
+    render :json => Order.find_by(number: params[:order_number])
+      .order_line_items.map(&:to_form_hash).to_json
   end
 
   private
@@ -194,17 +190,5 @@ class OrdersController < ApplicationController
 
   def set_order
     @order = Order.find(params[:id])
-  end
-
-  def sort_column
-    related_columns = Order.reflect_on_all_associations(:belongs_to).map {|a| a.klass.column_names.map {|col| "#{a.klass.table_name}.#{col}"}}
-    columns = Order.column_names.map {|a| "orders.#{a}" }
-    columns.push(related_columns).flatten!.uniq!
-    columns.include?(params[:sort]) ? params[:sort] : "orders.id"
-  end
-
-  def sort_direction
-    %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
-  end
-  
+  end  
 end
