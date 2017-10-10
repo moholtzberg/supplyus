@@ -1,6 +1,6 @@
 require 'sidekiq-scheduler'
 
-class RemoveDuplicateItemVendorPrice
+class RemoveDuplicateItemVendorPriceWorker
   
   include Sidekiq::Worker
   
