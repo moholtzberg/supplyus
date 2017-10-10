@@ -1,0 +1,8 @@
+<% if @schedule.errors.any? %>
+  $(".modal-content").html("<%= j render :template => 'schedules/edit.html', :format => 'html' %>")
+<% else %>
+  $('#myModal').modal("hide")
+  $('body').removeClass('modal-open')
+  $('.modal-backdrop').remove()
+  $("#schedules").replaceWith("<%= j render :template => 'schedules/index.html', :format => 'html' %>")
+<% end %>

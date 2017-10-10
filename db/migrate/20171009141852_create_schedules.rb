@@ -4,9 +4,10 @@ class CreateSchedules < ActiveRecord::Migration
       t.text :cron
       t.text :worker
       t.text :name
-      t.text :arguments
+      t.text :arguments, array: true, default: []
       t.text :description
       t.boolean :enabled, default: true
+      t.timestamps
     end
   end
 end

@@ -28,6 +28,8 @@
 //= require select2
 //= require summernote
 //= require bootstrap-datepicker
+//= require jqCron
+//= require jqCron.en
 //= require_tree .
 
 // Create Recurring object first.

@@ -741,12 +741,14 @@ ActiveRecord::Schema.define(version: 20171009141852) do
   add_index "roles", ["name"], name: "index_roles_on_name", using: :btree
 
   create_table "schedules", force: :cascade do |t|
-    t.text    "cron"
-    t.text    "worker"
-    t.text    "name"
-    t.text    "arguments"
-    t.text    "description"
-    t.boolean "enabled",     default: true
+    t.text     "cron"
+    t.text     "worker"
+    t.text     "name"
+    t.text     "arguments",   default: [],   array: true
+    t.text     "description"
+    t.boolean  "enabled",     default: true
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "settings", force: :cascade do |t|

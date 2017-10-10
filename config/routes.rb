@@ -1,5 +1,7 @@
+require 'sidekiq/web'
+require 'sidekiq-scheduler/web'
 Rails.application.routes.draw do
-  
+  mount Sidekiq::Web => '/sidekiq'
   authenticate :user do
     scope "/admin" do
       resource :home, :controller => :home do 
@@ -183,6 +185,7 @@ Rails.application.routes.draw do
         end
       end
       resources :sales_reps
+      resources :schedules
       resources :settings
       resources :static_pages
       resources :subscriptions do
