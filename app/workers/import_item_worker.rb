@@ -1,7 +1,7 @@
-class ImportItemWorker
-  
+class ImportItemWorker  
   include Sidekiq::Worker
-  
+  include JobLogger
+
   # def perform(file_path)
   #   puts "********** Start Importing the items *********"
   #   item_import = ItemImport.new

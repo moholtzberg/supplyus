@@ -1,8 +1,13 @@
 class Subscription < ActiveRecord::Base
-
-  FREQUENCIES = ['month', 'quarter']
-  PAYMENT_METHODS = ['check', 'credit_card', 'terms']
-
+  FREQUENCIES = %w[month quarter]
+  PAYMENT_METHODS = %w[check credit_card terms]
+  scope :with_today_orders, lambda {
+    includes(:orders).where(
+      orders: {
+        created_at: Date.today.beginning_of_day..Date.today.end_of_day
+      }
+    )
+  }
   belongs_to :account
   belongs_to :ship_to_address, foreign_key: :address_id, class_name: Address
   belongs_to :bill_to_address, foreign_key: :bill_address_id, class_name: Address
@@ -37,7 +42,35 @@ class Subscription < ActiveRecord::Base
   def self.lookup(word)
     includes(:account, :item).where('lower(accounts.name) like (?) or lower(items.number) like (?)', "%#{word.downcase}%", "%#{word.downcase}%").references(:account, :item)
   end
-  
+
+  def self.trigger_today
+    where.not(id: with_today_orders.ids)
+         .where(state: 'active').joins(:account).where(
+           "(frequency = 'week' AND subscription_week_day IN (?)) OR "\
+           "(frequency = 'month' AND subscription_month_day IN (?)) OR "\
+           "(frequency = 'quarter' AND subscription_quarter_day IN (?))",
+           days_of_week, days_of_month, days_of_quarter
+         )
+  end
+
+  def self.days_of_week
+    [(Date.today + 1 - Date.today.beginning_of_week).to_i]
+  end
+
+  def self.days_of_month
+    (1..31).to_a.select do |i|
+      i > Date.today.all_month.to_a.length ||
+        i == Date.today + 1 - Date.today.beginning_of_month
+    end
+  end
+
+  def self.days_of_quarter
+    (1..92).to_a.select do |i|
+      i > Date.today.all_quarter.to_a.length ||
+        i == Date.today + 1 - Date.today.beginning_of_quarter
+    end
+  end
+
   def check_payment_method
     self.credit_card_id = nil if self.payment_method == 'check' || self.payment_method == 'terms'
   end

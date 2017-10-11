@@ -1,9 +1,9 @@
 require 'sidekiq-scheduler'
 
-class SwapItemsOnOrderWorker
-  
+class SwapItemsOnOrderWorker  
   include Sidekiq::Worker
-  
+  include JobLogger
+
   def perform(order_id)
     order = Order.find(order_id)
     if order.pending?
@@ -14,26 +14,26 @@ class SwapItemsOnOrderWorker
             price_to_beat = line_item.price
             best_match = line_item.item_id
             quantity = line_item.actual_quantity
-            puts "Quantity -> #{quantity}"
+            add_log "Quantity -> #{quantity}"
             new_best_match = nil
             subs.each do |sub|
               if sub.replacement_item.actual_price(order.account_id) < price_to_beat
                 price_to_beat = sub.replacement_item.actual_price(order.account_id)
                 new_best_match = sub.replacement_item
                 quantity = (sub.original_uom_qty.to_i * line_item.actual_quantity.to_i).to_i / sub.replacement_uom_qty.to_i
-                puts "-> Quantity -> #{quantity}"
+                add_log "-> Quantity -> #{quantity}"
                 if quantity < 1
                   quantity = 1
                 end
               end
             end
-            puts "BestMatch -> #{Item.find(best_match).item_vendor_prices.map(&:price).min}"
-            puts "NewBest Match -> #{new_best_match}"
+            add_log "BestMatch -> #{Item.find(best_match).item_vendor_prices.map(&:price).min}"
+            add_log "NewBest Match -> #{new_best_match}"
             if Item.find(new_best_match).actual_cost_price <= Item.find(best_match).actual_cost_price
               line_item.quantity_canceled = line_item.quantity
               new_line_item = order.order_line_items.new(item_id: new_best_match.id, quantity: quantity, price: new_best_match.actual_price(order.account_id))
-              puts "-------> new_line #{new_line_item.inspect}"
-              puts "-------> old_line #{line_item.inspect}"
+              add_log "-------> new_line #{new_line_item.inspect}"
+              add_log "-------> old_line #{line_item.inspect}"
               line_item.save
               new_line_item.save
             end
@@ -42,5 +42,4 @@ class SwapItemsOnOrderWorker
       end
     end
   end
-  
 end

@@ -1,6 +1,6 @@
-class EssendantXmlImportWorker
-  
+class EssendantXmlImportWorker  
   include Sidekiq::Worker
+  include JobLogger
   sidekiq_options :backtrace => true
   
   def perform(id)
@@ -8,7 +8,7 @@ class EssendantXmlImportWorker
     item.update_columns(:updated_at => Time.now)
     start = Time.now
   
-    puts "START >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> #{id}"
+    add_log "START >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> #{id}"
   
     current_item_id = id
   
@@ -22,14 +22,14 @@ class EssendantXmlImportWorker
         item.update_attributes(:active => false)
       end
     
-      puts "No such file #{item.number}.xml"
+      add_log "No such file #{item.number}.xml"
       return false
     else
       result = current_item_id.even?
       # self.item_properties.delete_all
 
       ItemProperty.delete_all(:item_id => item.id)
-      puts "deleted item properties"
+      add_log "deleted item properties"
       unless noko.xpath("//us:GlobalItem//us:GTINItem").nil?
         ItemProperty.create(item_id: current_item_id, key: "gtin_item", value: noko.xpath("//us:GlobalItem//us:GTINItem").text, active: true, :type => "Property")
       end
@@ -89,7 +89,7 @@ class EssendantXmlImportWorker
       noko.xpath("//oa:Specification//oa:Property//oa:NameValue").each_with_index do |k,v, index|
         ItemProperty.create(:item_id => current_item_id, :key => k.attributes["name"], :value => k.text, :order => index, :active => true)
       end
-      puts "matchbook starting"
+      add_log "matchbook starting"
       noko.xpath("//us:Matchbook").each_with_index.map do |k, index|
         ItemProperty.create(:item_id => item.id, :key => k.attributes["name"], :value => k.text, :order => index, :active => true)
         rel_make    = noko.xpath("//us:Matchbook")[index].element_children[0].element_children[0].text
@@ -110,7 +110,7 @@ class EssendantXmlImportWorker
         ItemCategory.find_or_create_by(:item_id => current_item_id, :category_id => imodel.id)
       end
     
-      # (0..(noko.xpath("//us:Matchbook").count)-1).each {|i| puts noko.xpath("//us:Matchbook//us:Device")[i] }
+      # (0..(noko.xpath("//us:Matchbook").count)-1).each {|i| add_log noko.xpath("//us:Matchbook//us:Device")[i] }
     
       brand = Brand.find_by(:prefix => noko.css("[agencyRole=Prefix_Number]").text.gsub(/\s+/, ""))
       brand = brand.id unless brand.nil?
@@ -168,12 +168,12 @@ class EssendantXmlImportWorker
         image_array.push noko.xpath("//us:SkuGroupImage").text
       end
       
-      puts image_array.inspect
+      add_log image_array.inspect
 
       image_array.each {|a| a.strip! if a.respond_to? :strip! }.uniq.each_with_index.map do |single_image, pos|
 
         image = single_image.tr(" ", "")
-        puts "-------image --> #{image}"
+        add_log "-------image --> #{image}"
         if image
           item_images = item.images
           unless Image.find_by(item_id: id, attachment_file_name: image)
@@ -194,7 +194,7 @@ class EssendantXmlImportWorker
       end
     
     end
-    puts "FINISH TIME ELAPSED -> #{Time.now - start} <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< #{id}"
+    add_log "FINISH TIME ELAPSED -> #{Time.now - start} <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< #{id}"
     result
   end
   
