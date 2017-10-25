@@ -1,0 +1,50 @@
+version: "3.2"
+services:
+  redis:
+    restart: always
+    image: redis
+    command: redis-server
+    volumes:
+      - redis:/data
+    expose:
+      - "6379"
+  sidekiq:
+    build: .
+    command: bundle exec sidekiq
+    volumes:
+      - .:/recurring
+    links:
+      - db
+      - redis
+  db:
+    restart: always
+    image: postgres
+    volumes:
+      - postgresql-data:/var/lib/postgresql/data
+  solr:
+    build: .
+    expose:
+      - "80"
+    volumes:
+      - .:/recurring
+    links:
+      - db
+    command: bundle exec rake sunspot:solr:run
+  web:
+    build: .
+    command: rails server -p 3000 -b '0.0.0.0'
+    volumes:
+      - .:/recurring
+    ports:
+      - "3000:3000"
+    links:
+      - solr
+      - db
+      - redis
+    stdin_open: true
+    tty: true
+volumes:
+  postgresql-data:
+    external: true
+  redis:
+    external: true

@@ -1,4 +1,4 @@
-if Rails.env == "development"
+if Rails.env == "development" || Rails.env == "staging"
   ActiveMerchant::Billing::BraintreeGateway.wiredump_device = File.open(Rails.root.join("log", "active_merchant.log"), "a+")
   ActiveMerchant::Billing::BraintreeGateway.wiredump_device.sync = true
   ActiveMerchant::Billing::Base.mode = :test
