@@ -62,7 +62,12 @@ class Role < ActiveRecord::Base
           :machine_model,
           :equipment,
           :equipment_alert,
-          :report
+          :report,
+          :discount_code,
+          :bin,
+          :warehouse,
+          :return_authorization,
+          :schedule
   ]
 
 end

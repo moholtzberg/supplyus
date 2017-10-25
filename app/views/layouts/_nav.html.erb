@@ -68,6 +68,14 @@
 			<% if a.include?("subscription") %>
 			<li class="<% if current_page?(:subscriptions) %>active<% end %>"><%= link_to "Subscriptions", subscriptions_path %></li>
 			<% end %>
+
+			<% if a.include?("return_authorization") %>
+			<li class="<% if current_page?(:return_authorizations) %>active<% end %>"><%= link_to "Return Authorizations", return_authorizations_path %></li>
+			<% end %>
+
+			<% if a.include?("discount_code") %>
+			<li class="<% if current_page?(:discount_codes) %>active<% end %>"><%= link_to "Discount Codes", discount_codes_path %></li>
+			<% end %>
 		</ul>
 	</li>
 	<% end %>
@@ -106,6 +114,15 @@
 			<% if a.include?("inventory") %>
 			<li class="<% if current_page?(:inventories) %>active<% end %>"><%= link_to "Inventory", inventories_path %></li>
 			<% end %>
+
+			<% if a.include?("bin") %>
+			<li class="<% if current_page?(:bins) %>active<% end %>"><%= link_to "Bins", bins_path %></li>
+			<% end %>
+
+			<% if a.include?("warehouse") %>
+			<li class="<% if current_page?(:warehouses) %>active<% end %>"><%= link_to "Warehouses", warehouses_path %></li>
+			<% end %>
+
 		</ul>
 	</li>
 	<% end %>
@@ -138,8 +155,8 @@
 	
 	<% if a.include?("report") %>
 		<li>
-			<a href="#settings_menu" data-toggle="collapse">Reports <i class="fa fa-caret-down pull-right"></i></a>
-			<ul id="settings_menu" class="sub-menu list-group collapse">
+			<a href="#reports_menu" data-toggle="collapse">Reports <i class="fa fa-caret-down pull-right"></i></a>
+			<ul id="reports_menu" class="sub-menu list-group collapse">
 				<li class="<% if current_page?(:sales_tax_reports) %>active<% end %>"><%= link_to "Sales Tax Report", sales_tax_reports_path %></li>
 				<li class="<% if current_page?(:item_usage_reports) %>active<% end %>"><%= link_to "Item Usage Report", item_usage_reports_path %></li>
 				<li class="<% if current_page?(:ar_aging_reports) %>active<% end %>"><%= link_to "AR Aging Report", ar_aging_reports_path %></li>
@@ -151,6 +168,7 @@
 		<li>
 			<a href="#settings_menu" data-toggle="collapse">Settings <i class="fa fa-caret-down pull-right"></i></a>
 			<ul id="settings_menu" class="sub-menu list-group collapse">
+				<li class="<% if current_page?(:schedules) %>active<% end %>"><%= link_to "Schedules", schedules_path %></li>
 				<li class="<% if current_page?(:settings) %>active<% end %>"><%= link_to "General Settings", settings_path %></li>
 				<li class="<% if current_page?(:tax_rates) %>active<% end %>"><%= link_to "Tax Rates", tax_rates_path %></li>
 				<% if a.include?("role") %>
