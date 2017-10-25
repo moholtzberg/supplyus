@@ -11,6 +11,7 @@
 // about supported directives.
 //
 //= require jquery
+//= require jquery.auto-complete
 // require jquery-ui/autocomplete
 //= require jquery_ujs
 //= require jquery.remotipart
