@@ -9,7 +9,7 @@ class PaymentsController < ApplicationController
     respond_to do |format|
       format.html
       format.js
-      format.json {render :json => @payments.map(&:number)}
+      format.json { render :json => @payments.map(&:number) }
     end
   end
   
@@ -19,13 +19,12 @@ class PaymentsController < ApplicationController
   
   def create
     @payment = Payment.create(payment_params)
-    @payment = @payment.becomes @payment.payment_type
+    @payment = @payment.becomes @payment.payment_type.constantize
     @payment.authorize
     udpate_index
   end
 
-  def edit
-  end
+  def edit; end
 
   def update
     @payment.update_attributes(payment_params)
