@@ -1,22 +1,23 @@
 class DiscountCodeRulesController < ApplicationController
-  layout "admin"
+  layout 'admin'
   before_action :set_discount_code_rule, only: [:destroy]
   load_and_authorize_resource
-  
+
   def new
     @discount_code_rule = DiscountCodeRule.new(discount_code_rule_params)
   end
-  
+
   def create
-    @discount_code = DiscountCode.find(discount_code_rule_params[:discount_code_id])
+    byebug
     @discount_code_rule = DiscountCodeRule.create(discount_code_rule_params)
+    @discount_code = @discount_code_rule.code
   end
-  
+
   def destroy
     @discount_code = @discount_code_rule.code
     @discount_code_rule.destroy!
   end
-  
+
   private
 
   def set_discount_code_rule
@@ -24,6 +25,9 @@ class DiscountCodeRulesController < ApplicationController
   end
 
   def discount_code_rule_params
-    params.require(:discount_code_rule).permit(:quantity, :amount, :requirable_id, :requirable_type, :discount_code_id)
+    params.require(:discount_code_rule).permit(
+      :quantity, :amount, :requirable_id, :requirable_type, :discount_code_id,
+      :user_appliable_id, :user_appliable_type
+    )
   end
 end

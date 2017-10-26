@@ -198,4 +198,12 @@ class OrderLineItem < ActiveRecord::Base
       item_id: item_id
     }
   end
+
+  def self.total_qty
+    where(nil).sum('(COALESCE(quantity,0) - COALESCE(quantity_canceled,0))')
+  end
+
+  def self.total_price
+    where(nil).sum('(COALESCE(quantity,0) - COALESCE(quantity_canceled,0)) * price')
+  end
 end
