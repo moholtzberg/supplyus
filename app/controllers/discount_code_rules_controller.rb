@@ -8,7 +8,6 @@ class DiscountCodeRulesController < ApplicationController
   end
 
   def create
-    byebug
     @discount_code_rule = DiscountCodeRule.create(discount_code_rule_params)
     @discount_code = @discount_code_rule.code
   end
