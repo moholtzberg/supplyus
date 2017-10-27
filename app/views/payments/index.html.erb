@@ -4,7 +4,7 @@
 	<table class="table table-bordered table-condensed">
 		
 		<tr>
-			<td colspan="12">
+			<td colspan="13">
 				<form id="searchBox" accept-charset="UTF-8" action="<%= payments_path(search_params.except(:page)) %>" method="get" role="search" data-remote="true">
 					<input type="text" class="form-control" id="term" name="term" placeholder="Search for payment" value="<%= params[:term] %>">
 				</form>
@@ -14,7 +14,7 @@
 		<tr>
 			<th><%= sortable "payments.id", "ID" %></th>
 			<th><%= sortable "accounts.name", 'Account' %></th>
-			<th><%= sortable "payments.date", "Date" %></th>
+			<th><%= sortable "payments.created_at", "Date" %></th>
 			<th><%= sortable "payments.payment_type", 'Payment Type' %></th>
 			<th><%= sortable "payments.amount", 'Payment Amount' %></th>
 			<th>Applied Amount</th>

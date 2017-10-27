@@ -64,4 +64,8 @@ class CreditCardPayment < Payment
       false
     end
   end
+
+  def authorized?
+    authorization_code
+  end
 end

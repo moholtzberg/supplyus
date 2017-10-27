@@ -3,7 +3,7 @@ class Payment < ActiveRecord::Base
   self.inheritance_column = :payment_type
   belongs_to :account
   belongs_to :payment_method
-  has_many :order_payment_applications
+  has_many :order_payment_applications, inverse_of: :payment
   has_many :orders, through: :order_payment_applications
   has_many :transactions
   accepts_nested_attributes_for :order_payment_applications
@@ -13,7 +13,7 @@ class Payment < ActiveRecord::Base
   validate :amount_refunded
   
   def self.lookup(word)
-    includes(:account).where('lower(accounts.name) like (?) or lower(payments.amount) like (?)'\
+    includes(:account).where('lower(accounts.name) like (?) or cast( payments.amount as varchar(20)) like (?)'\
       ' or lower(payments.check_number) like (?) or lower(payments.authorization_code) like (?)',
       "%#{word.downcase}%", "%#{word.downcase}%", "%#{word.downcase}%", "%#{word.downcase}%").references(:account)
   end

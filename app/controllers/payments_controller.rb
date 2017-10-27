@@ -18,9 +18,15 @@ class PaymentsController < ApplicationController
   end
 
   def create
-    @payment = Payment.create(payment_params)
+    @payment = Payment.new(payment_params)
     @payment = @payment.becomes @payment.payment_type.constantize
-    @payment.authorize
+    @payment.order_payment_applications.build(
+      applied_amount: @payment.amount,
+      order_id: params[:payment][:order_payment_application][:order_id]
+    )
+    if @payment.valid? && @payment.authorize
+      @payment.save
+    end
     update_index
   end
 
@@ -52,7 +58,7 @@ class PaymentsController < ApplicationController
   def payment_params
     params.require(:payment).permit(
       :amount, :account_name, :payment_method_id, :credit_card_id,
-      :check_number, :date
+      :check_number, :date, :payment_type
     )
   end
 

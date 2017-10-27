@@ -402,6 +402,12 @@ class Order < ActiveRecord::Base
       total_paid
     }
   end
+
+  def unauthorized_payment_amount
+    remaining = total
+    self.order_payment_applications.includes(:payment).each {|a| remaining = remaining - a.applied_amount if a.payment.authorized? }
+    remaining
+  end
   
   def paid
     Rails.cache.fetch([self, "#{self.class.to_s.downcase}_paid"]) {
