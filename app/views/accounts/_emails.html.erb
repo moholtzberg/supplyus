@@ -1,0 +1,19 @@
+<table class="table table-bordered table-condensed table-striped">
+
+  <tr>
+    <th>Eventable Type</th>
+    <th>Eventable Id</th>
+    <th>Failed At</th>
+    <th>Delivered At</th>
+    <th>Opened At</th>
+  </tr>
+  <% EmailDelivery.where(addressable: account).each do |email| %>
+    <tr>
+      <td><%= email.eventable_type %></td>
+      <td><%= email.eventable_id %></td>
+      <td><%= email.failed_at %></td>
+      <td><%= email.delivered_at %></td>
+      <td><%= email.opened_at %></td>
+    </tr>
+  <% end %>
+</table>

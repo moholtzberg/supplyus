@@ -1,7 +1,7 @@
 <% content_for :app_location do %>Admin / Email Deliveries / Index<% end %>
 <div id="email-deliveries" class="col-md-12">
 
-	<table class="table table-bordered table-condensed" id="email-deliveries-table" data-source="<%= datatables_email_deliveries_path(format: :json) %>">
+	<table class="table table-bordered table-condensed" id="email-deliveries-table" data-source="<%= datatables_email_deliveries_path({format: :json}.merge({filters: @filters})) %>">
   	<thead>
 			<tr>
 				<th>ID</th>
