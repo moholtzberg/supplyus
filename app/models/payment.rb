@@ -11,6 +11,7 @@ class Payment < ActiveRecord::Base
   validates :amount, :presence => true, :numericality => { greater_then: 0 }
   validates :payment_method, :presence => true
   validate :amount_refunded
+  validate :not_over_applying
   
   def self.lookup(word)
     includes(:account).where('lower(accounts.name) like (?) or cast( payments.amount as varchar(20)) like (?)'\
@@ -62,5 +63,14 @@ class Payment < ActiveRecord::Base
   def amount_refunded
     return if amount.to_f >= refunded.to_f
     errors.add(:refunded, 'must be less than amount')
+  end
+
+  def not_over_applying
+    applied = order_payment_applications.inject(0.0) do |sum, opa|
+      sum + opa.applied_amount
+    end
+    return if amount.to_d >= applied.to_d
+    errors.add(:amount, "Can't over apply payment, #{applied}"\
+               " is greater than the payment amount of #{amount}")
   end
 end

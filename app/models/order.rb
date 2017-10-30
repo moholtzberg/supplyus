@@ -292,7 +292,15 @@ class Order < ActiveRecord::Base
   end
   
   def self.unpaid
-    ids = Order.is_complete.where("payments.success = 't'")
+    ids = Order.where.not(state: [:incomplete, :failed_authorization, :canceled]).where("payments.success = 't'")
+    .joins("LEFT OUTER JOIN order_payment_applications ON order_payment_applications.order_id = orders.id")
+    .joins("LEFT OUTER JOIN payments ON order_payment_applications.payment_id = payments.id")
+    .group("orders.id")
+    .having("SUM(COALESCE(sub_total,0) + COALESCE(shipping_total,0) + COALESCE(tax_total,0) - COALESCE(discount_total,0)) <> (COALESCE(SUM(applied_amount),0))")
+  end
+  
+  def self.not_covered_by_authorized_payments
+    ids = Order.where("payments.authorization_code IS NULL AND payments.payment_type <> 'CheckPayment'")
     .joins("LEFT OUTER JOIN order_payment_applications ON order_payment_applications.order_id = orders.id")
     .joins("LEFT OUTER JOIN payments ON order_payment_applications.payment_id = payments.id")
     .group("orders.id")
@@ -404,9 +412,9 @@ class Order < ActiveRecord::Base
   end
 
   def unauthorized_payment_amount
-    remaining = total
-    self.order_payment_applications.includes(:payment).each {|a| remaining = remaining - a.applied_amount if a.payment.authorized? }
-    remaining
+    order_payment_applications.includes(:payment).inject(total) do |remaining, a|
+      remaining - (a.payment.authorized? ? a.applied_amount : 0.0)
+    end
   end
   
   def paid
@@ -421,10 +429,9 @@ class Order < ActiveRecord::Base
   def balance_due
     # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_balance_due"]) {
       # Rails.cache.delete("#{self.class.to_s.downcase}_balance_due")
-      total_paid = self.order_payment_applications.includes(:payment).inject(0.0) {|sum, a| sum = sum + a.applied_amount if a.payment.success? }
-      puts total_paid.to_f.to_d.to_s
-      puts self.total.to_f.to_d.to_s
-      return (self.total.to_f.to_d - total_paid.to_f.to_d)
+      order_payment_applications.includes(:payment).inject(total) do |balance, a|
+        balance - (a.payment.success? ? a.applied_amount : 0.0)
+      end
     # }
   end
   

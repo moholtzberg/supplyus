@@ -152,13 +152,10 @@ class OrdersController < ApplicationController
   end
 
   def unpaid
+    a = Account.find_by(name: params[:account_name])
+    reuturn unless a&.id
     @unpaid_orders = Order.unpaid
-    if params[:account_name].present?
-      a = Account.find_by(name: params[:account_name])
-      unless a.blank?
-        @unpaid_orders = @unpaid_orders.where(:account_id => a.id)
-      end
-    end
+                          .where(account_id: a.id)
     @unpaid_orders.includes(:payments, :accounts)
   end
   
