@@ -1,7 +1,9 @@
 require 'sidekiq/web'
 require 'sidekiq-scheduler/web'
 Rails.application.routes.draw do
-  mount Sidekiq::Web => '/sidekiq'
+  authenticate :user, lambda { |u| u.has_role?(:super_admin) } do
+    mount Sidekiq::Web => '/sidekiq'
+  end
   authenticate :user do
     scope "/admin" do
       resource :home, :controller => :home do 
