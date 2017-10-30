@@ -32,6 +32,7 @@ class PaymentsController < ApplicationController
   def finalize
     authorize! :update, Payment
     @payment.finalize
+    update_index
   end
 
   private
