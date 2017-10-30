@@ -67,7 +67,8 @@ class Role < ActiveRecord::Base
           :bin,
           :warehouse,
           :return_authorization,
-          :schedule
+          :schedule,
+          :email_delivery
   ]
 
 end

@@ -49,6 +49,10 @@
 			<% if a.include?("item_list") %>
 			<li class="<% if current_page?(:item_lists) %>active<% end %>"><%= link_to "Item Lists", item_lists_path %></li>
 			<% end %>
+
+			<% if a.include?("email_delivery") %>
+			<li class="<% if current_page?(:email_deliveries) %>active<% end %>"><%= link_to "Email Deliveries", email_deliveries_path %></li>
+			<% end %>
 		</ul>
 	</li>
 	<% end %>
