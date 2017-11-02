@@ -156,7 +156,7 @@ class ShopController < ApplicationController
   def cart
     @cart = Cart.find_or_initialize_by(:id => cookies.permanent.signed[:cart_id])
     if current_user && current_user.has_account
-      @cart.account_id = current_user.account.id
+      @cart.update_attribute(:account_id, current_user.account_id)
       @cart.order_line_items.each do |c| 
         c.price = c.item.actual_price(@cart.account_id, c.quantity)
         c.save!

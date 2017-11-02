@@ -23,4 +23,8 @@ class CheckPayment < Payment
   def refund(sum)
     update_attributes(refunded: sum)
   end
+
+  def authorized?
+    true
+  end
 end

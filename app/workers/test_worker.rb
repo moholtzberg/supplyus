@@ -1,11 +1,10 @@
 require 'sidekiq-scheduler'
 
 class TestWorker
-  
   include Sidekiq::Worker
-  
-  def perform()
-    puts "Running a test worker"
+  include JobLogger
+
+  def perform
+    add_log 'Running a test worker'
   end
-  
 end

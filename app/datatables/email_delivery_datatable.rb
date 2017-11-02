@@ -37,7 +37,7 @@ class EmailDeliveryDatatable < AjaxDatatablesRails::Base
   private
 
   def get_raw_records
-    EmailDelivery.all
+    filter_query = options.to_a.map { |k, v| "#{k} = \'#{v}\'" }.join(' AND ')
+    EmailDelivery.all.where(filter_query)
   end
-
 end

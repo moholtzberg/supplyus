@@ -52,5 +52,50 @@
 			});
 		</script>
 
+		<div id="user_appliable_type" class="col-md-6">
+			<%= f.label :user_appliable_type, :class => "control-label" %>
+			<%= f.select :user_appliable_type, DiscountCodeRule::USER_APPLIABLE_TYPES, {include_blank: true}, :class => "form-control", style: "width: 100%" %>
+		</div>
+
+		<div id="user_appliable_id" class="col-md-6">
+			<%= f.label :user_appliable_id, :class => "control-label" %>
+			<%= f.select :user_appliable_id, [[f.object.user_appliable&.name, f.object.user_appliable_id]], {include_blank: true}, :class => "form-control", style: "width: 100%", disabled: f.object.user_appliable_type.nil? %>
+		</div>
+
+		<script>
+			$("#discount_code_rule_user_appliable_id").select2({
+			  ajax: {
+			    url: function() {
+				    if ($('#discount_code_rule_user_appliable_type').val() == 'Account') {
+				      return "<%= accounts_path %>"
+				    } else {
+				      return "<%= groups_path %>"
+				    }
+				  },
+			    dataType: 'json',
+			    delay: 250,
+			    data: function (params) {
+			      return {
+			        term: params.term
+			      };
+			    },
+			    processResults: function (data, params) {
+			      return {
+			        results: data
+			      };
+			    },
+			    cache: true
+			  },
+			  minimumInputLength: 1,
+			  placeholder: 'Search account or group',
+			  allowClear: true,
+			  theme: "bootstrap"
+			});
+
+			$('#discount_code_rule_user_appliable_type').change(function(){
+				$('#discount_code_rule_user_appliable_id').val('').trigger('change')
+				$('#discount_code_rule_user_appliable_id').prop('disabled', $(this).val() == '')
+			})
+		</script>
 	</fieldset>
 <% end %>

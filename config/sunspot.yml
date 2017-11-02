@@ -15,6 +15,13 @@ development:
     log_level: INFO
     path: <%= SECRET["WEBSOLR"]["DEV_PATH"] %>
 
+staging:
+  solr:
+    hostname: <%= SECRET["WEBSOLR"]["STG_HOST"] %>
+    port: 8983
+    log_level: INFO
+    path: <%= SECRET["WEBSOLR"]["STG_PATH"] %>
+
 test:
   solr:
     hostname: localhost

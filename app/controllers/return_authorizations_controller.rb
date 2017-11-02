@@ -50,7 +50,6 @@ class ReturnAuthorizationsController < ApplicationController
       ReturnAuthorizationMailer.cancel(@return_authorization.id).deliver_later
     end
     update_index
-    render 'update'
   end
 
   def set_bins

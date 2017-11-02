@@ -9,7 +9,9 @@ require 'wicked_pdf'
 Bundler.require(*Rails.groups)
 APP_NAME = Rails.env == "development" ? File.expand_path(".", "#{Rails.root}").split("/").last : File.expand_path(".", "#{Rails.root}").split("/").last
 SHARED_DIR = Rails.env == "development" ? File.expand_path("../shared", "#{Rails.root}")  : File.expand_path("../shared", "#{Rails.root}")
-secret_file = secret_file = "#{SHARED_DIR}/#{APP_NAME}_secrets.yml"
+secret_file = "#{SHARED_DIR}/#{APP_NAME}_secrets.yml"
+# for heroku deploy
+secret_file = "shared/#{APP_NAME}_secrets.yml" if !File.exists?(secret_file)
 puts secret_file
 SECRET = File.exists?(secret_file) ? YAML.load_file(secret_file) : {}
 puts "++++++++++++++ #{SECRET.inspect}\n"
@@ -31,5 +33,6 @@ module Recurring
     REVISION = `git log --pretty=format:'%h' -n 1`
     # Do not swallow errors in after_commit/after_rollback callbacks.
     config.active_record.raise_in_transactional_callbacks = true
+    config.autoload_paths << Rails.root.join('lib')
   end
 end

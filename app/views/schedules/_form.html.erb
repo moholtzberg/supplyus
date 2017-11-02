@@ -1,0 +1,86 @@
+<fieldset>	
+	
+	<div id="name" class="col-md-5">
+		<%= f.label :name, :class => "control-label" %>
+		<%= f.text_field :name, :class => "form-control" %>
+	</div>
+	
+	<div id="worker" class="col-md-5">
+		<%= f.label :worker, :class => "control-label" %>
+		<%= f.select :worker, @workers_with_params.keys, { include_blank: true }, :class => "form-control" %>
+	</div>
+	
+	<div id="enabled" class="col-md-2">
+		<%= f.label :enabled, :class => "control-label" %>
+		<%= f.check_box :enabled, :class => "form-control" %>
+	</div>
+
+	<div id="cron" class="col-md-12">
+		<%= f.label :cron, :class => "control-label" %>
+		<%= f.hidden_field :cron, :class => "form-control" %>
+		<div id="cron-input"></div>
+		<p><span class="cron"></span></p>
+	</div>
+	
+	<div id="description" class="col-md-6">
+		<%= f.label :description, :class => "control-label" %>
+		<%= f.text_area :description, rows: 6, :class => "form-control" %>
+	</div>
+
+	<div id="arguments" class="col-md-6">
+		<%= f.label :arguments, :class => "control-label" %>
+	</div>
+	
+	
+	<script>
+		$(function() {
+			var workers_with_params = <%= raw @workers_with_params.to_json %>;
+			$('#schedule_worker').change(function() {
+				$('#arguments .input-group').remove();
+				var params = workers_with_params[$(this).val()]
+				params.forEach(function(param) {
+	        var html = document.createElement("div");
+	        html.className = "input-group";
+	        html.style.marginBottom = "5px";
+	        $(html)
+	        .append(
+	        	$("<span class='input-group-addon'>")
+	        	.append(
+	        		param
+	        	)
+	        )
+	        .append(
+	        	$("<input class='form-control' type='text' name='schedule[arguments][]'>")
+	        )
+					$('#arguments').append(html)
+				})
+			})
+			var cron_value = <%= raw @schedule.cron.to_json %>;
+			if (cron_value == null) { cron_value = "* * * * *" };
+			cron_instance = $('#cron-input').jqCron({
+        enabled_minute: true,
+        multiple_dom: true,
+        multiple_month: true,
+        multiple_mins: true,
+        multiple_dow: true,
+        multiple_time_hours: true,
+        multiple_time_minutes: true,
+        default_period: 'week',
+        default_value: cron_value,
+        no_reset_button: true,
+        lang: 'en',
+        bind_to: $('span.cron'),
+        bind_method: {
+            set: function($element, value) {
+                $element.html(value);
+            }
+        }
+    	}).jqCronGetInstance();
+    	$('form[id*="schedule"]').submit(function() {
+    		$(':input#schedule_cron').val(cron_instance.getCron());
+    	})
+		})
+	</script>	
+	
+
+</fieldset>

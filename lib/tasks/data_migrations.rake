@@ -138,7 +138,8 @@ namespace :data_migrations do
     end
   end
 
-  task ensure_category_slug_uniqueness: :environment do
+  desc 'ensure item slug uniqueness'
+  task ensure_item_slug_uniqueness: :environment do
     slugs = []
     Item.all.each do |item|
       i = 1
@@ -147,6 +148,21 @@ namespace :data_migrations do
         item.update_column(:slug, "#{slug}_#{i}")
       end
       slugs.push(item.slug)
+    end
+  end
+
+  desc 'create schedule items'
+  task create_schedule_items: :environment do
+    schedules = YAML::load_file(File.join(__dir__, '../../config/schedules.yml'))
+    schedules.each do |k, v|
+      Schedule.create(
+        name: k,
+        worker: v['class'] || k,
+        enabled: v['enabled'] || true,
+        cron: v['cron'],
+        arguments: v['args'],
+        description: v['description']
+      )
     end
   end
 end

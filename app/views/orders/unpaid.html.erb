@@ -15,11 +15,27 @@
 			<td><%= order.due_date.strftime("%m/%d/%Y") unless order.due_date.blank? %></td>
 			<td>
 				<%= number_to_currency(order.balance_due) %>
-				<%= hidden_field_tag "order_payment_applications[#{idx}][order_id]", order.id.to_i %>
+				<%= hidden_field_tag "payment[order_payment_applications_attributes][#{idx}][order_id]", order.id.to_i %>
 			</td>
-			<td><%= text_field_tag "order_payment_applications[#{idx}][applied_amount]", order.balance_due.to_d.to_s, :class => "form-control" %></td>
+			<td><%= text_field_tag "payment[order_payment_applications_attributes][#{idx}][applied_amount]", order.balance_due.to_d.to_s, unauthorized: order.unauthorized_payment_amount.to_d.to_s, :class => "form-control" %></td>
 		</tr>
 			<% end %>
 		<% end %>
+
+		<script>
+			$('form#new_payment').submit(function(){
+				var ready = true
+				$.each($(':input[id$="applied_amount"]'), function() {
+					var idx = $(':input[id$="applied_amount"]').attr('id').match(/\d+/)[0]
+					var order_id = $(':input[id$="_' + idx + '_order_id"]').val()
+				  if ( $(this).val() > $(this).attr('unauthorized') ) {
+				  	if (!confirm('There is pending payment for order ' + order_id + '. Proceed?')) {
+				  		ready = false;
+				  	}
+				  }
+				});
+				return ready
+			})
+		</script>
 	</table>
 </div>

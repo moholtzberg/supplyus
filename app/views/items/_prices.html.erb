@@ -24,7 +24,7 @@
 			<td><%= it.end_date.try(:to_date) %></td>
 			<td><%= it.min_qty %></td>
 			<td><%= it.max_qty %></td>
-			<td><%= it.appliable %></td>
+			<td><%= it.appliable&.name %></td>
 			<td><%= it.combinable %></td>
 			<td>
 				<%= link_to price_path(it), method: :delete, remote: true do %>

@@ -1,0 +1,63 @@
+<% content_for :app_location do %>Admin / Schedules / Index<% end %>
+<div id="schedules" class="col-md-12">
+	
+	<table class="table table-bordered table-condensed">
+		
+		<tr>
+			<td colspan="9">
+				<form id="searchBox" accept-charset="UTF-8" action="<%= schedules_path(search_params.except(:page)) %>" method="get" role="search" data-remote="true">
+					<input type="text" class="form-control" id="term" name="term" placeholder="Enter schedule name" value="<%= params[:term] %>">
+				</form>
+			</td>
+		</tr>
+		
+		<tr>
+			<th class="hidden-xs"><%= sortable "schedules.id", "Id" %></th>
+			<th><%= sortable "schedules.name", "Name" %></th>
+			<th><%= sortable "schedules.worker", "Worker" %></th>
+			<th><%= sortable "schedules.cron", "Cron" %></th>
+			<th><%= sortable "schedules.arguments", "Arguments" %></th>
+			<th><%= sortable "schedules.enabled", "Enabled" %></th>
+			<th class="hidden-xs"><%= sortable "schedules.description", "Description" %></th>
+			<th>&nbsp;</th>
+		</tr>
+
+		<% @schedules.each do |a| %>
+			<tr>
+				<td class="hidden-xs"><%= a.id %></td>
+				<td><%= a.name %></td>
+				<td><%= a.worker %></td>
+				<td><%= a.cron %></td>
+				<td><%= a.arguments %></td>
+				<td><%= a.enabled %></td>
+				<td class="hidden-xs"><%= a.description %></td>
+				<td class="text-center">
+					<div class="dropdown">
+						<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+							<li><%= link_to("View", schedule_path(a.id))  %></li>
+							<li><%= link_to("Edit", edit_schedule_path(a.id, search_params), :remote => true)  %></li>
+							<li><%= link_to("Destroy", schedule_path(a.id, search_params), :method => :delete, :remote => true)  %></li>
+						</ul>
+					</div>
+				</td>
+			</tr>
+		<% end %>
+
+	</table>
+		
+	<%= will_paginate @schedules, params: search_params.except(:page).merge(action: 'index'), renderer: BootstrapPagination::Rails %>
+	
+	<%= link_to new_schedule_path(search_params), :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
+	
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div>

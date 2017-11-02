@@ -1,11 +1,11 @@
 require 'sidekiq-scheduler'
 
 class ItemIndexWorker
-  
   include Sidekiq::Worker
-  
+  include JobLogger
+
   def perform(item_id)
-    puts "Indexing Item #{item_id}"
+    add_log "Indexing Item #{item_id}"
     Item.find(item_id).index
     ih = ImportHistory.first
     ih.nb_last_id = item_id
@@ -14,5 +14,4 @@ class ItemIndexWorker
     ih.is_processing = (ih.nb_in_queue > 0)
     ih.save
   end
-  
 end

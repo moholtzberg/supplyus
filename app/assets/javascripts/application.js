@@ -11,6 +11,7 @@
 // about supported directives.
 //
 //= require jquery
+//= require jquery.auto-complete
 // require jquery-ui/autocomplete
 //= require jquery_ujs
 //= require jquery.remotipart
@@ -28,6 +29,8 @@
 //= require select2
 //= require summernote
 //= require bootstrap-datepicker
+//= require jqCron
+//= require jqCron.en
 //= require_tree .
 
 // Create Recurring object first.

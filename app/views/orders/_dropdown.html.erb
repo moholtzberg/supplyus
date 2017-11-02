@@ -21,6 +21,9 @@
     <% if !item.locked? %>
       <li><%= link_to("Edit", edit_order_path(item.id)) %></li>
     <% end %>
+    <% if !item.incomplete? && !item.canceled? %>
+      <li><%= link_to("Resend Order Notification", resend_order_order_path(:id => item.id), :remote => true, :method => "put") %></li>
+    <% end %>
     <% if item.credit_hold? %>
       <li><%= link_to("Remove Credit Hold", credit_hold_remove_order_path(item.id), :remote => true, :method => "put")  %></li>
     <% end %>
@@ -29,7 +32,6 @@
     <% end %>
     <% if item.awaiting_fulfillment? or item.partially_fulfilled? %>
       <li><%= link_to("Fulfill", new_order_invoice_path(item.id))  %></li>
-      <li><%= link_to("Resend Order Notification", resend_order_order_path(:id => item.id), :remote => true, :method => "put") %></li>
     <% end %>
     <% if item.fulfilled? %>
       <li><%= link_to("Resend Invoice Notification", resend_invoice_order_path(:id => item.id), :remote => true, :method => "put") %></li>

@@ -4,8 +4,8 @@
 	
 	<script>
 		$(function() {
-			$('#payment_payment_method').change(function() {
-				if ($('#payment_payment_method option:selected').text() == "credit_card") {
+			$('#payment_payment_method_id').change(function() {
+				if ($('#payment_payment_method_id option:selected').text() == "credit_card") {
 					$('#payment_credit_card_id').prop('disabled', false);
 					$('#payment_check_number').prop('disabled', true);
 					$('#payment_payment_type').val('CreditCardPayment')
@@ -18,47 +18,49 @@
 		})
 	</script>
 
-	<div id="name" class="col-md-12">
+	<div id="payment_method" class="col-md-12">
 		<%= f.label :payment_method, :class => "control-label" %>
-		<%= f.select :payment_method_id, PaymentMethod.where(active: true).map{ |pm| [pm.name, pm.id] }, {}, {:class => "form-control", :disabled => params[:action] != 'new' }%>
-	</div>
-	
-	<div id="address" class="col-md-12">
-		<%= f.label :amount, :class => "control-label" %>
-		<%= f.text_field :amount, :class => "form-control", :disabled => params[:action] != 'new' %>
+		<%= f.select :payment_method_id, PaymentMethod.where(active: true).map{ |pm| [pm.name, pm.id] }, {}, {:class => "form-control", :disabled => !['new', 'create'].include?(params[:action]) }%>
 	</div>
 	
 	<div id="account_name" class="col-md-12">
 		<%= f.label :account_name, :class => "control-label" %>
-		<%= f.text_field :account_name, :class => "form-control", data: {autocomplete_source: accounts_path}, :disabled => params[:action] != 'new' %>
+		<%= f.text_field :account_name, :class => "form-control", data: {autocomplete_source: accounts_path}, :disabled => !['new', 'create'].include?(params[:action]) %>
+	</div>
+
+	<div id="amount" class="col-md-12">
+		<%= f.label :amount, :class => "control-label" %>
+		<%= f.text_field :amount, :class => "form-control", :disabled => !['new', 'create'].include?(params[:action]) %>
+	</div>
+
+	<div id="applications">
 	</div>
 	
 	<div id="credit_card_id" class="col-md-12">
 		<%= f.label :credit_card, :class => "control-label" %>
-		<%= f.select :credit_card_id, [], {}, :class => "form-control", disabled: @payment.payment_type != 'CreditCardPayment' || params[:action] != 'new' %>
+		<%= f.select :credit_card_id, [], {}, :class => "form-control", disabled: @payment.payment_type != 'CreditCardPayment' || !['new', 'create'].include?(params[:action]) %>
 	</div>
 	
 	<div id="check_number" class="col-md-6">
 		<%= f.label :check_number, :class => "control-label" %>
 		<%= f.text_field :check_number, :class => "form-control", disabled: @payment.payment_type == 'CreditCardPayment' %>
-	</div>
-	
-	<div id="check_number" class="col-md-6">
-		<%= f.label :date, :class => "control-label" %>
-		<%= f.date_field :date, :class => "form-control", :disabled => params[:action] != 'new' %>
-	</div>
-	
+	</div>	
 	
 	<script>
 	jQuery(function() {
 		return $('#payment_account_name').autocomplete({
 			source: $('#payment_account_name').data('autocomplete-source'),
       select: function( event, ui ) {
+      	$('#payment_order_payment_application_order_id').prop('disabled', !ui.item.value);
+      	$('#payment_amount').val('');
 				var $el = $("#payment_credit_card_id");
 				$el.empty(); // remove old options
 				$.each(ui.item.credit_cards, function(key,value) {
 				  $el.append($("<option></option>")
 				     .attr("value", value).text(key));
+				});
+				$.ajax({
+					url : '/admin/orders/unpaid.js?account_name=' + ui.item.value,
 				});
 				$("#payment_account_name" ).val(ui.item.value);
         return false;

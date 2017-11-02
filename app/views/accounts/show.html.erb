@@ -132,7 +132,6 @@
 			</div>
 		</div>
 	</div>
-	
 </div>
 
 	<ul class="nav nav-tabs nav-justified">
@@ -140,6 +139,7 @@
 		<li role="presentation"><a href="#prices" aria-controls="prices" role="tab" data-toggle="tab">Prices</a></li>
 		<li role="presentation"><a href="#users" aria-controls="users" role="tab" data-toggle="tab">Users</a></li>
 		<li role="presentation"><a href="#account-addresses" aria-controls="addresses" role="tab" data-toggle="tab">Addresses</a></li>
+		<li role="presentation"><a href="#emails" aria-controls="emails" role="tab" data-toggle="tab">Sent Emails</a></li>
 	</ul>
 	
 	<div class="tab-content">
@@ -249,6 +249,12 @@
 		<div role="tabpanel" class="tab-pane" id="account-addresses">
 
 			<%= render :partial => "addresses", :locals => {:account => @account} %>
+				
+		</div>
+	
+		<div role="tabpanel" class="tab-pane" id="emails">
+
+			<%= render :partial => "emails", :locals => {:account => @account} %>
 				
 		</div>
 	

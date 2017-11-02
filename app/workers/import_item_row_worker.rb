@@ -1,9 +1,9 @@
-class ImportItemRowWorker
-  
+class ImportItemRowWorker  
   include Sidekiq::Worker
-  
+  include JobLogger
+
   def perform(row)
-    puts "#{Item.find_by(number: row["number"]).inspect}"
+    add_log "#{Item.find_by(number: row["number"]).inspect}"
     if Item.find_by(number: row["number"]).nil?
       item = Item.new
       item.attributes = row.to_hash.slice(*Item.attribute_names())
@@ -21,7 +21,7 @@ class ImportItemRowWorker
     item.list_price = row["list_price"]
     item.item_vendor_prices.new(vendor_id: 106, price: row["cost_price"])
     item.save
-    puts "-----> #{item.inspect}"
+    add_log "-----> #{item.inspect}"
   end
   
 end
