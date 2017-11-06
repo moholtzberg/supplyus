@@ -98,6 +98,10 @@
 		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@invoice.shipping_total) %></strong></td>
 	</tr>
 	<tr>
+		<td colspan="3">Discount Total</td>
+		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@invoice.discount_total) %></strong></td>
+	</tr>
+	<tr>
 		<td colspan="3">Invoice Total</td>
 		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@invoice.total) %></strong></td>
 	</tr>
@@ -109,10 +113,102 @@
 		<td colspan="3">Balance Due</td>
 		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@invoice.balance_due) %></strong></td>
 	</tr>
-	<% unless @invoice.paid %>
+</table>
+<% unless @invoice.paid %>
+	<table class="table table-bordered">
+		<% if @payment && @payment.errors.any? %>	
+			<div id="payment_errors" class="alert alert-danger">
+				<% @payment.errors.full_messages.each.each do |e| %>
+				<%= e %>
+				<% end %>
+			</div>
+		<% end %>
+		<% if @card && @card.errors.any? %>
+			<div id="card_errors" class="alert alert-danger">
+				<% @card.errors.full_messages.each.each do |e| %>
+				<%= e %>
+				<% end %>
+			</div>
+		<% end %>
 		<% if Setting.find_by(:key => "enable_credit_card_payments") and Setting.find_by(:key => "enable_credit_card_payments").value == "t" %>
 			<tr>
-				<td colspan="5"><%= link_to "Pay Invoice", "/my_account/invoice/#{@invoice.number}/pay", :class => "btn btn-primary pull-right", :remote => true %></td>
+				<%= form_for @invoice, :url => "/my_account/invoice/#{@invoice.number}/pay", :method => :post do |f| %>
+					<td colspan="4">
+						<select id="payment_type" class="selectpicker">
+							<% @cards.each do |card| %>
+								<option value="<%= card.service_card_id %>" data-content='<span class="<%= card.logo_class %>" style="margin-right: 5px;"></span><span class="text">  **** **** **** <%= card.last_4 %></span>'></option>
+							<% end %>
+							<option value="credit_card">New Credit Card</option>
+						</select>
+
+						<script>
+							$("select#payment_type").change(function(){
+								var m = this.value;
+								$("#payment_method").val('credit_card');
+								$("#credit_card_token").val(m == 'credit_card' ? '' : m);
+		            if (m == 'credit_card') {
+		              $("#credit_card").removeClass('hidden');
+		            } else {
+		              $("#credit_card").addClass('hidden');
+		            }
+							})
+						</script>
+						
+						<!-- Load the required client component. -->
+						<script src="https://js.braintreegateway.com/web/3.11.0/js/client.min.js"></script>
+						
+						<!-- Load Hosted Fields component. -->
+						<script src="https://js.braintreegateway.com/web/3.11.0/js/hosted-fields.min.js"></script>
+						
+						<div id="credit_card" class="panel panel-default bootstrap-basic <%= 'hidden' if @cards.any? %>">
+							
+							<input type="hidden" id="payment_method" name="payment_method" value="credit_card" />
+							<input type="hidden" id="credit_card_token" name="credit_card_token" value="<%= @cards.first.try(:service_card_id) %>" />
+							<input type="hidden" id="order_id" name="order_id" value="<%= @invoice.id %>" />
+							
+							<div class="panel-heading">
+								<h3 class="panel-title">Enter Card Details</h3>
+							</div>
+							
+							<div class="panel-body">
+								
+								<div class="row">
+									<div class="form-group col-xs-12">
+										<label class="control-label">Cardholder Name</label>
+										<input type="text" id="cardholder_name" name="cardholder_name" class="form-control" placeholder="Name on Card"/>
+									</div>
+								</div>
+								
+								<div class="row">
+									<div class="form-group col-xs-12">
+										<label class="control-label">Card Number</label>
+										<input type="number" id="credit_card_number" name="credit_card_number" class="form-control" placeholder="Enter Credit Card Number"/>
+									</div>						
+								</div>
+								
+								<div class="row">
+									<div class="form-group col-xs-4">
+										<label class="control-label">Security Code</label>
+										<input type="text" id="card_security_code" name="card_security_code" class="form-control" placeholder="Enter CVV"/>
+									</div>
+									<div class="form-group col-xs-8">						
+										<label class="control-label col-xs-12">Expiration Date</label>
+										<div class="col-xs-6">
+											<input type="number" id="expiration_month" name="expiration_month" class="form-control" placeholder="MM"/>
+										</div>
+										<div class="col-xs-6">
+											<input type="number" id="expiration_year" name="expiration_year" class="form-control" placeholder="YYYY"/>
+										</div>						
+									</div>
+								</div>					
+							</div>
+						</div>
+					</td>
+					<td colspan="2">
+						<!-- <button value="submit" id="submit" class="btn btn-success btn-lg center-block">Pay with <span id="card-type">Card</span></button> -->
+						<%= f.submit "Pay Invoice", :class => "btn btn-primary pull-right" %>
+					</td>
+				<% end %>
 			</tr>
 		<% end %>
 	<% end %>

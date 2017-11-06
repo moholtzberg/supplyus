@@ -41,7 +41,7 @@ jQuery(function() {
 });
 
 $(document).ready(function() {
-  $("[data-toggle=tooltip").tooltip();
+  $("[data-toggle=tooltip]").tooltip();
 });
 
 $(document).on('turbolinks:load', function () {

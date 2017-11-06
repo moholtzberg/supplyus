@@ -154,72 +154,35 @@
 				<div class="panel-body">
 					
 					<div class="row">
-						<div class="form-group col-md-12">
+						<div class="form-group col-xs-12">
+							<label class="control-label">Cardholder Name</label>
 							<input type="text" id="cardholder_name" name="cardholder_name" class="form-control" placeholder="Name on Card"/>
-						<div>
-					</div>
-					
-					<div class="row">
-						<div class="form-group col-xs-8">
-							<label class="control-label">Card Number</label>
-							<!--  Hosted Fields div container -->
-							<!-- <div class="form-control" id="card-number"></div> -->
-							<span class="helper-text"></span>
-							<input type="number" id="credit_card_number" name="credit_card_number" class="form-control" placeholder="Enter Credit Card Number"/>
 						</div>
-						
-						<div class="form-group col-xs-4">
-						
-								<label class="control-label col-xs-12">Expiration Date</label>
-								<div class="col-xs-6">
-									<!--  Hosted Fields div container -->
-									<!-- <div class="form-control" id="expiration-month"></div> -->
-									<!-- <select id="expiration_month" name="expiration_month" class="form-control">
-										<% Date::MONTHNAMES.compact.each do |month| %>
-										<option value="<%= Date::MONTHNAMES.index(month) %>"><%= month %></option>
-										<% end %>
-									</select> -->
-									<input type="number" id="expiration_month" name="expiration_month" class="form-control" placeholder="MM"/>
-								</div>
-								
-								<div class="col-xs-6">
-									<!--  Hosted Fields div container -->
-									<!-- <div class="form-control" id="expiration-year"></div> -->
-									<!-- <select id="expiration_year" name="expiration_year" class="form-control">
-										<option value="2016">2016</option>
-										<option value="2017">2017</option>
-										<option value="2018">2018</option>
-										<option value="2019">2019</option>
-										<option value="2020">2020</option>
-										<option value="2021">2021</option>
-										<option value="2022">2022</option>
-										<option value="2023">2023</option>
-										<option value="2024">2024</option>
-									</select>
-										-->
-									<input type="number" id="expiration_year" name="expiration_year" class="form-control" placeholder="YYYY"/>
-								</div>
-						
-					</div>
-
 					</div>
 					
 					<div class="row">
-						<div class="form-group col-xs-6">
+						<div class="form-group col-xs-12">
+							<label class="control-label">Card Number</label>
+							<input type="number" id="credit_card_number" name="credit_card_number" class="form-control" placeholder="Enter Credit Card Number"/>
+						</div>						
+					</div>
+					
+					<div class="row">
+						<div class="form-group col-xs-4">
 							<label class="control-label">Security Code</label>
-							<!--  Hosted Fields div container -->
-							<!-- <div class="form-control" id="cvv"></div> -->
 							<input type="text" id="card_security_code" name="card_security_code" class="form-control" placeholder="Enter CVV"/>
 						</div>
-						<div class="form-group col-xs-6">
-							<label class="control-label">Zipcode</label>
-							<!--  Hosted Fields div container -->
-							<!-- <div class="form-control" id="postal-code"></div> -->
+						<div class="form-group col-xs-8">						
+							<label class="control-label col-xs-12">Expiration Date</label>
+							<div class="col-xs-6">
+								<input type="number" id="expiration_month" name="expiration_month" class="form-control" placeholder="MM"/>
+							</div>
+							<div class="col-xs-6">
+								<input type="number" id="expiration_year" name="expiration_year" class="form-control" placeholder="YYYY"/>
+							</div>						
 						</div>
-					</div>
-					
+					</div>					
 				</div>
-			
 			</div>
 		</td>
 		<td>

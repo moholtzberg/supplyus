@@ -191,6 +191,8 @@ class ShopController < ApplicationController
     
   def view_invoice
     @invoice = Order.find_by(:number => params[:invoice_number])
+    @cards = current_user.account.main_service.credit_cards
+    @payment = Payment.new
     if current_user.my_account_ids.include?(@invoice.account_id)
       respond_to do |format|
         format.html
@@ -205,10 +207,35 @@ class ShopController < ApplicationController
   end
   
   def pay_invoice
-    @account = current_user.account
-    @credit_card = CreditCard.new
-    @invoice = Invoice.find_by(:number => params[:invoice_number])
-    @payment = Payment.new
+    @invoice = Order.find_by(:number => params[:invoice_number])
+    @payment = @invoice.payments.new
+    @payment.account = current_user.account
+    @payment.amount = @invoice.total
+    @payment.payment_method = PaymentMethod.find_or_create_by(name: params[:payment_method], active: true)
+    @payment.payment_type =  'CreditCardPayment'
+    @payment = @payment.becomes CreditCardPayment
+    if !params[:credit_card_token].blank?
+      @card = CreditCard.find_by(account_payment_service_id: @invoice.account.main_service.id, service_card_id: params[:credit_card_token])
+    else
+      @card = CreditCard.create({
+        cardholder_name: params[:cardholder_name],
+        credit_card_number: params[:credit_card_number],
+        card_security_code: params[:card_security_code],
+        expiration_month: params[:expiration_month],
+        expiration_year: params[:expiration_year],
+        account_payment_service_id: @invoice.account.main_service.id
+      })
+    end
+    @payment.credit_card_id = @card&.id
+    @cards = current_user.account.main_service.credit_cards
+    if @card and @card.errors.empty? and @payment.authorize
+      @payment.save
+      OrderPaymentApplication.create(:order_id => @invoice.id, :payment_id => @payment.id, :applied_amount => @payment.amount)
+      flash[:notice] = 'Your payment was authorized successfully.'
+      redirect_to my_account_orders_path
+    else
+      render 'view_invoice'
+    end
   end
   
   def edit_account

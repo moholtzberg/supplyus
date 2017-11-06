@@ -246,7 +246,7 @@ Rails.application.routes.draw do
   patch "/update_cart" => "shop#update_cart"
   
   get "/my_account/items" => "shop#my_items"
-  get "/my_account/invoice/:invoice_number/pay" => "shop#pay_invoice"
+  post "/my_account/invoice/:invoice_number/pay" => "shop#pay_invoice"
   get "/my_account/invoice/:invoice_number" => "shop#view_invoice"
   get "/my_account/:account_id" => "shop#view_account"
   get "/my_account" => "shop#my_account"
