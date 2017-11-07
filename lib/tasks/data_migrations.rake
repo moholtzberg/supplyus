@@ -78,7 +78,9 @@ namespace :data_migrations do
 
   desc 'migrates Price from default Item prices'
   task prices_from_items: :environment do
-    Item.where.not(id: Item.joins('LEFT JOIN prices ON items.id = prices.item_id').where('prices._type = "Default" AND prices.price = items.price').ids.uniq).each do |item|
+    items_ok = Item.joins('LEFT JOIN prices ON items.id = prices.item_id')
+                   .where('prices._type = \'Default\' AND prices.price = items.price')
+    Item.where.not(id: items_ok.ids.uniq, price: nil).each do |item|
       Rails.logger.info "Migrating Item with id #{item.id}."
       price = item.prices.create(_type: "Default", price: item.price, combinable: true)
       if price.persisted?
