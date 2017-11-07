@@ -167,4 +167,36 @@ namespace :data_migrations do
       )
     end
   end
+
+  desc 'set Order state for existing orders'
+  task order_set_state: :environment do
+    Order.where(state: nil).each do |order|
+      state = if order.paid && order.shipped && order.fulfilled
+                'completed'
+              elsif order.paid && order.shipped
+                'awaiting_fulfillment'
+              elsif order.paid && order.fulfilled
+                'awaiting_shipment'
+              elsif order.shipped && order.fulfilled
+                'fulfilled'
+              elsif order.paid
+                'awaiting_shipment'
+              elsif order.shipped
+                'awaiting_fulfillment'
+              elsif order.fulfilled
+                'fulfilled'
+              elsif order.completed_at.present?
+                'pending'
+              elsif order.quantity == order.quantity_canceled
+                'canceled'
+              else
+                'incomplete'
+              end
+      if order.update_attribute(state: state)
+        Rails.logger.info "Migrated. #{Order.where(state: nil).count} remains."
+      else
+        Rails.logger.error "Not migrated: #{order.errors.full_messages.join(', ')}"
+      end
+    end
+  end
 end
