@@ -46,7 +46,7 @@
           <tr>
             <td><%= lir.order_line_item.item_number %></td>
             <td><%= lir.quantity %></td>
-            <td><%= lir.order_line_item.actual_quantity - lir.order_line_item.quantity_returned %></td>
+            <td><%= lir.order_line_item.actual_quantity.to_f - lir.order_line_item.quantity_returned.to_f %></td>
             <td><%= lir.bin&.name %></td>
           </tr>
         <% end %>
