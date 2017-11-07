@@ -192,7 +192,7 @@ namespace :data_migrations do
               else
                 'incomplete'
               end
-      if order.update_attribute(state: state)
+      if order.update_attribute(:state, state)
         Rails.logger.info "Migrated. #{Order.where(state: nil).count} remains."
       else
         Rails.logger.error "Not migrated: #{order.errors.full_messages.join(', ')}"
