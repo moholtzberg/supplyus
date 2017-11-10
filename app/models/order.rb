@@ -339,7 +339,7 @@ class Order < ActiveRecord::Base
   end
   
   def shipped
-    quantity_shipped == quantity
+    quantity != 0 && quantity_shipped == quantity
   end
   
   def shipped_id
@@ -366,6 +366,10 @@ class Order < ActiveRecord::Base
     order_line_items.sum("quantity_shipped")
   end
   
+  def quantity_canceled
+    order_line_items.sum("quantity_canceled")
+  end
+
   def amount_shipped
     # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_amount_shipped"]) {
     #   Rails.cache.delete("#{self.class.to_s.downcase}_amount_shipped")
@@ -375,7 +379,7 @@ class Order < ActiveRecord::Base
   end
   
   def fulfilled
-    quantity_fulfilled.to_i == quantity.to_i
+    quantity != 0 && quantity_fulfilled.to_i == quantity.to_i
     # order_line_items.sum("COALESCE(quantity,0) - COALESCE(quantity_canceled,0)")
   end
   
@@ -414,7 +418,7 @@ class Order < ActiveRecord::Base
       Rails.cache.delete("#{self.class.to_s.downcase}_paid")
       total_paid = 0.0
       self.order_payment_applications.includes(:payment).each {|a| total_paid = total_paid + a.applied_amount if a.payment.success? }
-      total_paid.to_d == self.total.to_d ? true : false
+      self.total != 0  && total_paid.to_d == self.total.to_d ? true : false
     }
   end
   

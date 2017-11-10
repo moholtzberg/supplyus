@@ -78,7 +78,9 @@ namespace :data_migrations do
 
   desc 'migrates Price from default Item prices'
   task prices_from_items: :environment do
-    Item.where.not(id: Item.joins('LEFT JOIN prices ON items.id = prices.item_id').where('prices._type = "Default" AND prices.price = items.price').ids.uniq).each do |item|
+    items_ok = Item.joins('LEFT JOIN prices ON items.id = prices.item_id')
+                   .where('prices._type = \'Default\' AND prices.price = items.price')
+    Item.where.not(id: items_ok.ids.uniq, price: nil).each do |item|
       Rails.logger.info "Migrating Item with id #{item.id}."
       price = item.prices.create(_type: "Default", price: item.price, combinable: true)
       if price.persisted?
@@ -163,6 +165,38 @@ namespace :data_migrations do
         arguments: v['args'],
         description: v['description']
       )
+    end
+  end
+
+  desc 'set Order state for existing orders'
+  task order_set_state: :environment do
+    Order.where(state: nil).each do |order|
+      state = if order.paid && order.shipped && order.fulfilled
+                'completed'
+              elsif order.paid && order.shipped
+                'awaiting_fulfillment'
+              elsif order.paid && order.fulfilled
+                'awaiting_shipment'
+              elsif order.shipped && order.fulfilled
+                'fulfilled'
+              elsif order.paid
+                'awaiting_shipment'
+              elsif order.shipped
+                'awaiting_fulfillment'
+              elsif order.fulfilled
+                'fulfilled'
+              elsif order.completed_at.present?
+                'pending'
+              elsif order.quantity == order.quantity_canceled
+                'canceled'
+              else
+                'incomplete'
+              end
+      if order.update_attribute(:state, state)
+        Rails.logger.info "Migrated. #{Order.where(state: nil).count} remains."
+      else
+        Rails.logger.error "Not migrated: #{order.errors.full_messages.join(', ')}"
+      end
     end
   end
 end
