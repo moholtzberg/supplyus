@@ -30,7 +30,7 @@ class MyAccount::SubscriptionsController < ApplicationController
     @subscription.bill_to_address = Address.find_or_create_by(subscription_params[:bill_to_address_attributes].merge(account_id: @subscription.account_id))
     @subscription.payment_method = params[:payment_method]
     if !params[:credit_card_token].blank?
-      @card = CreditCard.find_by(account_payment_service_id: @checkout.account.main_service.id, service_card_id: params[:credit_card_token])
+      @card = CreditCard.find_by(account_payment_service_id: @subscription.account.main_service.id, service_card_id: params[:credit_card_token])
     elsif @subscription.payment_method == 'credit_card'
       @card = CreditCard.create({
         cardholder_name: params[:cardholder_name],
