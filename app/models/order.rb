@@ -296,7 +296,8 @@ class Order < ActiveRecord::Base
     .joins("LEFT OUTER JOIN order_payment_applications ON order_payment_applications.order_id = orders.id")
     .joins("LEFT OUTER JOIN payments ON order_payment_applications.payment_id = payments.id AND payments.success = 't'")
     .group("orders.id")
-    .having("AVG(COALESCE(sub_total,0) + COALESCE(shipping_total,0) + COALESCE(tax_total,0) - COALESCE(discount_total,0)) <> (COALESCE(SUM(applied_amount),0))")
+    .having("AVG(COALESCE(sub_total,0) + COALESCE(shipping_total,0) + COALESCE(tax_total,0) - COALESCE(discount_total,0)) <> (COALESCE(SUM(applied_amount),0))").ids
+    where(id: ids)
   end
   
   def self.empty
