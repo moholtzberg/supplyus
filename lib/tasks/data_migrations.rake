@@ -57,7 +57,7 @@ namespace :data_migrations do
         Rails.logger.error "Not migrated: #{price.errors.full_messages.join(', ')}"
       end
     end
-    GroupItemPrice.where(active: true, migrated: false).each do |gip|
+    GroupItemPrice.where(migrated: false).each do |gip|
       Rails.logger.info "Migrating GroupItemPrice with id #{gip.id}."
       price_attributes = {
         item_id: gip.item_id,
@@ -84,7 +84,7 @@ namespace :data_migrations do
       Rails.logger.info "Migrating Item with id #{item.id}."
       price = item.prices.create(_type: "Default", price: item.price, combinable: true)
       if price.persisted?
-        Rails.logger.info "Migrated. #{Item.where.not(id: Item.joins('LEFT JOIN prices ON items.id = prices.item_id').where('prices._type = "Default" AND prices.price = items.price').ids.uniq).count} remains."
+        Rails.logger.info "Migrated. #{Item.where.not(id: items_ok.ids.uniq, price: nil).count} remains."
       else
         Rails.logger.error "Not migrated: #{price.errors.full_messages.join(', ')}"
       end
@@ -133,10 +133,14 @@ namespace :data_migrations do
     Category.all.each do |cat|
       i = 1
       slug = cat.slug
+      puts slug
       while slugs.include?(cat.slug)
+        puts slugs
         cat.update_column(:slug, "#{slug}_#{i}")
+        puts cat.slug
       end
       slugs.push(cat.slug)
+      puts slugs
     end
   end
 
@@ -185,14 +189,14 @@ namespace :data_migrations do
                 'awaiting_fulfillment'
               elsif order.fulfilled
                 'fulfilled'
-              elsif order.completed_at.present?
-                'pending'
-              elsif order.quantity == order.quantity_canceled
+              elsif order.quantity == 0
                 'canceled'
+              elsif order.submitted_at.present?
+                'pending'
               else
                 'incomplete'
               end
-      if order.update_attribute(:state, state)
+      if order.update_column(:state, state)
         Rails.logger.info "Migrated. #{Order.where(state: nil).count} remains."
       else
         Rails.logger.error "Not migrated: #{order.errors.full_messages.join(', ')}"
