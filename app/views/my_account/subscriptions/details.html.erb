@@ -1,0 +1,312 @@
+<%= form_for @subscription, :url => details_my_account_subscription_path(@subscription), :method => :patch, :html => {:class => "form-horizontal"} do |f| %>    
+  <%= f.hidden_field :quantity %>  
+  <%= f.hidden_field :frequency %>  
+  <%= f.hidden_field :item_id %>  
+  <%= f.hidden_field :account_id %>  
+  <table class="table table-bordered">
+
+    <tr>
+      <th width="50%" class="text-center">Ship To</th>
+      <th width="50%" class="text-center">Bill To</th>
+    </tr>
+
+    <tr>
+      <td>
+        <div id="select_address" class="col-md-12 shipping">
+          <label for="checkout_{:class=>&quot;control-label&quot;}">Select Address</label>
+          <%= select_tag("", options_from_collection_for_select(current_user.account.addresses, "id", "name"), {include_blank: true, class: "shipping_address form-control selectpicker"}) %>
+          <script>
+            var addresses = <%= raw current_user.account.addresses.to_a.push(Address.new).to_json %>;
+            $('select.shipping_address').change(function(){
+              var $select = $(this);
+              var current_address = addresses.filter(function(item){return item.id == (parseInt( $select.val() ) || null) })[0];
+              $(':input#subscription_ship_to_address_attributes_address_1').val(current_address['address_1']);
+              $(':input#subscription_ship_to_address_attributes_address_2').val(current_address['address_2']);
+              $(':input#subscription_ship_to_address_attributes_city').val(current_address['city']);
+              $(':input#subscription_ship_to_address_attributes_state').val(current_address['state']);
+              $(':input#subscription_ship_to_address_attributes_zip').val(current_address['zip']);
+              $(':input#subscription_ship_to_address_attributes_phone').val(current_address['phone']);
+            })
+          </script>
+        </div>
+
+        <%= f.fields_for :ship_to_address do |a| %>
+          <div id="address" class="col-md-12 shipping">
+            <%= a.label :address_1, :class => "control-label" %>
+            <%= a.text_field :address_1, :class => "form-control" %>
+          </div>
+
+          <div id="address_2" class="col-md-12 shipping">
+            <%= a.label :address_2, :class => "control-label" %>
+            <%= a.text_field :address_2, :class => "form-control" %>
+          </div>
+
+          <div id="city" class="col-md-12 shipping">
+            <%= a.label :city, :class => "control-label" %>
+            <%= a.text_field :city, :class => "form-control" %>
+          </div>
+          
+          <div id="state" class="col-md-6 shipping">
+            <%= a.label :state, :class => "control-label" %>
+            <%= a.text_field :state, :class => "form-control" %>
+          </div>
+          
+          <div id="zip" class="col-md-6 shipping">
+            <%= a.label :zip, :class => "control-label" %>
+            <%= a.text_field :zip, :class => "form-control" %>
+          </div>
+
+          <div id="phone" class="col-xs-12 shipping">
+            <%= a.label :phone, :class => "control-label" %>
+            <%= a.text_field :phone, :class => "form-control" %>
+          </div>
+        <% end %>
+      </td>
+      <td>
+        <div id="select_address" class="col-md-12 shipping">
+          <label for="checkout_{:class=>&quot;control-label&quot;}">Select Address</label>
+          <%= select_tag("", options_from_collection_for_select(current_user.account.addresses, "id", "name"), {include_blank: true, class: "billing_address form-control bill_to selectpicker"}) %>
+          <script>
+            var addresses = <%= raw current_user.account.addresses.to_a.push(Address.new).to_json %>;
+            $('select.billing_address').change(function(){
+              var $select = $(this);
+              var current_address = addresses.filter(function(item){return item.id == (parseInt( $select.val() ) || null) })[0];
+              $(':input#subscription_bill_to_address_attributes_address_1').val(current_address['address_1']);
+              $(':input#subscription_bill_to_address_attributes_address_2').val(current_address['address_2']);
+              $(':input#subscription_bill_to_address_attributes_city').val(current_address['city']);
+              $(':input#subscription_bill_to_address_attributes_state').val(current_address['state']);
+              $(':input#subscription_bill_to_address_attributes_zip').val(current_address['zip']);
+              $(':input#subscription_bill_to_address_attributes_phone').val(current_address['phone']);
+            })
+          </script>
+        </div>
+
+        <%= f.fields_for :bill_to_address do |a| %>
+          <div id="address" class="col-md-12 shipping">
+            <%= a.label :address_1, :class => "control-label" %>
+            <%= a.text_field :address_1, :class => "form-control bill_to" %>
+          </div>
+
+          <div id="address_2" class="col-md-12 shipping">
+            <%= a.label :address_2, :class => "control-label" %>
+            <%= a.text_field :address_2, :class => "form-control bill_to" %>
+          </div>
+
+          <div id="city" class="col-md-12 shipping">
+            <%= a.label :city, :class => "control-label" %>
+            <%= a.text_field :city, :class => "form-control bill_to" %>
+          </div>
+          
+          <div id="state" class="col-md-6 shipping">
+            <%= a.label :state, :class => "control-label" %>
+            <%= a.text_field :state, :class => "form-control bill_to" %>
+          </div>
+          
+          <div id="zip" class="col-md-6 shipping">
+            <%= a.label :zip, :class => "control-label" %>
+            <%= a.text_field :zip, :class => "form-control bill_to" %>
+          </div>
+
+          <div id="phone" class="col-xs-12 shipping">
+            <%= a.label :phone, :class => "control-label" %>
+            <%= a.text_field :phone, :class => "form-control bill_to" %>
+          </div>
+        <% end %>
+
+        <div id="use_ship_to" class="col-xs-12 shipping">
+          <%= check_box_tag :use_ship_to_address, true, :checked %>
+          <%= label_tag :use_ship_to_address %>
+        </div>
+
+        <script>
+          $(document).ready(function() {
+            
+            if ($('#use_ship_to_address').is(":checked")) {
+              $(".bill_to").prop("disabled", true)
+            };
+            
+            $('#use_ship_to_address').change(function(){
+              if ($(this).is(":checked")) {
+                $(".bill_to").prop("disabled", true)
+              } else {
+                $(".bill_to").prop("disabled", false)
+              }
+            });
+
+            $('form#new_subscription').submit(function(e){
+              $('label span').remove();
+              var valid = true
+              var ship_to_ary = [
+                $(':input#subscription_ship_to_address_attributes_address_1'),
+                $(':input#subscription_ship_to_address_attributes_city'),
+                $(':input#subscription_ship_to_address_attributes_state'),
+                $(':input#subscription_ship_to_address_attributes_zip')
+              ]
+              var bill_to_ary = [
+                $(':input#subscription_bill_to_address_attributes_address_1'),
+                $(':input#subscription_bill_to_address_attributes_city'),
+                $(':input#subscription_bill_to_address_attributes_state'),
+                $(':input#subscription_bill_to_address_attributes_zip')
+              ]
+              if ($('#use_ship_to_address').is(":checked")) {
+                var el_ary = ship_to_ary
+              } else {
+                var el_ary = ship_to_ary.concat(bill_to_ary)
+              }
+              el_ary.forEach(function($el){
+                if ($el.val() == '') {
+                  valid = false;
+                  $el.prev().append("<span class='text text-danger'> Can't be blank</span>");
+                }                
+              })
+              if (valid == true) { return } else { e.preventDefault() }
+            })
+          })
+        </script>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <% if @payment && @payment.errors.any? %>
+          <div id="payment_errors" class="alert alert-danger">
+            <% @payment.errors.full_messages.each do |e| %>
+              <%= e %>
+            <% end %>
+          </div>
+        <% end %>
+        <% if @subscription && @subscription.errors.any? %>
+          <div id="subscription_errors" class="alert alert-danger">
+            <% @subscription.errors.full_messages.each do |e| %>
+              <%= e %>
+            <% end %>
+          </div>
+        <% end %>
+        <% if @card && @card.errors.any? %>
+          <div id="card_errors" class="alert alert-danger">
+            <% @card.errors.full_messages.each do |e| %>
+              <%= e %>
+            <% end %>
+          </div>
+        <% end %>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <select id="payment_type" class="selectpicker">
+          <% @cards.each do |card| %>
+            <option value="<%= card.service_card_id %>" data-content='<span class="<%= card.logo_class %>" style="margin-right: 5px;"></span><span class="text">  **** **** **** <%= card.last_4 %></span>'></option>
+          <% end %>
+          <option value="credit_card">New Credit Card</option>
+          <option value="check">Check</option>
+          <% if current_user.account and current_user.account.has_enough_credit %>
+            <option value="terms">Net <%= current_user.account.credit_terms %></option>
+          <% end %>
+        </select>
+
+        <script>
+          $("select#payment_type").change(function(){
+            var m = this.value;
+            if (m == 'check' || m == 'terms') {
+              $("#payment_method").val(m);
+              $("#credit_card_token").val('');
+              $("#credit_card").addClass('hidden');
+            } else { 
+              $("#payment_method").val('credit_card');
+              $("#credit_card_token").val(m == 'credit_card' ? '' : m);
+              if (m == 'credit_card') {
+                $("#credit_card").removeClass('hidden');
+              } else {
+                $("#credit_card").addClass('hidden');
+              }
+            }
+          })
+        </script>
+        
+        <!-- Load the required client component. -->
+        <script src="https://js.braintreegateway.com/web/3.11.0/js/client.min.js"></script>
+        
+        <!-- Load Hosted Fields component. -->
+        <script src="https://js.braintreegateway.com/web/3.11.0/js/hosted-fields.min.js"></script>
+        
+        <div id="credit_card" class="panel panel-default bootstrap-basic <%= 'hidden' if @cards.any? %>">
+          
+          <input type="hidden" id="payment_method" name="payment_method" value="credit_card" />
+          <input type="hidden" id="credit_card_token" name="credit_card_token" value="<%= @cards.first.try(:service_card_id) %>" />
+          <input type="hidden" id="order_id" name="order_id" value="" />
+          
+          <div class="panel-heading">
+            <h3 class="panel-title">Enter Card Details</h3>
+          </div>
+          
+          <div class="panel-body">
+            
+            <div class="row">
+              <div class="form-group col-md-12">
+                <input type="text" id="cardholder_name" name="cardholder_name" class="form-control" placeholder="Name on Card"/>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="form-group col-xs-8">
+                <label class="control-label">Card Number</label>
+                <!--  Hosted Fields div container -->
+                <!-- <div class="form-control" id="card-number"></div> -->
+                <span class="helper-text"></span>
+                <input type="number" id="credit_card_number" name="credit_card_number" class="form-control" placeholder="Enter Credit Card Number"/>
+              </div>
+              
+              <div class="form-group col-xs-4">
+                <label class="control-label col-xs-12">Expiration Date</label>
+                <div class="col-xs-6">
+                  <!--  Hosted Fields div container -->
+                  <!-- <div class="form-control" id="expiration-month"></div> -->
+                  <!-- <select id="expiration_month" name="expiration_month" class="form-control">
+                    <% Date::MONTHNAMES.compact.each do |month| %>
+                    <option value="<%= Date::MONTHNAMES.index(month) %>"><%= month %></option>
+                    <% end %>
+                  </select> -->
+                  <input type="number" id="expiration_month" name="expiration_month" class="form-control" placeholder="MM"/>
+                </div>
+                
+                <div class="col-xs-6">
+                  <!--  Hosted Fields div container -->
+                  <!-- <div class="form-control" id="expiration-year"></div> -->
+                  <!-- <select id="expiration_year" name="expiration_year" class="form-control">
+                    <option value="2016">2016</option>
+                    <option value="2017">2017</option>
+                    <option value="2018">2018</option>
+                    <option value="2019">2019</option>
+                    <option value="2020">2020</option>
+                    <option value="2021">2021</option>
+                    <option value="2022">2022</option>
+                    <option value="2023">2023</option>
+                    <option value="2024">2024</option>
+                  </select>
+                    -->
+                  <input type="number" id="expiration_year" name="expiration_year" class="form-control" placeholder="YYYY"/>
+                </div>              
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="form-group col-xs-6">
+                <label class="control-label">Security Code</label>
+                <!--  Hosted Fields div container -->
+                <!-- <div class="form-control" id="cvv"></div> -->
+                <input type="text" id="card_security_code" name="card_security_code" class="form-control" placeholder="Enter CVV"/>
+              </div>
+              <div class="form-group col-xs-6">
+                <label class="control-label">Zipcode</label>
+                <!--  Hosted Fields div container -->
+                <!-- <div class="form-control" id="postal-code"></div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2"><%= f.submit "Continue", :class => "btn btn-primary pull-right"%></td>
+    </tr>
+  </table>
+<% end %>

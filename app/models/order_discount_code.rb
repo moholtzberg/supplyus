@@ -14,24 +14,22 @@ class OrderDiscountCode < ActiveRecord::Base
 
   def check_rules
     code.rules.each do |rule|
-      errors.add(:order, rule.error_message) if !rule.check(order)
+      errors.add(:order, rule.error_message) unless rule.check(order)
     end
   end
 
   def apply_effect
-    #line item is added here too
+    # line item is added here too
     discount = code.effect.calculate(order)
     order.update_attribute(:discount_total, discount)
   end
 
   def remove_effect
-    discount = code.effect.calculate(order)
     order.update_attribute(:discount_total, 0)
   end
 
   def times_of_use_limit
-    if self.code.order_discount_codes(:reload).count >= self.code.times_of_use
-      errors.add(:order, "Discount code is exhausted.")
-    end
+    return if code.order_discount_codes(:reload).count <= code.times_of_use
+    errors.add(:order, 'Discount code is exhausted.')
   end
 end

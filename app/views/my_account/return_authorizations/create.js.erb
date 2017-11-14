@@ -1,0 +1,8 @@
+<% if @return_authorization.errors.any? %>
+  $("#modal-content").html("<%= j render :template => 'my_account/return_authorizations/new.html', :format => 'html' %>");
+<% else %>
+  $('#myModal').modal("hide");
+  $('body').removeClass('modal-open');
+  $('.modal-backdrop').remove();
+  window.location.href = "<%= my_account_order_path(@return_authorization.order_number) %>";
+<% end %>

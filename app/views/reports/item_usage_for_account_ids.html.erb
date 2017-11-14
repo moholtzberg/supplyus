@@ -1,0 +1,30 @@
+<% content_for :app_location do %>Admin / Groups / Item Usage for Account Ids<% end %>
+<% @accounts.each do |account| %>
+  <table class="table table-bordered table-condensed">
+    <tr>
+      <th colspan="6" class="text-center bg-info">
+					<%= account.name %><br/>
+			</th>
+    </tr>
+    <tr>
+      <th>Index</th>
+      <th>Item Id</th>
+      <th>QTY Ordered</th>
+      <th>Item Number</th>
+      <th>Current Price</th>
+    </tr>
+
+    <% OrderLineItem.from_to_by_account_id(@from_date, @to_date, account.id).select { |li| li.qty > 0 }.each_with_index do |li, i|%>
+      <% account_item_price = li.item.prices.actual.by_account(account.id)&.last&.price.to_f %>
+      <tr>
+        <td><%= i %></td>
+        <td><%= li.item_id %></td>
+        <td><%= number_with_delimiter(li.qty) %></td>
+        <td><%= li.number %></td>
+        <td>
+          <%= number_to_currency([account_item_price, li.item.default_price.to_f.to_d].select(&:positive?).min) %>
+        </td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>

@@ -1,82 +1,73 @@
 class PaymentsController < ApplicationController
-  layout "admin"
+  layout 'admin'
   helper_method :sort_column, :sort_direction
-  
+  before_action :set_payment, only: %i[edit update destroy finalize]
+  load_and_authorize_resource except: [:finalize]
+
   def index
-    authorize! :read, Payment
-    @payments = Payment.order(sort_column + " " + sort_direction).includes(:order_payment_applications => [:order])
-    unless params[:term].blank?
-      @payments = @payments.lookup(params[:term]) if params[:term].present?
-    end
-    @payments = @payments.paginate(:page => params[:page], :per_page => 25)
+    update_index
     respond_to do |format|
       format.html
-      format.json {render :json => @payments.map(&:number)}
+      format.js
+      format.json { render :json => @payments.map(&:number) }
     end
   end
-  
+
   def new
-    authorize! :create, Payment
     @payment = Payment.new
   end
-  
+
   def create
-    authorize! :create, Payment
-    if PaymentMethod.find(params[:payment][:payment_method]).name == "CreditCard"
-      payment = CreditCardPayment.new(
-        :first_name => params[:payment][:first_name],
-        :last_name => params[:payment][:last_name],
-        :credit_card_number => params[:payment][:credit_card_number],
-        :card_security_code => params[:payment][:card_security_code],
-        :expiration_month => params[:payment][:expiration_month],
-        :expiration_year => params[:payment][:expiration_year],
-        :amount => params[:payment][:amount]
-      )
-      
-      if payment.authorize
-        payment.save
-        complete
-      else
-        puts "-----XXX---> #{a.errors.messages}"
-        render "payment"
-      end
-    else
-      payment = Payment.new(
-        :amount => params[:payment][:amount],
-        :account_name => params[:payment][:account_name],
-        :payment_method => PaymentMethod.find_by(:name => params[:payment][:payment_method]),
-        :check_number => params[:payment][:check_number],
-        :date => params[:payment][:date],
-      )
-      payment.payment_type = "CheckPayment"
-      payment.save
-    end
-    
-    params[:order_payment_applications].each do |line|
-      if line[1]["applied_amount"].to_d > 0
-        payment.order_payment_applications.new(:order_id => line[1]["order_id"], :applied_amount => line[1]["applied_amount"].to_d.to_s)
-      end
-    end
-    
-    if payment.save
-      @payments = Payment.order(sort_column + " desc").includes(:order_payment_applications => [:order])
-      flash[:notice] = "Payment saved successfully!"
-      @payments = @payments.paginate(:page => params[:page], :per_page => 25)
-    end
+    @payment = Payment.new(payment_params)
+    @payment.save if @payment.valid? && @payment.authorize
+    update_index
   end
-  
+
+  def edit; end
+
+  def update
+    @payment.update_attributes(payment_params)
+  end
+
+  def finalize
+    authorize! :update, Payment
+    @payment.finalize
+    update_index
+  end
+
   private
-  
+
+  def set_payment
+    @payment = Payment.find(params[:id])
+  end
+
+  def update_index
+    @payments = Payment.includes(:account)
+                       .order(sort_column + ' ' + sort_direction)
+                       .includes(:order_payment_applications => [:order])
+    @payments = @payments.lookup(params[:term]) if params[:term].present?
+    @payments = @payments.paginate(:page => params[:page], :per_page => 25)
+  end
+
   def payment_params
-    params.require(:payment).permit(:amount, :account_name, :payment_method_id, :check_number, :date)
+    params.require(:payment).permit(
+      :amount, :account_name, :payment_method_id, :credit_card_id,
+      :check_number, :date, :payment_type,
+      order_payment_applications_attributes: [:order_id, :applied_amount]
+    )
   end
-  
+
   def sort_column
-    Payment.column_names.include?(params[:sort]) ? params[:sort] : "id"
+    default = 'payments.id'
+    columns = [Account, Payment].inject([]) do |a, c|
+      a + c.column_names.map do |cn|
+        "#{c.table_name}.#{cn}"
+      end
+    end
+    columns.include?(params[:sort]) ? params[:sort] : default
   end
-  
+
   def sort_direction
-    %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
+    %w[asc desc].include?(params[:direction]) ? params[:direction] : 'asc'
   end
-  
 end

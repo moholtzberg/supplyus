@@ -1,13 +1,10 @@
-<% start_date = 12.months.ago.beginning_of_year %>
-<% end_date   = Date.today %>
-<% number_of_months = (end_date.year*12+end_date.month)-(start_date.year*12+start_date.month) %>
-
+<% number_of_months = (@to_date.year * 12 + @to_date.month) - (@from_date.year * 12 + @from_date.month) %>
 <% (0..number_of_months).to_a.reverse.each do |month_offset| %>
 	
 	<% s = month_offset.months.ago.beginning_of_month %>
 	<% e = month_offset.months.ago.end_of_month %>
 	
-	<% order_ids = Order.where("COALESCE(tax_total,0) <> 0").where(completed_at: s..e).fulfilled %>
+	<% order_ids = Order.where("COALESCE(tax_total,0) <> 0").where(submitted_at: s..e).fulfilled %>
 	
 	<% order_tax_rates = OrderTaxRate.where(order_id: order_ids) %>
 	
@@ -18,27 +15,26 @@
 			</tr>
 			<% sum = 0 %>
 			<% TaxRate.where(id: order_tax_rates.map(&:tax_rate_id)).each do |t| %>
-			<tr>
-				<td><%= "#{t.state_code} - #{t.zip_code}(#{t.region_name}) - #{t.rate}" %></td>
-				<td><%= number_to_currency(order_tax_rates.where(tax_rate_id: t.id).map(&:amount).sum) %></td>
-				<% sum += order_tax_rates.where(tax_rate_id: t.id).map(&:amount).sum %>
-			</tr>
+				<% tax_rate_sum = order_tax_rates.where(tax_rate_id: t.id).map(&:amount).sum %>
+				<% sum += tax_rate_sum %>
+				<tr>
+					<td><%= "#{t.state_code} - #{t.zip_code}(#{t.region_name}) - #{t.rate}" %></td>
+					<td><%= number_to_currency(tax_rate_sum) %></td>
+				</tr>
 			<% end %>
 			<tr>
 				<td><%= number_to_currency(order_tax_rates.map(&:amount).sum) %></td>
 				<td><%= number_to_currency(sum)%></td>
 			</tr>
 			<% if sum != order_tax_rates.map(&:amount).sum %>
-			<tr>
-				<td colspan="2">
-					<% order_tax_rates.where(tax_rate_id: nil).each do |amt| %>
-						<%= "#{number_to_currency(amt.amount)} -> #{amt.tax_rate_id} -> #{amt.order_id}" if amt.tax_rate_id.nil?  %><br/>
-					<% end %>
-				</td>
-			</tr>
+				<tr>
+					<td colspan="2">
+						<% order_tax_rates.where(tax_rate_id: nil).each do |amt| %>
+							<%= "#{number_to_currency(amt.amount)} -> #{amt.tax_rate_id} -> #{amt.order_id}" if amt.tax_rate_id.nil?  %><br/>
+						<% end %>
+					</td>
+				</tr>
 			<% end %>
 		</table>
-		
 	<% end %>
-	
 <% end %>

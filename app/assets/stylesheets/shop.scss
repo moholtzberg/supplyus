@@ -2,6 +2,8 @@
 @import "bootstrap";
 @import "font-awesome-sprockets";
 @import "font-awesome";
+@import "bootstrap-select";
+@import "jquery.auto-complete";
 
 html {
 	font-family: sans-serif;
@@ -623,6 +625,7 @@ ul#account_links {
 
 select.add_to_list {
   margin-top: 15px;
+  margin-bottom: 1px;
 }
 
 .vertical-middle {
@@ -669,4 +672,13 @@ select.add_to_list {
     -webkit-border-radius:6px 0 6px 6px;
     -moz-border-radius:6px 0 6px 6px;
     border-radius:6px 0 6px 6px;
+}
+.border-bottom {
+	border-bottom: 1px solid;
+}
+.margin-bottom {
+	margin-bottom: 15px;
+}
+.margin-top {
+	margin-top: 20px;
 }

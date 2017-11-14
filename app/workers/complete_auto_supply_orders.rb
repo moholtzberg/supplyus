@@ -1,20 +1,16 @@
 require 'sidekiq-scheduler'
 
 class CompleteAutoSupplyOrders
-  
   include Sidekiq::Worker
-  
-  def perform()
-    j = Job.new
-    puts "********* Completeting Incomplete Toner Orders from Alerts *********"
-    j.job_name = "Complete Incomplete Toner Orders from Alerts"
-    orders = Order.is_incomplete.where(:notes => "Auto Supply Order")
+  include JobLogger
+
+  def perform
+    add_log '********* Completeting Incomplete Toner Orders from Alerts *********'
+    orders = Order.not_submitted.where(:notes => 'Auto Supply Order')
     orders.each do |ord|
-      ord.update_attributes(:completed_at => DateTime.now)
-      j.notes = "Sucess"
+      ord.update_attributes(:submitted_at => DateTime.now)
+      add_log "Order #{ord.number}: success"
     end
-    puts "********* END *********"
-    j.save
+    add_log '********* END *********'
   end
-  
 end

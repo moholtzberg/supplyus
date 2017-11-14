@@ -1,177 +1,458 @@
-<%= form_for @purchase_order, :method => :patch, :html => {:class => "form-horizontal"} do |f| %>
+<fieldset>
+	
+	<div class="col-md-12">
+		
+		<div class="col-md-4">
+			<%= f.label :vendor %>
+			<%= f.select :vendor_id, @vendors.collect {|p| [p.name, p.id, 
+				:vendor_name => p.name, :ship_to_address_1 => p.address_1, :ship_to_address_2 => p.address_2, :ship_to_city => p.city, :ship_to_state => p.state, :ship_to_zip => p.zip, :ship_to_phone => p.phone
+				]}, {:include_blank => "Select Vendor"}, {:class => "form-control"} %>
+		</div>
 
-	<fieldset>
+		<script>
+			$("select#purchase_order_vendor_id").change(function(e){
+				var vendor = $(this).find("option:selected").attr("vendor_name")
+				var address_1 = $(this).find("option:selected").attr("ship_to_address_1")
+				var address_2 = $(this).find("option:selected").attr("ship_to_address_2")
+				var city = $(this).find("option:selected").attr("ship_to_city")
+				var state = $(this).find("option:selected").attr("ship_to_state")
+				var zip = $(this).find("option:selected").attr("ship_to_zip")
+				var phone = $(this).find("option:selected").attr("ship_to_phone")
+				$("input#purchase_order_ship_from_vendor_name").val(vendor)
+				$("input#purchase_order_ship_from_address_1").val(address_1)
+				$("input#purchase_order_ship_from_address_2").val(address_2)
+				$("input#purchase_order_ship_from_city").val(city)
+				$("input#purchase_order_ship_from_state").val(state)
+				$("input#purchase_order_ship_from_zip").val(zip)
+				$("input#purchase_order_ship_from_phone").val(phone)
+			})
+		</script>
+
+		<div class="col-md-4">
+			<%= f.label :number %>
+			<%= f.text_field(:number, :class => "form-control") %>
+		</div>
+	
+		<div class="col-md-4">
+			<%= f.label :completed_at %>
+			
+			<% if @purchase_order.completed_at.blank? %>
+
+			<%= f.date_field(:completed_at, :class => "form-control") %>
+			
+			<% else %>
+			
+			<%= f.datetime_field(:completed_at, :disabled => true, :class => "form-control", :value => @purchase_order.completed_at.strftime("%m/%d/%Y %I:%M %p")) %>
+			
+			<% end %>
+		</div>
 		
 		<div class="col-md-12">
-			
-			<div class="col-md-4">
-				<%= f.label :vendor %>
-				<%= f.select :vendor_id, @vendors.collect {|p| [p.name, p.id, 
-					:vendor_name => p.name, :ship_to_address_1 => p.ship_to_address_1, :ship_to_address_2 => p.ship_to_address_2, :ship_to_city => p.ship_to_city, :ship_to_state => p.ship_to_state, :ship_to_zip => p.ship_to_zip, :ship_to_phone => p.ship_to_phone
-					]}, {:include_blank => "Select Vendor"}, {:class => "form-control"} %>
-			</div>
-	
-			<script>
-				$("select#purchase_order_vendor_id").change(function(e){
-					var vendor = $(this).find("option:selected").attr("vendor_name")
-					var address_1 = $(this).find("option:selected").attr("ship_to_address_1")
-					var address_2 = $(this).find("option:selected").attr("ship_to_address_2")
-					var city = $(this).find("option:selected").attr("ship_to_city")
-					var state = $(this).find("option:selected").attr("ship_to_state")
-					var zip = $(this).find("option:selected").attr("ship_to_zip")
-					var phone = $(this).find("option:selected").attr("ship_to_phone")
-					$("input#purchase_order_ship_from_vendor_name").val(vendor)
-					$("input#purchase_order_ship_from_address_1").val(address_1)
-					$("input#purchase_order_ship_from_address_2").val(address_2)
-					$("input#purchase_order_ship_from_city").val(city)
-					$("input#purchase_order_ship_from_state").val(state)
-					$("input#purchase_order_ship_from_zip").val(zip)
-					$("input#purchase_order_ship_from_phone").val(phone)
-				})
-			</script>
-	
-			<div class="col-md-4">
-				<%= f.label :number %>
-				<%= f.text_field(:number, :class => "form-control") %>
-			</div>
+			<%= f.label :notes %>
+			<%= f.text_area(:notes, :class => "form-control") %>
+		</div>
 		
-			<div class="col-md-4">
-				<%= f.label :completed_at %>
-				
-				<% if @purchase_order.completed_at.blank? %>
-	
-				<%= f.date_field(:completed_at, :class => "form-control") %>
-				
-				<% else %>
-				
-				<%= f.datetime_field(:completed_at, :disabled => true, :class => "form-control", :value => @purchase_order.completed_at.strftime("%m/%d/%Y %I:%M %p")) %>
-				
+		<div class="col-md-12">
+			<select id="order_id" class="form-control">
+				<option>Please Select an Order</option>
+				<% Order.is_submitted.not_linked_to_po.order(:submitted_at).each do |o|%>
+				<option id="<%= o.id %>"><%= o.number %></option>
 				<% end %>
-			</div>
-			
-			<div class="col-md-12">
-				<%= f.label :notes %>
-				<%= f.text_area(:notes, :class => "form-control") %>
-			</div>
-			
-			<div class="col-md-12">
-				<select id="order_id" class="form-control">
-					<option>Please Select an Order</option>
-					<% Order.is_complete.not_linked_to_po.order(:completed_at).each do |o|%>
-					<option id="<%= o.id %>"><%= o.number %></option>
-					<% end %>
-				</select>
-				
-				<script>
-					$("select#order_id").change(function(e){
-						var order_id = $(this).find("option:selected").attr("id")
-						var request = $.ajax({
-							url : '/admin/purchase_orders/<%= @purchase_order.id.to_i %>/line_items_from_order.js?order_id='+ order_id
-						});
-					})
-				</script>
-				
-			</div>
+			</select>
 			
 		</div>
 		
-	</fieldset>
-	<fieldset>
-		
-		<div class="col-md-6 address">
-			<div class="col-md-12">
-				<%= f.label :ship_from_vendor_name %>
-				<%= f.text_field(:ship_from_vendor_name, :class => " form-control col-md-12 input-sm")%>
-			</div>
-			<div class="col-md-12">
-				<%= f.label :ship_from_attention %>
-				<%= f.text_field(:ship_from_attention, :class => " form-control col-md-12 input-sm")%>
-			</div>
-			<div class="col-md-12">
-				<%= f.label :ship_from_address_1 %>
-				<%= f.text_field(:ship_from_address_1, :class => "form-control col-md-12 input-sm")%>
-			</div>
-			<div class="col-md-12">
-				<%= f.label :ship_from_address_2 %>
-				<%= f.text_field(:ship_from_address_2, :class => "form-control col-md-12 input-sm")%>
-			</div>
-			<div class="col-md-6">
-				<%= f.label :ship_from_city %>
-				<%= f.text_field(:ship_from_city, :class => "form-control col-md-12 input-sm")%>
-			</div>
-			<div class="col-md-3">
-				<%= f.label :ship_from_state %>
-				<%= f.text_field(:ship_from_state, :class => "form-control col-md-12 input-sm")%>
-			</div>
-			<div class="col-md-3">
-				<%= f.label :ship_from_zip %>
-				<%= f.text_field(:ship_from_zip, :class => "form-control col-md-12 input-sm")%>
-			</div>
-			
-		</div>
-		
-		<div class="col-md-6 address">
-			<div class="col-md-12">
-				<%= f.label :ship_to_account_name %>
-				<%= f.text_field(:ship_to_account_name, :class => " form-control col-md-12 input-sm")%>
-			</div>
-			<div class="col-md-12">
-				<%= f.label :ship_to_attention %>
-				<%= f.text_field(:ship_to_attention, :class => " form-control col-md-12 input-sm")%>
-			</div>
-			<div class="col-md-12">
-				<%= f.label :ship_to_address_1 %>
-				<%= f.text_field(:ship_to_address_1, :class => "form-control col-md-12 input-sm")%>
-			</div>
-			<div class="col-md-12">
-				<%= f.label :ship_to_address_2 %>
-				<%= f.text_field(:ship_to_address_2, :class => "form-control col-md-12 input-sm")%>
-			</div>
-			<div class="col-md-6">
-				<%= f.label :ship_to_city %>
-				<%= f.text_field(:ship_to_city, :class => "form-control col-md-12 input-sm")%>
-			</div>
-			<div class="col-md-3">
-				<%= f.label :ship_to_state %>
-				<%= f.text_field(:ship_to_state, :class => "form-control col-md-12 input-sm")%>
-			</div>
-			<div class="col-md-3">
-				<%= f.label :ship_to_zip %>
-				<%= f.text_field(:ship_to_zip, :class => "form-control col-md-12 input-sm")%>
-			</div>
-			
-		</div>
-		
-		<div class="col-md-6">
-			<%= f.label :shipping_method %>
-			<%= f.select(:shipping_method, ShippingMethod.all.collect {|a| [a.name, a.id]}, {:include_blank => "Select Shipping Method"}, {:class => "form-control col-md-12 input-sm"}) %>
-		</div>
-		
-		<div class="col-md-6">
-			<%= f.label :shipping_amount %>
-			<%= f.text_field(:shipping_amount, :class => "form-control col-md-12 input-sm")%>
-		</div>
+	</div>
 	
-	</fieldset>
+</fieldset>
+<fieldset>
 	
-<% end %>
+	<div class="col-md-6 address">
+		<div class="col-md-12">
+			<%= f.label :ship_from_vendor_name %>
+			<%= f.text_field(:ship_from_vendor_name, :class => " form-control col-md-12 input-sm")%>
+		</div>
+		<div class="col-md-12">
+			<%= f.label :ship_from_attention %>
+			<%= f.text_field(:ship_from_attention, :class => " form-control col-md-12 input-sm")%>
+		</div>
+		<div class="col-md-12">
+			<%= f.label :ship_from_address_1 %>
+			<%= f.text_field(:ship_from_address_1, :class => "form-control col-md-12 input-sm")%>
+		</div>
+		<div class="col-md-12">
+			<%= f.label :ship_from_address_2 %>
+			<%= f.text_field(:ship_from_address_2, :class => "form-control col-md-12 input-sm")%>
+		</div>
+		<div class="col-md-6">
+			<%= f.label :ship_from_city %>
+			<%= f.text_field(:ship_from_city, :class => "form-control col-md-12 input-sm")%>
+		</div>
+		<div class="col-md-3">
+			<%= f.label :ship_from_state %>
+			<%= f.text_field(:ship_from_state, :class => "form-control col-md-12 input-sm")%>
+		</div>
+		<div class="col-md-3">
+			<%= f.label :ship_from_zip %>
+			<%= f.text_field(:ship_from_zip, :class => "form-control col-md-12 input-sm")%>
+		</div>
+		
+	</div>
+	
+	<div class="col-md-6 address">
+		<div class="col-md-12">
+			<%= f.label :ship_to_account_name %>
+			<%= f.text_field(:ship_to_account_name, :class => " form-control col-md-12 input-sm")%>
+		</div>
+		<div class="col-md-12">
+			<%= f.label :ship_to_attention %>
+			<%= f.text_field(:ship_to_attention, :class => " form-control col-md-12 input-sm")%>
+		</div>
+		<div class="col-md-12">
+			<%= f.label :ship_to_address_1 %>
+			<%= f.text_field(:ship_to_address_1, :class => "form-control col-md-12 input-sm")%>
+		</div>
+		<div class="col-md-12">
+			<%= f.label :ship_to_address_2 %>
+			<%= f.text_field(:ship_to_address_2, :class => "form-control col-md-12 input-sm")%>
+		</div>
+		<div class="col-md-6">
+			<%= f.label :ship_to_city %>
+			<%= f.text_field(:ship_to_city, :class => "form-control col-md-12 input-sm")%>
+		</div>
+		<div class="col-md-3">
+			<%= f.label :ship_to_state %>
+			<%= f.text_field(:ship_to_state, :class => "form-control col-md-12 input-sm")%>
+		</div>
+		<div class="col-md-3">
+			<%= f.label :ship_to_zip %>
+			<%= f.text_field(:ship_to_zip, :class => "form-control col-md-12 input-sm")%>
+		</div>
+		
+	</div>
+	
+	<div class="col-md-6">
+		<%= f.label :shipping_method %>
+		<%= f.select(:shipping_method, ShippingMethod.all.collect {|a| [a.name, a.id]}, {:include_blank => "Select Shipping Method"}, {:class => "form-control col-md-12 input-sm"}) %>
+	</div>
+	
+	<div class="col-md-6">
+		<%= f.label :shipping_amount %>
+		<%= f.text_field(:shipping_amount, :class => "form-control col-md-12 input-sm")%>
+	</div>
 
+</fieldset>
+	
 <hr/>
 
 <fieldset>
 	
-	<div id="line_items">
-		<%= render "purchase_order_line_items/line_items" %>
+	<div>
+		<table class="table table-bordered table-condensed table-striped table-hover table-responsive">
+			<tr class="line-items-lables">
+				<th width="1%">&nbsp;</td>
+				<th width="43%">Item</td>
+				<th width="12%">Qty.</td>
+				<th width="12%">Quantity Canceled</td>
+				<th width="12%">Linked Order Line Item</td>
+				<th width="10%">Price</td>
+				<th width="10%">Subtotal</td>
+				<th width="1%">&nbsp;</td>
+			</tr>
+			<tr id="add_lines_form">
+				<td colspan="2">
+					<%= select_tag :item_id, "", {include_blank: true, class: "form-control", style: "width: 100%"} %>
+				</td>
+				<td>
+					<%= number_field_tag :quantity, nil, :class => "form-control" %>
+				</td>
+				<td colspan="2">
+				</td>
+				<td>
+					<%= text_field_tag :price, nil, :class => "form-control" %>
+				</td>
+				<td colspan="2">
+					<%= button_tag "Add Item", :class => "btn btn-primary btn-sm add-item" %>
+				</td>
+			</tr>
+		</table>
 	</div>
-	
-	<%= form_for @order_line_item, :remote => true do |form| %>
-	
-	<table class="table table-bordered table-condensed">
-	
-		<%= render "purchase_order_line_items/form", f: form %>
-		
-	</table>
-	
-	<% end %>
-	
 </fieldset>
+
+<script>
+  $(function() {
+
+    var FORMBUILDER = FORMBUILDER || {};
+
+    FORMBUILDER.purchase_order_line_items = <%= raw @purchase_order.purchase_order_line_items.map{ |li| li.to_po_form_hash }.to_json %>;
+    FORMBUILDER.current_line_item = {};
+    FORMBUILDER.purchase_order_notes = "<%= raw @purchase_order.notes %>";
+
+    FORMBUILDER.actions = {
+
+      init: function(){
+
+        FORMBUILDER.actions.subTotal();
+        FORMBUILDER.actions.addItem();
+        FORMBUILDER.actions.removeItem();
+        FORMBUILDER.actions.validateForm();
+        FORMBUILDER.actions.fieldValid(key);
+	      FORMBUILDER.actions.recalculateLineItems();
+        FORMBUILDER.actions.clearErrors();
+        FORMBUILDER.actions.renderLineItems();
+        FORMBUILDER.actions.resetForm();
+        FORMBUILDER.actions.updateLineItemSelectOptions();
+        FORMBUILDER.actions.updateCurrentLineItem();
+        FORMBUILDER.actions.updateQuantityToShip();
+
+      },
+
+      subTotal: function(){
+      	var sub_total = 0;
+      	FORMBUILDER.purchase_order_line_items.forEach(function(el, i) { sub_total += el.sub_total });
+      	return sub_total;
+      },
+
+      addItem: function(){
+      	FORMBUILDER.actions.clearErrors();
+      	if (FORMBUILDER.actions.validateForm()) {
+	        FORMBUILDER.purchase_order_line_items.push($.extend({}, FORMBUILDER.current_line_item));
+	        FORMBUILDER.actions.resetForm();
+	        FORMBUILDER.actions.renderLineItems();
+      	}
+      },
+
+      removeItem: function(e){
+      	var index = parseInt($(e.target).closest('tr').data( "index" ));
+      	if (FORMBUILDER.purchase_order_line_items[index].id) {
+      		FORMBUILDER.purchase_order_line_items[index]._destroy = true;
+      	} else {
+	      	FORMBUILDER.purchase_order_line_items.splice(index, 1);
+      	}
+	      FORMBUILDER.actions.resetForm();
+	      FORMBUILDER.actions.renderLineItems();
+      },
+
+      validateForm: function(){
+      	var valid = true;
+      	['item_id', 'quantity', 'price'].forEach(function(key){
+      		if (!FORMBUILDER.actions.fieldValid(key)) { 
+      			$('#add_lines_form #' + key).parent().addClass('has-error');
+      			valid = false;
+      		}
+      	})
+      	return valid;
+      },
+
+      fieldValid: function(key) {
+      	var value = FORMBUILDER.current_line_item[key]
+      	switch(key) {
+      		case 'item_id':
+      			return value
+      			break;
+      		case 'quantity':
+      			return value && value > 0
+      			break;
+      		case 'price':
+      			return value && value > 0
+      			break;
+      	}
+      },
+
+      clearErrors: function() {
+      	$('#add_lines_form td').removeClass('has-error');
+      },
+
+      renderLineItems: function() {
+      	$('tr.poli').remove();
+      	FORMBUILDER.purchase_order_line_items.forEach(function(el, i) {
+	        var item = document.createElement("tr");
+	        if (el._destroy) {
+	        	item.className = "poli hidden";
+	        } else {
+	        	item.className = "poli";	        	
+	        }
+	        item.setAttribute('data-index', i)
+	        $(item)
+	        .append('<input type="hidden" name="purchase_order[purchase_order_line_items_attributes][' + i + '][id]" value="' + (el.id == null ? '' : el.id) + '" />')
+	        .append('<input type="hidden" name="purchase_order[purchase_order_line_items_attributes][' + i + '][_destroy]" value="' + el._destroy + '" />')
+	        .append('<input type="hidden" name="purchase_order[purchase_order_line_items_attributes][' + i + '][purchase_order_line_number]" value="' + el.purchase_order_line_number + '" />')	        
+	        .append(
+	          $("<td>")
+	          .append(
+	          	el.purchase_order_line_number
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<input type="hidden" name="purchase_order[purchase_order_line_items_attributes][' + i + '][item_id]" value="' + el.item_id + '" />')
+	          )
+	          .append(
+	          	el.item_number
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<input name="purchase_order[purchase_order_line_items_attributes][' + i + '][quantity]" value="' + el.quantity + '" />')
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<input name="purchase_order[purchase_order_line_items_attributes][' + i + '][quantity_received]" value="' + el.quantity_received + '" />')
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<input name="purchase_order[purchase_order_line_items_attributes][' + i + '][order_line_item_id]" value="' + (el.order_line_item_id == null ? '' : el.order_line_item_id) + '" />')
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<input name="purchase_order[purchase_order_line_items_attributes][' + i + '][price]" value="' + el.price + '" />')
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            el.sub_total
+	          )
+	        )
+	        .append(
+	          $("<td span='10%' class='text-center'>")
+	          .append(
+	            $('<a href="#" class="remove-item"><i class="fa fa-trash"></i></a>')
+	          )
+	        )
+	        .after(
+	        	$("<tr>")
+	        	.append(
+	        		$('<td colspan="7">Subtotal</td>')
+	        	)
+	        	.append(
+	        		$('<td colspan="2">' + FORMBUILDER.actions.subTotal() + '</td>')
+	        	)
+	        )
+	        $('.line-items-lables').after(item)
+      	})
+		    $('.remove-item').click(function(e){
+		    	e.stopPropagation();
+		    	e.preventDefault();
+		      FORMBUILDER.actions.removeItem(e);
+		    })
+      },
+
+      resetForm: function() {
+      	$('#add_lines_form :input').val('').trigger('change');
+      	FORMBUILDER.actions.updateCurrentLineItem();
+      },
+
+      updateCurrentLineItem: function() {
+      	var line_item = FORMBUILDER.current_line_item;
+        line_item.item_id = $('#add_lines_form :input#item_id').val();
+        line_item.item_number = $.trim($('#add_lines_form :input#item_id option[value="' + line_item.item_id + '"]').text());
+        line_item.quantity = $('#add_lines_form :input#quantity').val();
+        line_item.quantity_received = 0;
+        line_item.order_line_item_id = '';
+        line_item.price = $('#add_lines_form :input#price').val();
+        line_item._destroy = false;
+        line_item.id = '';
+        var current_max_line_number = 0
+        if (FORMBUILDER.purchase_order_line_items.length != 0) {
+        	current_max_line_number = FORMBUILDER.purchase_order_line_items[FORMBUILDER.purchase_order_line_items.length-1].purchase_order_line_number
+        }
+        line_item.purchase_order_line_number = Math.max(FORMBUILDER.purchase_order_line_items.length, current_max_line_number) + 1
+        line_item.sub_total = (line_item.quantity * line_item.price).toFixed(2);
+      }
+
+    }
+
+    $('.add-item').click(function(e){
+    	e.stopPropagation();
+    	e.preventDefault();
+      FORMBUILDER.actions.addItem();
+    })
+
+    $('#add_lines_form :input').change(function(){
+      FORMBUILDER.actions.updateCurrentLineItem();
+    })
+
+		$("#add_lines_form :input#item_id").select2({
+		  ajax: {
+		    url: "<%= autocomplete_items_path %>",
+		    dataType: 'json',
+		    delay: 250,
+		    data: function (params) {
+		      return {
+		        term: params.term
+		      };
+		    },
+		    processResults: function (data, params) {
+			    return {
+			        results: $.map(data, function(obj) {
+			            return { id: obj.id, text: obj.label };
+			        })
+			    };
+		    },
+		    cache: true
+		  },
+		  minimumInputLength: 1,
+		  placeholder: 'Search item',
+		  allowClear: true,
+		  theme: "bootstrap"
+		});
+
+		$("#add_lines_form :input#item_id").on('select2:select', function(e){
+			var item_id = $("#add_lines_form :input#item_id").val();
+			var vendor_id = $("#purchase_order_vendor_id").find(":selected").val();
+			var request = $.ajax({
+				url : '/admin/item_vendor_prices?item_id=' + item_id + '&vendor_id=' + vendor_id,
+				dataType : "json"
+			});
+
+			request.success(function(data) {
+				console.log(data)
+				if (data == null) {
+					
+				} else {
+					success_action(data)
+				}
+				
+			});
+
+			request.error(function(httpObj, textStatus) {       
+				if(httpObj.status == 200)
+				success_action(data)
+				else
+				alert("Failed")
+			});
+
+			function success_action(data) {
+				if (data.price) {
+					$("#add_lines_form :input#price").val(parseFloat(data.price).toFixed(2))
+				}
+			}
+		});
+
+		$("select#order_id").change(function(e){
+			var order_id = $(this).find("option:selected").attr("id")
+			var request = $.ajax({
+				url : '/admin/purchase_orders/line_items_from_order.json?order_id='+ order_id,
+				success : function(data) {
+					FORMBUILDER.purchase_order_notes = data['purchase_order_notes'];
+					$(":input#purchase_order_notes").val(FORMBUILDER.purchase_order_notes);
+					FORMBUILDER.purchase_order_line_items = data['purchase_order_line_items'];
+					FORMBUILDER.actions.renderLineItems();
+				}
+			});
+		})
+
+		$(document).ready(function(){
+			FORMBUILDER.actions.renderLineItems();
+		})
+  });
+</script>	

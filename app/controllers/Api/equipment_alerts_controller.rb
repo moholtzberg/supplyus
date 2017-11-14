@@ -1,5 +1,6 @@
 module Api
   class Api::EquipmentAlertsController < ApiController
+    acts_as_token_authentication_handler_for User
     skip_before_filter :verify_authenticity_token, :only => :create
     respond_to :json
     

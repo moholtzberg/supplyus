@@ -1,0 +1,62 @@
+<fieldset>	
+
+		<div id="_type" class="col-md-6">
+			<%= f.label :_type, class: "control-label" %>
+			<%= f.select :_type, Price::PRICE_TYPES, {}, class: "form-control" %>
+		</div>
+
+		<div id="price" class="col-md-6">
+			<%= f.label :price, class: "control-label" %>
+			<%= f.text_field :price, class: "form-control" %>
+		</div>
+
+		<div id="start_date" class="col-md-6">
+			<%= f.label :start_date, class: "control-label" %>
+			<%= f.date_field :start_date, class: "form-control" %>
+		</div>
+
+		<div id="end_date" class="col-md-6">
+			<%= f.label :end_date, class: "control-label" %>
+			<%= f.date_field :end_date, class: "form-control" %>
+		</div>
+
+		<div id="min_qty" class="col-md-6">
+			<%= f.label :min_qty, class: "control-label" %>
+			<%= f.text_field :min_qty, class: "form-control", disabled: @price._type != 'Bulk' %>
+		</div>
+
+		<div id="max_qty" class="col-md-6">
+			<%= f.label :max_qty, class: "control-label" %>
+			<%= f.text_field :max_qty, class: "form-control", disabled: @price._type != 'Bulk' %>
+		</div>
+
+		<div id="appliable_type" class="col-md-6">
+			<%= f.label :appliable_type, class: "control-label" %>
+			<%= f.select :appliable_type, ['Account', 'Group'], {include_blank: true, default: nil}, class: "form-control" %>
+		</div>
+
+		<div id="appliable_id" class="col-md-6">
+			<%= f.label :appliable_id, class: "control-label" %>
+			<%= f.text_field :appliable_id, class: "form-control" %>
+		</div>
+
+		<div id="combinable" class="col-md-6">
+			<%= f.label :combinable, class: "control-label" %>
+			<%= f.check_box :combinable, class: "form-control" %>
+		</div>
+
+		<%= f.hidden_field :item_id %>
+
+		<script>
+			$(function() {
+				$('#price__type').change(function() {
+					if ($(this).val() == 'Bulk') {
+						$('#price_min_qty, #price_max_qty').prop('disabled', false);
+					} else {
+						$('#price_min_qty, #price_max_qty').prop('disabled', true);
+					}
+				})
+			})
+		</script>
+	
+</fieldset>

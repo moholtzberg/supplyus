@@ -3,15 +3,27 @@ class Order < ActiveRecord::Base
   include ApplicationHelper
   
   scope :is_locked, -> () { where(:locked => true) }
+  scope :is_complete, -> () { where(state: [:completed, :fulfilled])}
   scope :is_unlocked, -> () { where.not(:locked => true) }
-  scope :is_complete, -> () { where.not(:completed_at => nil)}
-  scope :is_incomplete, -> () { where(:completed_at => nil)}
-  scope :is_canceled, -> () { where(:canceled => true)}
-  scope :not_canceled, -> () { where(:canceled => nil)}
+  scope :is_submitted, -> () { where.not(:submitted_at => nil) }
+  scope :not_submitted, -> () { where(:submitted_at => nil) }
+  scope :is_canceled, -> () { where(:state => :canceled) }
+  scope :not_canceled, -> () { where.not(:state => :canceled) }
   scope :has_account, -> () { where.not(:account_id => nil) }
   scope :no_account, -> () { where(:account_id => nil) }
   scope :by_date_range, -> (from, to) { where("due_date >= ? AND due_date <= ?", from, to) }
-  scope :lookup, -> (q) { joins({:account => [:group]}, {:order_line_items => [:item]}).where("lower(orders.number) like (?) or lower(orders.po_number) like (?) or lower(accounts.name) like (?) or lower(items.number) like (?) or lower(items.name) like (?) or lower(items.description) like (?) or lower(groups.name) like (?)", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%") }
+  scope :lookup, lambda { |q|
+    includes(
+      :account => [:group],
+      :order_line_items => [:item]
+    ).where(
+      'lower(orders.number) like (?) or lower(orders.po_number) like (?) or '\
+      'lower(accounts.name) like (?) or lower(items.number) like (?) or '\
+      'lower(items.name) like (?) or lower(items.description) like (?) or lower(groups.name) like (?)',
+      "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%",
+      "%#{q.downcase}%", "%#{q.downcase}%", "%#{q.downcase}%"
+    ).references(:account, :group, :order_line_items, :item)
+  }
   # scope :shipped, -> () { where(:id => OrderLineItem.shipped.pluck(:order_id).uniq) }
   # scope :fulfilled, -> () { where(:id => LineItemFulfillment.pluck(:invoice_id).unpaid.uniq) }
   # scope :fulfilled, -> () { where(:id => OrderLineItem.fulfilled.pluck(:order_id).uniq) }
@@ -21,10 +33,12 @@ class Order < ActiveRecord::Base
   belongs_to :account
   belongs_to :user
   belongs_to :sales_rep, :class_name => "User"
+  belongs_to :subscription
   has_one :order_shipping_method, :dependent => :destroy, :inverse_of => :order
   has_one :order_tax_rate, :dependent => :destroy, :inverse_of => :order
   has_one :order_discount_code
   has_one :discount_code, through: :order_discount_code, source: :code
+  has_many :return_authorizations
   has_many :order_line_items, :dependent => :destroy, :inverse_of => :order
   has_many :items, :through => :order_line_items
   has_many :shipments, :through => :order_line_items
@@ -41,10 +55,82 @@ class Order < ActiveRecord::Base
   after_commit :flush_cache
   after_update :update_order_tax_rate
   after_commit :update_totals, :if => :persisted?
-  after_update :create_inventory_transactions_for_line_items
   
   # after_commit :sync_with_quickbooks if :persisted
-  
+
+  state_machine initial: :incomplete do
+    before_transition on: :submit do |order|
+      order.submitted_at = Time.now
+    end
+
+    before_transition on: :cancel do |order|
+      order.order_line_items.each do |oli|
+        oli.update_attribute(:quantity_canceled, oli.quantity)
+      end
+    end
+
+    before_transition on: :remove_hold do |order|
+      order.credit_hold = false
+    end
+
+    before_transition any => :awaiting_payment do |order|
+      order.update_attribute(:locked, true)
+    end
+
+    before_transition any => :awaiting_shipment do |order|
+      order.create_full_invoice unless order.terms_payment?
+    end
+
+    event :submit do
+      transition :incomplete => :pending
+    end
+
+    event :failed_authorization do
+      transition :pending => :failed_authorization
+    end
+
+    event :passed_authorization do
+      transition :failed_authorization => :pending
+    end
+
+    event :cancel do
+      transition [:incomplete, :pending] => :canceled
+    end
+
+    event :approve do
+      transition :pending => :credit_hold, if: -> (order) { order.terms_payment? and order.credit_hold? }
+      transition :pending => :awaiting_shipment, if: -> (order) { order.terms_payment? or order.paid }
+      transition :pending => :awaiting_payment
+    end
+
+    event :remove_hold do
+      transition :credit_hold => :awaiting_shipment, if: -> (order) { order.terms_payment? }
+    end
+
+    event :confirm_payment do
+      transition [:awaiting_payment, :partially_paid] => :awaiting_shipment, if: :paid
+      transition [:awaiting_payment, :partially_paid] => :partially_paid
+      transition :fulfilled => :completed
+    end
+
+    event :confirm_shipment do
+      transition [:awaiting_shipment, :partially_shipped] => :completed, if: -> (order) { order.shipped and order.fulfilled }
+      transition [:awaiting_shipment, :partially_shipped] => :awaiting_fulfillment, if: -> (order) { order.shipped }
+      transition [:awaiting_shipment, :partially_shipped] => :partially_shipped
+    end
+
+    event :confirm_fulfillment do
+      transition [:awaiting_fulfillment, :partially_fulfilled] => :completed, if: -> (order) { order.paid and order.fulfilled }
+      transition [:awaiting_fulfillment, :partially_fulfilled] => :fulfilled, if: :fulfilled
+      transition [:awaiting_fulfillment, :partially_fulfilled] => :partially_fulfilled
+    end
+
+  end
+
+  def terms_payment?
+    payments.map {|p| p.payment_method.name }.uniq == ['terms'] and account.has_enough_credit
+  end
+
   def account_name
     account.try(:name)
   end
@@ -142,12 +228,6 @@ class Order < ActiveRecord::Base
   
   #####
   
-  def create_inventory_transactions_for_line_items
-    unless completed_at.blank?
-      order_line_items.each {|a| a.create_inventory_transactions }
-    end
-  end
-  
   def quantities_not_linked_to_po
     order_line_items.map(&:quantities_not_linked_to_po).sum.to_i
   end
@@ -212,15 +292,11 @@ class Order < ActiveRecord::Base
   end
   
   def self.unpaid
-    # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_unpaid_orders"]) {
-    #   Rails.cache.delete("#{self.class.to_s.downcase}_unpaid_orders")
-    #   Order.is_complete.where.not(:id => OrderPaymentApplication.select(:order_id).uniq).order(:due_date)
-    # }
-    # order_ids = OrderPaymentApplication.select(:order_id).uniq
-    ids = Order.is_complete
+    ids = Order.where.not(state: [:incomplete, :failed_authorization, :canceled])
     .joins("LEFT OUTER JOIN order_payment_applications ON order_payment_applications.order_id = orders.id")
+    .joins("LEFT OUTER JOIN payments ON order_payment_applications.payment_id = payments.id AND payments.success = 't'")
     .group("orders.id")
-    .having("SUM(COALESCE(sub_total,0) + COALESCE(shipping_total,0) + COALESCE(tax_total,0)) <> SUM(COALESCE(order_payment_applications.applied_amount,0))").ids
+    .having("AVG(COALESCE(sub_total,0) + COALESCE(shipping_total,0) + COALESCE(tax_total,0) - COALESCE(discount_total,0)) <> (COALESCE(SUM(applied_amount),0))").ids
     where(id: ids)
   end
   
@@ -233,7 +309,7 @@ class Order < ActiveRecord::Base
   end
   
   def shipping_total_sum
-    if order_shipping_method.nil?
+    if order_shipping_method&.amount.nil?
       0
     else
       order_shipping_method.amount
@@ -264,7 +340,7 @@ class Order < ActiveRecord::Base
   end
   
   def shipped
-    quantity_shipped == quantity
+    quantity != 0 && quantity_shipped == quantity
   end
   
   def shipped_id
@@ -291,6 +367,10 @@ class Order < ActiveRecord::Base
     order_line_items.sum("quantity_shipped")
   end
   
+  def quantity_canceled
+    order_line_items.sum("quantity_canceled")
+  end
+
   def amount_shipped
     # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_amount_shipped"]) {
     #   Rails.cache.delete("#{self.class.to_s.downcase}_amount_shipped")
@@ -300,7 +380,7 @@ class Order < ActiveRecord::Base
   end
   
   def fulfilled
-    quantity_fulfilled.to_i == quantity.to_i
+    quantity != 0 && quantity_fulfilled.to_i == quantity.to_i
     # order_line_items.sum("COALESCE(quantity,0) - COALESCE(quantity_canceled,0)")
   end
   
@@ -323,28 +403,32 @@ class Order < ActiveRecord::Base
   def payments_total
     Rails.cache.fetch([self, "#{self.class.to_s.downcase}_payments_total"]) {
       total_paid = 0.0
-      self.order_payment_applications.each {|a| total_paid = total_paid + a.applied_amount}
+      self.order_payment_applications.includes(:payment).each {|a| total_paid = total_paid + a.applied_amount if a.payment.success? }
       total_paid
     }
+  end
+
+  def unauthorized_payment_amount
+    order_payment_applications.includes(:payment).inject(total) do |remaining, a|
+      remaining - (a.payment.authorized? ? a.applied_amount : 0.0)
+    end
   end
   
   def paid
     Rails.cache.fetch([self, "#{self.class.to_s.downcase}_paid"]) {
       Rails.cache.delete("#{self.class.to_s.downcase}_paid")
       total_paid = 0.0
-      self.order_payment_applications.each {|a| total_paid = total_paid + a.applied_amount}
-      total_paid.to_d == self.total.to_d ? true : false
+      self.order_payment_applications.includes(:payment).each {|a| total_paid = total_paid + a.applied_amount if a.payment.success? }
+      self.total != 0  && total_paid.to_d == self.total.to_d ? true : false
     }
   end
   
   def balance_due
     # Rails.cache.fetch([self, "#{self.class.to_s.downcase}_balance_due"]) {
       # Rails.cache.delete("#{self.class.to_s.downcase}_balance_due")
-      total_paid = 0.0
-      self.order_payment_applications.each {|a| total_paid = total_paid + a.applied_amount}
-      puts total_paid.to_d.to_s
-      puts self.total.to_d.to_s
-      return (self.total.to_d - total_paid.to_d)
+      order_payment_applications.includes(:payment).inject(total) do |balance, a|
+        balance - (a.payment.success? ? a.applied_amount : 0.0)
+      end
     # }
   end
   
@@ -353,9 +437,9 @@ class Order < ActiveRecord::Base
       self.due_date
     else
       if account.payment_terms
-        self.completed_at + account.payment_terms
+        self.submitted_at + account.payment_terms
       else
-        self.completed_at + 30.days
+        self.submitted_at + 30.days
       end
     end
   end
@@ -365,9 +449,9 @@ class Order < ActiveRecord::Base
       (Date.today.to_date - self.due_date.to_date).to_i
     else
       if account.payment_terms
-        (Date.today.to_date - (self.completed_at + account.payment_terms).to_date).to_i
+        (Date.today.to_date - (self.submitted_at + account.payment_terms).to_date).to_i
       else
-        (Date.today.to_date - (self.completed_at + 30.days).to_date).to_i
+        (Date.today.to_date - (self.submitted_at + 30.days).to_date).to_i
       end
     end
   end
@@ -433,7 +517,7 @@ class Order < ActiveRecord::Base
     
     invoice = {
       DueDate: due_date.to_s,
-      TxnDate: completed_at.to_s,
+      TxnDate: submitted_at.to_s,
       DocNumber: number,
       Line: line_items_array,
       CustomerRef: {
@@ -472,6 +556,17 @@ class Order < ActiveRecord::Base
     secret = Setting.find_by(:key => "qb_secret").value
     realm_id = Setting.find_by(:key => "qb_realm").value
     $qbo_api = QboApi.new(token: token, token_secret: secret, realm_id: realm_id, consumer_key: QB_KEY, consumer_secret: QB_SECRET)
+  end
+
+  def create_full_invoice
+    invoice = Invoice.new(date: Date.today, order_id: id, due_date: Date.today)
+    invoice.order_line_items = order_line_items
+    invoice.line_item_fulfillments.each do |lif|
+      lif.quantity_fulfilled = lif.order_line_item.actual_quantity
+    end
+    if invoice.save
+      self.update_attributes(date: invoice.date, due_date: invoice.due_date)
+    end
   end
    
 end

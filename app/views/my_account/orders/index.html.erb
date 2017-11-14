@@ -1,0 +1,15 @@
+<h3>Orders</h3>
+<table class="table table-bordered">
+  <tr>
+    <th>Number</th>
+    <th>Total</th>
+    <th>Shipped</th>
+    <th>Balance Due</th>
+    <th>Submitted At</th>
+    <th>State</th>
+    <th>&nbsp;</th>
+  </tr>
+  <%= render partial: 'my_account/orders/order', collection: @orders %>
+</table>
+
+<%= will_paginate @orders, renderer: BootstrapPagination::Rails %>

@@ -1,37 +1,34 @@
 require 'sidekiq-scheduler'
 
 class OrderLineItemFromEquipmentAlert
-  
   include Sidekiq::Worker
+  include JobLogger
   
   def perform()
-    j = Job.new
-    puts "********* Crating Orders from Equipment Alerts *********"
-    j.job_name = "Crating Orders from Equipment Alerts"
-    j.notes = ""
+    logger_name "Crating Orders from Equipment Alerts"
   
     alerts = EquipmentAlert.where(:active => true, :alert_type => "start", :order_line_item_id => nil)
   
     alerts.each do |alert|
-      j.notes += "[{alert_id: #{alert.id}}"
+      add_log "[{alert_id: #{alert.id}}"
     
       if alert.equipment_id
-        j.notes += "{equipment_id: #{alert.equipment_id}}"
+        add_log "{equipment_id: #{alert.equipment_id}}"
         equipment = alert.equipment
       
         if equipment.is_managed == true
-          j.notes += "{is_manged: true}"
-          j.notes += "{customer_id: #{equipment.customer.id unless equipment.nil?}}"
+          add_log "{is_manged: true}"
+          add_log "{customer_id: #{equipment.customer.id unless equipment.nil?}}"
         
           customer = equipment.customer
         
-          order = Order.where(:locked => nil, :completed_at => nil, :customer => equipment.account_id).first
+          order = Order.where(:locked => nil, :submitted_at => nil, :customer => equipment.account_id).first
         
           if order.nil?
             order = Order.new(:customer => customer)
           end
         
-          j.notes += "{order_id: #{order.id}}"
+          add_log "{order_id: #{order.id}}"
         
           order.notes = "Auto Supply Order"
           order.sales_rep_id = customer.sales_rep_id
@@ -51,7 +48,7 @@ class OrderLineItemFromEquipmentAlert
           order.bill_to_email = customer.bill_to_email
         
           supply = equipment.find_supply(alert.supply_type, alert.supply_color)
-          j.notes += "{supply: #{supply.item_id unless supply.nil?}}"
+          add_log "{supply: #{supply.item_id unless supply.nil?}}"
         
           unless supply.nil?
             line = order.order_line_items.new
@@ -62,20 +59,18 @@ class OrderLineItemFromEquipmentAlert
           
             if line.save
               alert.update_attributes(:active => false, :order_line_item_id => line.id)
-              j.notes += "{status : sucess}]"
+              add_log "{status : sucess}]"
             else
-              j.notes += "{status : fail}]"
+              add_log "{status : fail}]"
             end
         
           else
-            j.notes += "{is_manged: false}"
+            add_log "{is_manged: false}"
           end
       
         end
       end
     end
     puts "********* END *********"
-    j.save
   end
-  
 end

@@ -1,56 +1,24 @@
 <% content_for :app_location do %>Admin / Customers / Index<% end %>
 <div id="customers" class="col-md-12">
 	
-	<table class="table table-bordered table-condensed">
-		
-		<tr>
-			<td colspan="9">
-				<form id="searchBox" accept-charset="UTF-8" action="/admin/customers" method="get" role="search">
-					<input type="text" class="form-control" id="term" name="term" placeholder="Enter customer name" value="<%= params[:term] %>">
-				</form>
-			</td>
-		</tr>
-		
-		<tr>
-			<th class="hidden-xs"><%= sortable "id" %></th>
-			<th><%= sortable "group.name", "Group" %></th>
-			<th><%= sortable "name" %></th>
-			<th class="hidden-xs">Address 1</th>
-			<th class="hidden-xs"><%= sortable "ship_to_city", "City" %></th>
-			<th class="hidden-xs"><%= sortable "ship_to_state", "State" %></th>
-			<th class="hidden-xs"><%= sortable "ship_to_zip", "Zip" %></th>
-			<th class="hidden-xs">Phone</th>
-			<th>&nbsp;</th>
-		</tr>
-
-		<% @customers.each do |a| %>
-		<tr>
-			<td class="hidden-xs"><%= a.id %></td>
-			<td><%= a.group_name %></td>
-			<td><%= a.name %></td>
-			<td class="hidden-xs"><%= a.ship_to_address_1 %></td>
-			<td class="hidden-xs"><%= a.ship_to_city %></td>
-			<td class="hidden-xs"><%= a.ship_to_state %></td>
-			<td class="hidden-xs"><%= a.ship_to_zip %></td>
-			<td class="hidden-xs"><%= number_to_phone(a.ship_to_phone) %></td>
-			<td class="text-center">
-				<div class="dropdown">
-					<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-						<span class="caret"></span>
-					</button>
-					<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-						<li><%= link_to("View", customer_path(a.id))  %></li>
-						<li><%= link_to("Edit", edit_customer_path(a.id), :remote => true)  %></li>
-					</ul>
-				</div>
-			</td>
-		</tr>
-		<% end %>
-
+	<table class="table table-bordered table-condensed" id="customers-table" data-source="<%= datatables_customers_path(format: :json) %>">
+  	<thead>
+			<tr>
+				<th>ID</th>
+				<th>Group</th>
+				<th>Name</th>
+				<th>Address 1</th>
+				<th>City</th>
+				<th>State</th>
+				<th>ZIP</th>
+				<th>Phone</th>
+				<th>&nbsp;</th>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
 	</table>
-		
-	<%= will_paginate @customers, renderer: BootstrapPagination::Rails %>
-	
+
 	<%= link_to new_customer_path, :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
 	
 </div>

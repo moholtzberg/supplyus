@@ -251,3 +251,15 @@ table tr th {
 table.table {
 	font-size: 13px;
 }
+
+.dataTables_wrapper > .row {
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+.modal.modal-wide .modal-dialog {
+  width: 90%;
+}
+.modal-wide .modal-body {
+  overflow-y: auto;
+}

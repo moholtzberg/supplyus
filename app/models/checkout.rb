@@ -10,8 +10,8 @@ class Checkout < Order
   has_one :order_shipping_method, :foreign_key => :order_id
   # has_one :shipping_method, :through => :order_shipping_method
   
-  def complete
-    completed_at.nil? ? false : true
+  def submitted?
+    submitted_at.nil? ? false : true
   end
   
 end

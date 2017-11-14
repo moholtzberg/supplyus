@@ -1,0 +1,185 @@
+<table class="table table-bordered table-condensed thead">
+  <tr class="bg-primary">
+    <th width="33.3%">Remit To</th>
+    <th width="33.4%">Shipping Address</th>
+    <th width="33.3%">Billing Address</th>
+  </tr>
+  <tr>
+    <td>
+      24/7 Office Supply, Inc.<br/>
+      2957 NW 27th Street<br/>
+      Fort Lauderdale, FL 33311<br/>
+      (888) 247-8775
+    </td>
+    <td>
+      <%= order.ship_to_account_name %> &nbsp;<% if order.account != nil and order.account.group_id != nil %><small>(<%= order.account.group.name %>)</small><% end %><br/>
+      <% unless order.ship_to_attention.blank? %><%= order.ship_to_attention %><br/><% end %>
+      <%= order.ship_to_address_1 %><br/>
+      <% unless order.ship_to_address_2.blank? %><%= order.ship_to_address_2 %><br/><% end %>
+      <%= order.ship_to_city %>, <%= order.ship_to_state %> <%= order.ship_to_zip %><br/>
+      <%= order.ship_to_phone unless order.ship_to_phone.blank? %><br/>
+      <%= order.email %>
+      
+    </td>
+    <td>
+      <% unless order.bill_to_account_name.blank? %><%= order.bill_to_account_name %><br/><% end %>
+      <% unless order.bill_to_attention.blank? %><%= order.bill_to_attention %><br/><% end %>
+      <% unless order.bill_to_address_1.blank? %><%= order.bill_to_address_1 %><br/><% end %>
+      <% unless order.bill_to_address_2.blank? %><%= order.bill_to_address_2 %><br/><% end %>
+      <%= order.bill_to_city unless order.bill_to_city.blank? %>, <%= order.bill_to_state unless order.bill_to_state.blank?%> <%= order.bill_to_zip unless order.bill_to_zip.blank? %><br/>
+      <%= order.bill_to_phone unless order.bill_to_phone.blank? %><br/>
+      <%= order.bill_to_email %>
+    </td>
+  </tr>
+</table>
+
+<table class="table table-bordered table-condensed">
+  <tr class="bg-primary">
+    <th>Order Number</th>
+    <th>Order Date</th>
+    <th>State</th>
+    <th>Locked</th>
+    <th>PO Number</th>
+    <th>Sales Rep</th>
+  </tr>
+  <tr>
+    <td><%= order.number %></td>
+    <td><%= order.submitted_at.strftime("%m/%d/%Y %I:%M %p") unless order.submitted_at.nil? %></td>
+    <td><%= order.state %></td>
+    <td><%= order.locked ? "Yes" : "No" %></td>
+    <td><%= order.po_number %></td>
+    <td><%= "#{order.sales_rep.first_name} #{order.sales_rep.last_name}" unless order.sales_rep.blank? %></td>
+  </tr>
+</table>
+
+<table class="table table-bordered table-condensed">
+  <tr class="bg-primary">
+    <th>Notes</th>
+  </tr>
+  <tr>
+    <td><%= order.notes %></td>
+  </tr>
+</table>
+
+<table class="table table-bordered table-condensed">
+
+  <tr class="bg-primary">
+    <th width="64%" class="text-left" colspan="2">Item Name/Description</th>
+    <th width="6%" class="text-center">Qty</th>
+    <th width="6%" class="text-center">Cancel</th>
+    <th width="6%" class="text-center">Ship</th>
+    <th width="6%" class="text-center">Billed</th>
+    <th width="6%" class="text-center">Returned</th>
+    <th width="6%" class="text-center">Price</th>
+    <th width="6%" class="text-center">Subtotal</th>
+    <th>Linked PO's</th>
+  </tr>
+
+  <% order.order_line_items.includes(:item).active.each_with_index do |li, idx| %>
+  <tr class="line_items">
+    <td class="text-center"><%= li.order_line_number %></td>
+    <td>
+      <%= li.item.number unless li.item.nil? %> / <%= li.item.name unless li.item.nil? %>
+      <% if (li.item.item_type_id == 99 unless li.item.nil?) || li.description.present? %><br/>(<%= li.description %>)<% end %>
+    </td>
+    <td class="text-center"><%= li.quantity.to_i %></td>
+    <td class="text-center"><%= li.quantity_canceled.to_i %></td>
+    <td class="text-center"><%= li.quantity_shipped  %></td>
+    <td class="text-center"><%= li.quantity_fulfilled  %></td>
+    <td class="text-center"><%= li.quantity_returned  %></td>
+    <td class="text-center"><%= number_to_currency(li.price) %></td>
+    <td class="text-center"><%= number_to_currency(li.sub_total) %></td>
+    <td>
+      <% if li.purchase_orders.count > 0 %>
+      <div class="dropdown">
+        <button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+          <% li.purchase_orders.each do |app| %>
+            <% if app.purchase_order_line_items.where(item_id: li.item_id).count > 0  %>
+          <li><a><%= link_to "#{app.number} x #{app.purchase_order_line_items.where(item_id: li.item_id).first.quantity}", app %></a></li>
+            <% end %>
+          <% end %>
+        </ul>
+      </div>
+      <% end %>
+    </td>
+  <tr>
+  <% end %>
+
+  <tr class="line_items">
+    <td colspan="7">Sub Total</td>
+    <td colspan="3" class="text-center"><strong><%= number_to_currency(order.sub_total) %></strong></td>
+  </tr>
+  <tr class="line_items">
+    <td colspan="7"><%= "#{order.order_shipping_method.name} - " unless  order.order_shipping_method.nil? %>Shipping</td>
+    <td colspan="3" class="text-center"><strong> <%= number_to_currency(order.order_shipping_method.amount) unless  order.order_shipping_method.nil? %></strong></td>
+  </tr>
+  <tr class="line_items">
+    <td colspan="7"><%= "#{order.order_tax_rate.name}" unless  order.order_tax_rate.nil? %>Tax</td>
+    <td colspan="3" class="text-center"><strong> <%= number_to_currency(order.tax_total)%></strong></td>
+  </tr>
+  <tr class="line_items">
+    <td colspan="7"><%= "#{order.discount_code.name}" unless  order.discount_code.nil? %> Discount</td>
+    <td colspan="3" class="text-center"><strong> <%= number_to_currency(- order.discount_total)%></strong></td>
+  </tr>
+  <tr class="line_items">
+    <td colspan="7">Order Total</td>
+    <td colspan="3" class="text-center"><strong> <%= number_to_currency(order.total) %></strong></td>
+  </tr>
+  
+  <tr>
+    <td colspan="7">Balance Due</th>
+    <td colspan="3" class="text-center"><strong> <%=  number_to_currency(order.balance_due) %></strong></td>
+  </tr>
+  
+</table>
+
+<table class="table table-bordered table-condensed">
+  
+  <tr class="line_items">
+    <th class="bg-primary">Date</th>
+    <th class="bg-primary">Payment Type</th>
+    <th class="bg-primary">Payent Amount</th>
+    <th class="bg-primary">Authorization Code</th>
+    <th class="bg-primary">Completed?</th>
+    <th class="bg-primary">Finalize</th>
+  </tr>
+  <%= render partial: 'orders/payment', collection: order.payments %>
+</table>
+
+<table class="table table-bordered table-condensed">
+  
+  <tr class="line_items">
+    <th colspan="3" class="bg-primary">Tracking Numbers</th>
+  </tr>
+  <% order.shipments.each do |shipment| %>
+    <tr class="line_items">
+      <td><%= shipment.carrier %></td>
+      <td><%= shipment.ship_date.strftime("%m/%d/%y") unless shipment.ship_date.nil? %></td>
+      <td><% shipment.tracking_numbers.each do |tr|%><%= link_to tr.number, tr.link %><br/><% end %></td>
+    </tr>
+  <% end %>
+</table>
+
+<table class="table table-bordered table-condensed">
+  
+  <tr class="line_items">
+    <th width="16%" class="bg-primary">Order ID</th>
+    <th width="16%" class="bg-primary">IP Address</th>
+    <th width="17%" class="bg-primary">Created At</th>
+    <th width="17%" class="bg-primary">Updated At</th>
+    <th width="17%" class="bg-primary">Locked</th>
+    <th width="17%" class="bg-primary">Credit Hold</th>
+  </tr>
+  
+  <tr>
+    <td><%= order.id %></td>
+    <td><%= order.ip_address %></td>
+    <td><%= order.created_at.strftime("%m/%d/%y %I:%M:%S %p") unless order.created_at.nil? %></td>
+    <td><%= order.updated_at.strftime("%m/%d/%y %I:%M:%S %p") unless order.updated_at.nil? %></td>
+    <td><%= order.locked ? "Yes" : "No" %></td>
+    <td><%= order.credit_hold ? "Yes" : "No" %></td>
+  </tr>
+</table>

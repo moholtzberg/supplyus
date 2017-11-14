@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170616152935) do
+ActiveRecord::Schema.define(version: 20171009141852) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,9 +20,16 @@ ActiveRecord::Schema.define(version: 20170616152935) do
   create_table "account_item_prices", force: :cascade do |t|
     t.integer  "account_id"
     t.integer  "item_id"
-    t.decimal  "price",      precision: 10, scale: 2, null: false
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
+    t.decimal  "price",      precision: 10, scale: 2,                 null: false
+    t.datetime "created_at",                                          null: false
+    t.datetime "updated_at",                                          null: false
+    t.boolean  "migrated",                            default: false
+  end
+
+  create_table "account_payment_services", force: :cascade do |t|
+    t.string  "name"
+    t.string  "service_id"
+    t.integer "account_id"
   end
 
   create_table "accounts", force: :cascade do |t|
@@ -32,33 +39,34 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.string  "quickbooks_id"
     t.string  "number"
     t.string  "email"
-    t.string  "ship_to_address_1"
-    t.string  "ship_to_address_2"
-    t.string  "ship_to_city"
-    t.string  "ship_to_state"
-    t.string  "ship_to_zip"
-    t.string  "ship_to_phone"
-    t.string  "ship_to_fax"
-    t.string  "bill_to_address_1"
-    t.string  "bill_to_address_2"
-    t.string  "bill_to_city"
-    t.string  "bill_to_state"
-    t.string  "bill_to_zip"
-    t.string  "bill_to_phone"
-    t.string  "bill_to_fax"
     t.boolean "active"
     t.integer "group_id"
-    t.float   "credit_limit",      default: 0.0
+    t.float   "credit_limit",             default: 0.0
     t.integer "credit_terms"
-    t.boolean "credit_hold",       default: true
+    t.boolean "credit_hold",              default: true
     t.string  "bill_to_email"
     t.boolean "is_taxable"
     t.integer "sales_rep_id"
-    t.boolean "replace_items",     default: false, null: false
+    t.boolean "replace_items",            default: false, null: false
+    t.integer "subscription_week_day"
+    t.integer "subscription_month_day"
+    t.integer "subscription_quarter_day"
+  end
+
+  create_table "addresses", force: :cascade do |t|
+    t.integer "account_id"
+    t.string  "address_1"
+    t.string  "address_2"
+    t.string  "city"
+    t.string  "state"
+    t.string  "zip"
+    t.string  "phone"
+    t.string  "fax"
+    t.boolean "main",       default: false
+    t.string  "name"
   end
 
   create_table "assets", force: :cascade do |t|
-    t.integer  "item_id"
     t.string   "type"
     t.integer  "attachment_width"
     t.integer  "attachment_height"
@@ -70,6 +78,14 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.text     "alt"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "attachable_id"
+    t.string   "attachable_type"
+  end
+
+  create_table "bins", force: :cascade do |t|
+    t.string  "name"
+    t.string  "_type"
+    t.integer "warehouse_id"
   end
 
   create_table "brands", force: :cascade do |t|
@@ -89,6 +105,7 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.text    "description"
     t.boolean "show_in_menu"
     t.boolean "active"
+    t.integer "position"
   end
 
   add_index "categories", ["id"], name: "category_id_ix", using: :btree
@@ -117,10 +134,13 @@ ActiveRecord::Schema.define(version: 20170616152935) do
   end
 
   create_table "credit_cards", force: :cascade do |t|
-    t.integer "account_id"
-    t.string  "stripe_customer_id"
-    t.string  "stripe_card_id"
+    t.integer "account_payment_service_id"
+    t.string  "service_card_id"
     t.string  "expiration"
+    t.string  "last_4"
+    t.string  "card_type"
+    t.string  "unique_number_identifier"
+    t.string  "cardholder_name"
   end
 
   create_table "discount_code_effects", force: :cascade do |t|
@@ -146,6 +166,18 @@ ActiveRecord::Schema.define(version: 20170616152935) do
   create_table "discount_codes", force: :cascade do |t|
     t.string  "code"
     t.integer "times_of_use"
+  end
+
+  create_table "email_deliveries", force: :cascade do |t|
+    t.string   "addressable_type"
+    t.integer  "addressable_id"
+    t.string   "to_email"
+    t.text     "body"
+    t.string   "eventable_type"
+    t.integer  "eventable_id"
+    t.datetime "failed_at"
+    t.datetime "delivered_at"
+    t.datetime "opened_at"
   end
 
   create_table "equipment", force: :cascade do |t|
@@ -191,13 +223,27 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.datetime "updated_at"
   end
 
+  create_table "friendly_id_slugs", force: :cascade do |t|
+    t.string   "slug",                      null: false
+    t.integer  "sluggable_id",              null: false
+    t.string   "sluggable_type", limit: 50
+    t.string   "scope"
+    t.datetime "created_at"
+  end
+
+  add_index "friendly_id_slugs", ["slug", "sluggable_type", "scope"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope", unique: true, using: :btree
+  add_index "friendly_id_slugs", ["slug", "sluggable_type"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type", using: :btree
+  add_index "friendly_id_slugs", ["sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_id", using: :btree
+  add_index "friendly_id_slugs", ["sluggable_type"], name: "index_friendly_id_slugs_on_sluggable_type", using: :btree
+
   create_table "group_item_prices", force: :cascade do |t|
     t.integer  "group_id"
     t.integer  "item_id"
-    t.decimal  "price",      precision: 10, scale: 2, null: false
+    t.decimal  "price",      precision: 10, scale: 2,                 null: false
     t.boolean  "active"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "migrated",                            default: false
   end
 
   add_index "group_item_prices", ["group_id"], name: "index_group_item_prices_on_group_id", using: :btree
@@ -233,16 +279,17 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.integer  "qty_backordered"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "bin_id"
   end
 
   create_table "inventory_transactions", force: :cascade do |t|
-    t.integer  "item_id",                          null: false
     t.integer  "inv_transaction_id",               null: false
     t.string   "inv_transaction_type",             null: false
     t.integer  "quantity",             default: 0, null: false
     t.string   "notes"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "inventory_id"
   end
 
   create_table "invoice_payment_applications", force: :cascade do |t|
@@ -325,22 +372,22 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.integer  "category_id"
     t.integer  "model_id"
     t.boolean  "is_serialized"
-    t.string   "number",                                                null: false
+    t.string   "number",                                                          null: false
     t.string   "name"
     t.string   "slug"
     t.text     "description"
-    t.decimal  "price",         precision: 10, scale: 2
-    t.decimal  "sale_price",    precision: 10, scale: 2
-    t.decimal  "cost_price",    precision: 10, scale: 2
+    t.decimal  "price",                   precision: 10, scale: 2
+    t.decimal  "sale_price",              precision: 10, scale: 2
+    t.decimal  "cost_price",              precision: 10, scale: 2
     t.float    "weight"
     t.float    "height"
     t.float    "width"
     t.float    "length"
-    t.datetime "created_at",                                            null: false
-    t.datetime "updated_at",                                            null: false
+    t.datetime "created_at",                                                      null: false
+    t.datetime "updated_at",                                                      null: false
     t.integer  "brand_id"
-    t.boolean  "active",                                 default: true, null: false
-    t.decimal  "list_price",    precision: 10, scale: 2
+    t.boolean  "active",                                           default: true, null: false
+    t.decimal  "list_price",              precision: 10, scale: 2
     t.boolean  "green_indicator"
     t.boolean  "recycle_indicator"
     t.boolean  "small_package_indicator"
@@ -364,11 +411,19 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.datetime "date"
   end
 
+  create_table "line_item_returns", force: :cascade do |t|
+    t.integer "order_line_item_id"
+    t.integer "return_authorization_id"
+    t.integer "quantity"
+    t.integer "bin_id"
+  end
+
   create_table "line_item_shipments", force: :cascade do |t|
     t.integer  "order_line_item_id"
     t.integer  "shipment_id"
     t.integer  "quantity_shipped"
     t.datetime "date"
+    t.integer  "bin_id"
   end
 
   add_index "line_item_shipments", ["id"], name: "line_item_shipment_id_ix", using: :btree
@@ -435,6 +490,7 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.integer  "quantity_canceled"
     t.integer  "quantity_shipped",                            default: 0
     t.integer  "quantity_fulfilled",                          default: 0
+    t.integer  "quantity_returned"
   end
 
   add_index "order_line_items", ["id"], name: "order_line_item_id_ix", using: :btree
@@ -475,8 +531,7 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.integer  "sales_rep_id"
     t.datetime "date"
     t.datetime "due_date"
-    t.datetime "completed_at"
-    t.boolean  "canceled"
+    t.datetime "submitted_at"
     t.boolean  "locked"
     t.string   "po_number"
     t.string   "ip_address"
@@ -508,6 +563,8 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.decimal  "tax_total",            precision: 10, scale: 2, default: 0.0
     t.boolean  "credit_hold",                                   default: false
     t.decimal  "discount_total",       precision: 10, scale: 2, default: 0.0
+    t.integer  "subscription_id"
+    t.string   "state"
   end
 
   add_index "orders", ["account_id"], name: "order_customer_id_ix", using: :btree
@@ -551,6 +608,7 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "date"
+    t.decimal  "refunded",           precision: 10, scale: 2
   end
 
   create_table "permissions", force: :cascade do |t|
@@ -566,11 +624,25 @@ ActiveRecord::Schema.define(version: 20170616152935) do
 
   add_index "permissions", ["role_id"], name: "index_permissions_on_role_id", using: :btree
 
+  create_table "prices", force: :cascade do |t|
+    t.integer  "item_id"
+    t.integer  "min_qty"
+    t.integer  "max_qty"
+    t.string   "_type",                                   default: "Default"
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.boolean  "combinable",                              default: false
+    t.integer  "appliable_id"
+    t.string   "appliable_type"
+    t.decimal  "price",          precision: 10, scale: 2
+  end
+
   create_table "purchase_order_line_item_receipts", force: :cascade do |t|
     t.integer  "purchase_order_line_item_id"
     t.integer  "purchase_order_receipt_id"
     t.integer  "quantity_received"
     t.datetime "date"
+    t.integer  "bin_id"
   end
 
   create_table "purchase_order_line_items", force: :cascade do |t|
@@ -649,6 +721,7 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.text     "notes"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
+    t.decimal  "amount"
   end
 
   create_table "roles", force: :cascade do |t|
@@ -661,6 +734,17 @@ ActiveRecord::Schema.define(version: 20170616152935) do
 
   add_index "roles", ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id", using: :btree
   add_index "roles", ["name"], name: "index_roles_on_name", using: :btree
+
+  create_table "schedules", force: :cascade do |t|
+    t.text     "cron"
+    t.text     "worker"
+    t.text     "name"
+    t.text     "arguments",   default: [],   array: true
+    t.text     "description"
+    t.boolean  "enabled",     default: true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "settings", force: :cascade do |t|
     t.string "key"
@@ -693,6 +777,26 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.float   "free_at_amount"
   end
 
+  create_table "static_pages", force: :cascade do |t|
+    t.string "title"
+    t.text   "content"
+    t.string "slug"
+  end
+
+  add_index "static_pages", ["slug"], name: "index_static_pages_on_slug", unique: true, using: :btree
+
+  create_table "subscriptions", force: :cascade do |t|
+    t.integer "address_id"
+    t.integer "item_id"
+    t.integer "quantity"
+    t.string  "frequency"
+    t.integer "bill_address_id"
+    t.integer "account_id"
+    t.integer "credit_card_id"
+    t.string  "payment_method"
+    t.string  "state"
+  end
+
   create_table "tax_rates", force: :cascade do |t|
     t.string   "state_code"
     t.string   "region_name"
@@ -720,6 +824,12 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.string  "transaction_type"
     t.decimal "amount",             precision: 10, scale: 2, null: false
     t.string  "authorization_code"
+  end
+
+  create_table "transfers", force: :cascade do |t|
+    t.integer "from_id"
+    t.integer "to_id"
+    t.integer "quantity"
   end
 
   create_table "user_accounts", force: :cascade do |t|
@@ -764,6 +874,11 @@ ActiveRecord::Schema.define(version: 20170616152935) do
     t.integer  "account_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "warehouses", force: :cascade do |t|
+    t.string "name"
+    t.string "_type"
   end
 
 end

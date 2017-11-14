@@ -12,21 +12,35 @@
 		
 		<tr>
 			<td width="50%" rowspan="<%= @item.item_properties.size + 7 %>">
-				
-				<div class="col-md-3">
-					<% @item.images.each do |img| %>
-					<a><%= image_tag "http://content.oppictures.com/Master_Images/Master_Variants/Variant_500/#{img.attachment_file_name}", :height => "100", :class => "thumbnail", :id => "#{img.id}"%></a>
-					<% end %>	
+
+				<div class="col-md-12">
+					<input type="file" id="assets_upload" name="asset[attachment]" data-item-id="<%= @item.id %>" multiple/>
+					<script>
+					  $(function() {
+					    $("#assets_upload").fileinput({
+					      uploadUrl: "<%= assets_path %>",
+					      uploadExtraData: function (previewId, index) {
+								  var obj = {};
+								  obj['attachable_type'] = 'Item';
+								  obj['attachable_id'] = $('#assets_upload')[0].dataset['itemId'];
+                  obj['position'] = $('.file-preview-frame.kv-preview-thumb').index($('#' + previewId)) + 1;
+                  obj['acts_as_list_no_update'] = true;
+								  return obj;
+								},
+					      deleteUrl: "<%= delete_assets_path %>",
+					      dropZoneEnabled: true,
+								initialPreviewAsData: true,
+								overwriteInitial: false,
+								allowedFileExtensions: ['jpg', 'gif', 'png', 'pdf'],
+								initialPreview: <%= raw @item.assets.each.map { |asset| asset.attachment.url } %>,
+						    initialPreviewConfig: <%= raw @item.assets.each.map { |asset| asset.to_fileinput_hash }.to_json %>
+					    });
+							$('#assets_upload').on('filesorted', function(event, params) {
+								$.post( "<%= change_position_assets_path %>", {id: params.stack[params.newIndex].key, asset: {position: params.newIndex + 1}} );
+							});
+					  });
+					</script>
 				</div>
-				<div class="col-md-9">
-					<%= image_tag "http://content.oppictures.com/Master_Images/Master_Variants/Variant_500/#{@item.default_image_path}", :width => "400", :id => "main_image" %>
-				</div>
-				<script>
-					$(".thumbnail").click(function(event){
-						var src = $("#"+ event.currentTarget.id).attr("src")
-						$("#main_image").attr("src", src)
-					})
-				</script>
 					
 			</td>
 			
@@ -76,8 +90,6 @@
 			
 			</td>
 		</tr>
-
-
 		
 	</table>
 	
@@ -86,10 +98,8 @@
 		<tr>
 			<th width="10%">Number</th>
 			<th width="50%">Name</th>
-			<th width"10%">Slug</th>
-			<th width"10%">Price</th>
-			<th width"10%">Sale Price</th>
-			<th width"10%">Cost</th>
+			<th width="10%">Slug</th>
+			<th width="10%">Price</th>
 		</tr>
 		
 		<tr>
@@ -97,20 +107,18 @@
 			<td><%= @item.name %></td>
 			<td><%= @item.slug %></td>
 			<td><%= number_to_currency(@item.price) %></td>
-			<td><%= number_to_currency(@item.sale_price) %></td>
-			<td><%= number_to_currency(@item.cost_price) %></td>
 		</tr>
 		<tr>
-			<td colspan="6"><%= best_in_place @item, :description %></td>
+			<td colspan="7"><%= best_in_place @item, :description %></td>
 		<tr>
 		
 	</table>
 	
 	<ul class="nav nav-tabs nav-justified">
 		<li role="presentation" class="active"><a href="#orders" aria-controls="orders" role="tab" data-toggle="tab">Orders</a></li>
+		<li role="presentation"><a href="#inventories" aria-controls="inventories" role="tab" data-toggle="tab">Inventories</a></li>
 		<li role="presentation"><a href="#item_vendor_prices" aria-controls="item_vendor_prices" role="tab" data-toggle="tab">Vendor Item Prices</a></li>
-		<li role="presentation"><a href="#account_item_prices" aria-controls="account_item_prices" role="tab" data-toggle="tab">Account Item Prices</a></li>
-		<li role="presentation"><a href="#group_item_prices" aria-controls="group_item_prices" role="tab" data-toggle="tab">Group Item Prices</a></li>
+		<li role="presentation"><a href="#prices" aria-controls="prices" role="tab" data-toggle="tab">Prices</a></li>
 		<li role="presentation"><a href="#item_substitutes" aria-controls="item_substitutes" role="tab" data-toggle="tab">Item Substitutes</a></li>
 		<li role="presentation"><a href="#substituting_items" aria-controls="substituting_items" role="tab" data-toggle="tab"> Substituting Items</a></li>
 	</ul>
@@ -139,6 +147,12 @@
 				</table>
 			
 		</div>
+
+		<div id="inventories" class="tab-pane" role="tabpanel">
+
+			<%= render :partial => "inventories", :locals => {:item => @item} %>
+
+		</div>
 		
 		<div id="item_vendor_prices" class="tab-pane" role="tabpanel">
 
@@ -146,16 +160,10 @@
 
 		</div>
 
-		<div id="account_item_prices" class="tab-pane" role="tabpanel">
+		<div id="prices" class="tab-pane" role="tabpanel">
 
-			<%= render :partial => "account_item_prices", :locals => {:item => @item} %>
+			<%= render :partial => "prices", :locals => {:item => @item} %>
 
-		</div>
-		
-		<div id="group_item_prices" class="tab-pane" role="tabpanel">
-			
-			<%= render :partial => "group_item_prices", :locals => {:item => @item} %>
-			
 		</div>
 		
 		<div id="item_substitutes" class="tab-pane" role="tabpanel">

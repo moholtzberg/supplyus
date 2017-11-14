@@ -1,0 +1,44 @@
+<div id="category" class="col-md-12">
+    
+  <table class="table table-bordered table-striped">
+    
+    <tr>
+      <th width="10%">ID</th>
+      <th width="10%">Addressable Type</th>
+      <th width="10%">Addressable Id</th>
+      <th width="10%">To Email</th>
+      <th width="10%">Eventable Type</th>
+      <th width="10%">Eventable Id</th>
+      <th width="10%">Failed At</th>
+      <th width="10%">Delivered At</th>
+      <th width="10%">Opened At</th>
+    </tr>
+
+    <tr>
+      <td><%= @email_delivery.id %></td>
+      <td><%= @email_delivery.addressable_type %></td>
+      <td><%= @email_delivery.addressable_id %></td>
+      <td><%= @email_delivery.to_email %></td>
+      <td><%= @email_delivery.eventable_type %></td>
+      <td><%= @email_delivery.eventable_id %></td>
+      <td><%= @email_delivery.failed_at&.strftime("%m/%d/%y %I:%M %p") %></td>
+      <td><%= @email_delivery.delivered_at&.strftime("%m/%d/%y %I:%M %p") %></td>
+      <td><%= @email_delivery.opened_at&.strftime("%m/%d/%y %I:%M %p") %></td>
+    </tr>
+    
+  </table>
+  
+  <div class="col-md-12">
+    <h4 class="text-center">Email Body</h3>
+    <%= @email_delivery.body.html_safe %>
+  </div>
+  
+</div>
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      
+    </div>
+  </div>
+</div

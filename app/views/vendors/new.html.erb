@@ -6,14 +6,14 @@
 <div class="modal-body" id="modal-body">
 	
 	<% if flash[:error] %>
-	<div id="flash_messages" class="aelrt alert-danger" role="alert">
+	<div id="flash_messages" class="alert alert-danger" role="alert">
 		<strong><%= flash[:error] %></strong>
 	</div>
 	<% end %>
 	
 	
 	<%= form_for @vendor, :remote => true, :html => {:class => "form-horizontal"} do |f| %>
-		<%= render :partial => "accounts/form", :locals => {:f => f}%>
+		<%= render :partial => "vendors/form", :locals => {:f => f}%>
 	<% end %>
 	
 </div>

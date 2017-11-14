@@ -1,0 +1,76 @@
+<fieldset>	
+	
+	<div id="attachment" class="col-md-6">
+		<%= f.label :attachment, :class => "control-label" %>
+		<%= f.file_field :attachment, :class => "form-control" %>
+	</div>
+
+	<div id="alt" class="col-md-6">
+		<%= f.label :alt, :class => "control-label" %>
+		<%= f.text_field :alt, :class => "form-control" %>
+	</div>
+	
+	<div id="attachable_type" class="col-md-6">
+		<%= f.label :attachable_type, :class => "control-label" %>
+		<%= f.select :attachable_type, Asset::ATTACHABLE_TYPES, {include_blank: true}, :class => "form-control", style: "width: 100%" %>
+	</div>
+
+	<div id="attachable_id" class="col-md-6">
+		<%= f.label :attachable_id, :class => "control-label" %>
+		<%= f.select :attachable_id, [[f.object.attachable&.name, f.object.attachable_id]], {include_blank: true}, :class => "form-control", style: "width: 100%", disabled: f.object.attachable_type.nil? %>
+	</div>
+
+	<script>
+		$("#asset_attachable_id").select2({
+		  ajax: {
+		    url: function() {
+			    if ($('#asset_attachable_type').val() == 'Item') {
+			      return "<%= autocomplete_items_path %>"
+			    } else {
+			      return "<%= autocomplete_categories_path %>"
+			    }
+			  },
+		    dataType: 'json',
+		    delay: 250,
+		    data: function (params) {
+		      return {
+		        term: params.term
+		      };
+		    },
+		    processResults: function (data, params) {
+		      return {
+		        results: data
+		      };
+		    },
+		    cache: true
+		  },
+		  minimumInputLength: 1,
+		  placeholder: 'Search item or category',
+		  allowClear: true,
+		  theme: "bootstrap"
+		});
+
+		$('#asset_attachable_id').change(function(){
+			if ($(this).val() == '') {
+				$('#asset_position').prop('disabled', true)
+			} else {
+				$('#asset_position').prop('disabled', false)
+			}
+		})
+
+		$('#asset_attachable_type').change(function(){
+			$('#asset_attachable_id').val('').trigger('change')
+			if ($(this).val() == '') {
+				$('#asset_attachable_id').prop('disabled', true)
+			} else {
+				$('#asset_attachable_id').prop('disabled', false)
+			}
+		})
+	</script>
+	
+	<div id="position" class="col-md-6">
+		<%= f.label :position, :class => "control-label" %>
+		<%= f.number_field :position, :class => "form-control", disabled: f.object.attachable.nil? %>
+	</div>
+	
+</fieldset>

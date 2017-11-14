@@ -2,7 +2,7 @@
 	
 	<tr>
 		<th width="5%" class="text-center"></th>
-		<th>Item Name/Description</th>
+		<th>Item Number/Item Name</th>
 		<th width="10%" class="text-center">Quantity</th>
 		<th width="10%" class="text-center">Price</th>
 		<th width="10%" class="text-center">Subtotal</th>
@@ -11,7 +11,7 @@
 	<% @cart.contents.active.each_with_index do |li, idx| %>
 	<tr>
 		<td class="text-center"><%= li.order_line_number %></td>
-		<td><%= li.item.name %></td>
+		<td><strong><%= li.item.number %></strong> - <%= li.item.name %></td>
 		<td class="text-center">
 			<%= li.quantity.to_i %>
 		</td>
@@ -24,13 +24,24 @@
 		<td colspan="3">Sub Total</td>
 		<td colspan="2" class="text-center"><strong><%= number_to_currency(@cart.sub_total) %></strong></td>
 	</tr>
-	
+	<tr>
+		<td colspan="3">Sales Tax</td>
+		<td colspan="2" class="text-center"><strong><%= number_to_currency(@cart.tax_total) %></strong></td>
+	</tr>
+	<tr>
+		<td colspan="3"><%= @checkout.order_shipping_method.name %> - Shipping</td>
+		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@checkout.shipping_total) %></strong></td>
+	</tr>
+	<tr id="order_total">
+		<td colspan="3">Order Total</td>
+		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@checkout.total) %></strong></td>
+	</tr>
 </table>
 
 <table class="table table-bordered">
 	<tr>
-		<th>Shipping Address</th>
-		<th>Billing Address</th>
+		<th width="50%">Shipping Address</th>
+		<th width="50%">Billing Address</th>
 	</tr>
 	<tr>
 		<td>
@@ -39,7 +50,8 @@
 			<%= @cart.ship_to_address_1 %><br/>
 			<% unless @cart.ship_to_address_2.blank? %><%= @cart.ship_to_address_2 %><br/><% end %>
 			<%= @cart.ship_to_city %>, <%= @cart.ship_to_state %> <%= @cart.ship_to_zip %><br/>
-			<%= @cart.ship_to_phone %>
+			<% unless @cart.ship_to_phone.blank? %><%= @cart.ship_to_phone %><br/><% end %>
+			<% unless @cart.email.blank? %><%= @cart.email %><br/><% end %>
 		</td>
 		<td>
 			<%= @cart.bill_to_account_name %><br/>
@@ -47,48 +59,80 @@
 			<%= @cart.bill_to_address_1 %><br/>
 			<% unless @cart.bill_to_address_2.blank? %><%= @cart.bill_to_address_2 %><br/><% end %>
 			<%= @cart.bill_to_city %>, <%= @cart.bill_to_state %> <%= @cart.bill_to_zip %><br/>
-			<%= @cart.bill_to_phone %>
+			<% unless @cart.bill_to_phone.blank? %><%= @cart.bill_to_phone %><br/><% end %>
+			<% unless @cart.bill_to_email.blank? %><%= @cart.bill_to_email %><br/><% end %>
 		</td>
 	</tr>
 </table>
 
 <table class="table table-bordered">
 	<tr>
-		<td colspan="2">Shipping</td>
+		<th width="50%">PO Number</th>
+		<td width="50%"><%= @cart.po_number %></td>
 	</tr>
 	<tr>
-		<td><%= @cart.order_shipping_method.name %></td>
-		<td><%= number_to_currency(@cart.shipping_total) %></td>
+		<th width="50%">Notes</th>
+		<td width="50%"><%= @cart.notes %></td>
 	</tr>
 </table>
 
+<% if @cart.order_discount_code.nil? %>
+	<%= render :partial => "order_discount_code_form" %>
+<% end %>
+
 <table class="table table-bordered">
-	<div id="checkout_errors" class="alert alert-warning">
-		<% @checkout.errors.full_messages.each.each do |e| %>
-		<%= e %>
-		<% end %>
-	</div>
-	<div id="payment_errors" class="alert alert-danger">
-		<% @payment.errors.full_messages.each.each do |e| %>
-		<%= e %>
-		<% end %>
-	</div>
+	<% if @checkout && @checkout.errors.any? %>
+		<div id="checkout_errors" class="alert alert-warning">
+			<% @checkout.errors.full_messages.each.each do |e| %>
+			<%= e %>
+			<% end %>
+		</div>
+	<% end %>
+	<% if @payment && @payment.errors.any? %>	
+		<div id="payment_errors" class="alert alert-danger">
+			<% @payment.errors.full_messages.each.each do |e| %>
+			<%= e %>
+			<% end %>
+		</div>
+	<% end %>
+	<% if @card && @card.errors.any? %>
+		<div id="card_errors" class="alert alert-danger">
+			<% @card.errors.full_messages.each.each do |e| %>
+			<%= e %>
+			<% end %>
+		</div>
+	<% end %>
 	<tr>
 		<%= form_for @checkout, :url => checkout_payment_path, :method => :patch do |f| %>
 		<td>
-			<select id="payment_type" class="form-control">
-				<option value="credit_card">Credit Card</option>
+			<select id="payment_type" class="selectpicker">
+				<% @cards.each do |card| %>
+					<option value="<%= card.service_card_id %>" data-content='<span class="<%= card.logo_class %>" style="margin-right: 5px;"></span><span class="text">  **** **** **** <%= card.last_4 %></span>'></option>
+				<% end %>
+				<option value="credit_card">New Credit Card</option>
 				<option value="check">Check</option>
-				<% if current_user.account and current_user.account.has_credit %>
-				<option value="terms">Net <%= current_user.account.credit_terms %></option>
+				<% if current_user.account and current_user.account.has_enough_credit %>
+					<option value="terms">Net <%= current_user.account.credit_terms %></option>
 				<% end %>
 			</select>
-			
+
 			<script>
-			$("select#payment_type").change(function(){
-				var m = this.value;
-				$("#payment_method").val(m);
-			})
+				$("select#payment_type").change(function(){
+					var m = this.value;
+					if (m == 'check' || m == 'terms') {
+						$("#payment_method").val(m);
+						$("#credit_card_token").val('');
+						$("#credit_card").addClass('hidden');
+					} else { 
+						$("#payment_method").val('credit_card');
+						$("#credit_card_token").val(m == 'credit_card' ? '' : m);
+            if (m == 'credit_card') {
+              $("#credit_card").removeClass('hidden');
+            } else {
+              $("#credit_card").addClass('hidden');
+            }
+					}
+				})
 			</script>
 			
 			<!-- Load the required client component. -->
@@ -97,9 +141,10 @@
 			<!-- Load Hosted Fields component. -->
 			<script src="https://js.braintreegateway.com/web/3.11.0/js/hosted-fields.min.js"></script>
 			
-			<div id="credit_card" class="panel panel-default bootstrap-basic">
+			<div id="credit_card" class="panel panel-default bootstrap-basic <%= 'hidden' if @cards.any? %>">
 				
 				<input type="hidden" id="payment_method" name="payment_method" value="credit_card" />
+				<input type="hidden" id="credit_card_token" name="credit_card_token" value="<%= @cards.first.try(:service_card_id) %>" />
 				<input type="hidden" id="order_id" name="order_id" value="<%= @checkout.id %>" />
 				
 				<div class="panel-heading">
@@ -109,78 +154,45 @@
 				<div class="panel-body">
 					
 					<div class="row">
-						<div class="form-group col-md-12">
+						<div class="form-group col-xs-12">
+							<label class="control-label">Cardholder Name</label>
 							<input type="text" id="cardholder_name" name="cardholder_name" class="form-control" placeholder="Name on Card"/>
-						<div>
-					</div>
-					
-					<div class="row">
-						<div class="form-group col-xs-8">
-							<label class="control-label">Card Number</label>
-							<!--  Hosted Fields div container -->
-							<!-- <div class="form-control" id="card-number"></div> -->
-							<span class="helper-text"></span>
-							<input type="number" id="credit_card_number" name="credit_card_number" class="form-control" placeholder="Enter Credit Card Number"/>
 						</div>
-						
-						<div class="form-group col-xs-4">
-						
-								<label class="control-label col-xs-12">Expiration Date</label>
-								<div class="col-xs-6">
-									<!--  Hosted Fields div container -->
-									<!-- <div class="form-control" id="expiration-month"></div> -->
-									<!-- <select id="expiration_month" name="expiration_month" class="form-control">
-										<% Date::MONTHNAMES.compact.each do |month| %>
-										<option value="<%= Date::MONTHNAMES.index(month) %>"><%= month %></option>
-										<% end %>
-									</select> -->
-									<input type="number" id="expiration_month" name="expiration_month" class="form-control" placeholder="MM"/>
-								</div>
-								
-								<div class="col-xs-6">
-									<!--  Hosted Fields div container -->
-									<!-- <div class="form-control" id="expiration-year"></div> -->
-									<!-- <select id="expiration_year" name="expiration_year" class="form-control">
-										<option value="2016">2016</option>
-										<option value="2017">2017</option>
-										<option value="2018">2018</option>
-										<option value="2019">2019</option>
-										<option value="2020">2020</option>
-										<option value="2021">2021</option>
-										<option value="2022">2022</option>
-										<option value="2023">2023</option>
-										<option value="2024">2024</option>
-									</select>
-										-->
-									<input type="number" id="expiration_year" name="expiration_year" class="form-control" placeholder="YYYY"/>
-								</div>
-						
-					</div>
-
 					</div>
 					
 					<div class="row">
-						<div class="form-group col-xs-6">
+						<div class="form-group col-xs-12">
+							<label class="control-label">Card Number</label>
+							<input type="number" id="credit_card_number" name="credit_card_number" class="form-control" placeholder="Enter Credit Card Number"/>
+						</div>						
+					</div>
+					
+					<div class="row">
+						<div class="form-group col-xs-4">
 							<label class="control-label">Security Code</label>
-							<!--  Hosted Fields div container -->
-							<!-- <div class="form-control" id="cvv"></div> -->
 							<input type="text" id="card_security_code" name="card_security_code" class="form-control" placeholder="Enter CVV"/>
 						</div>
-						<div class="form-group col-xs-6">
-							<label class="control-label">Zipcode</label>
-							<!--  Hosted Fields div container -->
-							<!-- <div class="form-control" id="postal-code"></div> -->
+						<div class="form-group col-xs-8">						
+							<label class="control-label col-xs-12">Expiration Date</label>
+							<div class="col-xs-6">
+								<input type="number" id="expiration_month" name="expiration_month" class="form-control" placeholder="MM"/>
+							</div>
+							<div class="col-xs-6">
+								<input type="number" id="expiration_year" name="expiration_year" class="form-control" placeholder="YYYY"/>
+							</div>						
 						</div>
-					</div>
-					
+					</div>					
 				</div>
-			
 			</div>
 		</td>
 		<td>
 			<!-- <button value="submit" id="submit" class="btn btn-success btn-lg center-block">Pay with <span id="card-type">Card</span></button> -->
-			<%= f.submit "Continue", :class => "btn btn-primary pull-right" %></td>
+			<%= f.submit "Place Order", :class => "btn btn-primary pull-right" %></td>
 		<% end %>
 	</tr>
 </table>
-	
+<script>
+	$('form.edit_checkout').submit(function(){
+		$('input[value="Place Order"]').prop('disabled', true)
+	});
+</script>

@@ -5,14 +5,14 @@
 
 <div class="modal-body" id="modal-body">
 	
-	<% if flash[:error] %>
-	<div id="flash_messages" class="aelrt alert-danger" role="alert">
-		<strong><%= flash[:error] %></strong>
-	</div>
+	<% if @account.errors.any? %>
+		<div id="flash_messages" class="alert alert-danger" role="alert">
+			<strong><%= @account.errors.full_messages.join(', ') %></strong>
+		</div>
 	<% end %>
 	
 	
-	<%= form_for @account, :remote => true, :html => {:class => "form-horizontal"} do |f| %>
+	<%= form_for @account, as: :account, url: account_path(@account, search_params), :remote => true, :html => {:class => "form-horizontal", id: "edit_account_#{@account.id}"} do |f| %>
 		<%= render :partial => "accounts/form", :locals => {:f => f}%>
 	<% end %>
 	
@@ -20,6 +20,6 @@
 
 <div class="modal-footer">
 	<%= button_tag(:name => :commit, :type => :submit, :class => "btn btn-primary", :form => "edit_account_#{@account.id}") do %>
-	Update Account 
+		Update Account 
 	<% end %>
 </div>

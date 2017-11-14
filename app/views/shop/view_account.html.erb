@@ -1,41 +1,7 @@
 <% if params[:account_id] %>
 	
 	<% unless @account.nil? %>
-	<table class="table table-bordered">
-
-		<tr>
-			<td colspan="2">My Account <%# link_to "Edit", "/edit_account" %></td>
-		</tr>
-
-		<tr>
-			<td>
-				<strong>Ship To:</strong>
-				<address>
-				<%= @account.name %><br/>
-				<%= @account.address_1 %><br/>
-				<%= @account.address_2 %><br/>
-				<%= @account.city %>, <%= @account.state %> <%= @account.zip %><br/>
-				<%= @account.phone %>
-				<%= @account.email %>
-				</address>
-			</td>
-			<td>
-				<strong>Bill To:</strong>
-				<address>
-				<%= @account.name %><br/>
-				<%= @account.bill_address_1 %><br/>
-				<%= @account.bill_address_2 %><br/>
-				<%= @account.bill_city %>, <%= @account.bill_state %> <%= @account.bill_zip %><br/>
-				<%= @account.bill_to_email %>
-				</address>
-			</td>
-		</tr>
-		
-		<tr>
-			<td colspan="2"><%= link_to "View Item History", "/my_account/items", :class => "btn btn-primary" %></td>
-		</tr>
-	
-	</table>
+		<%= render :partial => "addresses", :locals => {:account => @account} %>
 	<% end %>
 
 	<table class="table table-bordered">
@@ -56,7 +22,7 @@
 		<% @orders.each do |order|%>
 		<tr>
 			<td><%= order.number %></td>
-			<td><%= order.completed_at.strftime("%m/%d/%Y") %></td>
+			<td><%= order.submitted_at.strftime("%m/%d/%Y") %></td>
 			<td><%= order.po_number %></td>
 			<td><%= number_to_currency(order.total) %></td>
 			<td><%= order.paid ? "Yes" : "No" %></td>
@@ -75,6 +41,6 @@
 			<td class="text-center" colspan="8"><%= will_paginate @orders, renderer: BootstrapPagination::Rails %></td>
 		</tr>
 	
-	<table>
+	</table>
 		
 <% end %>

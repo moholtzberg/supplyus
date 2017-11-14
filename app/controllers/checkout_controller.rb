@@ -45,9 +45,10 @@ class CheckoutController < ApplicationController
     if cart.account_id.nil?
       if current_user.has_account
         cart.account_id = current_user.account.id
+        cart.sales_rep_id = current_user.account.sales_rep_id
       end
     end
-    cart.order_line_items.each {|c| c.price = c.item.actual_price(cart.account_id)}
+    cart.order_line_items.each {|c| c.price = c.item.actual_price(cart.account_id, c.quantity)}
 
     cart.update_attributes(checkout_params)
 
@@ -86,14 +87,15 @@ class CheckoutController < ApplicationController
       o = OrderShippingMethod.new(:order_id => cookies.permanent.signed[:cart_id])
     end
     o.update_attributes(:shipping_method_id => shipping.id, :amount => shipping.calculate(@cart.sub_total))
-    redirect_to checkout_confirm_path
-    # redirect_to checkout_payment_path
+    # redirect_to checkout_confirm_path
+    redirect_to checkout_payment_path
   end
   
   def payment
     @checkout = Checkout.find_by(:id => cookies.permanent.signed[:cart_id])
     @payment = Payment.new
     @order = @checkout
+    @cards = current_user.account.main_service.credit_cards
     # if current_user.has_account
     #   redirect_to checkout_confirm_path
     # end
@@ -101,27 +103,38 @@ class CheckoutController < ApplicationController
   
   def update_payment
     puts params[:payment_method]
-    if (params[:payment_method] == "terms" || params[:payment_method] == "check")
-      redirect_to checkout_confirm_path
-    else
-      if params[:payment_method] == "credit_card"
-        @checkout = Checkout.find_by(:id => cookies.permanent.signed[:cart_id])
-        @payment = Order.find_by(:id => cookies.permanent.signed[:cart_id]).credit_card_payments.new
-        @payment.first_name = params[:first_name]
-        @payment.last_name = params[:last_name]
-        @payment.credit_card_number = params[:credit_card_number]
-        @payment.card_security_code = params[:card_security_code]
-        @payment.expiration_month = params[:expiration_month]
-        @payment.expiration_year = params[:expiration_year]
-        @payment.amount = Order.find_by(:id => cookies.permanent.signed[:cart_id]).total
-        if @payment.authorize
-          @payment.save
-          OrderPaymentApplication.create(:order_id => @checkout.id, :payment_id => @payment.id, :applied_amount => @payment.amount)
-          complete
-        else
-          render "payment"
-        end
+    @checkout = Checkout.find_by(:id => cookies.permanent.signed[:cart_id])
+    @payment = Order.find_by(:id => cookies.permanent.signed[:cart_id]).payments.new
+    @payment.account = current_user.account
+    @payment.amount = Order.find_by(:id => cookies.permanent.signed[:cart_id]).total
+    @payment.payment_method = PaymentMethod.find_or_create_by(name: params[:payment_method], active: true)
+    if params[:payment_method] == 'credit_card'
+      @payment.payment_type =  'CreditCardPayment'
+      @payment = @payment.becomes CreditCardPayment
+      if !params[:credit_card_token].blank?
+        @card = CreditCard.find_by(account_payment_service_id: @checkout.account.main_service.id, service_card_id: params[:credit_card_token])
+      else
+        @card = CreditCard.create({
+          cardholder_name: params[:cardholder_name],
+          credit_card_number: params[:credit_card_number],
+          card_security_code: params[:card_security_code],
+          expiration_month: params[:expiration_month],
+          expiration_year: params[:expiration_year],
+          account_payment_service_id: @checkout.account.main_service.id
+        })
       end
+      @payment.credit_card_id = @card&.id
+    else
+      @payment.payment_type =  'CheckPayment'
+      @payment = @payment.becomes CheckPayment
+    end
+    @cards = current_user.account.main_service.credit_cards
+    if (@payment.payment_type == 'CheckPayment' or (@card and @card.errors.empty?)) and @payment.authorize
+      @payment.save
+      OrderPaymentApplication.create(:order_id => @checkout.id, :payment_id => @payment.id, :applied_amount => @payment.amount)
+      submit
+    else
+      render "payment"
     end
   end
 
@@ -140,24 +153,23 @@ class CheckoutController < ApplicationController
     @checkout = Checkout.find_by(:id => cookies.permanent.signed[:cart_id])
   end
   
-  def complete
+  def submit
     c = Checkout.find_by(:id => cookies.permanent.signed[:cart_id])
     c.email             = current_user.email if c.email.nil?
     c.user_id           = current_user.id if c.user_id.nil?
-    c.completed_at = Time.now
     if c.account.present? and c.account.credit_hold == false
       c.credit_hold = false
     else
       c.credit_hold = true
     end
     if c.save
-      if c.complete
-        cookies.permanent.signed[:cart_id] = nil
-        puts "GOING INTO THE MAILER"
-        OrderMailer.order_confirmation(c.id, :bcc => "sales@247officesupply.com").deliver_later
-        redirect_to my_account_path
-      end
-      
+      c.submit
+      @cart.reload
+      cookies.permanent.signed[:cart_id] = nil
+      puts "GOING INTO THE MAILER"
+      flash[:notice] = 'Thank you for your order!'
+      redirect_to my_account_order_path(@cart.number)
+      # OrderMailer.order_confirmation(c.id, :bcc => "sales@247officesupply.com").deliver_later
     end
   end
   

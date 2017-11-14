@@ -1,0 +1,42 @@
+<table class="table table-bordered addresses">
+  <tr>
+    <th colspan="10">Addresses</th>
+  </tr>
+  <tr>
+    <td colspan="10"><%= link_to "Add Address", new_my_account_address_path(address: {account_id: account.id }), class: "btn btn-primary btn-block btn-xs", remote: true %>
+  </tr>
+  <tr>
+    <th>Name</th>
+    <th>Address 1</th>
+    <th>Address 2</th>
+    <th>City</th>
+    <th>State</th>
+    <th>Zip</th>
+    <th>Phone</th>
+    <th>Main</th>
+    <th>Remove</th>
+  </tr>
+
+  <% account.addresses.each do |addr|%>
+    <tr>
+      <td><%= addr.name %></td>
+      <td><%= addr.address_1 %></td>
+      <td><%= addr.address_2 %></td>
+      <td><%= addr.city %></td>
+      <td><%= addr.state %></td>
+      <td><%= addr.zip %></td>
+      <td><%= addr.phone %></td>
+      <td><%= addr.main %></td>
+      <td>
+        <%= link_to my_account_address_path(addr), method: :delete, remote: true do %>
+          <i class="fa fa-remove"></i>
+        <% end %>
+      </td>
+    </tr>
+  <% end %>
+
+  <tr>
+    <td colspan="10"><%= link_to "View Item History", "/my_account/items", :class => "btn btn-primary" %></td>
+  </tr>
+
+</table>

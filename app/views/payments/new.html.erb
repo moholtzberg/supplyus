@@ -5,14 +5,14 @@
 
 <div class="modal-body" id="modal-body">
 	
-	<% if flash[:error] %>
-	<div id="flash_messages" class="aelrt alert-danger" role="alert">
-		<strong><%= flash[:error] %></strong>
-	</div>
+	<% if @payment.errors.any? %>
+		<div id="flash_messages" class="alert alert-danger" role="alert">
+			<strong><%= @payment.errors.full_messages.join(', ') %></strong>
+		</div>
 	<% end %>
 	
 	
-	<%= form_for @payment, :remote => true, :html => {:class => "form-horizontal"} do |f| %>
+	<%= form_for @payment, as: :payment, url: payments_path(search_params), :remote => true, :html => {:class => "form-horizontal"} do |f| %>
 		<%= render :partial => "form", :locals => {:f => f} %>
 	<% end %>
 	
@@ -20,7 +20,7 @@
 
 <div class="modal-footer">
 	<%= button_tag(:name => :commit, :type => :submit, :class => "btn btn-primary", :form => "new_payment") do %>
-	Create Payment 
+		Create Payment 
 	<% end %>
 </div>
 

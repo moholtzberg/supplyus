@@ -1,0 +1,7 @@
+<% if @payment.errors.any? %>
+  alert("<%= @payment.errors.full_messages.join(', ') %>");
+<% else %>
+  $("#payments").replaceWith("<%= j render :template => 'payments/index.html', :format => 'html' %>")
+  $("#orders-table").DataTable().draw('full-hold');
+  $("#order").html("<%= j render partial: 'orders/full_order', locals: {order: @payment.orders.first} %>");
+<% end %>

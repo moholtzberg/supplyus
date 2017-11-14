@@ -1,38 +1,26 @@
 <% content_for :app_location do %>Admin / Groups / Items Usage<% end %>
-<div id="items" class="col-md-12">
+<table class="table table-bordered table-condensed">
+  <tr>
+    <th>Index</th>
+    <th>Item Id</th>
+    <th>QTY Ordered</th>
+    <th>Item Number</th>
+    <th>Image</th>
+  </tr>
 
-      <table class="table table-bordered table-condensed">
-        <tr>
-          <th>Index</th>
-          <th>Item Id</th>
-          <th>QTY Ordered</th>
-          <th>Item Number</th>
-          <!-- <th>Current Price</th> -->
-
-        </tr>
-				<% start = 0%>
-        <% items = OrderLineItem.unscoped.joins("INNER JOIN orders ON orders.id = order_line_items.order_id").joins("RIGHT OUTER JOIN items ON items.id = order_line_items.item_id").where("orders.completed_at BETWEEN ? AND ?", @from_date, @to_date).where("quantity_shipped >= 0").group("item_id, items.number").select("SUM(COALESCE(quantity, 0) - COALESCE(quantity_canceled, 0)) AS qty, item_id AS item_id, items.number AS number").having("item_id = item_id").order("qty DESC") %>
-
-        <% items.each do |i|%>
-				
-            <% if i.qty > 0 %>
-                <% start = start + 1  %>
-                <tr>
-                  <td><%= start %></td>
-                  <td><%= i.item_id %></td>
-                  <td><%= number_with_delimiter(i.qty) %></td>
-                  <td><%= i.number %></td>
-                  <td>
-										<% if i.item.images.size > 0 %>
-										<%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/#{i.item.default_image_path}", :class => "media-object", :height => "64", :width => "64" %>
-										 <% else %>
-										 <%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/NOA.JPG", :class => "media-object", :height => "64", :width => "64" %>
-										 <% end %>
-									 </td>
-
-                </tr>
-            <% end %>
+  <% OrderLineItem.from_to_by_account_id(@from_date, @to_date, nil).select { |li| li.qty > 0 }.each_with_index do |li, i| %>
+    <tr>
+      <td><%= i %></td>
+      <td><%= li.item_id %></td>
+      <td><%= number_with_delimiter(li.qty) %></td>
+      <td><%= li.number %></td>
+      <td>
+        <% if li.item.images.size > 0 %>
+          <%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/#{li.item.default_image_path}", :class => "media-object", :height => "64", :width => "64" %>
+        <% else %>
+          <%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/NOA.JPG", :class => "media-object", :height => "64", :width => "64" %>
         <% end %>
-      </table>
-
-</div>
+      </td>
+    </tr>
+  <% end %>
+</table>

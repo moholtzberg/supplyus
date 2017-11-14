@@ -1,0 +1,5 @@
+<% if @return_authorization.errors.any? %>
+  alert("<%= @return_authorization.errors.full_messages.join(', ') %>");
+<% else %>
+  $("#return_authorizations").replaceWith("<%= j render :template => 'return_authorizations/index.html', :format => 'html' %>")
+<% end %>

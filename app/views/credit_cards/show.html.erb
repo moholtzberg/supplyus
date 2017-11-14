@@ -1,0 +1,60 @@
+<div id="account_payment_service" class="col-md-12">
+		
+	<table class="table table-bordered table-striped">
+	</table>
+	
+	<table class="table table-bordered table-striped">
+		
+		<tr>
+			<th width="10%">ID</th>
+			<th width="10%">Account</th>
+			<th width="10%">Service Card ID</th>
+			<th width="20%">Cardholder Name</th>
+			<th width="10%">Last 4 Digits</th>
+			<th width="10%">Expiration</th>
+			<th width="10%">Card Type</th>
+			<th width="20%">Unique Number Identifier</th>
+		</tr>
+		
+		<tr>
+			<td><%= @credit_card.id %></td>
+			<td><%= @credit_card.account_payment_service&.account_name %></td>
+			<td><%= @credit_card.service_card_id %></td>
+			<td><%= @credit_card.cardholder_name %></td>
+			<td><%= @credit_card.last_4 %></td>
+			<td><%= @credit_card.expiration %></td>
+			<td><%= @credit_card.card_type %></td>
+			<td><%= @credit_card.unique_number_identifier %></td>
+		</tr>
+		
+	</table>
+	
+	<table class="table table-bordered table-condensed table-striped">
+		<tr class="line_items">
+			<th colspan="6" class="bg-primary text-center">Payments</th>
+		</tr>
+		<tr>
+			<th>Date</th>
+			<th>Amount</th>
+			<th>Authorization Code</th>
+			<th>Completed?</th>
+		</tr>
+		<% @credit_card.credit_card_payments.each do |payment| %>
+			<tr>
+				<td><%= payment.created_at.to_date %></td>
+				<td><%= payment.amount %></td>
+				<td><%= payment.number %></td>
+				<td><%= payment.success? ? 'Yes' : 'No' %></td>
+			</tr>
+		<% end %>
+	</table>
+	
+</div>
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div>

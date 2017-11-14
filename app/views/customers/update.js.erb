@@ -1,6 +1,8 @@
-<% unless flash[:error] %>
-	$('#myModal').modal("hide")
-	$('body').removeClass('modal-open')
-	$('.modal-backdrop').remove()
-	$("#customers").html("<%= j render :template => 'customers/index.html', :format => 'html' %>")
+<% if @customer.errors.any? %>
+  $(".modal-content").html("<%= j render :template => 'customers/edit.html', :format => 'html' %>")
+<% else %>
+  $('#myModal').modal("hide")
+  $('body').removeClass('modal-open')
+  $('.modal-backdrop').remove()
+  $("#customers-table").DataTable().draw('full-hold');
 <% end %>

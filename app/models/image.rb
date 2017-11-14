@@ -2,9 +2,7 @@ class Image < Asset
 
   include ApplicationHelper
   require 'open-uri'
-
-  belongs_to :item
-
+  
   def path
     attachment_file_name
   end

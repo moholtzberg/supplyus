@@ -10,7 +10,7 @@ class GroupsController < ApplicationController
     end
     respond_to do |format|
       format.html
-      format.json {render :json => @groups.map(&:name)}
+      format.json {render :json => @groups.map { |g| {id: g.id, name: g.name, text: g.name} }}
     end
   end
   
@@ -59,13 +59,13 @@ class GroupsController < ApplicationController
     .joins("INNER JOIN orders ON orders.id = order_line_items.order_id")
     .joins("RIGHT OUTER JOIN items ON items.id = order_line_items.item_id")
     .where("orders.account_id IN (?)", @ids)
-    .where("completed_at < ?", Date.strptime(params[:to_date], '%m/%d/%y'))
+    .where("submitted_at < ?", Date.strptime(params[:to_date], '%m/%d/%y'))
     .where("quantity_fulfilled >= 0")
     .group("item_id, items.number")
     .select("SUM(COALESCE(quantity, 0) - COALESCE(quantity_canceled, 0)) AS qty, item_id AS item_id, items.number AS number")
     .having("item_id = item_id")
     .order("qty DESC")
-    .includes(:item => [:group_item_prices, :item_vendor_prices])
+    .includes(:item => [:prices, :item_vendor_prices])
   end
   
   def invoices_by_customer
@@ -84,14 +84,14 @@ class GroupsController < ApplicationController
     .joins("INNER JOIN orders ON orders.id = order_line_items.order_id")
     .joins("RIGHT OUTER JOIN items ON items.id = order_line_items.item_id")
     .where("orders.account_id IN (?)", @ids)
-    .where("completed_at > ?", Date.strptime(params[:from_date], '%m/%d/%y'))
-    .where("completed_at < ?", Date.strptime(params[:to_date], '%m/%d/%y'))
+    .where("submitted_at > ?", Date.strptime(params[:from_date], '%m/%d/%y'))
+    .where("submitted_at < ?", Date.strptime(params[:to_date], '%m/%d/%y'))
     .where("quantity_shipped >= 0")
     .group("item_id, items.number")
     .select("SUM(COALESCE(quantity, 0) - COALESCE(quantity_canceled, 0)) AS qty, item_id AS item_id, items.number AS number")
     .having("item_id = item_id")
     .order("qty DESC")
-    .includes(:item => [:group_item_prices, :item_vendor_prices])
+    .includes(:item => [:prices, :item_vendor_prices])
   end
   
   def items_for_customer
@@ -102,7 +102,7 @@ class GroupsController < ApplicationController
     .joins("INNER JOIN orders ON orders.id = order_line_items.order_id")
     .joins("RIGHT OUTER JOIN items ON items.id = order_line_items.item_id")
     .where("orders.account_id IN (?)", @ids)
-    .where("completed_at < ?", Date.strptime(params[:to_date], '%m/%d/%y'))
+    .where("submitted_at < ?", Date.strptime(params[:to_date], '%m/%d/%y'))
     .where("quantity_fulfilled >= 0")
     .group("item_id, items.number")
     .select("SUM(COALESCE(quantity, 0) - COALESCE(quantity_canceled, 0)) AS qty, item_id AS item_id, items.number AS number")

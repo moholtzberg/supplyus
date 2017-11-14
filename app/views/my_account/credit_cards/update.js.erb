@@ -1,0 +1,8 @@
+<% if @credit_card.errors.any? %>
+  $("#modal-content").html("<%= j render :template => 'my_account/credit_cards/new.html', :format => 'html', :locals => {:credit_card => @credit_card} %>")
+<% else %>
+  $('#myModal').modal("hide")
+  $('body').removeClass('modal-open')
+  $('.modal-backdrop').remove()
+  $("tr[data-item-list-id='<%= @credit_card.id %>'").replaceWith("<%= j render :partial => 'my_account/credit_cards/credit_card', :format => 'html', :locals => {:credit_card => @credit_card} %>")
+<% end %>

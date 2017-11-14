@@ -5,13 +5,12 @@ class PurchaseOrderLineItem < ActiveRecord::Base
   belongs_to :purchase_order, :touch => true
   belongs_to :item
   belongs_to :order_line_item
-  # has_many :inventory_transactions, :class_name => "InventoryTransaction", :dependent => :destroy
   has_many :purchase_order_line_item_receipts
   
   scope :by_item, -> (item) { where(:item_id => item) }
   scope :active,  -> () { where(:quantity => 1..Float::INFINITY) }
   
-  before_create :make_line_number, :on => :create
+  before_create :make_line_number, on: :create, if: Proc.new { |li| !li.purchase_order_line_number }
   
   validates :purchase_order_line_number, :uniqueness => {
     :scope => :purchase_order_id
@@ -26,7 +25,7 @@ class PurchaseOrderLineItem < ActiveRecord::Base
   def linked_order_line_item_is_correct
     puts "trying to validate"
     if order_line_item_id.present?
-      if order_line_item.item_id != item_id
+      if !order_line_item || order_line_item.item_id != item_id
         errors.add(:order_line_item_id, "Item's do not match")
       end
       # if order_line_item.actual_quantity < (PurchaseOrderLineItem.where(:order_line_item_id => order_line_item_id).map(&:quantity).sum + quantity)
@@ -54,15 +53,6 @@ class PurchaseOrderLineItem < ActiveRecord::Base
     end
   end
   
-  def create_inventory_transactions
-    if InventoryTransaction.find_by(:inv_transaction_id => id, :inv_transaction_type => "PurchaseOrderLineItem")
-      i = InventoryTransaction.find_by(:inv_transaction_id => id, :inv_transaction_type => "PurchaseOrderLineItem")
-    else
-      i = InventoryTransaction.new
-    end
-    i.update_attributes(:inv_transaction_id => id, :inv_transaction_type => "PurchaseOrderLineItem", :item_id => item_id, :quantity => quantity)
-  end
-  
   def make_line_number
     if self.purchase_order_id.blank?
     else
@@ -87,6 +77,10 @@ class PurchaseOrderLineItem < ActiveRecord::Base
   
   def amount_received
     quantity_received.to_i * price.to_f.to_d
+  end
+
+  def to_po_form_hash
+    {id: id, purchase_order_line_number: purchase_order_line_number, item_id: item_id, item_number: item_number, quantity: quantity.to_i, price: price.to_f, quantity_received: quantity_received, sub_total: sub_total, order_line_item_id: order_line_item_id, _destroy: false}
   end
   
 end

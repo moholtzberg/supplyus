@@ -5,42 +5,53 @@
 		<%= f.text_field :name, :class => "form-control" %>
 	</div>
 	
-	<div class="col-md-6 address">
+	<div class="col-md-12 address">
 	
-		<div id="address" class="col-md-12">
-			<%= f.label :address, :class => "control-label" %>
-			<%= f.text_field :address_1, :class => "form-control" %>
-		</div>
-	
-		<div id="address_2" class="col-md-12">
-			<%= f.label :address_2, :class => "control-label" %>
-			<%= f.text_field :address_2, :class => "form-control" %>
-		</div>
-	
-		<div id="city" class="col-sm-12">
-			<%= f.label :city, :class => "control-label" %>
-			<%= f.text_field :city, :class => "form-control" %>
-		</div>
-	
-		<div id="state" class="col-sm-6 col-xs-6">
-			<%= f.label :state, :class => "control-label" %>
-			<%= f.text_field :state, :class => "form-control" %>
-		</div>
-	
-		<div id="zip" class="col-sm-6 col-xs-6">
-			<%= f.label :zip, :class => "control-label" %>
-			<%= f.text_field :zip, :class => "form-control" %>
-		</div>
-	
-		<div id="phone" class="col-xs-6">
-			<%= f.label :phone, :class => "control-label" %>
-			<%= f.text_field :phone, :class => "form-control" %>
-		</div>
-	
-		<div id="fax" class="col-xs-6">
-			<%= f.label :fax, :class => "control-label" %>
-			<%= f.text_field :fax, :class => "form-control" %>
-		</div>
+		<%= f.fields_for :main_address, @customer.main_address do |b| %>
+
+			<%= b.hidden_field :id %>
+			
+			<div id="address" class="col-md-12">
+				<%= b.label :address_name, :class => "control-label" %>
+				<%= b.text_field :name, :class => "form-control" %>
+			</div>			
+		
+			<div id="address" class="col-md-12">
+				<%= b.label :address, :class => "control-label" %>
+				<%= b.text_field :address_1, :class => "form-control" %>
+			</div>
+		
+			<div id="address_2" class="col-md-12">
+				<%= b.label :address_2, :class => "control-label" %>
+				<%= b.text_field :address_2, :class => "form-control" %>
+			</div>
+		
+			<div id="city" class="col-sm-12">
+				<%= b.label :city, :class => "control-label" %>
+				<%= b.text_field :city, :class => "form-control" %>
+			</div>
+		
+			<div id="state" class="col-sm-6 col-xs-6">
+				<%= b.label :state, :class => "control-label" %>
+				<%= b.text_field :state, :class => "form-control" %>
+			</div>
+		
+			<div id="zip" class="col-sm-6 col-xs-6">
+				<%= b.label :zip, :class => "control-label" %>
+				<%= b.text_field :zip, :class => "form-control" %>
+			</div>
+		
+			<div id="phone" class="col-xs-6">
+				<%= b.label :phone, :class => "control-label" %>
+				<%= b.text_field :phone, :class => "form-control" %>
+			</div>
+		
+			<div id="fax" class="col-xs-6">
+				<%= b.label :fax, :class => "control-label" %>
+				<%= b.text_field :fax, :class => "form-control" %>
+			</div>
+		
+		<% end %>
 	
 		<div id="email" class="col-xs-12">
 			<%= f.label :email, :class => "control-label" %>
@@ -48,75 +59,7 @@
 		</div>
 	
 	</div>
-	
-	
-	<div class="col-md-6 address">
-	
-		<div id="bill_to_address" class="col-md-12">
-			<%= f.label :bill_to_address, :class => "control-label" %>
-			<%= f.text_field :bill_to_address_1, :class => "form-control bill_to" %>
-		</div>
-	
-		<div id="bill_to_address_2" class="col-md-12">
-			<%= f.label :bill_to_address_2, :class => "control-label" %>
-			<%= f.text_field :bill_to_address_2, :class => "form-control bill_to" %>
-		</div>
-	
-		<div id="bill_to_city" class="col-sm-12">
-			<%= f.label :bill_to_city, :class => "control-label" %>
-			<%= f.text_field :bill_to_city, :class => "form-control bill_to" %>
-		</div>
-	
-		<div id="bill_to_state" class="col-sm-6 col-xs-6">
-			<%= f.label :bill_to_state, :class => "control-label" %>
-			<%= f.text_field :bill_to_state, :class => "form-control bill_to" %>
-		</div>
-	
-		<div id="bill_to_zip" class="col-sm-6 col-xs-6">
-			<%= f.label :bill_to_zip, :class => "control-label" %>
-			<%= f.text_field :bill_to_zip, :class => "form-control bill_to" %>
-		</div>
-	
-		<div id="bill_to_phone" class="col-xs-6">
-			<%= f.label :bill_to_phone, :class => "control-label" %>
-			<%= f.text_field :bill_to_phone, :class => "form-control bill_to" %>
-		</div>
-	
-		<div id="bill_to_fax" class="col-xs-6">
-			<%= f.label :bill_to_fax, :class => "control-label" %>
-			<%= f.text_field :bill_to_fax, :class => "form-control bill_to" %>
-		</div>
-	
-		<div id="bill_to_email" class="col-xs-12">
-			<%= f.label :bill_to_email, :class => "control-label" %>
-			<%= f.text_field :bill_to_email, :class => "form-control bill_to" %>
-		</div>
 		
-		<div id="use_ship_to" class="col-xs-12 shipping">
-			<%= label_tag :use_ship_to_address do %>Use Ship To Address
-				<%= check_box_tag :use_ship_to_address, :checked, :class => "form-control" %>
-			<% end %>
-		</div>
-		
-		<script>
-			$(document).ready(function() {
-				
-				if ($('#use_ship_to_address').val($(this).is(":checked"))) {
-					$(".bill_to").prop("disabled", true)
-				};
-				
-				$('#use_ship_to_address').change(function(){
-					if ($(this).is(":checked")) {
-						$(".bill_to").prop("disabled", true)
-					} else {
-						$(".bill_to").prop("disabled", false)
-					}
-				});
-			})
-		</script>
-	
-	</div>
-	
 	<div id="is_taxable" class="col-xs-12">
 		<%= label_tag :is_taxable do %>Is Taxable
 			<%= f.check_box :is_taxable, :value => :is_taxable, :class => "form-control" %>
@@ -137,7 +80,16 @@
 	<script>
 	jQuery(function() {
 		return $('#account_group_name').autocomplete({
-			source: $('#account_group_name').data('autocomplete-source')
+			source: $('#account_group_name').data('autocomplete-source'),
+			response: function( event, ui ) {
+				ui.content.forEach(function(item) {
+					item.label = item.name;
+				})
+			},
+      select: function( event, ui ) {
+        $("#account_group_name" ).val(ui.item.name);
+        return false;
+      }
 		})
 	});
 	</script>

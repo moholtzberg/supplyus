@@ -5,18 +5,20 @@
 
 <div class="modal-body" id="modal-body">
 	
-	<% if flash[:error] %>
-	<div id="flash_messages" class="aelrt alert-danger" role="alert">
-		<strong><%= flash[:error] %></strong>
-	</div>
+	<% if @discount_code_effect.errors.any? %>
+		<div id="flash_messages" class="alert alert-danger" role="alert">
+			<strong><%= @discount_code_effect.errors.full_messages.join(', ') %></strong>
+		</div>
 	<% end %>
 	
-		<%= render :partial => "discount_code_effects/form", :locals => {:effect => @discount_code_effect}%>
+	<%= form_for @discount_code_effect, url: discount_code_effect_path(@discount_code_effect, search_params), :remote => true, :html => {:class => "form-horizontal"} do |f| %>
+		<%= render :partial => "discount_code_effects/form", :locals => {:f => f}%>
+	<% end %>
 	
 </div>
 
 <div class="modal-footer">
 	<%= button_tag(:name => :commit, :type => :submit, :class => "btn btn-primary", :form => "edit_discount_code_effect_#{@discount_code_effect.id}") do %>
-	Update Discount Code Effect
+		Update Discount Code Effect
 	<% end %>
 </div>

@@ -5,7 +5,7 @@
 		
 		<tr>
 			<td colspan="8">
-				<form id="searchBox" accept-charset="UTF-8" action="/admin/discount_codes" method="get" role="search">
+				<form id="searchBox" accept-charset="UTF-8" action="<%= discount_codes_path(search_params.except(:page)) %>" method="get" role="search" data-remote="true">
 					<input type="text" class="form-control" id="term" name="term" placeholder="Search for code" value="<%= params[:term] %>">
 				</form>
 			</td>
@@ -13,47 +13,47 @@
 		</tr>
 		
 		<tr>
-			<th class="hidden-xs">ID</th>
-			<th>Code</th>
-			<th>Name</th>
+			<th class="hidden-xs"><%= sortable "discount_codes.id", 'ID' %></th>
+			<th><%= sortable "discount_codes.code", 'Code' %></th>
+			<th><%= sortable "discount_effects.name", 'Name' %></th>
 			<th>Remaining</th>
-			<th class="hidden-xs">Times of use</th>
+			<th class="hidden-xs"><%= sortable "discount_codes.times_of_use", 'Times Of Use' %></th>
 			<th>&nbsp;</th>
 		</tr>
 		
 		<% @discount_codes.each do |a| %>
-		<tr>
-			<td class="hidden-xs"><%= a.id %></td>
-			<td><%= a.code %></td>
-			<td><%= a.name %></td>
-			<td><%= a.remaining %></td>
-			<td class="hidden-xs"><%= a.times_of_use %></td>
-			<td class="text-center">
-			
-				<div class="dropdown">
-					<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-						<span class="caret"></span>
-					</button>
-					<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-						<li><%= link_to("View", discount_code_path(a.id))  %></li>
-						<li><%= link_to("Edit", edit_discount_code_path(a.id), :remote => true)  %></li>
-						<li><%= link_to("Delete", discount_code_path(a.id), :method => "delete", :remote => true)  %></li>
-					</ul>
-				</div>
-			
-			</td>
-		</tr>
+			<tr>
+				<td class="hidden-xs"><%= a.id %></td>
+				<td><%= a.code %></td>
+				<td><%= a.name %></td>
+				<td><%= a.remaining %></td>
+				<td class="hidden-xs"><%= a.times_of_use %></td>
+				<td class="text-center">
+				
+					<div class="dropdown">
+						<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+							<li><%= link_to("View", discount_code_path(a.id))  %></li>
+							<li><%= link_to("Edit", edit_discount_code_path(a.id, search_params), :remote => true)  %></li>
+							<li><%= link_to("Delete", discount_code_path(a.id, search_params), :method => "delete", :remote => true)  %></li>
+						</ul>
+					</div>
+				
+				</td>
+			</tr>
 		<% end %>
 
 	</table>
 	
-	<%= will_paginate @discount_codes, renderer: BootstrapPagination::Rails %>
+	<%= will_paginate @discount_codes, params: search_params.except(:page).merge(action: 'index'), renderer: BootstrapPagination::Rails %>
 	
-	<%= link_to new_discount_code_path, :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
+	<%= link_to new_discount_code_path(search_params), :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
 	
 </div>
 
-<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div id="myModal" class="modal fade" role="dialog" aria-labelledby="myModalLabel">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			

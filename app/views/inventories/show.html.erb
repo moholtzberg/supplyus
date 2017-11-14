@@ -1,0 +1,63 @@
+<div id="inventory" class="col-md-12">
+		
+	<table class="table table-bordered table-striped">
+		<tr>
+			<td colspan="8">
+				<form id="searchBox" accept-charset="UTF-8" action="/admin/inventories" method="get" role="search">
+					<input type="text" class="form-control" id="term" name="term" placeholder="Search for inventory" value="">
+				</form>
+			</td>
+		</tr>
+	</table>
+	
+	<table class="table table-bordered table-striped">
+
+	  <tr>
+			<th>ID</th>
+	    <th>Item</th>
+	    <th>Bin</th>
+	    <th>Qty On Hand</th>
+	    <th>Qty Shipped</th>
+	    <th>Qty Received</th>
+	  </tr>
+
+	  <tr>
+	    <td><%= @inventory.id %></td>
+	    <td><%= link_to @inventory.item.number, @inventory.item %></td>
+	    <td><%= link_to(@inventory.bin.name, @inventory.bin) if @inventory.bin %></td>
+	    <td><%= @inventory.qty_on_hand %></td>
+	    <td><%= @inventory.qty_shipped %></td>
+	    <td><%= @inventory.qty_received %></td>
+	  </tr>
+		
+	</table>
+	
+	<table class="table table-bordered table-condensed table-striped">
+		<tr class="line_items">
+			<th colspan="3" class="bg-primary">Transactions</th>
+		</tr>
+		<tr>
+			<th>Parent Link</th>
+			<th>Type</th>
+			<th>Id</th>
+			<th>Q-ty</th>
+		</tr>
+		<% @inventory.inventory_transactions.each do |tr| %>
+			<tr>
+				<td><%= link_to tr.ancestor_title, tr.ancestor %></td>
+				<td><%= tr.inv_transaction_type %></td>
+				<td><%= tr.inv_transaction_id %></td>
+				<td><%= tr.quantity %></td>
+			</tr>
+		<% end %>
+	</table>
+	
+</div>
+
+<div id="myModal" class="modal fade" tainventorydex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div

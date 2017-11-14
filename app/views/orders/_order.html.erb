@@ -6,46 +6,38 @@
 <td class="hidden-xs"><%= number_to_currency(order.amount_shipped) %></td>
 <td class="hidden-xs"><%= number_to_currency(order.amount_fulfilled) %></td>
 <td><%= number_to_currency(order.balance_due) %></td>
-<td class="text-center hidden-xs"><%= order.completed_at.strftime("%m/%d/%y %I:%M %p") unless order.completed_at.nil? %></td>
-<td class="locked hidden-xs">
-	<% if order.locked %> 
-	<i class="fa fa-lock" aria-hidden="true"></i>
-	<% end %>
-	
-	<% if order.is_taxable? %>
-	<i class="fa fa-balance-scale" aria-hidden="true"></i>
-	<% end %>
-	
-	<% if order.credit_hold == true %> 
-	<i class="fa fa-ban text-danger" aria-hidden="true"></i>
-	<% end %>
+<td class="text-center hidden-xs"><%= order.submitted_at.strftime("%m/%d/%y %I:%M %p") unless order.submitted_at.nil? %></td>
+<td class="locked hidden-xs"><%= order.state %></td>
 <td>
-
 	<div class="dropdown">
 		<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 			<span class="caret"></span>
 		</button>
 		<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
 			<li><%= link_to("View", order_path(order.id))  %></li>
-			<% unless order.locked %>
-			<li><%= link_to("Edit", edit_order_path(order.id)) %></li>
-			<li><%= link_to("Lock", lock_order_path(order.id), :remote => true, :method => "put") %></li>
-			<li><%= link_to("Toggle Credit Hold", credit_hold_order_path(order.id), :remote => true, :method => "put")  %></li>
-			<% else %>
-				
-				<% unless order.shipped %>
+			<% if order.pending? %>
+				<li><%= link_to("Approve", approve_order_path(order.id), :remote => true, :method => "put") %></li>
+				<li><%= link_to("Cancel", cancel_order_path(order.id), :remote => true, :method => "put") %></li>
+			<% end %>
+			<% if order.awaiting_payment? %>
+				<li><%= link_to("Toggle lock", lock_order_path(order.id), :remote => true, :method => "put") %></li>
+			<% end %>
+			<% if !order.locked? %>
+				<li><%= link_to("Edit", edit_order_path(order.id)) %></li>
+			<% end %>
+			<% if order.credit_hold? %>
+				<li><%= link_to("Remove Credit Hold", credit_hold_remove_order_path(order.id), :remote => true, :method => "put")  %></li>
+			<% end %>
+			<% if order.awaiting_shipment? or order.partially_shipped? %>
 				<li><%= link_to("Ship", new_order_shipment_path(order.id))  %></li>
-				<li><%= link_to("Toggle Credit Hold", credit_hold_order_path(order.id), :remote => true, :method => "put")  %></li>
-				<% end %>
-				
-				<% unless order.fulfilled %>
+			<% end %>
+			<% if order.awaiting_fulfillment? or order.partially_fulfilled? %>
 				<li><%= link_to("Fulfill", new_order_invoice_path(order.id))  %></li>
 				<li><%= link_to("Resend Order Notification", resend_order_order_path(:id => order.id), :remote => true, :method => "put") %></li>
-				<% else %>
+			<% end %>
+			<% if order.fulfilled? %>
 				<li><%= link_to("Resend Invoice Notification", resend_invoice_order_path(:id => order.id), :remote => true, :method => "put") %></li>
-				<% end %>
 			<% end %>
 		</ul>
 	</div>
-
 </td>

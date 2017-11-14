@@ -83,7 +83,7 @@
 	<%= render :partial => "order_discount_code_form" %>
 <% end %>
 
-<%= form_for @checkout, :url => checkout_complete_path, :method => :patch do |f| %>
+<%= form_for @checkout, :url => checkout_submit_path, :method => :patch do |f| %>
 	<table class="table table-bordered">
 		<tr>
 			<td colspan="2"><%= f.submit "Place Order", :class => "btn btn-primary pull-right"%></td>

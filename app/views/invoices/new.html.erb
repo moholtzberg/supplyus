@@ -15,7 +15,7 @@
 		<tr>
 			<td><%= @order.number %></td>
 			<td><%= @order.ship_to_account_name %></td>
-			<td><%= f.date_field :date, :class => "form-control", :value => @order.completed_at.to_date %></td>
+			<td><%= f.date_field :date, :class => "form-control", :value => @order.submitted_at.to_date %></td>
 			<td><%= f.date_field :due_date, :class => "form-control", :value => @order.due_on.to_date %></td>
 		</tr>
 		

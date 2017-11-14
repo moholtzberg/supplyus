@@ -1,0 +1,9 @@
+{
+  "name": "Recurring demo",
+  "description": "recurring demo",
+  "image": "heroku/ruby",
+  "addons": [
+    "heroku-postgresql",
+    "heroku-redis"
+  ]
+}

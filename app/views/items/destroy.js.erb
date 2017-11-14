@@ -1,5 +1,2 @@
-// fix partial -> template
-$("#items").html("<%= j render :template => 'items/index.html', :format => 'html', :locals => {:items => @items} %>");
+$("#items-table").DataTable().draw('full-hold');
 $("#confirmModal").modal("hide");
-// flash example
-Recurring.flash.showMsg('notice', "Item was deleted.");

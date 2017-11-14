@@ -3,17 +3,13 @@ class Account < ActiveRecord::Base
   devise :registerable
   self.inheritance_column = :account_type
   
-  alias_attribute :address_1, :ship_to_address_1
-  alias_attribute :address_2, :ship_to_address_2
-  alias_attribute :city,      :ship_to_city
-  alias_attribute :state,     :ship_to_state
-  alias_attribute :zip,       :ship_to_zip
-  alias_attribute :phone,     :ship_to_phone
-  alias_attribute :fax,       :ship_to_fax
+  delegate :address_1, :address_2, :city, :state, :zip, :phone, :fax, to: :main_address
   
   belongs_to :user
   belongs_to :group
   belongs_to :sales_rep, :class_name => "User"
+  has_many :addresses
+  has_one :main_address, -> { where(main: true) }, :class_name => "Address", :dependent => :destroy
   has_many :users
   has_many :contacts
   has_many :equipment, :class_name => "Equipment"
@@ -24,48 +20,21 @@ class Account < ActiveRecord::Base
   has_many :credit_cards
   has_many :orders
   has_many :order_line_items, :through => :orders
-  has_many :account_item_prices
-  
+  has_many :prices, as: :appliable
+  has_many :account_payment_services, dependent: :destroy
+  has_many :subscriptions
+  has_one :main_service, -> { where(name: AccountPaymentService::PROVIDERS_HASH[GATEWAY.class.to_s]) }, :class_name => "AccountPaymentService"
+
   validates :name, :presence => true
-  validates :ship_to_address_1, :presence => true
-  validates :ship_to_city, :presence => true
-  validates :ship_to_state, :presence => true
-  validates :ship_to_zip, :presence => true
-  
+  validates :subscription_week_day, numericality: true, inclusion: {in: (1..7).to_a}, allow_nil: true
+  validates :subscription_month_day, numericality: true, inclusion: {in: (1..31).to_a}, allow_nil: true
+  validates :subscription_quarter_day, numericality: true, inclusion: {in: (1..92).to_a}, allow_nil: true
+  before_create :set_payment_services
+  accepts_nested_attributes_for :main_address
+
   # after_commit :sync_with_quickbooks if :persisted
   
   # validates_presence_of :creator, :on => :create, :message => "creator can't be blank"
-  
-  
-  def use_bill_to_address
-    ["address_1", "address_2", "city", "state", "zip", "email", "phone", "fax"].each do |prop|
-      # puts prop
-      # puts eval(prop)
-      if eval(prop) != eval("bill_to_#{prop}")
-        return false
-      end
-    end
-  end
-  
-  def bill_address_1
-    bill_to_address_1.blank? ? ship_to_address_1 : bill_to_address_1
-  end
-  
-  def bill_address_2
-    bill_to_address_2.blank? ? ship_to_address_2 : bill_to_address_2
-  end
-  
-  def bill_city
-    bill_to_city.blank? ? ship_to_city : bill_to_city
-  end
-  
-  def bill_state
-    bill_to_state.blank? ? ship_to_state : bill_to_state 
-  end
-  
-  def bill_zip
-    bill_to_zip.blank? ? ship_to_zip : bill_to_zip 
-  end
   
   def self.lookup(term)
     includes(:user).where("lower(users.first_name) like (?) or lower(users.last_name) like (?) or lower(users.email) like (?) or lower(accounts.name) like (?)", "%#{term.downcase}%", "%#{term.downcase}%", "%#{term.downcase}%", "%#{term.downcase}%").references(:user)
@@ -78,9 +47,13 @@ class Account < ActiveRecord::Base
       false
     end
   end
+
+  def has_enough_credit
+    !credit_terms.nil? and credit_limit.to_d >= (orders.map(&:balance_due).sum).to_d
+  end
   
   def payment_terms
-    90
+    credit_terms
   end
   
   def is_taxable?
@@ -130,14 +103,7 @@ class Account < ActiveRecord::Base
     customer = { 
       CompanyName: name.gsub("&", "and"),
       DisplayName: name.gsub("&", "and"),
-      BillAddr: { 
-        Line1: bill_address_1,
-        Line2: bill_address_2,
-        City: bill_city, 
-        CountrySubDivisionCode: bill_state,
-        PostalCode: bill_zip
-      },
-      ShipAddr: { 
+      MainAddr: { 
         Line1: address_1,
         Line2: address_2,
         City: city, 
@@ -167,6 +133,11 @@ class Account < ActiveRecord::Base
     secret = Setting.find_by(:key => "qb_secret").value
     realm_id = Setting.find_by(:key => "qb_realm").value
     $qbo_api = QboApi.new(token: token, token_secret: secret, realm_id: realm_id, consumer_key: QB_KEY, consumer_secret: QB_SECRET)
+  end
+
+  def set_payment_services
+    response = Braintree::Customer.create(first_name: name.split(' ')[0], last_name: name.split(' ')[-1], email: email)
+    self.account_payment_services.build(name: 'braintree', service_id: response.customer.id)
   end
   
 end

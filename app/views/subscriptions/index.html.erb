@@ -1,0 +1,68 @@
+<% content_for :app_location do %>Admin / Subscriptions / Index<% end %>
+<div id="subscriptions" class="col-md-12">
+
+	<table class="table table-bordered table-condensed table-responsive">
+
+		<tr>
+			<td colspan="8">
+				<form id="searchBox" accept-charset="UTF-8" action="<%= subscriptions_path(search_params.except(:page)) %>" method="get" role="search" data-remote="true">
+					<input type="text" class="form-control" id="term" name="term" placeholder="Search for subscription" value="<%= params[:term] %>">
+				</form>
+			</td>
+		</tr>		
+
+		<tr>
+			<th class="hidden-xs"><%= sortable "subscriptions.id", "ID" %></th>
+			<th>Next Order Date</th>
+			<th><%= sortable "accounts.name", "Account" %></th>
+			<th><%= sortable "items.number", "Item" %></th>
+			<th><%= sortable "subscriptions.quantity", "Quantity" %></th>
+			<th><%= sortable "subscriptions.frequency", "Frequency" %></th>
+			<th class="hidden-xs"><%= sortable "subscriptions.payment_method", "Payment Method" %></th>
+			<th><%= sortable "subscriptions.state", "State" %></th>
+			<th>&nbsp;</th>
+		</tr>
+		
+		<% @subscriptions.each do |a| %>
+			<tr>
+				<td class="hidden-xs"><%= a.id %></td>
+				<td><%= a.next_order_date %></td>
+				<td><%= a.account&.name %></td>
+				<td><%= a.item&.number %></td>
+				<td><%= a.quantity %></td>
+				<td><%= a.frequency %></td>
+				<td><%= a.payment_method %></td>
+				<td><%= a.state %></td>
+				<td class="text-center">
+				
+					<div class="dropdown">
+						<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+							<li><%= link_to("View", subscription_path(a.id))  %></li>
+							<li><%= link_to("Generate Order", generate_order_subscription_path(a.id), :remote => true, :method => :post)  %></li>
+							<li><%= link_to("Edit", edit_subscription_path(a.id, search_params), :remote => true)  %></li>
+							<li><%= link_to("Delete", subscription_path(a.id, search_params), :method => "delete", :remote => true)  %></li>
+						</ul>
+					</div>
+				
+				</td>
+			</tr>
+		<% end %>
+
+	</table>
+	
+	<%= will_paginate @subscriptions, params: search_params.except(:page).merge(action: 'index'), renderer: BootstrapPagination::Rails %>
+	
+	<%= link_to new_subscription_path(search_params), :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
+	
+</div>
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div>

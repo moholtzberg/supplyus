@@ -1,9 +1,0 @@
-<% unless flash[:error] %>
-	
-	$('#myModal').modal("hide")
-	$('body').removeClass('modal-open')
-	$('.modal-backdrop').remove()
-	
-	$("#category_<%= @category.id -%>").html("<%= j render :partial => 'categories/category.html', :format => 'html', :locals => {:category => @category} %>")
-	
-<% end %>

@@ -108,5 +108,30 @@
 			<td><%= @purchase_order.locked ? "Yes" : "No" %></td>
 		</tr>
 	</table>
-	
+
+	<table class="table table-bordered table-condensed table-striped">
+		
+		<tr>
+			<td colspan="4"><%= link_to "Add Purchase Order Receipt", new_purchase_order_purchase_order_receipt_path(purchase_order_id: @purchase_order.id ), class: "btn btn-primary btn-block btn-xs" %></td>
+		</tr>
+		
+		<tr>
+			<th>Date</th>
+			<th>Items</th>
+			<th>Remove</th>
+		</tr>
+
+		<% @purchase_order.purchase_order_receipts.each do |por| %>
+			<tr data-por-id="<%= por.id %>">
+				<td><%= por.date.to_date %></td>
+				<td><%= por.purchase_order_line_item_receipts.map{ |polir| "#{polir.purchase_order_line_item.item.number}: #{polir.quantity_received}" }.join(', ') %></td>
+				<td>
+					<%= link_to purchase_order_purchase_order_receipt_path(@purchase_order.id, por.id), method: :delete, remote: true do %>
+						<i class="fa fa-remove"></i>
+					<% end %>
+				</td>
+			</tr>
+		<% end %>
+
+	</table>
 </div>

@@ -5,6 +5,8 @@ class ShopController < ApplicationController
   
   before_action :authenticate_user!, :only => [:my_account, :my_items, :view_account, :view_order, :view_invoice, :pay_invoice, :edit_account]
   
+  # theme "supply.us"
+  
   def check_authorization
     
   end
@@ -24,8 +26,8 @@ class ShopController < ApplicationController
   
   def category
     @params = params
-    @category = Category.where("slug = lower(?)", @params[:category].downcase).take
-    if Category.where("slug = lower(?)", @params[:category].downcase).take.nil?
+    @category = Category.friendly.find(@params[:category].downcase)
+    if Category.friendly.find(@params[:category].downcase).nil?
       raise ActionController::RoutingError.new('Not Found')
     end
     categories = []
@@ -35,8 +37,8 @@ class ShopController < ApplicationController
     @items = Item.search(include: [:categories, :item_categories, :features, :brand, :images]) do
       fulltext params[:keywords] if params[:keywords].present?
       with(:category_ids, categories)
-      stats :price
-      with(:price, Range.new(*params[:price_range].split("..").map(&:to_i))) if params[:price_range].present?
+      stats :actual_price
+      with(:actual_price, Range.new(*params[:price_range].split("..").map(&:to_i))) if params[:price_range].present?
       # with(:brand, params[:brand]) if params[:brand].present?
       if params[:specs].present?
         params[:specs].each do |param|
@@ -52,27 +54,32 @@ class ShopController < ApplicationController
       paginate(:page => params[:page])
     end
     if @items.results.any?
-      max = @items.stats(:price).max
-      @items.build { facet :price, :range => 0..max, :range_interval => (max/4).ceil }
+      max = @items.stats(:actual_price).max
+      @items.build { facet :actual_price, :range => 0..max, :range_interval => (max/4).ceil }
       @items.execute
     end
   end
   
   def item
-    @category = Category.where("slug = lower(?)", params[:category].downcase).take
-    if Item.where("slug = lower(?)", params[:item].downcase).take.nil?
+    @category = Category.friendly.find(params[:category].downcase)
+    if Item.friendly.find(params[:item].downcase).nil?
       raise ActionController::RoutingError.new('Not Found')
     end
-    @item = Item.where("slug = lower(?)", params[:item].downcase).includes(:group_item_prices, :account_item_prices, :item_properties, :item_categories => [:category]).take
+    @item = Item.includes(:prices, :item_properties, :item_categories => [:category]).friendly.find(params[:item].downcase)
+  end
+
+  def page
+    @static_page = StaticPage.friendly.find(params[:static_page].downcase)
+    raise ActionController::RoutingError.new('Not Found') if @static_page.nil?
   end
   
   def search
     # @items = Item.where(nil).active
     @items = []
-    @items = Item.search(include: [:categories, :item_categories, :features, :brand, :images]) do
+    @items = Item.search(include: [:prices, :categories, :item_categories, :features, :brand, :images, :item_lists]) do
       fulltext params[:keywords] if params[:keywords].present?
-      stats :price
-      with(:price, Range.new(*params[:price_range].split("..").map(&:to_i))) if params[:price_range].present?
+      stats :actual_price
+      with(:actual_price, Range.new(*params[:price_range].split("..").map(&:to_i))) if params[:price_range].present?
       # with(:brand, params[:brand]) if params[:brand].present?
       if params[:specs].present?
         params[:specs].each do |param|
@@ -88,8 +95,8 @@ class ShopController < ApplicationController
       paginate(:page => params[:page])
     end
     if @items.results.any?
-      max = @items.stats(:price).max
-      @items.build { facet :price, :range => 0..max, :range_interval => (max/4).ceil }
+      max = @items.stats(:actual_price).max
+      @items.build { facet :actual_price, :range => 0..max, :range_interval => (max/4).ceil }
       @items.execute
     end
   end
@@ -104,7 +111,7 @@ class ShopController < ApplicationController
     puts "SESSION --------> #{cookies.permanent.signed[:cart_id]}"
     if !cookies.permanent.signed[:cart_id].blank? and cookies.permanent.signed[:cart_id].is_a? Numeric
       @cart = Cart.find_by(:id => cookies.permanent.signed[:cart_id])
-      unless @cart.completed_at.nil?
+      unless @cart.submitted_at.nil?
         @cart = Cart.create
         cookies.permanent.signed[:cart_id] = @cart.id
       end
@@ -120,6 +127,7 @@ class ShopController < ApplicationController
       qty = line.first.quantity.to_f + params[:cart][:quantity].to_f
       line = line.first
       line.quantity = qty
+      line.price = line.item.actual_price(current_user.try(:account_id), line.quantity)
       line.save
     else
       
@@ -127,9 +135,9 @@ class ShopController < ApplicationController
         if current_user.has_account
           @cart.account_id = current_user.account.id
         end
-        @cart.contents.create(:item_id => params[:cart][:item_id], :quantity => params[:cart][:quantity].to_i, :price => i.actual_price(current_user.account.id))
+        @cart.contents.create(:item_id => params[:cart][:item_id], :quantity => params[:cart][:quantity].to_i, :price => i.actual_price(current_user.account_id, params[:cart][:quantity].to_i))
       else
-        @cart.contents.create(:item_id => params[:cart][:item_id], :quantity => params[:cart][:quantity].to_i, :price => i.price)
+        @cart.contents.create(:item_id => params[:cart][:item_id], :quantity => params[:cart][:quantity].to_i, :price => i.actual_price(nil, params[:cart][:quantity].to_i))
       end
       
     end
@@ -140,16 +148,17 @@ class ShopController < ApplicationController
     lines.each_with_index do |line, idx|
       id = line[1]["id"]
       qt = line[1]["quantity"].to_i
-      OrderLineItem.find(id).update_attributes(:quantity => qt)
+      oli = OrderLineItem.find(id)
+      oli.update_attributes(:quantity => qt, :price => oli.item.actual_price(current_user.try(:account_id), qt))
     end
   end
   
   def cart
     @cart = Cart.find_or_initialize_by(:id => cookies.permanent.signed[:cart_id])
     if current_user && current_user.has_account
-      @cart.account_id = current_user.account.id
+      @cart.update_attribute(:account_id, current_user.account_id)
       @cart.order_line_items.each do |c| 
-        c.price = c.item.actual_price(@cart.account_id)
+        c.price = c.item.actual_price(@cart.account_id, c.quantity)
         c.save!
       end
     end
@@ -163,7 +172,7 @@ class ShopController < ApplicationController
     # @items = Item.where(id: @items).joins(:order_line_items).group(:item_id).order("order_line_items.quantity DESC")
     
     if current_user.account
-      order_ids = Order.where(:account_id => current_user.account.id).where.not(:completed_at => nil).map(&:id)
+      order_ids = Order.where(:account_id => current_user.account.id).where.not(:submitted_at => nil).map(&:id)
     end
     
     item_ids = OrderLineItem.where(:order_id => order_ids, :quantity => 1..Float::INFINITY).map {|q| q.item_id unless q.actual_quantity < 1}
@@ -174,29 +183,16 @@ class ShopController < ApplicationController
   def view_account
     @account = Customer.find_by(:id => params[:account_id])
     if current_user.my_account_ids.include?(@account.id)
-      @orders = @account.orders.is_complete.includes(:order_shipping_method).order(:completed_at).paginate(:page => params[:page], :per_page => 10)
+      @orders = @account.orders.is_submitted.includes(:order_shipping_method).order(:submitted_at).paginate(:page => params[:page], :per_page => 10)
     else
       redirect_to "/"
     end
   end
-  
-  def view_order
-    @order = Order.find_by(:number => params[:order_number])
-    @shipments = Shipment.where(:order_id => @order.id)
-    if current_user.my_account_ids.include?(@order.account_id)
-      respond_to do |format|
-        format.html
-        format.pdf do
-          render :pdf => "#{@order.number}", :title => "#{@order.number}", :layout => 'admin_print.html.erb', :page_size => 'Letter', :background => false, :template => 'shop/view_order.html.erb', :print_media_type => true
-        end
-      end
-    else
-      redirect_to "/"
-    end
-  end
-  
+    
   def view_invoice
     @invoice = Order.find_by(:number => params[:invoice_number])
+    @cards = current_user.account.main_service.credit_cards
+    @payment = Payment.new
     if current_user.my_account_ids.include?(@invoice.account_id)
       respond_to do |format|
         format.html
@@ -211,10 +207,35 @@ class ShopController < ApplicationController
   end
   
   def pay_invoice
-    @account = current_user.account
-    @credit_card = CreditCard.new
-    @invoice = Invoice.find_by(:number => params[:invoice_number])
-    @payment = Payment.new
+    @invoice = Order.find_by(:number => params[:invoice_number])
+    @payment = @invoice.payments.new
+    @payment.account = current_user.account
+    @payment.amount = @invoice.total
+    @payment.payment_method = PaymentMethod.find_or_create_by(name: params[:payment_method], active: true)
+    @payment.payment_type =  'CreditCardPayment'
+    @payment = @payment.becomes CreditCardPayment
+    if !params[:credit_card_token].blank?
+      @card = CreditCard.find_by(account_payment_service_id: @invoice.account.main_service.id, service_card_id: params[:credit_card_token])
+    else
+      @card = CreditCard.create({
+        cardholder_name: params[:cardholder_name],
+        credit_card_number: params[:credit_card_number],
+        card_security_code: params[:card_security_code],
+        expiration_month: params[:expiration_month],
+        expiration_year: params[:expiration_year],
+        account_payment_service_id: @invoice.account.main_service.id
+      })
+    end
+    @payment.credit_card_id = @card&.id
+    @cards = current_user.account.main_service.credit_cards
+    if @card and @card.errors.empty? and @payment.authorize
+      @payment.save
+      OrderPaymentApplication.create(:order_id => @invoice.id, :payment_id => @payment.id, :applied_amount => @payment.amount)
+      flash[:notice] = 'Your payment was authorized successfully.'
+      redirect_to my_account_orders_path
+    else
+      render 'view_invoice'
+    end
   end
   
   def edit_account

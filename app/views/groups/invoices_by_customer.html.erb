@@ -14,7 +14,7 @@
 				<th>Order Balance Due</th>
 			</tr>
 		
-			<% orders = Order.where(account_id: customer.id).is_complete.order(:completed_at) %>
+			<% orders = Order.where(account_id: customer.id).is_submitted.order(:submitted_at) %>
 			<% start = 0 %>
 			
 			<% orders.each do |i|%>
@@ -24,7 +24,7 @@
 				<tr>
 					<td><%= start %></td>
 					<td><%= i.number %></td>
-					<td><%= i.completed_at.to_date.strftime("%m/%d/%Y") %></td>
+					<td><%= i.submitted_at.to_date.strftime("%m/%d/%Y") %></td>
 					<td><%= number_to_currency(i.total) %></td>
 					<td><%= number_to_currency(i.balance_due) %></td>
 				</tr>

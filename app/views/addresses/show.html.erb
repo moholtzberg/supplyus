@@ -1,0 +1,46 @@
+<div id="account_payment_service" class="col-md-12">
+		
+	<table class="table table-bordered table-striped">
+	</table>
+	
+	<table class="table table-bordered table-striped">
+		
+		<tr>
+			<th width="10%">ID</th>
+			<th width="10%">Account</th>
+			<th width="10%">Name</th>
+			<th width="10%">Address 1</th>
+			<th width="10%">Address 2</th>
+			<th width="10%">City</th>
+			<th width="10%">State</th>
+			<th width="10%">Zip</th>
+			<th width="10%">Phone</th>
+			<th width="10%">Fax</th>
+			<th width="10%">Main</th>
+		</tr>
+		
+		<tr>
+			<td><%= @address.id %></td>
+			<td><%= @address.account&.name %></td>
+			<td><%= @address.name %></td>
+			<td><%= @address.address_1 %></td>
+			<td><%= @address.address_2 %></td>
+			<td><%= @address.city %></td>
+			<td><%= @address.state %></td>
+			<td><%= @address.zip %></td>
+			<td><%= @address.phone %></td>
+			<td><%= @address.fax %></td>
+			<td><%= @address.main %></td>
+		</tr>
+		
+	</table>
+	
+</div>
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div>

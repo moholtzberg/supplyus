@@ -1,9 +1,17 @@
 class Category < ActiveRecord::Base
-  
+  extend FriendlyId
+  friendly_id :name, use: [:slugged, :history]
+
   belongs_to :parent, :class_name => "Category"
   has_many :item_categories
   has_many :items, :through => :item_categories
-  has_many :children, :class_name => "Category", :foreign_key => :parent_id
+  has_many :children, -> { order(position: :asc) }, :class_name => "Category", :foreign_key => :parent_id
+  has_many :images, as: :attachable
+  has_many :documents, as: :attachable
+  has_many :assets, -> { order(position: :asc) }, as: :attachable
+
+  acts_as_list scope: :parent
+  after_save :remove_position, if: Proc.new { |category| category.parent_id.nil? }
   
   scope :is_active, -> () { where(:active => true) }
   scope :is_parent, -> () { where(:parent_id => nil) }
@@ -13,15 +21,7 @@ class Category < ActiveRecord::Base
   def self.lookup(term)
     where("lower(name) like (?) or lower(slug) like (?)", "%#{term.downcase}%", "%#{term.downcase}%")
   end
-  
-  def parent_name
-    parent.try(:name)
-  end
-  
-  def parent_name=(name)
-    self.parent = Category.find_by(:name => name) if name.present?
-  end
-  
+
   def self.tokens(query)
     categories = where("lower(name) like ?", "%#{query}%")
     if categories.empty?
@@ -35,5 +35,8 @@ class Category < ActiveRecord::Base
     tokens.gsub!(/<<<(.+?)>>>/) { create!(name: $1).id }
     tokens.split(',')
   end
-  
+
+  def remove_position
+    update_column(:position, nil)
+  end  
 end

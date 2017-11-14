@@ -1,5 +1,5 @@
 class Users::RegistrationsController < Devise::RegistrationsController
-  prepend_before_action :check_captcha, only: [:create]
+  # prepend_before_action :check_captcha, only: [:create]
    
   layout "devise"
   
@@ -19,9 +19,12 @@ class Users::RegistrationsController < Devise::RegistrationsController
   before_filter :configure_permitted_parameters, if: :devise_controller?
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.for(:sign_up) {|u| 
-      u.permit(:email, :password, :password_confirmation, :remember_me, :first_name, :last_name,
-      account: [:name, :ship_to_address_1, :ship_to_address_2, :ship_to_city, :ship_to_state, :ship_to_zip, :ship_to_phone])}
+    devise_parameter_sanitizer.permit(:sign_up, keys: [
+        :email, :password, :password_confirmation, :remember_me, :first_name, :last_name,
+        account: [:name],
+        address: [:ship_to_address_1, :ship_to_address_2, :ship_to_city, :ship_to_state, :ship_to_zip, :ship_to_phone]
+      ]
+    )
   end
 
   # GET /resource/sign_up
@@ -33,16 +36,22 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def create
     a = Customer.create({
       email: params["user"]["email"], 
-      name: params["account"]["name"], 
-      address_1: params["account"]["address_1"], 
-      address_2: params["account"]["address_2"], 
-      city: params["account"]["city"], 
-      state: params["account"]["state"], 
-      zip: params["account"]["zip"], 
-      phone: params["account"]["phone"]
+      name: params["account"]["name"]
+      })
+    a.addresses.create({
+      name: params["address"]["name"],
+      address_1: params["address"]["address_1"], 
+      address_2: params["address"]["address_2"], 
+      city: params["address"]["city"], 
+      state: params["address"]["state"], 
+      zip: params["address"]["zip"], 
+      phone: params["address"]["phone"],
+      main: true
       })
     super
-    User.find_by(:email => params[:user][:email]).update_attributes(:account_id => a.id, :first_name => params[:user][:first_name], :last_name => params[:user][:last_name])
+    user = User.find_by(:email => params[:user][:email])
+    user.update_attributes(:account_id => a.id, :first_name => params[:user][:first_name], :last_name => params[:user][:last_name])
+    user.add_role :customer
   end
 
   # GET /resource/edit

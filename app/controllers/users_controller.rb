@@ -9,6 +9,11 @@ class UsersController < ApplicationController
       @users = @users.lookup(params[:term]) if params[:term].present?
     end
     @users = @users.paginate(:page => params[:page], :per_page => 25)
+    respond_to do |format|
+      format.html
+      format.js
+      format.json {render json: @users.map { |user| {id: user.id, text: user.email}}}
+    end
   end
   
   def new

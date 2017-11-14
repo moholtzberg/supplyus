@@ -1,44 +1,61 @@
-<table class="table">
-	<tr class="info">
-		<td colspan="3">Item</td>
-		<td>Quantity Available</td>
-		<td>Quantity Allocated</td>
-		<td>Quantity On Order</td>
-	</tr>
-	<tr class="default">
-		<td>Qty On Hand</td>
-		<td>Qty Sold</td>
-		<td>Qty Ordered</td>
-		<td>Qty Shipped</td>
-		<td>Qty Received</td>
-		<td>Qty Backordered</td>
-	</tr>
+<% content_for :app_location do %>Admin / Inventories / Index<% end %>
+<div id="inventories" class="col-md-12">
+
+	<table class="table table-bordered table-condensed table-responsive">
+		
+		<tr>
+			<td colspan="12">
+				<form id="searchBox" accept-charset="UTF-8" action="/admin/inventories" method="get" role="search">
+					<input type="text" class="form-control" id="term" name="term" placeholder="Search for inventory" value="<%= params[:term] %>">
+				</form>
+			</td>
+			
+		</tr>
+		
+	  <tr>
+			<th class="hidden-xs">ID</th>
+	    <th>Item</th>
+	    <th>Bin</th>
+	    <th>Qty On Hand</th>
+	    <th>Qty Shipped</th>
+	    <th>Qty Received</th>
+			<th>&nbsp;</th>
+	  </tr>
+		
+		<% @inventories.each do |i| %>
+		  <tr>
+		    <td class="hidden-xs"><%= i.id %></td>
+		    <td><%= link_to i.item.number, i.item %></td>
+		    <td><%= link_to(i.bin.name, i.bin) if i.bin %></td>
+		    <td><%= i.qty_on_hand %></td>
+		    <td><%= i.qty_shipped %></td>
+		    <td><%= i.qty_received %></td>
+				<td class="text-center">
+					<div class="dropdown">
+						<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+							<li><%= link_to("View", bin_path(i.id))  %></li>
+							<li><%= link_to("Transfer", new_inventory_transfer_path(i.id, quantity: i.qty_on_hand), :remote => true)  %></li>
+						</ul>
+					</div>
+				</td>
+		  </tr>
+		<% end %>
+
+	</table>
 	
-	<% @inventory.each do |i| %>
+	<%= will_paginate @inventories, renderer: BootstrapPagination::Rails %>
 	
-	<tr class="info">
-		<td colspan="3"><%= i.item.number %></td>
-		<td><%= i.quantity_available %></td>
-		<td><%= i.quantity_allocated %></td>
-		<td><%= i.quantity_on_order %></td>
-	</tr>
+	<%= link_to new_inventory_path, :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
 	
-	<tr>
-		<td><%= i.qty_on_hand %></td>
-		<td><%= i.qty_sold %></td>
-		<td><%= i.qty_ordered %></td>
-		<td><%= i.qty_shipped %></td>
-		<td><%= i.qty_received %></td>
-		<td><%= i.qty_backordered %></td>
-	</tr>
-	
-	<tr class="text-primary">
-		<td colspan="7">
-			<% i.inventory_transactions.each do |tr| %>
-				<%= "#{tr.inv_transaction_type} > #{tr.inv_transaction_id} > #{tr.quantity}"%><br/>
-			<% end %>
-		</td>
-	</tr>
-	
-	<% end %>
-</table>
+</div>
+
+<div id="myModal" class="modal fade" tainventorydex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div>

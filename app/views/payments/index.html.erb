@@ -4,42 +4,35 @@
 	<table class="table table-bordered table-condensed">
 		
 		<tr>
-			<th>Date</th>
-			<th>Payment Type</th>
-			<th>Payent Amount</th>
+			<td colspan="13">
+				<form id="searchBox" accept-charset="UTF-8" action="<%= payments_path(search_params.except(:page)) %>" method="get" role="search" data-remote="true">
+					<input type="text" class="form-control" id="term" name="term" placeholder="Search for payment" value="<%= params[:term] %>">
+				</form>
+			</td>
+		</tr>		
+
+		<tr>
+			<th><%= sortable "payments.id", "ID" %></th>
+			<th><%= sortable "accounts.name", 'Account' %></th>
+			<th><%= sortable "payments.created_at", "Date" %></th>
+			<th><%= sortable "payments.payment_type", 'Payment Type' %></th>
+			<th><%= sortable "payments.amount", 'Payment Amount' %></th>
 			<th>Applied Amount</th>
 			<th>Unapplied amount</th>
-			<th>Authorization Code</th>
-			<th>View Applications</th
+			<th><%= sortable "payments.refunded", 'Refunded Amount' %></th>
+			<th><%= sortable "payments.number", 'Authorization Code' %></th>
+			<th>Finalize</th>
+			<th><%= sortable "payments.success", 'Completed?' %></th>
+			<th>View Applications</th>
+			<th>&nbsp;</th>
 		</tr>
-		
-	<% @payments.each do |pmt| %>
-		<tr>
-			<td><%= pmt.date %></td>
-			<td><%= pmt.payment_type %></td>
-			<td><%= number_to_currency(pmt.amount) %></td>
-			<td><%= number_to_currency(pmt.applied_amount) %></td>
-			<td><%= number_to_currency(pmt.unapplied_amount) %></td>
-			<td><%= pmt.number %></td>
-			<td>
-				<div class="dropdown">
-					<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-						<span class="caret"></span>
-					</button>
-					<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-						<% pmt.order_payment_applications.each do |app| %>
-						<li><a><%= "#{app.order.number} - #{number_to_currency(app.applied_amount)}" %></a></li>
-						<% end %>
-					</ul>
-				</div>
-			</td>
-		</tr>
-	<% end %>
+	
+		<%= render partial: 'payment', collection: @payments %>	
 	</table>
 
-	<%= will_paginate @payments, renderer: BootstrapPagination::Rails %>
+	<%= will_paginate @payments, params: search_params.except(:page).merge(action: 'index'), renderer: BootstrapPagination::Rails %>
 
-	<%= link_to new_payment_path, :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
+	<%= link_to new_payment_path(search_params), :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
 		
 </div>
 

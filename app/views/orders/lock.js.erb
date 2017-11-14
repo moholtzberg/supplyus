@@ -1,3 +1,0 @@
-<% unless flash[:error] %>
-$("#order_<%= @order.id -%>").html("<%= j render :partial => 'orders/order.html', :format => 'html', :locals => {:order => @order} %>")
-<% end %>

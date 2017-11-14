@@ -22,24 +22,6 @@
 		<div class="panel panel-default">
 			
 			<div class="panel-heading text-center">
-				Billing Info
-			</div>
-			
-			<div class="panel-body">
-				<% if !@customer.name.nil? %><%= @customer.name %><% end %>
-				<% if !@customer.bill_to_address_1.nil? %><br/><%= @customer.bill_to_address_1 %><% end %>
-				<% if !@customer.bill_to_address_2.nil? %><br/><%= @customer.bill_to_address_2 %><% end %>
-				<%= @customer.bill_to_city %>, <%= @customer.bill_to_state %> <%= @customer.bill_to_zip %><br/>
-				<% if !@customer.bill_to_phone.nil? %><br/><%= number_to_phone(@customer.bill_to_phone) %><% end %>
-				<% if !@customer.bill_to_fax.nil? %><br/><%= number_to_phone(@customer.bill_to_fax) %><% end %>
-			</div>
-		</div>
-	</div>
-	
-	<div class="col-md-4">
-		<div class="panel panel-default">
-			
-			<div class="panel-heading text-center">
 				Misc Info
 			</div>
 			
@@ -62,7 +44,7 @@
 				Total Sales
 			</div>
 			<div class="panel-body text-center">
-				<%= number_to_currency(@orders.includes(:order_line_items).is_complete.map(&:sub_total).sum) %>
+				<%= number_to_currency(@orders.includes(:order_line_items).is_submitted.map(&:sub_total).sum) %>
 			</div>
 		</div>
 	</div>
@@ -73,7 +55,7 @@
 				Total Orders
 			</div>
 			<div class="panel-body text-center">
-				<%= number_to_human(@orders.is_complete.count) %>
+				<%= number_to_human(@orders.is_submitted.count) %>
 			</div>
 		</div>
 	</div>
@@ -84,7 +66,7 @@
 				Total Outstanding Balance
 			</div>
 			<div class="panel-body text-center">
-				<%= number_to_currency(@orders.includes(:order_line_items).is_complete.map(&:balance_due).sum) %>
+				<%= number_to_currency(@orders.includes(:order_line_items).is_submitted.map(&:balance_due).sum) %>
 			</div>
 		</div>
 	</div>
@@ -107,30 +89,30 @@
 					</tr>
 					<tr>
 						<td>Revenue</td>
-						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(Date.today.beginning_of_month, Date.today).map(&:sub_total).sum) %></td>
-						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(1.month.ago, 1.day.ago).map(&:sub_total).sum) %></td>
-						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(1.month.ago.beginning_of_month, 1.month.ago.end_of_month).map(&:sub_total).sum) %></td>
-						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(2.month.ago.beginning_of_month, 2.month.ago.end_of_month).map(&:sub_total).sum) %></td>
-						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(3.month.ago.beginning_of_month, 3.month.ago.end_of_month).map(&:sub_total).sum) %></td>
-						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(Date.today.beginning_of_year, Date.today).map(&:sub_total).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(Date.today.beginning_of_month, Date.today).map(&:sub_total).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(1.month.ago, 1.day.ago).map(&:sub_total).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(1.month.ago.beginning_of_month, 1.month.ago.end_of_month).map(&:sub_total).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(2.month.ago.beginning_of_month, 2.month.ago.end_of_month).map(&:sub_total).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(3.month.ago.beginning_of_month, 3.month.ago.end_of_month).map(&:sub_total).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(Date.today.beginning_of_year, Date.today).map(&:sub_total).sum) %></td>
 					</tr>
 					<tr>
 						<td>Orders</td>
-						<td><%= @orders.includes(:order_line_items => [:item]).is_complete.by_date_range(Date.today.beginning_of_month, Date.today).count %></td>
-						<td><%= @orders.includes(:order_line_items => [:item]).is_complete.by_date_range(1.month.ago, 1.day.ago).count %></td>
-						<td><%= @orders.includes(:order_line_items => [:item]).is_complete.by_date_range(1.month.ago.beginning_of_month, 1.month.ago.end_of_month).count %></td>
-						<td><%= @orders.includes(:order_line_items => [:item]).is_complete.by_date_range(2.month.ago.beginning_of_month, 2.month.ago.end_of_month).count %></td>
-						<td><%= @orders.includes(:order_line_items => [:item]).is_complete.by_date_range(3.month.ago.beginning_of_month, 3.month.ago.end_of_month).count %></td>
-						<td><%= @orders.includes(:order_line_items => [:item]).is_complete.by_date_range(Date.today.beginning_of_year, Date.today).count %></td>
+						<td><%= @orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(Date.today.beginning_of_month, Date.today).count %></td>
+						<td><%= @orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(1.month.ago, 1.day.ago).count %></td>
+						<td><%= @orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(1.month.ago.beginning_of_month, 1.month.ago.end_of_month).count %></td>
+						<td><%= @orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(2.month.ago.beginning_of_month, 2.month.ago.end_of_month).count %></td>
+						<td><%= @orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(3.month.ago.beginning_of_month, 3.month.ago.end_of_month).count %></td>
+						<td><%= @orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(Date.today.beginning_of_year, Date.today).count %></td>
 					</tr>
 					<tr>
 						<td>Profit</td>
-						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(Date.today.beginning_of_month, Date.today).map(&:profit).sum) %></td>
-						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(1.month.ago, 1.day.ago).map(&:profit).sum) %></td>
-						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(1.month.ago.beginning_of_month, 1.month.ago.end_of_month).map(&:profit).sum) %></td>
-						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(2.month.ago.beginning_of_month, 2.month.ago.end_of_month).map(&:profit).sum) %></td>
-						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(3.month.ago.beginning_of_month, 3.month.ago.end_of_month).map(&:profit).sum) %></td>
-						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_complete.by_date_range(Date.today.beginning_of_year, Date.today).map(&:profit).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(Date.today.beginning_of_month, Date.today).map(&:profit).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(1.month.ago, 1.day.ago).map(&:profit).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(1.month.ago.beginning_of_month, 1.month.ago.end_of_month).map(&:profit).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(2.month.ago.beginning_of_month, 2.month.ago.end_of_month).map(&:profit).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(3.month.ago.beginning_of_month, 3.month.ago.end_of_month).map(&:profit).sum) %></td>
+						<td><%= number_to_currency(@orders.includes(:order_line_items => [:item]).is_submitted.by_date_range(Date.today.beginning_of_year, Date.today).map(&:profit).sum) %></td>
 					</tr>
 				</table>
 			</div>
@@ -141,8 +123,9 @@
 
 	<ul class="nav nav-tabs nav-justified">
 		<li role="presentation" class="active"><a href="#orders" aria-controls="orders" role="tab" data-toggle="tab">Orders</a></li>
-		<li role="presentation"><a href="#account_item_prices" aria-controls="account_item_prices" role="tab" data-toggle="tab">Account Item Prices</a></li>
+		<li role="presentation"><a href="#prices" aria-controls="prices" role="tab" data-toggle="tab">Prices</a></li>
 		<li role="presentation"><a href="#users" aria-controls="users" role="tab" data-toggle="tab">Users</a></li>
+		<li role="presentation"><a href="#addresses" aria-controls="addresses" role="tab" data-toggle="tab">Addresses</a></li>
 	</ul>
 	
 	<div class="tab-content">
@@ -153,8 +136,8 @@
 		
 			<table class="table table-bordered table-condensed table-striped">
 				<tr>
-					<th>Complete</th>
-					<th>Completed At</th>
+					<th>Submitted</th>
+					<th>Submitted At</th>
 					<th>Last Update</th>
 					<th>Number</th>
 					<th width="7%">Sub Total</th>
@@ -168,8 +151,8 @@
 				</tr>
 				<% @orders.each do |it| %>
 				<tr>
-					<td><%= it.completed_at.nil? ? "No" : "Yes" %></td>
-					<td><%= it.completed_at.strftime("%m/%d/%Y %I:%M %p") unless it.completed_at.nil? %>
+					<td><%= it.submitted_at.nil? ? "No" : "Yes" %></td>
+					<td><%= it.submitted_at.strftime("%m/%d/%Y %I:%M %p") unless it.submitted_at.nil? %>
 					<td><%= it.updated_at.strftime("%m/%d/%Y %I:%M %p") %>
 					<td><%= link_to it.number, it %></td>
 					<td><%= number_to_currency(it.sub_total) %></td>
@@ -209,8 +192,7 @@
 		
 		</div>
 	
-		<div id="account_item_prices" class="tab-pane" role="tabpanel">
-			<%= link_to "Copy Price Catalogue", new_account_item_price_path(:copy => true, :account_id => @customer.id), :class => "btn btn-primary", :remote => true  %>
+		<div id="prices" class="tab-pane" role="tabpanel">
 			<table class="table table-bordered table-condensed table-hover">
 				<tr>
 					<th>Item Number</th>
@@ -225,8 +207,7 @@
 					<td><%= a.item.name unless a.item.nil? %></td>
 					<td><%= number_to_currency(a.price) %></td>
 					<td><%= number_to_currency(a.item.cost_price) unless a.item.nil? %></td>
-					<td><%= link_to "Delete", account_item_price_path(a.id), :method => :delete, :remote => true %></td>
-
+					<td><%= link_to "Delete", price_path(a.id), :method => :delete %></td>
 				</tr>
 				<% end %>
 			</table>
@@ -249,6 +230,12 @@
 				<% end %>
 			</table>
 		
+		</div>
+	
+		<div role="tabpanel" class="tab-pane" id="addresses">
+
+			<%= render :partial => "addresses", :locals => {:account => @customer} %>
+				
 		</div>
 	
 	</div>

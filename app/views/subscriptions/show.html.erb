@@ -1,0 +1,64 @@
+<div id="subscription" class="col-md-12">
+		
+	<table class="table table-bordered table-striped">
+	</table>
+	
+	<table class="table table-bordered table-striped">
+		
+		<tr>
+			<th width="10%">ID</th>
+			<th width="10%">Next Order Date</th>
+			<th width="10%">Account</th>
+			<th width="10%">Item</th>
+			<th width="10%">Quantity</th>
+			<th width="10%">Frequency</th>
+			<th width="10%">Payment Method</th>
+			<th width="10%">Credit Card</th>
+			<th width="10%">Ship To Address</th>
+			<th width="10%">Bill To Address</th>
+			<th width="10%">State</th>
+		</tr>
+
+		<tr>
+			<td><%= @subscription.id %></td>
+			<td><%= @subscription.next_order_date %></td>
+			<td><%= @subscription.account&.name %></td>
+			<td><%= @subscription.item&.number %></td>
+			<td><%= @subscription.quantity %></td>
+			<td><%= @subscription.frequency %></td>
+			<td><%= @subscription.payment_method %></td>
+			<td><%= link_to(@subscription.credit_card&.last_4, @subscription.credit_card) if @subscription.credit_card %></td>
+			<td><%= link_to(@subscription.ship_to_address&.address_1, @subscription.ship_to_address) if @subscription.ship_to_address %></td>
+			<td><%= link_to(@subscription.bill_to_address&.address_1, @subscription.bill_to_address) if @subscription.bill_to_address %></td>
+			<td><%= @subscription.state %></td>
+		</tr>
+		
+	</table>
+
+	<table class="table table-bordered table-condensed table-striped">
+		<tr>
+			<th>Order</th>
+			<th>Ship To Name</th>
+			<th>Price</th>
+			<th>State</th>
+		</tr>
+		<% @subscription.orders.each do |order| %>
+			<tr>
+				<td><%= link_to order.number, order %></td>
+				<td><%= order.ship_to_account_name %></td>
+				<td><%= order.total %></td>
+				<td><%= order.state %></td>
+			</tr>
+		<% end %>
+	</table>
+
+	
+</div>
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div

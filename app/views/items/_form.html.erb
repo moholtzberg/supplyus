@@ -22,22 +22,7 @@
 	
 	<div id="category" class="col-md-12">
 		<%= f.label :category_name, :class => "control-label" %>
-		<%= f.text_field :category_name, :class => "form-control", data: {autocomplete_source: categories_path} %>
-	</div>
-	
-	<div id="price" class="col-md-4">
-		<%= f.label :price, :class => "control-label" %>
-		<%= f.text_field :price, :class => "form-control" %>
-	</div>
-	
-	<div id="cost_price" class="col-md-4">
-		<%= f.label :cost_price, :class => "control-label" %>
-		<%= f.text_field :cost_price, :class => "form-control" %>
-	</div>
-	
-	<div id="sale_price" class="col-md-4">
-		<%= f.label :sale_price, :class => "control-label" %>
-		<%= f.text_field :sale_price, :class => "form-control" %>
+		<%= f.text_field :category_name, :class => "form-control", data: {autocomplete_source: autocomplete_categories_path} %>
 	</div>
 	
 	<div id="weight" class="col-md-3">
@@ -60,7 +45,6 @@
 		<%= f.text_field :length, :class => "form-control" %>
 	</div>
 	
-	
 
 	<div id="category_ids" class="col-md-3">
 		<%= f.label :category_tokens, :class => "control-label" %>
@@ -75,6 +59,41 @@
 			<%= f.label :active, I18n.t(:active) %>
 		</label>
 	</div>
+
+	<div class="col-md-12"><h4>Prices</h4></div>
+	<div class="col-md-12">
+    <table class="table table-bordered">
+      
+      <tr class="item-prices-labels">
+        <th>Type</th>
+        <th>Price</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Min Qty</th>
+        <th>Max Qty</th>
+        <th>App. Type</th>
+        <th>App. ID</th>
+        <th>Combinable</th>
+        <th>&nbsp;</th>
+      <tr>
+
+      <tr class="item-prices-form">
+        <td><%= select_tag :_type, options_for_select(Price::PRICE_TYPES), {include_blank: true, default: nil, class: 'form-control'} %></td>
+        <td><%= text_field_tag :price, nil, class: 'form-control' %></td>
+        <td><%= date_field_tag :start_date, nil, class: 'form-control' %></td>
+        <td><%= date_field_tag :end_date, nil, class: 'form-control' %></td>
+        <td><%= text_field_tag :min_qty, nil, class: 'form-control', disabled: true %></td>
+        <td><%= text_field_tag :max_qty, nil, class: 'form-control', disabled: true %></td>
+        <td><%= select_tag :appliable_type, options_for_select( ['Account', 'Group'] ), {include_blank: true, default: nil, class: "form-control"} %></td>
+        <td><%= text_field_tag :appliable_id, nil, class: "form-control" %></td>
+        <td><%= check_box_tag :combinable, false, false %></td>
+      	<td><%= button_tag "Add Price", class: "btn btn-primary add-price" %></td>
+      </tr>
+
+    </table>
+	</div>
+	
+
 	
 	<script>
 	jQuery(function() {
@@ -90,11 +109,253 @@
 	});
 	
 	jQuery(function() {
-		return $('#item_category_tokens').tokenInput("/admin/categories.json", {
+		return $('#item_category_tokens').tokenInput("<%= autocomplete_categories_path %>", {
 			queryParam: "term",
-			 prePopulate: $('#item_category_tokens').data('load')
+			prePopulate: $('#item_category_tokens').data('load')
 		})
 	});
+
+  $(function() {
+
+    var FORMBUILDER = FORMBUILDER || {};
+
+    FORMBUILDER.prices = <%= raw @item.prices.map{ |p| {id: p.id, price: p.price, _type: p._type, start_date: p.start_date&.to_date, end_date: p.end_date&.to_date, min_qty: p.min_qty, max_qty: p.max_qty, appliable_type: p.appliable_type, appliable_id: p.appliable_id, combinable: p.combinable, _destroy: false} }.to_json %>;
+    FORMBUILDER.current_price = {};
+
+    FORMBUILDER.actions = {
+
+      init: function(){
+
+        FORMBUILDER.actions.addItem();
+        FORMBUILDER.actions.removeItem();
+        FORMBUILDER.actions.validateForm();
+        FORMBUILDER.actions.fieldValid(key);
+        FORMBUILDER.actions.clearErrors();
+        FORMBUILDER.actions.renderList();
+        FORMBUILDER.actions.resetForm();
+        FORMBUILDER.actions.updateCurrentItem();
+
+      },
+
+      addItem: function(){
+      	FORMBUILDER.actions.clearErrors();
+      	if (FORMBUILDER.actions.validateForm()) {
+	        FORMBUILDER.prices.push($.extend({}, FORMBUILDER.current_price));
+	        FORMBUILDER.actions.resetForm();
+	        FORMBUILDER.actions.renderList();
+      	}
+      },
+
+      removeItem: function(e){
+      	var index = parseInt($(e.target).closest('tr').data( "index" ));
+      	if (FORMBUILDER.prices[index].id) {
+      		FORMBUILDER.prices[index]._destroy = true
+      	} else {
+	      	FORMBUILDER.prices.splice(index, 1);
+      	}
+	      FORMBUILDER.actions.resetForm();
+	      FORMBUILDER.actions.renderList();
+      },
+
+      validateForm: function(){
+      	var valid = true;
+      	Object.keys(FORMBUILDER.current_price).forEach(function(key){
+      		if (!FORMBUILDER.actions.fieldValid(key)) { 
+      			$('.item-prices-form #' + key).parent().addClass('has-error');
+      			valid = false;
+      		}
+      	})
+      	return valid;
+      },
+
+      fieldValid: function(key) {
+      	var value = FORMBUILDER.current_price[key]
+      	switch(key) {
+      		case '_type':
+      			return value
+      			break;
+      		case 'price':
+      			return value && value > 0
+      			break;
+      		case 'min_qty':
+      			return FORMBUILDER.current_price['_type'] != 'Bulk' || value
+      			break;
+      		case 'max_qty':
+      			return FORMBUILDER.current_price['_type'] != 'Bulk' || value
+      			break;
+      		default:
+      			return true
+      			break;
+      	}
+      },
+
+      clearErrors: function() {
+      	$('.item-prices-form td').removeClass('has-error');
+      },
+
+      renderList: function() {
+      	$('tr.item-price').remove();
+      	FORMBUILDER.prices.forEach(function(el, i) {
+	        var item = document.createElement("tr");
+	        item.className = el._destroy == true ? "item-price hidden" : "item-price"
+	        item.setAttribute('data-index', i)
+	        $(item)
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<input type="hidden" name="item[prices_attributes][' + i + '][_type]" value="' + (el._type == null ? '' : el._type) + '" />')
+	          )
+	          .append(
+	            el._type
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<input type="hidden" name="item[prices_attributes][' + i + '][price]" value="' + (el.price == null ? '' : el.price) + '" />')
+	          )
+	          .append(
+	            el.price
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<input type="hidden" name="item[prices_attributes][' + i + '][start_date]" value="' + (el.start_date == null ? '' : el.start_date) + '" />')
+	          )
+	          .append(
+	            el.start_date
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<input type="hidden" name="item[prices_attributes][' + i + '][end_date]" value="' + (el.end_date == null ? '' : el.end_date) + '" />')
+	          )
+	          .append(
+	            el.end_date
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<input type="hidden" name="item[prices_attributes][' + i + '][min_qty]" value="' + (el.min_qty == null ? '' : el.min_qty) + '" />')
+	          )
+	          .append(
+	            el.min_qty
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<input type="hidden" name="item[prices_attributes][' + i + '][max_qty]" value="' + (el.max_qty == null ? '' : el.max_qty) + '" />')
+	          )
+	          .append(
+	            el.max_qty
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<input type="hidden" name="item[prices_attributes][' + i + '][appliable_type]" value="' + (el.appliable_type == null ? '' : el.appliable_type) + '" />')
+	          )
+	          .append(
+	            el.appliable_type
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<input type="hidden" name="item[prices_attributes][' + i + '][appliable_id]" value="' + (el.appliable_id == null ? '' : el.appliable_id) + '" />')
+	          )
+	          .append(
+	            el.appliable_id
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<input type="hidden" name="item[prices_attributes][' + i + '][combinable]" value="' + (el.combinable == null ? 'false' : el.combinable) + '" />')
+	          )
+	          .append(
+	            el.combinable == false ? 'false' : 'true'
+	          )
+	        )
+	        .append(
+	          $("<td>")
+	          .append(
+	            $('<a href="#" class="remove-item"><i class="fa fa-remove"></i></a>')
+	          )
+	        )
+	        if (el.id) {
+	        	$(item)
+	        	.append(
+	        		$('<input type="hidden" name="item[prices_attributes][' + i + '][id]" value="' + el.id + '" />')
+	        	)
+		        .append(
+		        	$('<input type="hidden" name="item[prices_attributes][' + i + '][_destroy]" value="' + el._destroy + '" />')
+		        )
+	        }
+	        $('.item-prices-labels').after(item)
+      	})
+		    $('.remove-item').click(function(e){
+		    	e.stopPropagation();
+		    	e.preventDefault();
+		      FORMBUILDER.actions.removeItem(e);
+		    })
+      },
+
+      resetForm: function() {
+      	$('.item-prices-form :input').val('');
+      	$('.item-prices-form :input#combinable').prop('checked')
+      	FORMBUILDER.actions.updateCurrentItem();
+      },
+
+      updateCurrentItem: function() {
+      	var price = FORMBUILDER.current_price
+      	price._type = $(':input#_type').val();
+      	price.price = $(':input#price').val();
+      	price.start_date = $(':input#start_date').val();
+      	price.end_date = $(':input#end_date').val();
+      	price.min_qty = $(':input#min_qty').val();
+      	price.max_qty = $(':input#max_qty').val();
+      	price.appliable_type = $(':input#appliable_type').val();
+      	price.appliable_id = $(':input#appliable_id').val();
+      	price.combinable = $(':input#combinable').prop('checked');
+      },
+
+    }
+
+    $('.add-price').click(function(e){
+    	e.stopPropagation();
+    	e.preventDefault();
+      FORMBUILDER.actions.addItem();
+    })
+
+    $('.item-prices-form :input').change(function(){
+      FORMBUILDER.actions.updateCurrentItem();
+      FORMBUILDER.actions.clearErrors()
+    	switch(this.id) {
+    		case '_type':
+		    	if ($(this).val() == 'Bulk') {
+		    		$(':input#min_qty, :input#max_qty').prop('disabled', false);
+		    	} else {
+		    		$(':input#min_qty, :input#max_qty').prop('disabled', true);
+		    	}
+    			break;
+    		case 'appliable_type':
+		    	if ($(this).val() == '') {
+		    		$(':input#appliable_id').prop('disabled', true);
+		    	} else {
+		    		$(':input#appliable_id').prop('disabled', false);
+		    	}
+    			break;
+    	}
+    })
+
+    FORMBUILDER.actions.renderList();
+  });
+
 	</script>
 	
 </fieldset>

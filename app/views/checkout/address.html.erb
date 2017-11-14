@@ -67,6 +67,24 @@
 	<tr>
 		<td>
 			<fieldset>
+
+        <div id="select_address" class="col-md-12 shipping">
+          <label for="checkout_{:class=>&quot;control-label&quot;}">Select Address</label>
+          <%= select_tag("Select Address", options_from_collection_for_select(current_user.account.addresses, "id", "name"), {include_blank: true, class: "shipping_address form-control selectpicker"}) %>
+          <script>
+            var addresses = <%= raw current_user.account.addresses.to_a.push(Address.new).to_json %>;
+            $('select.shipping_address').change(function(){
+              var $select = $(this);
+              var current_address = addresses.filter(function(item){return item.id == (parseInt( $select.val() ) || null) })[0];
+              $(':input#checkout_ship_to_address_1').val(current_address['address_1']);
+              $(':input#checkout_ship_to_address_2').val(current_address['address_2']);
+              $(':input#checkout_ship_to_city').val(current_address['city']);
+              $(':input#checkout_ship_to_state').val(current_address['state']);
+              $(':input#checkout_ship_to_zip').val(current_address['zip']);
+              $(':input#checkout_ship_to_phone').val(current_address['phone']);
+            })
+          </script>
+        </div>        
 				
 				<div id="address" class="col-md-12 shipping">
 					<%= f.label :class => "control-label" do %>Company Name
@@ -115,7 +133,7 @@
 				</div>
 				
 				<div id="zip" class="col-md-6 shipping">
-					<%= f.label :class => "control-label" do %>State
+					<%= f.label :class => "control-label" do %>Zip
 						<% unless @checkout.errors[:ship_to_zip].blank? %>
 							<span class="text text-danger">(<%= "#{@checkout.errors.full_messages_for(:ship_to_zip).first}" %>)</span>
 						<% end %>
@@ -142,7 +160,25 @@
 		
 		<td>
 			<fieldset>
-				
+
+        <div id="select_address" class="col-md-12 shipping">
+          <label for="checkout_{:class=>&quot;control-label&quot;}">Select Address</label>
+          <%= select_tag("Select Address", options_from_collection_for_select(current_user.account.addresses, "id", "name"), {include_blank: true, class: "billing_address form-control bill_to selectpicker"}) %>
+          <script>
+            var addresses = <%= raw current_user.account.addresses.to_a.push(Address.new).to_json %>;
+            $('select.billing_address').change(function(){
+              var $select = $(this);
+              var current_address = addresses.filter(function(item){return item.id == (parseInt( $select.val() ) || null) })[0];
+              $(':input#checkout_bill_to_address_1').val(current_address['address_1']);
+              $(':input#checkout_bill_to_address_2').val(current_address['address_2']);
+              $(':input#checkout_bill_to_city').val(current_address['city']);
+              $(':input#checkout_bill_to_state').val(current_address['state']);
+              $(':input#checkout_bill_to_zip').val(current_address['zip']);
+              $(':input#checkout_bill_to_phone').val(current_address['phone']);
+            })
+          </script>
+        </div>        
+        				
 				<div id="address" class="col-md-12 shipping">
 					<%= f.label :company_name, :class => "control-label" %>
 					<%= f.text_field :bill_to_account_name, :class => "form-control bill_to" %>
@@ -189,27 +225,26 @@
 				</div>
 				
 				<div id="use_ship_to" class="col-xs-12 shipping">
-					<%= label_tag :use_ship_to_address do %>
-						<%= check_box_tag :use_ship_to_address, :checked, :class => "form-control" %>
-					<% end %>
+          <%= check_box_tag :use_ship_to_address, true, :checked %>
+					<%= label_tag :use_ship_to_address %>
 				</div>
 				
 				
 				
 				<script>
 					$(document).ready(function() {
-						
-						if ($('#use_ship_to_address').val($(this).is(":checked"))) {
-							$(".bill_to").prop("disabled", true)
-						};
-						
-						$('#use_ship_to_address').change(function(){
-							if ($(this).is(":checked")) {
-								$(".bill_to").prop("disabled", true)
-							} else {
-								$(".bill_to").prop("disabled", false)
-							}
-						});
+
+            if ($('#use_ship_to_address').is(":checked")) {
+              $(".bill_to").prop("disabled", true)
+            };
+            
+            $('#use_ship_to_address').change(function(){
+              if ($(this).is(":checked")) {
+                $(".bill_to").prop("disabled", true)
+              } else {
+                $(".bill_to").prop("disabled", false)
+              }
+            });
 					})
 				</script>
 
