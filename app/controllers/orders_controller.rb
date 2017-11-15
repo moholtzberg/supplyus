@@ -2,7 +2,7 @@ class OrdersController < ApplicationController
   layout 'admin'
   before_action :set_order, only:
     %i[show invoice resend_order resend_invoice edit update destroy
-       lock approve submit cancel credit_hold credit_hold_remove]
+       lock approve submit cancel credit_hold credit_hold_remove expand]
 
   def datatables
     authorize! :read, Order
@@ -164,6 +164,8 @@ class OrdersController < ApplicationController
       .order_line_items.map(&:to_form_hash).to_json
   end
 
+  def expand; end
+  
   private
 
   def order_params

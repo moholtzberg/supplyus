@@ -1,0 +1,5 @@
+<%= item.number %>
+<%= link_to expand_order_path(item.id), class: 'pull-right', remote: true do %>
+  <span class="glyphicon glyphicon-arrow-down"></span>
+  <span class="glyphicon glyphicon-arrow-up hidden"></span>
+<% end %>

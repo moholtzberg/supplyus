@@ -60,6 +60,10 @@ module ApplicationHelper
     render partial: "#{class_name.to_s.pluralize.underscore}/dropdown", locals: {item: item}, formats: [:html]
   end
 
+  def expand_button(class_name, item)
+    render partial: "#{class_name.to_s.pluralize.underscore}/expand_button", locals: {item: item}, formats: [:html]
+  end
+
   def search_params
     {term: params[:term], direction: params[:direction], sort: params[:sort], page: params[:page]}
   end
