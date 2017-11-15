@@ -129,31 +129,21 @@ namespace :data_migrations do
 
   desc 'ensure category slug uniqueness'
   task ensure_category_slug_uniqueness: :environment do
-    slugs = []
-    Category.all.each do |cat|
+    Category.select(:slug).group(:slug).having("count(*) > 1").each do |slug|
       i = 1
-      slug = cat.slug
-      puts slug
-      while slugs.include?(cat.slug)
-        puts slugs
-        cat.update_column(:slug, "#{slug}_#{i}")
-        puts cat.slug
+      Category.where(slug: slug.slug).each_with_index do |cat, idx|
+        cat.update_column(:slug, "#{slug.slug}_#{i}") if idx > 0
       end
-      slugs.push(cat.slug)
-      puts slugs
     end
   end
 
   desc 'ensure item slug uniqueness'
   task ensure_item_slug_uniqueness: :environment do
-    slugs = []
-    Item.all.each do |item|
+    Item.select(:slug).group(:slug).having("count(*) > 1").each do |slug|
       i = 1
-      slug = item.slug
-      while slugs.include?(item.slug)
-        item.update_column(:slug, "#{slug}_#{i}")
+      Item.where(slug: slug.slug).each_with_index do |item, idx|
+        item.update_column(:slug, "#{slug.slug}_#{i}") if idx > 0
       end
-      slugs.push(item.slug)
     end
   end
 
