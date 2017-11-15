@@ -1,0 +1,11 @@
+$td = $('a[href$="<%= expand_order_path(@order.id) %>"]').closest('td');
+$tr = $td.closest('tr');
+$a = $td.find('a');
+$tr.after("<tr class='child' id='<%= @order.id %>_order_info'><td class='child' colspan=" + $tr.find('td').length + "><%= j render :template => 'orders/_full_order.html', :format => 'html', locals: {order: @order} %></td></tr>");
+$a.find('span.glyphicon').toggleClass('hidden');
+$a.click(function(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  $(this).find('span.glyphicon').toggleClass('hidden');
+  $('tr#<%= @order.id %>_order_info').toggleClass('hidden');
+})

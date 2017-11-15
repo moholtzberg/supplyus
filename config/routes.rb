@@ -121,6 +121,7 @@ Rails.application.routes.draw do
           get :returnable_items
         end
         member do
+          get :expand
           put :submit
           put :approve
           put :cancel
