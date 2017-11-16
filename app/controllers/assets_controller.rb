@@ -25,7 +25,7 @@ class AssetsController < ApplicationController
       format.js
       format.json { render json: {
           error: (@asset.errors.full_messages.join(', ') if @asset.errors.any?),
-          initialPreview: [@asset.attachment&.url],
+          initialPreview: [@asset.attachment.url],
           initialPreviewConfig: [@asset.to_fileinput_hash]
         }
       }
@@ -71,7 +71,7 @@ class AssetsController < ApplicationController
 
   def asset_params
     prms = params.require(:asset).permit(:attachment, :position, :alt, :attachable_type, :attachable_id)
-    prms[:alt] = prms[:attachment].original_filename&.gsub(/(.*)\.\w*$/, '\1') if prms[:attachment] && (!prms[:alt] || prms[:alt].blank?)
+    prms[:alt] = prms[:attachment].original_filename.gsub(/(.*)\.\w*$/, '\1') if prms[:attachment] && (!prms[:alt] || prms[:alt].blank?)
     prms[:attachable_type] = params[:attachable_type] if params[:attachable_type]
     prms[:attachable_id] = params[:attachable_id] if params[:attachable_id]
     prms[:position] = params[:position] if params[:position]
