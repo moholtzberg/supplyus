@@ -47,9 +47,9 @@ class Item < ActiveRecord::Base
       brand&.name
     end
 
-    # text :item_categories do
-    #   item_categories.map { |item_category| item_category.category.name }
-    # end
+    text :item_categories do
+      item_categories.map { |item_category| item_category.category.name }
+    end
 
     text :item_properties do
       item_properties.map(&:value)
