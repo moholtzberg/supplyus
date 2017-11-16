@@ -9,7 +9,7 @@
 		</div>
 		<div id="sortFilter" class="panel-collapse collapse in">
 			<ul class="list-group">
-				<% for sorting in [{name: 'Price Asc', value: ['price', 'asc']}, {name: 'Price Desc', value: ['price', 'desc']}] %>
+				<% for sorting in [{name: 'Price Asc', value: ['actual_price', 'asc']}, {name: 'Price Desc', value: ['actual_price', 'desc']}] %>
 					<li class="list-group-item">
 						<% if params[:sort_by].blank? || params[:sort_by] != sorting[:value] %>
 							<%= link_to sorting[:name], params.merge(:sort_by => sorting[:value]), remote: true %>
@@ -25,7 +25,7 @@
 
 	<% i = 0 %>
 
-	<% if items.facet(:price) and items.facet(:price).rows.count > 0 %>
+	<% if items.facet(:actual_price) and items.facet(:actual_price).rows.count > 0 %>
 
 		<% i += 1 %>
 
@@ -38,7 +38,7 @@
 			</div>
 			<div id="priceFilter" class="panel-collapse collapse <%= 'in' if !params[:price_range].blank? %>">
 					<ul class="list-group">
-					<% for range in items.facet(:price).rows %>
+					<% for range in items.facet(:actual_price).rows %>
 					<li class="list-group-item">
 							<% if params[:price_range].blank? %>
 								<%= link_to range_to_currency(range.value), params.merge(:price_range => range.value), remote: true %> (<%= range.count%>)
