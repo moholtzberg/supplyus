@@ -1,6 +1,6 @@
 class OrderDatatable < AjaxDatatablesRails::Base
 
-  def_delegators :@view, :dropdown, :number_to_currency
+  def_delegators :@view, :dropdown, :number_to_currency, :expand_button
 
   def view_columns
     @view_columns ||= {
@@ -20,7 +20,7 @@ class OrderDatatable < AjaxDatatablesRails::Base
   def data
     records.map do |record|
       {
-        number: record.number,
+        number: expand_button(record.class, record),
         account: record.account&.name,
         total: number_to_currency(record.total),
         sub_total: number_to_currency(record.sub_total),

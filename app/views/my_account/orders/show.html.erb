@@ -1,0 +1,145 @@
+<table class="table table-bordered">
+	<tr>
+		<th width="33%">Remit To</th>
+		<th width="34%">Shipping Address</th>
+		<th width="33%">Billing Address</th>
+	</tr>
+	<tr>
+		<td>
+			24/7 Office Supply, Inc.<br/>
+			2957 NW 27th Street<br/>
+			Fort Lauderdale, FL 33311<br/>
+			(888) 247-8775
+		</td>
+		<td>
+			<%= @order.ship_to_account_name %><br/>
+			<% unless @order.ship_to_attention.blank? %><%= @order.ship_to_attention %><br/><% end %>
+			<%= @order.ship_to_address_1 %><br/>
+			<% unless @order.ship_to_address_2.blank? %><%= @order.ship_to_address_2 %><br/><% end %>
+			<%= @order.ship_to_city %>, <%= @order.ship_to_state %> <%= @order.ship_to_zip %><br/>
+			<%= @order.ship_to_phone %>
+		</td>
+		<td>
+			<%= @order.bill_to_account_name %><br/>
+			<% unless @order.bill_to_attention.blank? %><%= @order.bill_to_attention %><br/><% end %>
+			<%= @order.bill_to_address_1 %><br/>
+			<% unless @order.bill_to_address_2.blank? %><%= @order.bill_to_address_2 %><br/><% end %>
+			<%= @order.bill_to_city %>, <%= @order.bill_to_state %> <%= @order.bill_to_zip %><br/>
+			<%= @order.bill_to_phone %>
+		</td>
+	</tr>
+</table>
+
+<table class="table table-bordered">
+	<tr>
+		<th width="33%">Order Number</th>
+		<th width="34%">Order Date</th>
+		<th width="33%">PO Number</th>
+	</tr>
+	<tr>
+		<td width="33%"><%= @order.number %></td>
+		<td width="34%"><%= @order.submitted_at.strftime("%m/%d/%Y %I:%M %p") unless @order.submitted_at.nil? %></td>
+		<td width="33%"><%= @order.po_number %></td>
+	</tr>
+</table>
+
+<table class="table table-bordered">
+	<tr>
+		<th>Notes</th>
+	</tr>
+	<tr>
+		<td><%= @order.notes %></td>
+	</tr>
+</table>
+
+<table class="table table-bordered">
+	
+	<tr>
+		<th width="5%" class="text-center"></th>
+		<th>Item Name/Description</th>
+		<th width="7%" class="text-center">Quantity</th>
+		<th width="7%" class="text-center">Canceled</th>
+		<th width="7%" class="text-center">Actual</th>
+		<th width="7%" class="text-center">Shipped</th>
+		<th width="7%" class="text-center">Billed</th>
+		<th width="7%" class="text-center">Price</th>
+		<th width="7%" class="text-center">Subtotal</th>
+	</tr>
+	
+	<% @order.order_line_items.active.each_with_index do |li, idx| %>
+	<tr class="line_items">
+		<td class="text-center"><%= li.order_line_number %></td>
+		<td>
+			<%= li.item.number unless li.item.nil? %> / <%= li.item.name unless li.item.nil? %>
+			<% if li.item.item_type_id == 99 || li.description.present? %><br/><%= li.description %> <% end %>
+		</td>
+		<td class="text-center"><%= li.quantity.to_i %></td>
+		<td class="text-center"><%= li.quantity_canceled.to_i %></td>
+		<td class="text-center"><%= li.actual_quantity.to_i %></td>
+		<td class="text-center"><%= li.quantity_shipped.to_i %></td>
+		<td class="text-center"><%= li.quantity_fulfilled.to_i %></td>
+		<td class="text-center"><%= number_to_currency(li.price) %></td>
+		<td class="text-center"><%= number_to_currency(li.sub_total) %></td>
+	<tr>
+	<% end %>
+	
+	<tr>
+		<td colspan="7">Sub Total</td>
+		<td colspan="2" class="text-center"><strong><%= number_to_currency(@order.sub_total) %></strong></td>
+	</tr>
+	<tr>
+		<td colspan="7">Sales Tax</td>
+		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@order.tax_total) %></strong></td>
+	</tr>
+	<tr>
+		<td colspan="7"><%= @order.order_shipping_method.name unless @order.order_shipping_method.nil? %> - Shipping</td>
+		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@order.shipping_total) %></strong></td>
+	</tr>
+	<tr>
+		<td colspan="7">Order Total</td>
+		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@order.total) %></strong></td>
+	</tr>
+	<tr>
+		<td colspan="7">Payments</td>
+		<td colspan="2" class="text-center"><strong> <%= @order.payments.blank? ? number_to_currency(0) : number_to_currency(@order.payments_total) %></strong></td>
+	</tr>
+	<tr>
+		<td colspan="7">Balance Due</th>
+		<td colspan="2" class="text-center"><strong> <%=  number_to_currency(@order.balance_due) %></strong></td>
+	</tr>
+	
+</table>
+
+<table class="table table-bordered">
+	
+	<tr>
+		<th>Ship Date</th>
+		<th>Carrier</th>
+		<th>Tracking Number(s)</th>
+	</tr>
+	
+	<% @shipments.each do |shipment| %>
+	<tr>
+		<td><%= shipment.ship_date.strftime("%m/%d/%y") unless shipment.ship_date.nil? %></td>
+		<td><%= shipment.carrier %></td>
+		<td><% shipment.tracking_numbers.each do |tr|%><%= tr.number %><br/><% end %></td>
+	</tr>
+	<% end %>
+</table>
+
+<table class="table table-bordered">
+	
+	<tr>
+		<th>Return Date</th>
+		<th>Status</th>
+		<th>Notes</th>
+	</tr>
+	
+	<% @order.return_authorizations.each do |ra| %>
+		<tr>
+			<td><%= ra.created_at.strftime("%m/%d/%y") %></td>
+			<td><%= ra.status %></td>
+			<td><%= ra.notes %></td>
+		</tr>
+	<% end %>
+</table>

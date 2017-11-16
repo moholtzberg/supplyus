@@ -2,6 +2,7 @@ class CustomersController < ApplicationController
   layout "admin"
   respond_to :html, :json
   before_action :set_customer, only: [:show, :edit, :update, :destroy, :statements]
+  load_and_authorize_resource except: [:statements, :datatables, :autocomplete]
   
   def datatables
     authorize! :read, Customer
@@ -31,17 +32,14 @@ class CustomersController < ApplicationController
   end
 
   def index
-    authorize! :read, Customer
   end
   
   def new
-    authorize! :create, Customer
     @customer = Customer.new
     @customer.build_main_address
   end
   
   def create
-    authorize! :create, Customer
     params[:customer][:is_taxable] = true unless params[:customer][:is_taxable] != 1
     params[:customer][:sales_rep_name] = current_user.email unless !params[:customer][:sales_rep_name].blank?
     @customer = Customer.new(account_params)
@@ -49,24 +47,19 @@ class CustomersController < ApplicationController
   end
   
   def show
-    authorize! :read, @customer
-    puts @customer.inspect
     @orders = Order.where(account_id: @customer.id).includes(:order_line_items).order(:submitted_at)
     @item_prices = Price.where(appliable: @customer).includes(:item)
   end
   
   def edit
-    authorize! :update, @customer
   end
   
   def update
-    authorize! :update, @customer
     params[:customer][:is_taxable] = true unless params[:customer][:is_taxable] != 1
     @customer.update_attributes(account_params)
   end
 
   def destroy
-    authorize! :destroy, @customer
     @customer.destroy
   end
   

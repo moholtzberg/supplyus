@@ -26,7 +26,7 @@
         <!-- <div class="form-control" id="card-number"></div> -->
         <span class="helper-text"></span>
         <div class="col-xs-12">
-          <%= number_field_tag 'number', '', class: 'form-control', disabled: ['edit', 'update'].include?(params[:action]), placeholder: "Enter Credit Card Number" %>
+          <%= number_field_tag 'credit_card_number', '', class: 'form-control', disabled: ['edit', 'update'].include?(params[:action]), placeholder: "Enter Credit Card Number" %>
         </div>
       </div>        
     </div>
@@ -67,7 +67,7 @@
         <label class="control-label">Security Code</label>
         <!--  Hosted Fields div container -->
         <!-- <div class="form-control" id="cvv"></div> -->
-        <%= text_field_tag 'cvv', '', class: 'form-control', placeholder: 'Enter CVV', disabled: ['edit', 'update'].include?(params[:action]) %>
+        <%= text_field_tag 'card_security_code', '', class: 'form-control', placeholder: 'Enter CVV', disabled: ['edit', 'update'].include?(params[:action]) %>
       </div>
     </div>
   </div>

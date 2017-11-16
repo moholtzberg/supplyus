@@ -1,0 +1,28 @@
+<div id="schedule" class="col-md-12">
+	<table class="table table-bordered table-striped">
+		<tr>
+			<th width="10%">ID</th>
+			<th width="10%">Name</th>
+			<th width="10%">Worker</th>
+			<th width="20%">Cron</th>
+			<th width="20%">Arguments</th>
+			<th width="10%">Enabled</th>
+			<th width="20%">Description</th>
+		</tr>
+		<tr>
+			<td><%= @schedule.id %></td>
+			<td><%= @schedule.name %></td>
+			<td><%= @schedule.worker %></td>
+			<td><%= @schedule.cron %></td>
+			<td><%= @schedule.arguments %></td>
+			<td><%= @schedule.enabled %></td>
+			<td><%= @schedule.description %></td>
+		</tr>
+	</table>
+</div>
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content"></div>
+	</div>
+</div>

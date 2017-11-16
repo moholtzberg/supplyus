@@ -53,7 +53,7 @@ class Account < ActiveRecord::Base
   end
   
   def payment_terms
-    90
+    credit_terms
   end
   
   def is_taxable?

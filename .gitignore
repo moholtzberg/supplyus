@@ -16,6 +16,7 @@
 !/log/.keep
 /tmp
 /public/assets/*
+/public/system/assets/*
 /config/environments/development.rb
 /app/assets/images/400
 /app/assets/images/ecdb.individual_items
@@ -24,3 +25,6 @@ solr/*
 */solr/*.*
 .idea
 /config/deploy/*
+*.pid
+.byebug_history
+/shared

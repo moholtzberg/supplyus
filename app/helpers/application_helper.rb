@@ -49,7 +49,7 @@ module ApplicationHelper
     title ||= column.titleize
     css_class = column == sort_column ? "current #{sort_direction}" : nil
     direction = column == sort_column && sort_direction == "asc" ? "desc" : "asc"
-    link_to title, {:sort => column, :direction => direction}, {:class => css_class}
+    link_to title, {:sort => column, :direction => direction}.merge(term: params[:term], action: 'index'), {:class => css_class}
   end
 
   def range_to_currency(range)
@@ -57,7 +57,15 @@ module ApplicationHelper
   end
 
   def dropdown(class_name, item)
+<<<<<<< HEAD
     render partial: "#{class_name.to_s.pluralize.downcase}/dropdown", locals: {item: item}, formats: [:html]
+=======
+    render partial: "#{class_name.to_s.pluralize.underscore}/dropdown", locals: {item: item}, formats: [:html]
+  end
+
+  def expand_button(class_name, item)
+    render partial: "#{class_name.to_s.pluralize.underscore}/expand_button", locals: {item: item}, formats: [:html]
+>>>>>>> upstream/subscriptions
   end
 
   def search_params

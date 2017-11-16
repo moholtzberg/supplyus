@@ -25,13 +25,19 @@ class GroupMailer < ApplicationMailer
       
     end
     
-    mail(
+    email = mail(
          :to => "#{args[:email].present? ? args[:email] : 'moholtzberg@gmail.com'}",
          :bcc => "sales@247officesupply.com",
          :subject => "Group Statement Notification - #{@group.name}", 
          :text => render_to_string("groups/statements").to_str
     )
-    
+    @email_delivery = EmailDelivery.create({
+      addressable_type: 'Group',
+      addressable_id: @group.id,
+      to_email: "#{args[:email].present? ? args[:email] : 'moholtzberg@gmail.com'}",
+      body: email[:text].to_s
+    })
+    email.mailgun_variables = {message_id: @email_delivery.id}    
   end
   
 end

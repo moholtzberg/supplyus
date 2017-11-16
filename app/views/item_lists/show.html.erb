@@ -1,0 +1,36 @@
+<div id="item_list" class="col-md-12">
+		
+	<table class="table table-bordered table-striped">
+	</table>
+	
+	<table class="table table-bordered table-striped">
+		
+		<tr>
+			<th width="20%">ID</th>
+			<th width="30%">User</th>
+			<th width="20%">Name</th>
+		</tr>
+		
+		<tr>
+			<td><%= @item_list.id %></td>
+			<td><%= @item_list.user&.email %></td>
+			<td><%= @item_list.name %></td>
+		</tr>
+		
+	</table>
+
+	<div id="item_item_lists" class="tab-pane" role="tabpanel">
+
+		<%= render :partial => "item_item_lists", :locals => {:item_list => @item_list} %>
+
+	</div>
+	
+</div>
+
+<div id="myModal" class="modal fade" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div>

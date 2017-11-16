@@ -1,5 +1,9 @@
+require 'sidekiq/web'
+require 'sidekiq-scheduler/web'
 Rails.application.routes.draw do
-  
+  authenticate :user, lambda { |u| u.has_role?(:super_admin) } do
+    mount Sidekiq::Web => '/sidekiq'
+  end
   authenticate :user do
     scope "/admin" do
       resource :home, :controller => :home do 
@@ -33,7 +37,12 @@ Rails.application.routes.draw do
         end
       end
       resources :addresses
-      resources :assets
+      resources :assets do
+        collection do
+          post :delete, action: :destroy, as: 'delete'
+          post :change_position, action: :update, as: 'change_position'
+        end
+      end
       resources :bins
       resources :brands
       resources :brand_imports
@@ -41,6 +50,7 @@ Rails.application.routes.draw do
         collection do
           get :autocomplete
           post :datatables
+          post :change_position, action: :update, as: 'change_position'
         end
       end
       resources :charges
@@ -55,6 +65,11 @@ Rails.application.routes.draw do
       resources :discount_codes
       resources :discount_code_effects, only: [:edit, :update]
       resources :discount_code_rules, only: [:new, :create, :destroy]
+      resources :email_deliveries do
+        collection do
+          post :datatables
+        end
+      end
       resources :equipment
       resources :equipment_imports
       resources :equipment_alerts
@@ -82,6 +97,8 @@ Rails.application.routes.draw do
       end
       resources :item_categories
       resources :item_imports
+      resources :item_lists
+      resources :item_item_lists
       resources :item_vendor_prices
       resources :item_vendor_price_imports
       resources :jobs
@@ -104,6 +121,7 @@ Rails.application.routes.draw do
           get :returnable_items
         end
         member do
+          get :expand
           put :submit
           put :approve
           put :cancel
@@ -131,8 +149,11 @@ Rails.application.routes.draw do
       resources :prices
       resources :price_imports
       resources :purchase_orders do
-        member do
+        collection do
+          post :datatables
           get :line_items_from_order
+        end          
+        member do
           put :lock
           put :resend_invoice
           put :resend_order
@@ -140,13 +161,26 @@ Rails.application.routes.draw do
         resources :purchase_order_receipts, :only => [:new, :create, :destroy]
       end
       resources :purchase_order_line_items
-      resource :reports, :only => :index do
-        get :sales_tax
-        get :item_usage
-        get :item_usage_by_group
-        get :ar_aging
+      resources :reports, :only => :index do
+        collection do
+          get :sales_tax
+          get :item_usage
+          get :item_usage_for_account_ids
+          get :item_usage_by_group
+          get :ar_aging
+          get :vendor_prices
+        end
       end
-      resources :return_authorizations
+      resources :return_authorizations, except: [:edit, :update] do
+        member do
+          get :set_bins
+          get :set_amount
+          put :receive
+          put :refund
+          put :confirm
+          put :cancel
+        end
+      end
       resources :roles do
         collection do
           post :add_role_to_user
@@ -154,7 +188,14 @@ Rails.application.routes.draw do
         end
       end
       resources :sales_reps
+      resources :schedules
       resources :settings
+      resources :static_pages
+      resources :subscriptions do
+        member do
+          post :generate_order
+        end
+      end
       resources :tax_rates
       resources :users do
         get :edit_password
@@ -182,9 +223,11 @@ Rails.application.routes.draw do
     resources :subscriptions do
       member do
         get :details
-        patch :details, to: :update_details
+        patch :details, action: :update_details
       end
     end
+    resources :orders, param: :order_number, only: [:index, :show, :return]
+    resources :return_authorizations, only: [:new, :create]
   end
 
   get   "checkout/address" => "checkout#address"
@@ -204,8 +247,7 @@ Rails.application.routes.draw do
   patch "/update_cart" => "shop#update_cart"
   
   get "/my_account/items" => "shop#my_items"
-  get "/my_account/order/:order_number" => "shop#view_order", as: :my_account_order
-  get "/my_account/invoice/:invoice_number/pay" => "shop#pay_invoice"
+  post "/my_account/invoice/:invoice_number/pay" => "shop#pay_invoice"
   get "/my_account/invoice/:invoice_number" => "shop#view_invoice"
   get "/my_account/:account_id" => "shop#view_account"
   get "/my_account" => "shop#my_account"
@@ -215,6 +257,7 @@ Rails.application.routes.draw do
   get "/search" => "shop#search"
   get "/search_autocomplete" => "shop#search_autocomplete"
   
+  get "/pages/:static_page" => "shop#page"
   get "/categories/:parent_id" => "shop#categories"
   get "/:category/:item" => "shop#item"
   get "/:category" => "shop#category"
@@ -223,6 +266,11 @@ Rails.application.routes.draw do
   namespace :api, defaults: {format: :json} do
     scope :v1 do
       resources :equipment_alerts, only: [:index, :show, :create, :update]
+      resources :email_deliveries do
+        collection do
+          post :webhook
+        end
+      end
     end
   end
 

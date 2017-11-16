@@ -7,6 +7,7 @@ class Address < ActiveRecord::Base
   validates :state, :presence => true
   validates :zip, :presence => true
   validates :name, :presence => true, uniqueness: { scope: :account_id }
+  validates :account, :presence => true
 
   validate :one_main
 

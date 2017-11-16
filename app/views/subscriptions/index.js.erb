@@ -1,0 +1,2 @@
+$('#myModal').modal("hide")
+$("#subscriptions").replaceWith("<%= j render :template => 'subscriptions/index.html', :format => 'html', :locals => {:subscriptions => @subscriptions} %>")

@@ -26,8 +26,8 @@ class ShopController < ApplicationController
   
   def category
     @params = params
-    @category = Category.where("slug = lower(?)", @params[:category].downcase).take
-    if Category.where("slug = lower(?)", @params[:category].downcase).take.nil?
+    @category = Category.friendly.find(@params[:category].downcase)
+    if Category.friendly.find(@params[:category].downcase).nil?
       raise ActionController::RoutingError.new('Not Found')
     end
     categories = []
@@ -61,11 +61,16 @@ class ShopController < ApplicationController
   end
   
   def item
-    @category = Category.where("slug = lower(?)", params[:category].downcase).take
-    if Item.where("slug = lower(?)", params[:item].downcase).take.nil?
+    @category = Category.friendly.find(params[:category].downcase)
+    if Item.friendly.find(params[:item].downcase).nil?
       raise ActionController::RoutingError.new('Not Found')
     end
-    @item = Item.where("slug = lower(?)", params[:item].downcase).includes(:prices, :item_properties, :item_categories => [:category]).take
+    @item = Item.includes(:prices, :item_properties, :item_categories => [:category]).friendly.find(params[:item].downcase)
+  end
+
+  def page
+    @static_page = StaticPage.friendly.find(params[:static_page].downcase)
+    raise ActionController::RoutingError.new('Not Found') if @static_page.nil?
   end
   
   def search
@@ -151,7 +156,7 @@ class ShopController < ApplicationController
   def cart
     @cart = Cart.find_or_initialize_by(:id => cookies.permanent.signed[:cart_id])
     if current_user && current_user.has_account
-      @cart.account_id = current_user.account.id
+      @cart.update_attribute(:account_id, current_user.account_id)
       @cart.order_line_items.each do |c| 
         c.price = c.item.actual_price(@cart.account_id, c.quantity)
         c.save!
@@ -183,24 +188,11 @@ class ShopController < ApplicationController
       redirect_to "/"
     end
   end
-  
-  def view_order
-    @order = Order.find_by(:number => params[:order_number])
-    @shipments = Shipment.where(:order_id => @order.id)
-    if current_user.my_account_ids.include?(@order.account_id)
-      respond_to do |format|
-        format.html
-        format.pdf do
-          render :pdf => "#{@order.number}", :title => "#{@order.number}", :layout => 'admin_print.html.erb', :page_size => 'Letter', :background => false, :template => 'shop/view_order.html.erb', :print_media_type => true
-        end
-      end
-    else
-      redirect_to "/"
-    end
-  end
-  
+    
   def view_invoice
     @invoice = Order.find_by(:number => params[:invoice_number])
+    @cards = current_user.account.main_service.credit_cards
+    @payment = Payment.new
     if current_user.my_account_ids.include?(@invoice.account_id)
       respond_to do |format|
         format.html
@@ -215,10 +207,35 @@ class ShopController < ApplicationController
   end
   
   def pay_invoice
-    @account = current_user.account
-    @credit_card = CreditCard.new
-    @invoice = Invoice.find_by(:number => params[:invoice_number])
-    @payment = Payment.new
+    @invoice = Order.find_by(:number => params[:invoice_number])
+    @payment = @invoice.payments.new
+    @payment.account = current_user.account
+    @payment.amount = @invoice.total
+    @payment.payment_method = PaymentMethod.find_or_create_by(name: params[:payment_method], active: true)
+    @payment.payment_type =  'CreditCardPayment'
+    @payment = @payment.becomes CreditCardPayment
+    if !params[:credit_card_token].blank?
+      @card = CreditCard.find_by(account_payment_service_id: @invoice.account.main_service.id, service_card_id: params[:credit_card_token])
+    else
+      @card = CreditCard.create({
+        cardholder_name: params[:cardholder_name],
+        credit_card_number: params[:credit_card_number],
+        card_security_code: params[:card_security_code],
+        expiration_month: params[:expiration_month],
+        expiration_year: params[:expiration_year],
+        account_payment_service_id: @invoice.account.main_service.id
+      })
+    end
+    @payment.credit_card_id = @card&.id
+    @cards = current_user.account.main_service.credit_cards
+    if @card and @card.errors.empty? and @payment.authorize
+      @payment.save
+      OrderPaymentApplication.create(:order_id => @invoice.id, :payment_id => @payment.id, :applied_amount => @payment.amount)
+      flash[:notice] = 'Your payment was authorized successfully.'
+      redirect_to my_account_orders_path
+    else
+      render 'view_invoice'
+    end
   end
   
   def edit_account

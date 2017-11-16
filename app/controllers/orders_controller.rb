@@ -1,30 +1,25 @@
 class OrdersController < ApplicationController
-  layout "admin"
-  helper_method :sort_column, :sort_direction
-  before_action :set_order, only: [:show, :invoice, :resend_order, :resend_invoice, :edit, :update, :destroy, :lock, :approve, :submit, :cancel, :credit_hold, :credit_hold_remove]
+  layout 'admin'
+  before_action :set_order, only:
+    %i[show invoice resend_order resend_invoice edit update destroy
+       lock approve submit cancel credit_hold credit_hold_remove expand]
 
   def datatables
     authorize! :read, Order
-    render json: OrderDatatable.new(view_context, { from: params[:from] })
+    render json: OrderDatatable.new(view_context, from: params[:from])
   end
 
   def autocomplete
     authorize! :read, Order
-    
-    @orders = Order.is_submitted.not_canceled.includes({:account => [:group]}, {:order_line_items => [:line_item_shipments, :line_item_fulfillments]}, :order_tax_rate, :order_payment_applications => [:payment]).unshipped
-    
-    if current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
-    else
+    @orders = Order.is_submitted.not_canceled.includes(
+      { account: [:group], order_payment_applications: [:payment],
+        order_line_items: [:line_item_shipments, :line_item_fulfillments] },
+      :order_tax_rate
+    )
+    unless current_user.has_role?(:super_admin) || current_user.has_role?(:Support)
       @orders = @orders.where(:sales_rep_id => current_user.id)
     end
-    
-    if params[:term].present?
-      puts "ORDERS - LOOKUP"
-      @orders = @orders.lookup(params[:term]) if params[:term].present?
-    end
-    
-    @orders = @orders.order(sort_column + " " + sort_direction)
-    @orders = @orders.paginate(:page => params[:page], :per_page => 20)
+    @orders = @orders.lookup(params[:term]) if params[:term].present?
     render :json => @orders.map(&:number)
   end
 
@@ -97,6 +92,7 @@ class OrdersController < ApplicationController
     authorize! :update, Order
     params[:order][:sales_rep_id] = @order.account&.sales_rep_id unless !params[:order][:sales_rep_name].blank?
     params[:order][:credit_hold]  = @order.account&.credit_hold unless @order.account.nil?
+    @order_line_item = OrderLineItem.new
     respond_to do |format|
       if @order.update_attributes(order_params)
         format.html { redirect_to @order, notice: "Order #{@order.number} was successfully updated!" }
@@ -156,24 +152,24 @@ class OrdersController < ApplicationController
   end
 
   def unpaid
+    a = Account.find_by(name: params[:account_name])
+    reuturn unless a&.id
     @unpaid_orders = Order.unpaid
-    if params[:account_name].present?
-      a = Account.find_by(name: params[:account_name])
-      unless a.blank?
-        @unpaid_orders = @unpaid_orders.where(:account_id => a.id)
-      end
-    end
+                          .where(account_id: a.id)
     @unpaid_orders.includes(:payments, :accounts)
   end
   
   def returnable_items
-    @returnable_items = Order.where(number: params[:order_number]).first
+    render :json => Order.find_by(number: params[:order_number])
+      .order_line_items.map(&:to_form_hash).to_json
   end
 
+  def expand; end
+  
   private
 
   def order_params
-    temp_params = params.require(:order).permit(:account_name, :sales_rep_name, :number, :email, :po_number, 
+    temp_params = params.require(:order).permit(:account_name, :sales_re_id, :sales_rep_name, :number, :email, :po_number, 
       :submitted_at, :notes, :credit_hold, :shipping_method, :shipping_amount, :tax_rate, :tax_amount, 
       :bill_to_account_name, :bill_to_attention, :bill_to_address_1, :bill_to_address_2, :bill_to_city, 
       :bill_to_state, :bill_to_zip, :bill_to_phone, :bill_to_email, :ship_to_account_name, :ship_to_attention, 
@@ -193,17 +189,5 @@ class OrdersController < ApplicationController
 
   def set_order
     @order = Order.find(params[:id])
-  end
-
-  def sort_column
-    related_columns = Order.reflect_on_all_associations(:belongs_to).map {|a| a.klass.column_names.map {|col| "#{a.klass.table_name}.#{col}"}}
-    columns = Order.column_names.map {|a| "orders.#{a}" }
-    columns.push(related_columns).flatten!.uniq!
-    columns.include?(params[:sort]) ? params[:sort] : "orders.id"
-  end
-
-  def sort_direction
-    %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
-  end
-  
+  end  
 end

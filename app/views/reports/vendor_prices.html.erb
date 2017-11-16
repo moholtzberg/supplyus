@@ -1,0 +1,18 @@
+<% content_for :app_location do %>Admin / Groups / Lowest Vendor Prices<% end %>
+<table class="table table-bordered table-condensed">
+  <tr>
+    <th>Item Number</th>
+    <th>Lowest Vendor Price</th>
+    <th>Vendor Name</th>
+    <th>Times purchased</th>
+  </tr>
+
+  <% @items.each do |item| %>
+    <tr>
+      <td><%= item.number %></td>
+      <td><%= item.cheapest_vendor_price.price %></td>
+      <td><%= item.cheapest_vendor_price.vendor&.name %></td>
+      <td><%= item.times_sold %></td>
+    </tr>
+  <% end %>
+</table>

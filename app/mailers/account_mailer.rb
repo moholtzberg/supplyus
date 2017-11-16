@@ -21,12 +21,19 @@ class AccountMailer < ApplicationMailer
         :orientation => 'Landscape', :print_media_type => true
       )
     end
-    mail(
+    email = mail(
         :to => "#{args[:email].present? ? args[:email] : 'moholtzberg@gmail.com'}",
         :bcc => "sales@247officesupply.com",
         :subject => "Account Statement Notification - #{@account.name}",
         :text => render_to_string("accounts/statements").to_str
     )
+    @email_delivery = EmailDelivery.create({
+      addressable_type: 'Account',
+      addressable_id: @account.id,
+      to_email: "#{args[:email].present? ? args[:email] : 'moholtzberg@gmail.com'}",
+      body: email[:text].to_s
+    })
+    email.mailgun_variables = {message_id: @email_delivery.id}
   end
 
   def statement_all_notification(account_id, from, to, **args)
@@ -50,12 +57,19 @@ class AccountMailer < ApplicationMailer
       )
 
     end
-    mail(
+    email = mail(
         :to => "#{args[:email].present? ? args[:email] : 'moholtzberg@gmail.com'}",
         :bcc => "sales@247officesupply.com",
         :subject => "Account Statement Notification - #{@account.name}",
         :text => render_to_string("accounts/statements").to_str
     )
+    @email_delivery = EmailDelivery.create({
+      addressable_type: 'Account',
+      addressable_id: @account.id,
+      to_email: "#{args[:email].present? ? args[:email] : 'moholtzberg@gmail.com'}",
+      body: email[:text].to_s
+    })
+    email.mailgun_variables = {message_id: @email_delivery.id}
   end
 
 end

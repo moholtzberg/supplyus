@@ -11,13 +11,22 @@ class ShipmentMailer < ApplicationMailer
     
     options = defaults.merge(options)
     
-    mail(
+    email = mail(
       :to => options[:to],
       :cc => options[:cc],
       :bcc => options[:bcc],
       :subject => "Shipment Notification #{@shipment.orders.first.number}", 
       :text => render_to_string("shipment_mailer/shipment_confirmation").to_str
     )
+    @email_delivery = EmailDelivery.create({
+      addressable_type: 'User',
+      addressable_id: @shipment.orders.first.user_id,
+      to_email: @shipment.orders.first.email,
+      body: email[:text].to_s,
+      eventable_type: 'Shipment',
+      eventable_id: @shipment.id
+    })
+    email.mailgun_variables = {message_id: @email_delivery.id}
   end
   
 end

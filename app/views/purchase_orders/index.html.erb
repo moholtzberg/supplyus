@@ -1,37 +1,22 @@
 <% content_for :app_location do %>Admin / Purchase Orders / Index<% end %>
-<div id="orders" class="col-md-12">
+<div id="purchase_orders" class="col-md-12">
 
-	<table class="table table-bordered table-condensed">
-		
-		<tr>
-			<td colspan="9">
-				<form id="searchBox" accept-charset="UTF-8" action="<%= request.env['PATH_INFO'] %>" method="get" role="search">
-					<input type="text" class="form-control" id="term" name="term" placeholder="Enter user name" value="<%= params[:term] %>">
-				</form>
-			</td>
-		</tr>
-		
-		<tr>
-			
-			<th witdh="5%"><%= sortable "purchase_orders.number", "Number" %></th>
-			<th>Vendor</th>
-			<th width="10%">Sub Total</th>
-			<th width="5%">Notes</th>
-			<th width="10%" class="hidden-xs">Recieved</th>
-			<th width="13%" class="text-center hidden-xs"><%= sortable "purchase_orders.completed_at", "Completed At" %></th>
-			<th width="4%" class="hidden-xs"><%= sortable "purchase_orders.locked", "Locked" %></th>
-			<th width="2%">&nbsp;</th>
-		</tr>
-		
-		<% @purchase_orders.each do |purchase_order| %>
-		<tr id="order_<%= purchase_order.id %>">
-			<%= render :partial => "purchase_orders/order", :locals => {:order => purchase_order}%>
-		<tr>
-		<% end %>
-
+	<table class="table table-bordered table-condensed" id="purchase-orders-table" data-source="<%= datatables_purchase_orders_path(format: :json) %>">
+  	<thead>
+			<tr>
+				<th>Number</th>
+				<th>Vendor</th>
+				<th>Total</th>
+				<th>Notes</th>
+				<th>Received</th>
+				<th>Completed At</th>
+				<th>Locked</th>
+				<th>&nbsp;</th>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
 	</table>
-	
-	<%= will_paginate @purchase_orders, renderer: BootstrapPagination::Rails %>
 	
 	<%= link_to new_purchase_order_path, :class => "btn btn-default pull-right", :remote => false do %><span class="glyphicon glyphicon-plus"></span><% end %>
 	

@@ -1,0 +1,37 @@
+<%= form_for item_item_list, :remote => true, :html => {:class => "form-horizontal"} do |f| %>
+	<fieldset>	
+				
+		<div id="item_id" class="col-md-12">
+			<%= f.label :item_id, :class => "control-label" %>
+			<%= f.select :item_id, [[f.object.item&.number, f.object.item_id]], {include_blank: true}, class: "form-control", style: "width: 100%" %>
+		</div>
+		
+		<script>
+			$("#item_item_list_item_id").select2({
+			  ajax: {
+			    url: "<%= autocomplete_items_path %>",
+			    dataType: 'json',
+			    delay: 250,
+			    data: function (params) {
+			      return {
+			        term: params.term
+			      };
+			    },
+			    processResults: function (data, params) {
+			      return {
+			        results: data
+			      };
+			    },
+			    cache: true
+			  },
+			  minimumInputLength: 1,
+			  placeholder: 'Search item',
+			  allowClear: true,
+			  theme: "bootstrap"
+			});
+		</script>	
+
+		<%= f.hidden_field :item_list_id %>	
+
+	</fieldset>
+<% end %>

@@ -1,0 +1,69 @@
+<% content_for :app_location do %>Admin / Return Authorizations / Index<% end %>
+<div id="return_authorizations" class="col-md-12">
+	
+	<table class="table table-bordered table-condensed">
+
+		<tr>
+			<th class="hidden-xs"><%= sortable "return_authorizations.id", 'Id' %></th>
+			<th class="hidden-xs"><%= sortable "return_authorizations.created_at", 'Created At' %></th>
+			<th><%= sortable "return_authorizations.amount", 'Amount' %></th>
+			<th><%= sortable "orders.number", "Order" %></th>
+			<th><%= sortable "customers.name", "Customer" %></th>
+			<th><%= sortable "reviewers.name", "Reviewer" %></th>
+			<th><%= sortable "return_authorizations.reason", 'Reason' %></th>
+			<th><%= sortable "return_authorizations.notes", 'Notes' %></th>
+			<th><%= sortable "return_authorizations.status", 'Status' %></th>
+			<th>&nbsp;</th>
+		</tr>
+
+		<% @return_authorizations.each do |a| %>
+			<tr>
+				<td class="hidden-xs"><%= a.id %></td>
+				<td class="hidden-xs"><%= a.created_at %></td>
+				<td><%= number_to_currency(a.amount) %></td>
+				<td><%= link_to a.order_number, a.order %></td>
+				<td><%= a.customer_name %></td>
+				<td><%= a.reviewer&.display_name %></td>
+				<td class="hidden-xs"><%= a.reason %></td>
+				<td><%= a.notes %></td>
+				<td><%= a.status %></td>
+				<td class="text-center">
+					<div class="dropdown">
+						<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+							<% if a.unconfirmed? %>
+								<li><%= link_to("Confirm", confirm_return_authorization_path(a.id), :remote => true, :method => 'put' ) %></li>
+								<li><%= link_to("Cancel", cancel_return_authorization_path(a.id), :remote => true, :method => "put") %></li>
+							<% elsif a.canceled? %>
+								<li><%= link_to("Confirm", confirm_return_authorization_path(a.id), :remote => true, :method => 'put' ) %></li>
+							<% elsif a.confirmed? %>
+								<li><%= link_to("Receive", set_bins_return_authorization_path(a.id), :remote => true, :method => 'get' ) %></li>
+								<li><%= link_to("Cancel", cancel_return_authorization_path(a.id), :remote => true, :method => "put") %></li>
+							<% elsif a.received? %>
+								<li><%= link_to("Refund", set_amount_return_authorization_path(a.id), :remote => true, :method => 'get' ) %></li>
+								<li><%= link_to("Undo Receive", confirm_return_authorization_path(a.id), :remote => true, :method => 'put' ) %></li>
+							<% end %>
+							<li><%= link_to("View", return_authorization_path(a.id))  %></li>
+						</ul>
+					</div>
+				</td>
+			</tr>
+		<% end %>
+
+	</table>
+		
+	<%= will_paginate @return_authorizations, params: search_params.except(:page).merge(action: 'index'), renderer: BootstrapPagination::Rails %>
+	
+	<%= link_to new_return_authorization_path(search_params), :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
+	
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div>

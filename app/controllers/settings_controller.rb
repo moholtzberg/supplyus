@@ -14,9 +14,9 @@ class SettingsController < ApplicationController
   
   def create
     authorize! :create, Setting
-    @setting = Setting.new(vendor_params)
+    @setting = Setting.new(setting_params)
     if @setting.save
-      @setting = Setting.order(sort_column + " " + sort_direction)
+      @settings = Setting.order(sort_column + " " + sort_direction)
     end
   end
   

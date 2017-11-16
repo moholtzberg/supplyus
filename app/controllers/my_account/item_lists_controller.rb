@@ -5,28 +5,28 @@ class MyAccount::ItemListsController < ApplicationController
   skip_before_filter :check_authorization
   
   def new
-    authorize! :create, ItemList
+    # authorize! :create, ItemList
     @item_list = ItemList.new(item_list_params.to_h.merge(user_id: current_user.id))
   end
 
   def create
-    authorize! :create, ItemList
+    # authorize! :create, ItemList
     @item_list = ItemList.create(item_list_params.merge(user_id: current_user.id))
   end
 
   def show
     @item_list = ItemList.find(params[:id])
-    authorize! :read, @item_list
+    # authorize! :read, @item_list
   end
 
   def destroy
     @item_list = ItemList.find(params[:id])
-    authorize! :destroy, @item_list
+    # authorize! :destroy, @item_list
     @item_list.destroy
   end
 
   def index
-    authorize! :read, ItemList
+    # authorize! :read, ItemList
     @item_lists = current_user.item_lists
   end
 

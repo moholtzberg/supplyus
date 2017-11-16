@@ -1,62 +1,274 @@
 <fieldset>
 	
-	<div id="customer_name" class="col-md-12">
-		<%= f.label :customer_name, :class => "control-label" %>
-		<%= f.text_field :customer_name, :class => "form-control", data: {autocomplete_source: autocomplete_customers_path} %>
-	</div>
-	
-	<div id="order_number" class="col-md-12">
+	<div id="order_number" class="col-md-6">
 		<%= f.label :order_number, :class => "control-label" %>
 		<%= f.text_field :order_number, :class => "form-control", data: {autocomplete_source: autocomplete_orders_path} %>
 	</div>
 	
-	<div id="applications">
+	<div id="customer_name" class="col-md-6">
+		<%= f.label :customer_name, :class => "control-label" %>
+		<%= f.text_field :customer_name, :class => "form-control", data: {autocomplete_source: autocomplete_customers_path} %>
 	</div>
 	
-	<div id="date" class="col-md-6">
-		<%= f.label :date, :class => "control-label" %>
-		<%= f.date_field :date, :class => "form-control" %>
+	<div id="reason" class="col-md-12">
+		<%= f.label :reason, :class => "control-label" %>
+		<%= f.text_field :reason, :class => "form-control" %>
 	</div>
 	
-	<div id="expiration_date" class="col-md-6">
-		<%= f.label :expiration_date, :class => "control-label" %>
-		<%= f.date_field :expiration_date, :class => "form-control" %>
+	<div id="notes" class="col-md-12">
+		<%= f.label :notes, :class => "control-label" %>
+		<%= f.text_field :notes, :class => "form-control" %>
 	</div>
-	
-	<script>
-	jQuery(function() {
-		return $('#return_authorization_order_number').autocomplete({
-			source: $('#return_authorization_order_number').data('autocomplete-source')
-		})
-	});
-	
-	jQuery(function(){
-		$("input#return_authorization_order_number").blur(function(){
-			var order_number = $("input#return_authorization_order_number").val();
-			var request = $.ajax({
-				url : '/admin/orders/returnable_items.js?order_number=' + order_number,
-			});
-			
-			
-			request.success(function(data) {
-				
-			});
-			
-			request.error(function(httpObj, textStatus) {
-				if(httpObj.status == 200) {
-					// console.log(httpObj);
-				} else {
-					alert("Failed");
-				}
-			});
-		})
-	});
 
-  $('#return_authorization_customer_name').autocomplete({
-    source: $('#return_authorization_customer_name').data('autocomplete-source')
-  });
-	
-	
+	<script>		
+	  $('#return_authorization_customer_name').autocomplete({
+	    source: $('#return_authorization_customer_name').data('autocomplete-source')
+	  });	
 	</script>
-		
+	<div class="col-md-12">
+		<table class="table table-bordered">
+		  
+		  <tr class="line-item-returns-labels">
+		    <th>Item Name/Description</th>
+		    <th>Quantity To Return</th>
+		    <th></th>
+		  <tr>
+		      
+		  <tr class="line-item-returns-form">
+		    <td><%= select_tag :order_line_item_id, '', {include_blank: true, class: 'form-control'} %></td>
+		    <td><%= text_field_tag :quantity, nil, class: 'form-control', disabled: true %></td>
+		    <td><%= button_tag "Add Item", class: "btn btn-primary add-item" %></td>
+		  </tr>
+		</table>
+	</div>		
+	<script>
+	  $(function() {
+
+	    var FORMBUILDER = FORMBUILDER || {};
+
+	    FORMBUILDER.return_line_items = [];
+	    FORMBUILDER.line_item_returns = [];
+	    FORMBUILDER.current_line_item_return = {};
+
+	    FORMBUILDER.actions = {
+
+	      init: function(){
+
+	        FORMBUILDER.actions.findLineItem(line_item_return);
+	        FORMBUILDER.actions.addItem();
+	        FORMBUILDER.actions.removeItem();
+	        FORMBUILDER.actions.validateForm();
+	        FORMBUILDER.actions.fieldValid(key);
+		      FORMBUILDER.actions.recalculateRemainingQty();
+	        FORMBUILDER.actions.clearErrors();
+	        FORMBUILDER.actions.renderList();
+	        FORMBUILDER.actions.resetForm();
+	        FORMBUILDER.actions.updateItemSelectOptions();
+	        FORMBUILDER.actions.updateCurrentItem();
+	        FORMBUILDER.actions.updateQuantityToReturn();
+
+	      },
+
+	      findLineItem: function(line_item_return){
+	      	return FORMBUILDER.return_line_items.filter(function(item){return item.id == line_item_return.order_line_item_id})[0]
+	      },
+
+	      findBin: function(line_item_return){
+	      	return FORMBUILDER.bins.filter(function(item){return item.id == line_item_return.bin_id})[0]
+	      },
+
+	      updateSelect: function(data) {
+	      	FORMBUILDER.return_line_items = data;
+
+	      	var $el = $('select#order_line_item_id');
+					$el.empty(); // remove old options
+					$el.append($("<option></option>"));
+					$.each(FORMBUILDER.return_line_items, function(index, item) {
+						console.log(item);
+						if (item.remaining_quantity > 0) {
+						  $el.append($("<option></option>")
+						     .attr("value", item.id).text(item.name));
+						}
+					});
+			    FORMBUILDER.line_item_returns = [];
+			    FORMBUILDER.current_line_item_return = {};
+					FORMBUILDER.actions.renderList();
+	      },
+
+	      addItem: function(){
+	      	FORMBUILDER.actions.clearErrors();
+	      	if (FORMBUILDER.actions.validateForm()) {
+		        FORMBUILDER.line_item_returns.push($.extend({}, FORMBUILDER.current_line_item_return));
+		        FORMBUILDER.actions.recalculateRemainingQty();
+		        FORMBUILDER.actions.resetForm();
+		        FORMBUILDER.actions.renderList();
+	      	}
+	      },
+
+	      removeItem: function(e){
+	      	var index = parseInt($(e.target).closest('tr').data( "index" ));
+	      	FORMBUILDER.line_item_returns.splice(index, 1);
+		      FORMBUILDER.actions.recalculateRemainingQty();
+		      FORMBUILDER.actions.resetForm();
+		      FORMBUILDER.actions.renderList();
+	      },
+
+	      validateForm: function(){
+	      	var valid = true;
+	      	Object.keys(FORMBUILDER.current_line_item_return).forEach(function(key){
+	      		if (!FORMBUILDER.actions.fieldValid(key)) { 
+	      			$('.line-item-returns-form #' + key).parent().addClass('has-error');
+	      			valid = false;
+	      		}
+	      	})
+	      	return valid;
+	      },
+
+	      fieldValid: function(key) {
+	      	var value = FORMBUILDER.current_line_item_return[key]
+	      	switch(key) {
+	      		case 'order_line_item_id':
+	      			return value
+	      			break;
+	      		case 'quantity':
+	      			return value && value > 0 && value <= FORMBUILDER.actions.maxQuantity()
+	      			break;
+	      	}
+	      },
+
+	      recalculateRemainingQty: function() {
+	      	FORMBUILDER.return_line_items.forEach(function(el) {
+	      		el.remaining_quantity = el.quantity - FORMBUILDER.line_item_returns.filter(function(item){return item.order_line_item_id == el.id}).reduce(function(acc, lis) {
+	  					return acc + parseInt(lis.quantity);
+						}, 0);
+	      	})
+	      },
+
+	      clearErrors: function() {
+	      	$('.line-item-returns-form td').removeClass('has-error');
+	      },
+
+	      renderList: function() {
+	      	$('tr.lir').remove();
+	      	FORMBUILDER.line_item_returns.forEach(function(el, i) {
+		        var item = document.createElement("tr");
+		        item.className = "lir";
+		        item.setAttribute('data-index', i)
+		        $(item)
+		        .append(
+		          $("<td>")
+		          .append(
+		            $('<input type="hidden" name="return_authorization[line_item_returns_attributes][' + i + '][order_line_item_id]" value="' + el.order_line_item_id + '" />')
+		          )
+		          .append(
+		            FORMBUILDER.actions.findLineItem(el).name
+		          )
+		        )
+		        .append(
+		          $("<td>")
+		          .append(
+		            $('<input type="hidden" name="return_authorization[line_item_returns_attributes][' + i + '][quantity]" value="' + el.quantity + '" />')
+		          )
+		          .append(
+		            el.quantity
+		          )
+		        )
+		        .append(
+		          $("<td>")
+		          .append(
+		            $('<a href="#" class="remove-item"><i class="fa fa-remove"></i></a>')
+		          )
+		        )
+		        $('.line-item-returns-labels').after(item)
+	      	})
+			    $('.remove-item').click(function(e){
+			    	e.stopPropagation();
+			    	e.preventDefault();
+			      FORMBUILDER.actions.removeItem(e);
+			    })
+	      },
+
+	      resetForm: function() {
+	      	$('.line-item-returns-form :input').val('');
+	      	FORMBUILDER.actions.updateCurrentItem();
+	      	FORMBUILDER.actions.updateItemSelectOptions();
+	      },
+
+	      updateItemSelectOptions: function() {
+	      	$el = $(':input#order_line_item_id')
+	      	$el.find('option:not([value=""])').remove()
+	      	FORMBUILDER.return_line_items.filter(function(item){return item.remaining_quantity > 0}).forEach(function(el) {
+		        var item = document.createElement("option");
+		        item.setAttribute('value', el.id);
+		        item.innerHTML = el.name;
+		        $el.append(item);
+		      });
+	      },
+
+	      updateCurrentItem: function() {
+	      	var line_item_return = FORMBUILDER.current_line_item_return
+	        line_item_return.order_line_item_id = $(':input#order_line_item_id').val();
+	        line_item_return.quantity = $(':input#quantity').val();
+	      },
+
+	      updateQuantityToReturn: function() {
+	        $(':input#quantity').val(FORMBUILDER.actions.maxQuantity()).change();
+	      },
+
+	      maxQuantity: function() {
+	        var line_item = FORMBUILDER.actions.findLineItem(FORMBUILDER.current_line_item_return);
+	        var line_item_qty = line_item.remaining_quantity
+	      	return line_item_qty
+	      }
+
+	    }
+
+	    $('.add-item').click(function(e){
+	    	e.stopPropagation();
+	    	e.preventDefault();
+	      FORMBUILDER.actions.addItem();
+	    })
+
+	    $('.line-item-returns-form :input').change(function(){
+	      FORMBUILDER.actions.updateCurrentItem();
+	      FORMBUILDER.actions.clearErrors()
+	    	switch(this.id) {
+	    		case 'order_line_item_id':
+			    	if ($(this).val()) {
+			    		$(':input#quantity').prop( "disabled", false );
+			    		FORMBUILDER.actions.updateQuantityToReturn();
+			    	} else {
+			    		$(':input#quantity').prop( "disabled", true );
+			    	}
+	    			break;
+	    	}
+	    })
+
+			jQuery(function() {
+				return $('#return_authorization_order_number').autocomplete({
+					source: $('#return_authorization_order_number').data('autocomplete-source'),
+		      select: function( event, ui ) {
+						var order_number = ui.item.value
+						var request = $.ajax({
+							url : '/admin/orders/returnable_items.js?order_number=' + order_number,
+						});
+						request.success(function(data) {
+			      	FORMBUILDER.return_line_items = data;
+					    FORMBUILDER.line_item_returns = [];
+					    FORMBUILDER.current_line_item_return = {};
+			      	FORMBUILDER.actions.updateItemSelectOptions();
+							FORMBUILDER.actions.renderList();
+						});
+						request.error(function(httpObj, textStatus) {
+							if(httpObj.status == 200) {
+								// console.log(httpObj);
+							} else {
+								alert("Failed");
+							}
+						});
+		      }
+				})
+			});
+	  });
+	</script>
 </fieldset>
