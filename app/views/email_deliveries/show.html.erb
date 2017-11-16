@@ -21,9 +21,9 @@
       <td><%= @email_delivery.to_email %></td>
       <td><%= @email_delivery.eventable_type %></td>
       <td><%= @email_delivery.eventable_id %></td>
-      <td><%= @email_delivery.failed_at&.strftime("%m/%d/%y %I:%M %p") %></td>
-      <td><%= @email_delivery.delivered_at&.strftime("%m/%d/%y %I:%M %p") %></td>
-      <td><%= @email_delivery.opened_at&.strftime("%m/%d/%y %I:%M %p") %></td>
+      <td><%= @email_delivery.failed_at.strftime("%m/%d/%y %I:%M %p") %></td>
+      <td><%= @email_delivery.delivered_at.strftime("%m/%d/%y %I:%M %p") %></td>
+      <td><%= @email_delivery.opened_at.strftime("%m/%d/%y %I:%M %p") %></td>
     </tr>
     
   </table>

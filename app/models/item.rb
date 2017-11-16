@@ -44,7 +44,7 @@ class Item < ActiveRecord::Base
     text :description, :stored => true
 
     text :brand do
-      brand&.name
+      brand.name
     end
 
     # text :item_categories do
@@ -58,7 +58,7 @@ class Item < ActiveRecord::Base
     float :actual_price, :trie => true
 
     string :brand, :stored => true do
-      brand&.name
+      brand.name
     end
 
     integer :category_ids, :multiple => true, :references => Category

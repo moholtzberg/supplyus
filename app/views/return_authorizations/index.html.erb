@@ -23,7 +23,7 @@
 				<td><%= number_to_currency(a.amount) %></td>
 				<td><%= link_to a.order_number, a.order %></td>
 				<td><%= a.customer_name %></td>
-				<td><%= a.reviewer&.display_name %></td>
+				<td><%= a.reviewer.display_name %></td>
 				<td class="hidden-xs"><%= a.reason %></td>
 				<td><%= a.notes %></td>
 				<td><%= a.status %></td>

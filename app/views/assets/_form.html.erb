@@ -17,7 +17,7 @@
 
 	<div id="attachable_id" class="col-md-6">
 		<%= f.label :attachable_id, :class => "control-label" %>
-		<%= f.select :attachable_id, [[f.object.attachable&.name, f.object.attachable_id]], {include_blank: true}, :class => "form-control", style: "width: 100%", disabled: f.object.attachable_type.nil? %>
+		<%= f.select :attachable_id, [[f.object.attachable.name, f.object.attachable_id]], {include_blank: true}, :class => "form-control", style: "width: 100%", disabled: f.object.attachable_type.nil? %>
 	</div>
 
 	<script>

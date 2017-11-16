@@ -22,7 +22,7 @@
 		<% @account_payment_services.each do |a| %>
 			<tr>
 				<td class="hidden-xs"><%= a.id %></td>
-				<td><%= a.account&.name %></td>
+				<td><%= a.account.name %></td>
 				<td><%= a.name %></td>
 				<td><%= a.service_id %></td>
 				<td class="text-center">

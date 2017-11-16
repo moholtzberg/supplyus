@@ -16,7 +16,7 @@
         <Row>
           <Cell><Data ss:Type="String"><%= item.number %></Data></Cell>
           <Cell><Data ss:Type="String"><%= item.cheapest_vendor_price.price %></Data></Cell>
-          <Cell><Data ss:Type="String"><%= item.cheapest_vendor_price.vendor&.name %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= item.cheapest_vendor_price.vendor.name %></Data></Cell>
           <Cell><Data ss:Type="String"><%= item.times_sold %></Data></Cell>
         </Row>
       <% end %>

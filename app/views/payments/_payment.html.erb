@@ -1,6 +1,6 @@
 <tr data-payment-id="<%= payment.id %>">
   <td><%= payment.id %></td>
-  <td><%= payment.account&.name %></td>
+  <td><%= payment.account.name %></td>
   <td><%= payment.created_at.to_date %></td>
   <td><%= payment.payment_type %></td>
   <td><%= number_to_currency(payment.amount) %></td>
@@ -21,7 +21,7 @@
       </button>
       <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
         <% payment.order_payment_applications.each do |app| %>
-          <li><%= link_to "#{app.order&.number} - #{number_to_currency(app.applied_amount)}", order_path(app.order_id) %></li>
+          <li><%= link_to "#{app.order.number} - #{number_to_currency(app.applied_amount)}", order_path(app.order_id) %></li>
         <% end %>
       </ul>
     </div>

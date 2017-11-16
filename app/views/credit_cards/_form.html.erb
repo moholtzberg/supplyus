@@ -2,7 +2,7 @@
 
 	<div class="col-xs-12 col-md-12">
 		<label for="account_name">ACCOUNT</label>
-		<%= text_field_tag :account_name, @credit_card&.account_payment_service&.account_name, class: "form-control", name: "account_name", data: {autocomplete_source: accounts_path} %>
+		<%= text_field_tag :account_name, @credit_card.account_payment_service.account_name, class: "form-control", name: "account_name", data: {autocomplete_source: accounts_path} %>
 	</div>
 	
 	<div class="col-xs-12 col-md-12">	

@@ -7,7 +7,7 @@
 	
 	<div id="user_id" class="col-md-6">
 		<%= f.label :user_id, :class => "control-label" %>
-		<%= f.select :user_id, [[f.object.user&.email, f.object.user_id]], {include_blank: true}, class: "form-control", style: "width: 100%" %>
+		<%= f.select :user_id, [[f.object.user.email, f.object.user_id]], {include_blank: true}, class: "form-control", style: "width: 100%" %>
 	</div>
 	
 	<script>

@@ -22,7 +22,7 @@ class CategoryDatatable < AjaxDatatablesRails::Base
     records.map do |record|
       {
         id: record.id,
-        parent: record.parent&.name,
+        parent: record.parent.name,
         position: record.position,
         name: record.name,
         slug: record.slug,
