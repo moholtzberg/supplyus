@@ -263,3 +263,7 @@ table.table {
 .modal-wide .modal-body {
   overflow-y: auto;
 }
+
+#no-before:before {
+   content: none;
+}
