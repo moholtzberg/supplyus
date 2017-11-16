@@ -63,7 +63,7 @@ class ItemsController < ApplicationController
   end
   
   def actual_price_by_item_number_and_account_id
-    account_id = Account.find_by(name: params[:account_name])&.id
+    account_id = Account.find_by(name: params[:account_name]).id
     @price = Item.find_by(number: params["item_number"])&.actual_price(account_id)
     render json: @price
   end
