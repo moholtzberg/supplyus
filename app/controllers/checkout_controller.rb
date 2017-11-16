@@ -123,7 +123,7 @@ class CheckoutController < ApplicationController
           account_payment_service_id: @checkout.account.main_service.id
         })
       end
-      @payment.credit_card_id = @card&.id
+      @payment.credit_card_id = @card.id
     else
       @payment.payment_type =  'CheckPayment'
       @payment = @payment.becomes CheckPayment
