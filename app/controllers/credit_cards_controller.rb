@@ -15,7 +15,7 @@ class CreditCardsController < ApplicationController
   
   def create
     @account = Account.find_by(name: params[:account_name])
-    @credit_card = CreditCard.new(credit_card_params.merge(account_payment_service_id: @account.main_service.id))
+    @credit_card = CreditCard.new(credit_card_params.merge(account_payment_service_id: @account&.main_service&.id))
     @credit_card.save
     update_index
   end

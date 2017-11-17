@@ -309,7 +309,7 @@ class Order < ActiveRecord::Base
   end
   
   def shipping_total_sum
-    if order_shipping_method.amount.nil?
+    if order_shipping_method&.amount.nil?
       0
     else
       order_shipping_method.amount

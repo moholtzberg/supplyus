@@ -36,9 +36,9 @@ class CreditCard < ActiveRecord::Base
   def store_gateway
     if GATEWAY.class == ActiveMerchant::Billing::BraintreeBlueGateway
       if account_payment_service
-        unique_numbers = account_payment_service.credit_cards.map(&:unique_number_identifier)
+        unique_numbers = account_payment_service&.credit_cards&.map(&:unique_number_identifier)
         resp = Braintree::CreditCard.create(
-          customer_id: account_payment_service.service_id,
+          customer_id: account_payment_service&.service_id,
           cardholder_name: cardholder_name,
           number: credit_card_number,
           cvv: card_security_code,

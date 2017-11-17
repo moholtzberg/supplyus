@@ -3,7 +3,7 @@
   <td><%= number_to_currency(order.total) %></td>
   <td><%= number_to_currency(order.amount_shipped) %></td>
   <td><%= number_to_currency(order.balance_due) %></td>
-  <td><%= order.submitted_at.strftime("%m/%d/%y %I:%M %p") %></td>
+  <td><%= order.submitted_at&.strftime("%m/%d/%y %I:%M %p") %></td>
   <td><%= order.state %></td>
   <td class="text-center">
     <div class="dropdown">

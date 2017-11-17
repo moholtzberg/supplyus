@@ -18,11 +18,11 @@ class PurchaseOrderDatatable < AjaxDatatablesRails::Base
     records.map do |record|
       {
         number: record.number,
-        vendor: record.vendor.name,
+        vendor: record.vendor&.name,
         total: number_to_currency(record.total),
         notes: record.notes,
         amount_received: number_to_currency(record.amount_received),
-        completed_at: record.completed_at.strftime("%m/%d/%y %I:%M %p"),
+        completed_at: record.completed_at&.strftime("%m/%d/%y %I:%M %p"),
         locked: record.locked ? 'Yes' : 'No',
         dropdown: dropdown(record.class, record)
       }

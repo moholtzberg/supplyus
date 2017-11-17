@@ -226,7 +226,7 @@ class ShopController < ApplicationController
         account_payment_service_id: @invoice.account.main_service.id
       })
     end
-    @payment.credit_card_id = @card.id
+    @payment.credit_card_id = @card&.id
     @cards = current_user.account.main_service.credit_cards
     if @card and @card.errors.empty? and @payment.authorize
       @payment.save

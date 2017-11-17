@@ -90,8 +90,8 @@ class OrdersController < ApplicationController
   
   def update
     authorize! :update, Order
-    params[:order][:sales_rep_id] = @order.account.sales_rep_id unless !params[:order][:sales_rep_name].blank?
-    params[:order][:credit_hold]  = @order.account.credit_hold unless @order.account.nil?
+    params[:order][:sales_rep_id] = @order.account&.sales_rep_id unless !params[:order][:sales_rep_name].blank?
+    params[:order][:credit_hold]  = @order.account&.credit_hold unless @order.account.nil?
     @order_line_item = OrderLineItem.new
     respond_to do |format|
       if @order.update_attributes(order_params)
@@ -153,7 +153,7 @@ class OrdersController < ApplicationController
 
   def unpaid
     a = Account.find_by(name: params[:account_name])
-    reuturn unless a.id
+    reuturn unless a&.id
     @unpaid_orders = Order.unpaid
                           .where(account_id: a.id)
     @unpaid_orders.includes(:payments, :accounts)

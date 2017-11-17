@@ -22,14 +22,14 @@
 		<tr>
 			<td><%= @subscription.id %></td>
 			<td><%= @subscription.next_order_date %></td>
-			<td><%= @subscription.account.name %></td>
-			<td><%= @subscription.item.number %></td>
+			<td><%= @subscription.account&.name %></td>
+			<td><%= @subscription.item&.number %></td>
 			<td><%= @subscription.quantity %></td>
 			<td><%= @subscription.frequency %></td>
 			<td><%= @subscription.payment_method %></td>
-			<td><%= link_to(@subscription.credit_card.last_4, @subscription.credit_card) if @subscription.credit_card %></td>
-			<td><%= link_to(@subscription.ship_to_address.address_1, @subscription.ship_to_address) if @subscription.ship_to_address %></td>
-			<td><%= link_to(@subscription.bill_to_address.address_1, @subscription.bill_to_address) if @subscription.bill_to_address %></td>
+			<td><%= link_to(@subscription.credit_card&.last_4, @subscription.credit_card) if @subscription.credit_card %></td>
+			<td><%= link_to(@subscription.ship_to_address&.address_1, @subscription.ship_to_address) if @subscription.ship_to_address %></td>
+			<td><%= link_to(@subscription.bill_to_address&.address_1, @subscription.bill_to_address) if @subscription.bill_to_address %></td>
 			<td><%= @subscription.state %></td>
 		</tr>
 		

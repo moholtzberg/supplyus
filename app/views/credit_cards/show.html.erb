@@ -18,7 +18,7 @@
 		
 		<tr>
 			<td><%= @credit_card.id %></td>
-			<td><%= @credit_card.account_payment_service.account_name %></td>
+			<td><%= @credit_card.account_payment_service&.account_name %></td>
 			<td><%= @credit_card.service_card_id %></td>
 			<td><%= @credit_card.cardholder_name %></td>
 			<td><%= @credit_card.last_4 %></td>

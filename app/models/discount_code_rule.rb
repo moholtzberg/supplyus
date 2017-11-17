@@ -18,7 +18,7 @@ class DiscountCodeRule < ActiveRecord::Base
   end
 
   def appliable?(order)
-    [order.account, order.account.group, nil].include?(user_appliable)
+    [order.account, order.account&.group, nil].include?(user_appliable)
   end
 
   def enough_items?(items)
@@ -39,7 +39,7 @@ class DiscountCodeRule < ActiveRecord::Base
     if amount || quantity
       msg += 'Order should contain at least '
       msg += amount ? "$#{amount} worth of " : "#{quantity} "
-      msg += "\'#{requirable.name}\' " if requirable
+      msg += "\'#{requirable&.name}\' " if requirable
       msg += 'items.'
     end
     msg

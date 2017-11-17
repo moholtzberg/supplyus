@@ -28,7 +28,7 @@
 	<div id="appliable_id" class="col-md-4">
 		<%= f.label :appliable_id, class: "control-label" %>
 		<% sources = {'Item' => autocomplete_items_path, 'Category' => autocomplete_categories_path} %>
-		<%= f.text_field :appliable_term, class: "form-control", data: {autocomplete_source: sources[@discount_code_effect.appliable_type]}, disabled: @discount_code_effect.appliable_type.blank?, value: @discount_code_effect.appliable.name %>
+		<%= f.text_field :appliable_term, class: "form-control", data: {autocomplete_source: sources[@discount_code_effect.appliable_type]}, disabled: @discount_code_effect.appliable_type.blank?, value: @discount_code_effect.appliable&.name %>
 	</div>
 
 	<div id="appliable_type" class="col-md-4">

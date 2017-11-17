@@ -12,7 +12,7 @@
 	
 	<div id="parent" class="col-md-6">
 		<%= f.label :parent, :class => "control-label" %>
-		<%= f.select :parent_id, [[f.object.parent.name, f.object.parent_id]], {include_blank: true}, :class => "form-control", style: "width: 100%" %>
+		<%= f.select :parent_id, [[f.object.parent&.name, f.object.parent_id]], {include_blank: true}, :class => "form-control", style: "width: 100%" %>
 	</div>
 
 	<script>

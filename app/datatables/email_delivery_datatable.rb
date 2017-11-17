@@ -26,9 +26,9 @@ class EmailDeliveryDatatable < AjaxDatatablesRails::Base
         to_email: record.to_email,
         eventable_type: record.eventable_type,
         eventable_id: link_to(record.eventable_id, record.eventable),
-        failed_at: record.failed_at.strftime("%m/%d/%y %I:%M %p"),
-        delivered_at: record.delivered_at.strftime("%m/%d/%y %I:%M %p"),
-        opened_at: record.opened_at.strftime("%m/%d/%y %I:%M %p"),
+        failed_at: record.failed_at&.strftime("%m/%d/%y %I:%M %p"),
+        delivered_at: record.delivered_at&.strftime("%m/%d/%y %I:%M %p"),
+        opened_at: record.opened_at&.strftime("%m/%d/%y %I:%M %p"),
         dropdown: dropdown(record.class, record)
       }
     end

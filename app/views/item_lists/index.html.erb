@@ -22,7 +22,7 @@
 		<% @item_lists.each do |a| %>
 			<tr>
 				<td class="hidden-xs"><%= a.id %></td>
-				<td><%= link_to a.user.email, a.user %></td>
+				<td><%= link_to a.user&.email, a.user %></td>
 				<td><%= a.name %></td>
 				<td><%= a.items.count %></td>
 				<td class="text-center">

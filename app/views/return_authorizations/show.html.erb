@@ -20,7 +20,7 @@
       <td><%= number_to_currency(@return_authorization.amount) %></td>
       <td><%= @return_authorization.order_number %></td>
       <td><%= @return_authorization.customer_name %></td>
-      <td><%= @return_authorization.reviewer.display_name %></td>
+      <td><%= @return_authorization.reviewer&.display_name %></td>
       <td><%= @return_authorization.reason %></td>
       <td><%= @return_authorization.notes %></td>
       <td><%= @return_authorization.status %></td>
@@ -47,7 +47,7 @@
             <td><%= lir.order_line_item.item_number %></td>
             <td><%= lir.quantity %></td>
             <td><%= lir.order_line_item.actual_quantity.to_f - lir.order_line_item.quantity_returned.to_f %></td>
-            <td><%= lir.bin.name %></td>
+            <td><%= lir.bin&.name %></td>
           </tr>
         <% end %>
       </tbody>
