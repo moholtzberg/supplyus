@@ -18,7 +18,7 @@ set :shared_files, fetch(:shared_files, []).push('config/application.rb', 'confi
 
 task :environment do
   # For those using RVM, use this to load an RVM version@gemset.
-  invoke :'rvm:use', 'ruby-2.2.1@global'
+  invoke :'rvm:use', 'ruby-2.3.0@default'
 end
 
 # Put any custom commands you need to run at setup
@@ -46,6 +46,9 @@ task :deploy do
     # instance of your project.
     invoke :'git:clone'
     invoke :'deploy:link_shared_paths'
+    in_path(fetch(:current_path)) do
+      command %{gem install json -v '1.8.6'}
+    end
     invoke :'bundle:install'
     invoke :'rails:db_migrate'
     invoke :'rails:assets_precompile'
