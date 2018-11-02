@@ -22,12 +22,12 @@ staging:
   
 development:
   <<: *default
-  adapter: <%= SECRET["DATABASE"]["DEV_ENGINE"] %>
-  host: <%= SECRET["DATABASE"]["DEV_HOST"] %>
-  database: <%= SECRET["DATABASE"]["DEV_DB"] %>
-  username: <%= SECRET["DATABASE"]["DEV_UN"] %>
-  password: <%= SECRET["DATABASE"]["DEV_PW"] %>
-  port: <%= SECRET["DATABASE"]["DEV_PORT"] %>
+  adapter: <%= SECRET["DATABASE"]["PROD_ENGINE"] %>
+  host: <%= SECRET["DATABASE"]["PROD_HOST"] %>
+  database: <%= SECRET["DATABASE"]["PROD_DB"] %>
+  username: <%= SECRET["DATABASE"]["PROD_UN"] %>
+  password: <%= SECRET["DATABASE"]["PROD_PW"] %>
+  port: <%= SECRET["DATABASE"]["PROD_PORT"] %>
 
 # development:
 #   <<: *default
