@@ -170,7 +170,7 @@
 			html += '<div class="media-item-listing search-result">'
 			html +=	'<div class="media-left">'
 			html += '<a href="#">'
-			html += '<img src="https://s3.amazonaws.com/247officesuppy/400/400/' + item.image_path +'" class="media-object" height="60px"/>'
+			html += '<img src='+ item.image_path +' class="media-object" height="60px"/>'
 			html += '</a>'
 			html += '</div>'
 			html += '<div class="media-body">'

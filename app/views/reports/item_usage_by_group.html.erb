@@ -11,19 +11,20 @@
       <th>Item Id</th>
       <th>QTY Ordered</th>
       <th>Item Number</th>
-      <th>Current Price</th>
+      <th>Item Name</th>
+			<th>Price</th>
+			<th>Default Price</th>
     </tr>
 
-    <% OrderLineItem.from_to_by_account_id(@from_date, @to_date, account.id).select { |li| li.qty > 0 }.each_with_index do |li, i|%>
-      <% group_item_price = li.item.prices.actual.by_group(@group.id)&.last&.price.to_f %>
+    <% OrderLineItem.from_to_by_account_id(@from_date, @to_date, account.id).includes(:item => [ :default_price]).select { |li| li.qty > 0 }.each_with_index do |li, i|%>
       <tr>
         <td><%= i %></td>
         <td><%= li.item_id %></td>
         <td><%= number_with_delimiter(li.qty) %></td>
         <td><%= li.number %></td>
-        <td>
-          <%= number_to_currency([group_item_price, li.item.default_price.to_f.to_d].select(&:positive?).min) %>
-        </td>
+        <td><%= li.item.name %></td>
+				<td><%= number_to_currency(li.item.prices.where(appliable_type: "Group", appliable_id: @group.id).order(:id).last&.price) %></td>
+				<td><%= number_to_currency(li.item.default_price&.price)%>
       </tr>
     <% end %>
   </table>

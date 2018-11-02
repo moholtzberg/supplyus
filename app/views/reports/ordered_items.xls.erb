@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+	xmlns:o="urn:schemas-microsoft-com:office:office"
+	xmlns:x="urn:schemas-microsoft-com:office:excel"
+	xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+	xmlns:html="http://www.w3.org/TR/REC-html40">
+	<Worksheet ss:Name="Sheet1">
+		<Table>
+			<Row>
+				<Cell><Data ss:Type="String">Name</Data></Cell>
+				<Cell><Data ss:Type="String">Description</Data></Cell>
+				<Cell><Data ss:Type="String">Distributor</Data></Cell>
+				<Cell><Data ss:Type="String">Distributor #</Data></Cell>
+				<Cell><Data ss:Type="String">Manufacture</Data></Cell>
+				<Cell><Data ss:Type="String">Manufacture #</Data></Cell>
+				<Cell><Data ss:Type="String">Category LVL 1</Data></Cell>
+				<Cell><Data ss:Type="String">Category LVL 2</Data></Cell>
+				<Cell><Data ss:Type="String">Category LVL 3</Data></Cell>
+				<Cell><Data ss:Type="String">Retail Price</Data></Cell>
+				<Cell><Data ss:Type="String">Zen Price</Data></Cell>
+				<Cell><Data ss:Type="String">Package</Data></Cell>
+				<Cell><Data ss:Type="String">Sub Package</Data></Cell>
+				<Cell><Data ss:Type="String">Wieght</Data></Cell>
+				<Cell><Data ss:Type="String">Color</Data></Cell>
+				<Cell><Data ss:Type="String">Size/Volume</Data></Cell>
+				<Cell><Data ss:Type="String">Materials</Data></Cell>
+				<Cell><Data ss:Type="String">Image</Data></Cell>
+			</Row>
+		
+		<% ordered_items_ids = Item.times_ordered.map(&:id) %>
+		<%# sql = "SQL
+		SELECT *
+FROM items i
+LEFT OUTER JOIN brands b ON i.brand_id = b.id 
+LEFT OUTER JOIN item_categories ic ON ic.item_id = i.id
+LEFT OUTER JOIN categories c ON ic.category_id = c.id
+LEFT OUTER JOIN item_properties ip ON ip.item_id = i.id
+LEFT OUTER JOIN assets a ON a.attachable_id = i.id
+LEFT OUTER JOIN prices p ON p.item_id = i.id
+AND p.appliable_id = 46
+GROUP BY i.id, i.number, c.name, b.name, p.price, ip.key, ip.value, a.attachment_file_name
+LIMIT 1" %>
+<%# 
+	results = Item.where.not(id: ordered_items_ids)
+	.joins("LEFT OUTER JOIN brands b ON  .brand_id = b.id")
+	.joins("LEFT OUTER JOIN item_categories ic ON ic.item_id = items.id")
+	.joins("LEFT OUTER JOIN categories c ON ic.category_id = c.id")
+	.joins("LEFT OUTER JOIN item_properties ip ON ip.item_id = i.id")
+	.joins("LEFT OUTER JOIN assets a ON a.attachable_id = i.id")
+	.joins("LEFT OUTER JOIN prices p ON p.item_id = i.id")
+	.where("p.appliable_id = 46 AND p.appliable_type = 'Group'")
+	.group("i.id, i.number, c.name, b.name, p.price, ip.key, ip.value, a.attachment_file_name")
+	.limit(1)
+#%>
+	<%# results = ActiveRecord::Base.connection.execute(sql) %>
+		<%# results.each do |i| %>
+		<% items = Item.where.not(id: ordered_items_ids, description: nil).where(active: true).order(:id).limit(10) %>
+		<%# items = items.includes(:item_categories => [:category]).references(:item_category).where.not("item_categories.category_id = 9609") %>
+		<% items = items.includes(:item_properties) %>
+		<% items.limit(10).find_each do |i| %>
+			<%# if i.assets.count > 0  %>
+			<Row>
+				<Cell><Data ss:Type="String"><%= i.name %></Data></Cell>
+				<Cell><Data ss:Type="String"><%= i.description %></Data></Cell>
+				<Cell><Data ss:Type="String">24/7 Office Supply</Data></Cell>
+				<Cell><Data ss:Type="String"><%= i.number %></Data></Cell>
+				<Cell><Data ss:Type="String"><%# i.brand_name %></Data></Cell>
+				<Cell><Data ss:Type="String"><%= i.number %></Data></Cell>
+				<Cell><Data ss:Type="String"><%# i.item_categories.first&.category&.parent&.parent&.name %></Data></Cell> 
+				<Cell><Data ss:Type="String"><%# i.item_categories.first&.category&.parent&.name %></Data></Cell>
+				<Cell><Data ss:Type="String"><%# i.item_categories.first&.category&.name %></Data></Cell>
+				<Cell><Data ss:Type="String"><%# i.list_price %></Data></Cell>
+				<Cell><Data ss:Type="String"><%# number_to_currency(i.prices.where(appliable_type: "Group", appliable_id: 46, end_date: nil).order(:id).last&.price) %></Data></Cell>
+				<Cell><Data ss:Type="String"><%= i.item_properties.where("key ~* ?", "\w* per \w*").first&.value %>/<%= i.item_properties.where("key ~* ?", "\w* per \w*").first&.key&.scan(/\w*$/)&.first %></Data></Cell>
+				<Cell><Data ss:Type="String"></Data></Cell>
+				<Cell><Data ss:Type="String"></Data></Cell>
+				<Cell><Data ss:Type="String"><%= i.item_properties.where("key ~* ?", "color").first&.value %></Data></Cell>
+				<Cell><Data ss:Type="String"><%= i.item_properties.where("key ~* ?", "(size|volume)").first&.value %></Data></Cell>
+				<Cell><Data ss:Type="String"><%= i.item_properties.where("key ~* ?", "material").first&.value %></Data></Cell>
+				<Cell><Data ss:Type="String"><%# i.assets&.first&.attachment&.url("400/400") %></Data></Cell>
+			</Row>
+			<%# end %>
+		<% end %>
+		</Table>
+	</Worksheet>
+</Workbook>

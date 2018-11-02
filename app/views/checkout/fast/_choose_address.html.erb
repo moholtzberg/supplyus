@@ -1,0 +1,20 @@
+<% current_user.account.addresses.each do |addr| %>
+	
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<div class="address col-md-6">
+				<%= addr.name %><br/>
+				<%= addr.address_1 %><br/>
+				<%= addr.address_2 %><% unless addr.address_2.blank? %><br/><% end %>
+				<%= addr.city %>, <%= addr.state %> <%= addr.zip %><br/>
+				<%= addr.phone %>
+			</div>
+			<div class="col-md-6">
+				<%= link_to "Choose", checkout_fast_update_address_path(:address_id => addr.id), remote: true, method: "patch", class: "btn btn-primary pull-right" %>
+			</div>
+		</div>
+	</div>
+	
+<% end %>
+
+<%= link_to "Enter a New Address", checkout_fast_new_address_path(:account_id => current_user.account_id), remote: true %>

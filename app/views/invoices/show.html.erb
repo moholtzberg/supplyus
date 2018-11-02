@@ -70,7 +70,7 @@
 				<% @invoice.line_item_fulfillments.each do |chg| %>
 				<tr>
 					<td><%= chg.order_line_item.item.number %></td>
-					<td class="text-center"><%= chg.order_line_item.quantity.to_i %></td>
+					<td class="text-center"><%= chg.order_line_item.actual_quantity.to_i %></td>
 					<td class="text-center"><%= number_to_currency(chg.order_line_item.price) %></td>
 					<td class="text-right"><%= number_to_currency(chg.order_line_item.sub_total) %></td>
 				</tr>

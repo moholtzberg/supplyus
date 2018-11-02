@@ -1,7 +1,7 @@
 <tr data-payment-id="<%= payment.id %>">
   <td><%= payment.id %></td>
   <td><%= payment.account&.name %></td>
-  <td><%= payment.created_at.to_date %></td>
+  <td><%= payment.created_at&.to_date %></td>
   <td><%= payment.payment_type %></td>
   <td><%= number_to_currency(payment.amount) %></td>
   <td><%= number_to_currency(payment.applied_amount) %></td>

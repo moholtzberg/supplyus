@@ -36,7 +36,6 @@
 				});
 
 				function success_action(data_object) {
-					console.log(data_object)
 					var text = "<option>2 | Select Your Printer Family</option>"
 					for (var i=0; i < data_object.length; i++) {
 						text += "<option value=" + data_object[i].id + ">" + data_object[i].name + "</option>"
@@ -176,14 +175,16 @@
 			
 			<div id="carousel-example" class="row container carousel slide hidden-xs featured-items" data-ride="carousel">
 				<div class="carousel-inner">
+
+					<% must_have_items = Category.find_by(:slug => "must-have-items") %>
 				
-					<% Category.find_by(slug: "must-have-items").item_categories.each_slice(6).with_index do |slice, idx| %>
+					<% Item.joins(:categories).eager_load(:default_price, :current_user_actual_price, :default_image, :recurring_price, :bulk_prices).where('categories.id = ?', must_have_items.id).each_slice(6).with_index do |slice, idx| %>
 						<% active = idx == 0 ? "active" : "" %>
 						
 						<div class="item <%= active %>">
 							
 								<% slice.each do |i| %>
-									<%= render :partial => "shop/featured_item", :locals => {:item => i.item} %>
+									<%= render :partial => "shop/featured_item", :locals => {:item => i} %>
 								<% end %>
 						
 						</div>

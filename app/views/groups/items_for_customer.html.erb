@@ -8,23 +8,37 @@
 				<th>Item</th>
 				
 				<th>Item Number</th>
+				
 				<th>Price</th>
+				<!-- <th>Aftr Cpn</th> -->
+				<!-- <th>Cost</th> -->
+				<!-- <th>20%</th> -->
+				<!-- <th>Aftr CPN 5%</th> -->
+				<!-- <th>Aftr CPN 8%</th> -->
+				<th>Aftr CPN 10%</th>
 			</tr>
 		
-			<% order_ids = Order.where(account_id: @ids).ids %>
+			<%# order_ids = Order.where(account_id: @ids).ids %>
 			
 			<% @items.limit(100).each do |i|%>
-				<% if i.qty > 0 %>
+				<%# if i.qty > 0 %>
 				<tr>
 					<td>
-						<%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/#{i.item.default_image_path}", :class => "media-object", :height => "64", :width => "64" %>
+						<%= image_tag i.default_image_path, :class => "media-object", :height => "64", :width => "64" %>
 					</td>
-					<td><%= link_to "#{i.item.number}", "#{i.item.category.slug unless i.item.category.nil?}/#{i.item.slug}" %></td>
+					<td><%= link_to "#{i.number}", "#{i.category.slug unless i.category.nil?}/#{i.slug}" %></td>
 					
-					<td><%= i.item.name %></td>
-					<td><%= number_to_currency(i.item.cost_price.to_f * 1.2) %></td>
+					<td><%= i.name %></td>
+					<!-- <td><%# i.default_price.start_date.try(:to_date) %> -->
+					<!-- <td><%# number_to_currency(i.default_price.price) %></td> -->
+					<!-- <td><%# number_to_currency(i.default_price.price * 0.9) %></td> -->
+					<!-- <td><%# number_to_currency(i.item_vendor_prices.order(:id)&.last&.price) %></td> -->
+					<td><%= number_to_currency(i.item_vendor_prices.order(:id)&.last&.price * 1.2) %></td>
+					<!-- <td><%# number_to_currency((i.item_vendor_prices.order(:id)&.last&.price * 1.2) * 0.95) %></td>
+					<td><%# number_to_currency((i.item_vendor_prices.order(:id)&.last&.price * 1.2) * 0.92) %></td> -->
+					<td><%= number_to_currency((i.item_vendor_prices.order(:id)&.last&.price * 1.2) * 0.9) %></td>
 				</tr>
-				<% end %>
+				<%# end %>
 			<% end %>
 		</table>
 	

@@ -149,7 +149,7 @@
 					<th>&nbsp;</th>
 				</tr>
 
-				<% @group.prices.actual.includes(:item).each do |a| %>
+				<%# @group.prices.limit(100).actual.includes(:item).each do |a| %>
 
 				<tr <% if a.item && (a.price.to_f < a.item.cost_price.to_f) %>class="danger" <% end %>>
 					<td><%= a.item.number unless a.item.nil?  %></td>
@@ -159,7 +159,7 @@
 					<td><%= link_to "Delete", price_path(a.id), :method => :delete %></td>
 				</tr>
 
-				<% end %>
+				<%# end %>
 
 			</table>
 			
@@ -200,4 +200,4 @@
 			
 		</div>
 	</div>
-</div
+</div>

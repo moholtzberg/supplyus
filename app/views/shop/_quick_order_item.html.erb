@@ -1,0 +1,53 @@
+<div id=item_"<%= i.id %>" class="media item_listing">
+	
+	<div class="col-md-9 col-xs-12">
+		<div class="media-left">
+			<a href="#">
+				<%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/#{i.images&.first&.path}", :class => "media-object", :height => "100", :width => "100" %>
+			</a>
+		</div>
+		<div class="media-body">
+
+				<% name = i.name  %>
+				<% number = i.number %>
+
+			<h4 class="media-heading"><strong><% if i.slug.blank? or i.default_category.slug.blank? %><%= "#{i.number}" %><% else %><%= link_to "#{i.number}", shop_item_path(:category => i.default_category, :item => i)%> <% end %></strong> - <%= "#{name}".html_safe %></h4>
+			
+		</div>
+	</div>
+	
+	<div class="col-md-3 col-xs-12">
+		<div class="pull-right">
+			<%= form_for @cart, url: add_to_cart_path, :class => "form-inline", :remote => true do |f| %>
+				<div class="form-group">
+					<% if i.current_user_actual_price.price < i.default_price&.price %>
+						<h5 class="text-center"><span class="hidden-xs">List Price:</span> <span style="text-decoration:line-through;"><%= number_to_currency(i.default_price&.price) %></span><h5>
+						<h4 class="text-center"><span class="hidden-xs">Your Price:</span> <%= number_to_currency(i.current_user_actual_price.price) %><h4>
+					<% else %>
+						<h4 class="text-center"><span class="hidden-xs">Your Price:</span> <%= number_to_currency(i.default_price&.price) %><h4>
+					<% end %>
+					<% if i.bulk_prices.any? %>
+						<div class="well well-sm">
+							<p class="border-bottom">Bulk prices:</p>
+							<% i.bulk_prices.each do |price| %>
+								<p>
+									<%= "#{price.min_qty}-#{price.max_qty} pcs.: #{number_to_currency(price.price)}" %>
+								</p>
+							<% end %>
+						</div>
+					<% end %>
+					<%= f.hidden_field :item_id, :value => i.id %>
+					<div class="input-group">
+						<%= f.number_field :quantity, :value => 1, :class => "form-control input-sm input-block" %>
+					</div>
+				</div>
+				<%= f.submit "Add To Cart", :class => "btn btn-success btn-sm btn-block margin-bottom" %>
+			<% end %>
+			<% if i.recurring_price %>
+				<%= link_to "Subscribe (#{number_to_currency(i.recurring_price.price)})", new_my_account_subscription_path(subscription: {item_id: i.id, account_id: current_user&.account_id, state: 'new'}), remote: true, class: "btn btn-primary btn-sm btn-block" %>
+			<% end %>
+			
+		</div>
+	</div>
+	
+</div>

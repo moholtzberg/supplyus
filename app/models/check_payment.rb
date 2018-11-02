@@ -4,10 +4,10 @@ class CheckPayment < Payment
 
   def authorize
     if payment_method.name == 'terms'
-      if account.has_enough_credit
+      if account.has_credit
         true
       else
-        errors.add(:base, 'Not enough credit for terms payment.') && return
+        errors.add(:base, 'Youre account is either on hold or has insufficient credit available to process this order.') && return
         false
       end
     elsif payment_method.name == 'check'
@@ -21,6 +21,7 @@ class CheckPayment < Payment
   end
 
   def refund(sum)
+    puts "reeeeeefunuuuuuund #{sum}"
     update_attributes(refunded: sum)
   end
 

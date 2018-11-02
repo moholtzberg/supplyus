@@ -28,11 +28,14 @@
 				$.each($(':input[id$="applied_amount"]'), function() {
 					var idx = $(':input[id$="applied_amount"]').attr('id').match(/\d+/)[0]
 					var order_id = $(':input[id$="_' + idx + '_order_id"]').val()
-				  if ( $(this).val() > $(this).attr('unauthorized') ) {
+				  if ( Number($(this).val()) > Number($(this).attr('unauthorized')) ) {
 				  	if (!confirm('There is pending payment for order ' + order_id + '. Proceed?')) {
 				  		ready = false;
 				  	}
 				  }
+				});
+				$(this).children(':input[name$="[applied_amount]"]').each(function() {
+					$(this).attr('disabled', Number($(this).val()) == 0 )
 				});
 				return ready
 			})

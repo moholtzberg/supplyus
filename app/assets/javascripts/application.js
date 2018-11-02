@@ -12,7 +12,8 @@
 //
 //= require jquery
 //= require jquery.auto-complete
-// require jquery-ui/autocomplete
+//= require jquery-ui/widgets/autocomplete
+//= require jquery-ui/widgets/sortable
 //= require jquery_ujs
 //= require jquery.remotipart
 //= require jquery.tokeninput

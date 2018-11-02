@@ -35,6 +35,7 @@
 	<script>
 		$(function() {
 			var workers_with_params = <%= raw @workers_with_params.to_json %>;
+			console.log(workers_with_params)
 			$('#schedule_worker').change(function() {
 				$('#arguments .input-group').remove();
 				var params = workers_with_params[$(this).val()]

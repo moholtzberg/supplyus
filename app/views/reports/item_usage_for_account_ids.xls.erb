@@ -22,7 +22,7 @@
             <Cell><Data ss:Type="String"><%= number_with_delimiter(li.qty) %></Data></Cell>
             <Cell><Data ss:Type="String"><%= li.number %></Data></Cell>
             <Cell><Data ss:Type="String">
-              <%= number_to_currency([account_item_price, li.item.default_price.to_f.to_d].select(&:positive?).min) %>
+              <%= number_to_currency([account_item_price, li.item.default_price.price.to_f.to_d].select(&:positive?).min) %>
             </Data></Cell>
           </Row>
         <% end %>

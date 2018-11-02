@@ -59,12 +59,11 @@ Rails.application.configure do
   # config.logger = ActiveSupport::TaggedLogging.new(SyslogLogger.new)
 
   # Use a different cache store in production.
-  # config.cache_store = :mem_cache_store
+  config.cache_store = :dalli_store, 'memcache:11211', {:expires_in => 1.day, :compress => true }
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   
-  config.action_controller.asset_host = "www.supply.us/"
-  config.action_mailer.default_url_options = { :host => "http://www.supply.us" }
+  config.action_mailer.default_url_options = { :host => "www.247officesupply.com" }
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
@@ -80,14 +79,16 @@ Rails.application.configure do
     enable_starttls_auto: true
   }
   
-  # config.paperclip_defaults = {
-  #     :storage => :s3,
-  #     :s3_credentials => {
-  #       :bucket => "247officesuppy",
-  #       :access_key_id => "#{SECRET['AWS']['ACCESS_KEY_ID']}",
-  #       :secret_access_key => "#{SECRET['AWS']['SECRET_ACCESS_KEY']}"
-  #     }
-  #   }
+  config.paperclip_defaults = {
+    :storage => :s3,
+    :preserve_files => true,
+    :s3_credentials => {
+      :bucket => "#{SECRET['AWS']['S3']['BUCKET_NAME']}",
+      :access_key_id => "#{SECRET['AWS']['ACCESS_KEY_ID']}",
+      :secret_access_key => "#{SECRET['AWS']['SECRET_ACCESS_KEY']}"
+    },
+    :s3_region => "us-east-1"
+  }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).

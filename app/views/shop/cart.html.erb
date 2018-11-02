@@ -4,4 +4,12 @@
 	<% else %>
 	<%= render :partial => "shop/cart_contents" %>
 	<% end %>
+	<% if current_user %>
+		<% if Budget.find_by(budgetable_id: current_user.id, budgetable_type: "User") or Budget.find_by(budgetable_id: current_user.account_id, budgetable_type: "Account") %>
+		<% account_budget = Budget.find_by(budgetable_id: current_user.account_id, budgetable_type: "Account") %>
+		<% user_budget = Budget.find_by(budgetable_id: current_user.id, budgetable_type: "User") %>
+			Account Budget: <%= account_budget  %><br/>
+			User Budget: <%= user_budget  %>
+		<% end %>
+	<% end %>
 </div>

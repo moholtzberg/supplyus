@@ -5,12 +5,12 @@ class MyAccount::ReturnAuthorizationsController < ApplicationController
   skip_before_filter :check_authorization
 
   def new
-    authorize! :create, ReturnAuthorization
+    # authorize! :create, ReturnAuthorization
     @return_authorization = ReturnAuthorization.new(order_id: params[:order_id])
   end
 
   def create
-    authorize! :create, ReturnAuthorization
+    # authorize! :create, ReturnAuthorization
     @return_authorization = ReturnAuthorization.new(
       return_authorization_params.merge(customer_id: current_user.account_id)
     )

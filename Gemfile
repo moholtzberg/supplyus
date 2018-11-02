@@ -1,6 +1,7 @@
 ruby "2.3.3"
+
 source 'https://rubygems.org'
-gem 'rails', '4.2.3'
+gem 'rails', '~> 4.2.7.1'
 
 gem 'sqlite3', group: :development
 gem 'pg'
@@ -14,7 +15,7 @@ gem "jquery-ui-rails"
 gem 'turbolinks'
 gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
-  
+gem 'premailer-rails'
 # gem 'elasticsearch-model'
 # gem 'elasticsearch-rails'
 # gem 'searchkick'
@@ -28,7 +29,7 @@ gem 'unicorn'
 gem 'bootstrap-sass', '~> 3.3.5'
 gem 'font-awesome-sass'
 gem 'paperclip'
-gem 'aws-sdk', '< 2.0'
+gem 'aws-sdk', '~> 3'
 gem 'devise'
 # gem 'devise_token_auth'
 gem 'simple_token_authentication', '~> 1.0'
@@ -52,7 +53,7 @@ gem 'newrelic_rpm'
 gem 'wicked_pdf'
 gem 'wkhtmltopdf-binary'
 
-gem 'sidekiq', '~> 4.1', '>= 4.1.1'
+gem 'sidekiq', '4.2.7'
 gem 'sinatra', :require => nil
 gem 'sidekiq-scheduler'
 gem 'sidekiq-batch'
@@ -65,13 +66,13 @@ group :development, :test do
   gem 'mina'
   gem 'mina-foreman', github: 'asabourin/mina-foreman', branch: 'master'
   gem 'byebug'
-  # gem 'jazz_hands', github: 'nixme/jazz_hands', branch: 'bring-your-own-debugger'
   gem 'pry-byebug'
   gem 'web-console', '~> 2.0'
+  gem "bullet"
+  gem 'quiet_assets', '~> 1.1'
+  gem "letter_opener"
 end
-gem "bullet", :group => "development"
-gem 'quiet_assets', '~> 1.1', group: :development
-gem "letter_opener", :group => :development
+
 gem 'raindrops', '~> 0.15.0'
 gem 'state_machines'
 gem 'state_machines-activerecord'
@@ -84,3 +85,6 @@ gem "select2-rails"
 gem 'friendly_id', '~> 5.1.0'
 gem 'summernote-rails'
 gem 'bootstrap-datepicker-rails'
+gem 'paper_trail'
+gem 'lograge'
+gem 'rack-attack'

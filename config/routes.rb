@@ -99,6 +99,7 @@ Rails.application.routes.draw do
       resources :item_imports
       resources :item_lists
       resources :item_item_lists
+      resources :item_references
       resources :item_vendor_prices
       resources :item_vendor_price_imports
       resources :jobs
@@ -131,6 +132,7 @@ Rails.application.routes.draw do
           put :resend_order
           post :resend_order_confirmation
           put :credit_hold
+          put :remove_hold
           post :apply_code
         end
         resources :shipments, :only => [:new, :create]
@@ -169,6 +171,8 @@ Rails.application.routes.draw do
           get :item_usage_by_group
           get :ar_aging
           get :vendor_prices
+          get :unlinked_order_line_items
+          get :ordered_items
         end
       end
       resources :return_authorizations, except: [:edit, :update] do
@@ -190,6 +194,10 @@ Rails.application.routes.draw do
       resources :sales_reps
       resources :schedules
       resources :settings
+      resources :shipping_methods
+      resources :shipping_calculators
+      resources :shipment
+      resources :sku_groups
       resources :static_pages
       resources :subscriptions do
         member do
@@ -202,6 +210,11 @@ Rails.application.routes.draw do
         get :reset_password
       end
       resources :vendors
+      resources :versions do
+        collection do
+          post :datatables
+        end
+      end
       resources :warehouses
       get "items/delete/:id" => "items#delete"
       get "/" => "home#show"
@@ -219,28 +232,54 @@ Rails.application.routes.draw do
     resources :addresses, only: [:index, :new, :create, :destroy]
     resources :credit_cards
     resources :item_item_lists, only: [:create, :destroy]
-    resources :item_lists
+    resources :item_lists 
+    resources :user_item_lists do
+      collection do
+        get :users
+      end
+    end
     resources :subscriptions do
       member do
         get :details
         patch :details, action: :update_details
       end
     end
-    resources :orders, param: :order_number, only: [:index, :show, :return]
+    resources :orders, param: :order_number, only: [:show, :return]
     resources :return_authorizations, only: [:new, :create]
+    resources :accounts, only: [:new, :create] do 
+      member do
+        resources :users
+      end
+    end
+    resources :flagged_order_line_items
   end
-
-  get   "checkout/address" => "checkout#address"
-  patch "checkout/address" => "checkout#update_address"
-  get   "checkout/shipping" => "checkout#shipping"
-  patch "checkout/shipping" => "checkout#update_shipping"
-  get   "checkout/payment" => "checkout#payment"
-  patch "checkout/payment" => "checkout#update_payment"
-  get   "checkout/confirm" => "checkout#confirm"
-  patch "checkout/submit"=> "checkout#submit"
-  post  "checkout/apply_code" => "checkout#apply_code"
-  delete  "checkout/remove_code" => "checkout#remove_code"
-
+  
+  get    "checkout/address" => "checkout#address"
+  patch  "checkout/address" => "checkout#update_address"
+  get    "checkout/shipping" => "checkout#shipping"
+  patch  "checkout/shipping" => "checkout#update_shipping"
+  get    "checkout/payment" => "checkout#payment"
+  patch  "checkout/payment" => "checkout#update_payment"
+  get    "checkout/confirm" => "checkout#confirm"
+  patch  "checkout/submit"=> "checkout#submit"
+  post   "checkout/apply_code" => "checkout#apply_code"
+  delete "checkout/remove_code" => "checkout#remove_code"
+  get    "checkout/fast" => "checkout#fast_checkout"
+  get    "checkout/fast/choose_address" => "checkout#fast_choose_address"
+  get    "checkout/fast/new_address" => "checkout#fast_new_address"
+  patch  "checkout/fast/update_address" => "checkout#fast_update_address"
+  get    "checkout/fast/update_address" => "checkout#fast_update_address"
+  patch  "checkout/fast/create_address" => "checkout#fast_create_address"
+  get    "checkout/fast/back_to_address" => "checkout#fast_back_to_address"
+  get    "checkout/fast/choose_payment_method" => "checkout#fast_choose_payment_method"
+  get    "checkout/fast/new_cc" => "checkout#fast_new_cc"
+  post   "checkout/fast/create_cc" => "checkout#fast_create_cc"
+  patch  "checkout/fast/update_payment_method" => "checkout#fast_update_payment_method"
+  get    "checkout/fast/update_payment_method" => "checkout#fast_update_payment_method"
+  get    "checkout/fast/back_to_payment" => "checkout#fast_back_to_payment"
+  
+  get   "/quick_order" => "shop#quick_order", as: :quick_order
+  get   "/quick_search" => "shop#quick_search", as: :quick_search
   post  "/add_to_cart" => "shop#add_to_cart"
   patch "/add_to_cart" => "shop#add_to_cart"
   post  "/update_cart" => "shop#update_cart"
@@ -259,7 +298,7 @@ Rails.application.routes.draw do
   
   get "/pages/:static_page" => "shop#page"
   get "/categories/:parent_id" => "shop#categories"
-  get "/:category/:item" => "shop#item"
+  get "/:category/:item" => "shop#item", as: :shop_item
   get "/:category" => "shop#category"
   get "/" => "shop#index"
   

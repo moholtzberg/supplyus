@@ -1,0 +1,57 @@
+<% content_for :app_location do %>Admin / Groups / Ordered Items<% end %>
+<table class="table table-bordered table-condensed">
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Distributor</th>
+    <th>Distributor #</th>
+    <th>Manufacture</th>
+		<th>Manufacture #</th>
+		<th>Category LVL 1</th>
+		<th>Category LVL 2</th>
+		<th>Category LVL 3</th>
+		<th>Retail Price</th>
+		<th>Zen Price</th>
+		<th>Package</th>
+		<th>Sub Package</th>
+		<th>Wieght</th>
+		<th>Color</th>
+		<th>Size/Volume</th>
+		<th>Materials</th>
+		<th>Image</th>
+  </tr>
+	
+	<% ordered_items_ids = Item.times_ordered.map(&:id).uniq %>
+  <% Item.where.not(id: ordered_items_ids, description: nil).where(active: true).limit(10000)
+		.joins([:brand, :assets, :images, :item_properties, :prices, :item_categories => [:category]])
+		.select("..........").each do |i| %>
+    <tr>
+      <td><%= i.name %></td>
+      <td><%= i.description %></td>
+      <td>24/7 Office Supply</td>
+			<td><%= i.number %></td>
+			<td><%= i.brand&.name %></td>
+			<td><%= i.number %></td>
+			<td><%= i.item_categories.where.not(category_id: 9609).first&.category&.parent&.parent&.name %> </td> 
+			<td><%= i.item_categories.where.not(category_id: 9609).first&.category&.parent&.name %></td>
+			<td><%= i.item_categories.where.not(category_id: 9609).first&.category&.name %></td>
+			<td><%= i.list_price %></td>
+			<td><%= number_to_currency(i.prices.where(appliable_type: "Group", appliable_id: 46, end_date: nil).order(:id).last&.price) %></td>
+			<td><%= i.item_properties.where("key ~* ?", "\w* per \w*").first&.value %>/<%= i.item_properties.where("key ~* ?", "\w* per \w*").first&.key&.scan(/\w*$/)&.first %></td>
+			<td></td>
+			<td></td>
+			<td><%= i.item_properties.where("key ~* ?", "color").first&.value %></td>
+			<td><%= i.item_properties.where("key ~* ?", "(size|volume)").first&.value %></td>
+			<td><%= i.item_properties.where("key ~* ?", "material").first&.value %></td>
+			<td>
+					<img class="media-object" height="64" width="64" src="<%= i.default_image_path %>"/>
+          <%# image_tag i.default_image_path, :class => "media-object", :height => "64", :width => "64" %>
+        
+          <%# image_tag "https://s3.amazonaws.com/247officesuppy/400/400/NOA.JPG", :class => "media-object", :height => "64", :width => "64" %>
+        
+      </td>
+			
+			
+    </tr>
+  <% end %>
+</table>

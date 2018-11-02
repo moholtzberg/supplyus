@@ -8,8 +8,9 @@ class Account < ActiveRecord::Base
   belongs_to :user
   belongs_to :group
   belongs_to :sales_rep, :class_name => "User"
-  has_many :addresses
-  has_one :main_address, -> { where(main: true) }, :class_name => "Address", :dependent => :destroy
+  has_many :addresses, inverse_of: :account
+  has_one :main_address, -> { where(main: true) }, :class_name => "Address", :dependent => :destroy, inverse_of: :account
+  has_one :budget, as: :budgetable
   has_many :users
   has_many :contacts
   has_many :equipment, :class_name => "Equipment"
@@ -21,6 +22,7 @@ class Account < ActiveRecord::Base
   has_many :orders
   has_many :order_line_items, :through => :orders
   has_many :prices, as: :appliable
+  has_many :prices, as: :appliable
   has_many :account_payment_services, dependent: :destroy
   has_many :subscriptions
   has_one :main_service, -> { where(name: AccountPaymentService::PROVIDERS_HASH[GATEWAY.class.to_s]) }, :class_name => "AccountPaymentService"
@@ -30,8 +32,8 @@ class Account < ActiveRecord::Base
   validates :subscription_month_day, numericality: true, inclusion: {in: (1..31).to_a}, allow_nil: true
   validates :subscription_quarter_day, numericality: true, inclusion: {in: (1..92).to_a}, allow_nil: true
   before_create :set_payment_services
-  accepts_nested_attributes_for :main_address
-
+  accepts_nested_attributes_for :main_address 
+  accepts_nested_attributes_for :addresses
   # after_commit :sync_with_quickbooks if :persisted
   
   # validates_presence_of :creator, :on => :create, :message => "creator can't be blank"
@@ -41,7 +43,7 @@ class Account < ActiveRecord::Base
   end
   
   def has_credit
-    if credit_limit > 0 and credit_hold != true and credit_terms > 1
+    if credit_limit > 0 and credit_hold != true and payment_terms > 1
       true
     else
       false
@@ -49,11 +51,11 @@ class Account < ActiveRecord::Base
   end
 
   def has_enough_credit
-    !credit_terms.nil? and credit_limit.to_d >= (orders.map(&:balance_due).sum).to_d
+    has_credit and credit_limit.to_d >= (orders.map(&:balance_due).sum).to_d
   end
   
   def payment_terms
-    credit_terms
+    credit_terms.to_i
   end
   
   def is_taxable?

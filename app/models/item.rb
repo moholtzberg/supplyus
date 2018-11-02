@@ -2,6 +2,7 @@ class Item < ActiveRecord::Base
 
   include ApplicationHelper
   extend FriendlyId
+  has_paper_trail
   friendly_id :number, use: [:slugged, :history]
 
   scope :active, -> { where(:active => true)}
@@ -9,6 +10,7 @@ class Item < ActiveRecord::Base
 
   has_many :item_vendor_prices
   has_many :images, as: :attachable
+  has_one :default_image, -> { limit(1).order(:id) }, as: :attachable, class_name: 'Image'
   has_many :documents, as: :attachable
   has_many :assets, -> { order(position: :asc) }, as: :attachable
   has_many :order_line_items
@@ -25,6 +27,12 @@ class Item < ActiveRecord::Base
   has_many :item_lists, through: :item_item_lists
   has_many :item_item_lists, dependent: :destroy
   has_many :prices
+  has_one :default_price, -> { actual._public.default.limit(1).order(:price) }, class_name: 'Price'
+  has_one :recurring_price, -> { actual.recurring.limit(1).order(:price) }, class_name: 'Price'
+  has_many :bulk_prices, -> { actual.bulk.order('min_qty asc') }, class_name: 'Price'
+  has_one :current_user_actual_price, -> { actual.where('(prices.appliable_type = ? AND prices.appliable_id = ?) OR (prices.appliable_type = ? AND prices.appliable_id = ?) OR (prices.appliable_type IS NULL AND prices.appliable_id IS NULL)', (User.current&.account_id ? 'Account' : nil), User.current&.account_id, (User.current&.account_id ? 'Group' : nil), (User.current&.account_id ? Account.find(User.current&.account_id).group_id : nil)).where('prices._type IN (?) AND prices.min_qty IS NULL AND prices.max_qty IS NULL', ['Default', 'Sale']) }, class_name: 'Price'
+  belongs_to :sku_group
+  delegate :name, to: :sku_group, allow_nil: true, prefix: true
   belongs_to :category
   belongs_to :brand
   belongs_to :model
@@ -92,11 +100,11 @@ class Item < ActiveRecord::Base
   end
 
   def index_async
-    ItemIndexWorker.perform_async(id)
+    DataMaintenance::ItemIndexWorker.perform_async(id)
   end
 
   def essendant_xml_import_async
-    EssendantXmlImportWorker.perform_async(id)
+    DataImports::EssendantXmlImportWorker.perform_async(id)
   end
 
   def category_name
@@ -158,20 +166,15 @@ class Item < ActiveRecord::Base
     item_vendor_prices.where.not(price: 0).order(price: :asc).first
   end
 
-  def default_price
-    prices.actual._public.default.minimum(:price).to_f
-  end
-
   def actual_price(account_id = nil, quantity = nil)
-    self.prices.actual.where('(appliable_type = ? AND appliable_id = ?) OR (appliable_type = ? AND appliable_id = ?) OR (appliable_type IS NULL AND appliable_id IS NULL)', (account_id ? 'Account' : nil), account_id, (account_id ? 'Group' : nil), (account_id ? Account.find(account_id).group_id : nil)).
+    self.prices.actual.where('(appliable_type = ? AND appliable_id = ?) OR (appliable_type = ? AND appliable_id = ?) OR (appliable_type IS NULL AND appliable_id IS NULL)', (account_id ? 'Account' : nil), account_id, (account_id ? 'Group' : nil), (account_id ? Account.find(account_id)&.group_id : nil)).
       where('(_type = ? AND min_qty <= ? AND max_qty >= ?) OR (_type IN (?) AND min_qty IS NULL AND max_qty IS NULL)', (quantity ? 'Bulk' : nil), quantity, quantity, ['Default', 'Sale']).
       minimum(:price).to_f
   end
 
   def default_image_path
     unless images.first.nil?
-      puts "----> #{images.first.path}"
-      images.first.path
+      images.first.attachment.url
     end
   end
 
@@ -241,5 +244,14 @@ class Item < ActiveRecord::Base
 
   def one_default_price
     errors.add(:base, "Item needs to have at least one default price") if prices.select { |p| !p.marked_for_destruction? && p._type == 'Default' }.length == 0
+  end
+
+  def default_price_value
+    default_price.price
+  end
+
+  def sku_group_neighbours
+    Item.where(sku_group_id: sku_group_id)
+        .where.not(id: id).where.not(sku_group_id: nil)
   end
 end

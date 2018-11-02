@@ -1,0 +1,27 @@
+<div class="col-md-9">
+<%# form_for @checkout, :url => checkout_address_path, :method => :patch do |f| %>
+	
+	<% @checkout.errors.each do |attribute, message| %>
+		<script>
+			$("#checkout_<%= attribute %>").addClass("danger");
+			</script>
+	<% end %>
+	
+	<!-- <div class="col-md-2">
+
+	</div>
+
+	<div class="col-md-10">
+
+	</div> -->
+		
+		<%= render :partial => "checkout/fast/shipping_address" %>
+		<br/>
+		<%= render :partial => "checkout/fast/payment_method" %>
+
+<%# end %>
+</div>
+
+<div class="col-md-3">
+	
+</div>

@@ -30,9 +30,9 @@
 					<td><%= number_with_delimiter(i.qty) %></td>
 					<td><%= i.number %></td>
 					<td><% prc = group_item_price.nil? ? 0 : group_item_price.price %>
-						<%= number_to_currency([prc, i.item.default_price.to_f.to_d].min) %>
+						<%= number_to_currency([prc, i.item.default_price.price.to_f.to_d].min) %>
 					</td>
-					<td><%= i.item.default_price.to_f.to_d %></td>
+					<td><%= i.item.default_price.price.to_f.to_d %></td>
 				</tr>
 				<% end %>
 			<% end %>

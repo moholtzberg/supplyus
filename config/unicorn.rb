@@ -22,8 +22,8 @@
 # https://www.digitalocean.com/community/tutorials/how-to-deploy-a-rails-app-with-unicorn-and-nginx-on-ubuntu-14-04
 # set path to application
 # app_dir = File.expand_path("../..", __FILE__)
-app_dir = "/home/rails/supplyus/current"
-shared_dir = "/home/rails/supplyus/shared"
+app_dir = "/recurring"
+shared_dir = "/recurring/shared"
 working_directory app_dir
 
 # Set unicorn options

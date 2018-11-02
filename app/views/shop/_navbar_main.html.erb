@@ -83,7 +83,7 @@
 					<% end %>
 				</ul>
 			
-				<% cache @menu do %>
+				<%# cache @menu do %>
 				<ul class="nav navbar-nav">
 				
 					<% @menu.each do |cat| %>
@@ -117,7 +117,7 @@
 					<% end %>
 				
 				</ul>
-				<% end %>
+				<%# end %>
 			</div>
 		
 		</div>
@@ -132,10 +132,8 @@
 		$(".js-autocomplete").autoComplete({
 			delay: 1000,
 			source: function(term, response){
-				console.log(term);
 				$.getJSON('/search_autocomplete', { q: term }, function(data){ 
 					response(data);
-					console.log(data);
 				 });
 			}
 		});

@@ -19,7 +19,7 @@ class ItemDatatable < AjaxDatatablesRails::Base
         id: record.id,
         number: record.number,
         name: record.name,
-        default_price: number_to_currency(record.prices.actual.where(_type: 'Default').first&.price),
+        default_price: number_to_currency(record.default_price&.price),
         times_sold: record.times_sold.to_i,
         dropdown: dropdown(record.class, record)
       }

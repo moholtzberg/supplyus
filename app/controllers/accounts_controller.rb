@@ -9,15 +9,12 @@ class AccountsController < ApplicationController
     respond_to do |format|
       format.html
       format.js
-      msg = @accounts.map {|a| 
+      msg = @accounts.includes(:addresses, account_payment_services: :credit_cards).map {|a| 
         {
           :label => "#{a.name} #{a.group_name.present? ? "(" + a.group_name + ")" : nil}", :value => "#{a.name}",
           :name => "#{a.name}",
           :address_1 => "#{a.address_1}", :address_2 => "#{a.address_2}", :city => "#{a.city}", text: a.name, id: a.id,
-          :state => "#{a.state}", :zip => "#{a.zip}", :phone => "#{a.phone}", :email => "#{a.email}",
-          :credit_cards => (a.main_service.credit_cards.map {|cc| ["**** **** **** #{cc.last_4.to_i}", cc.id] }.to_h if a.main_service),
-          :orders => a.orders.map {|o| {label:  o.number, value: o.id, unauthorized_payment: o.unauthorized_payment_amount } },
-          :addresses => a.addresses.map { |addr| [addr.name, addr.id] }.to_h
+          :state => "#{a.state}", :zip => "#{a.zip}", :phone => "#{a.phone}", :email => "#{a.email}", :bill_to_email => "#{a.bill_to_email}"
         } 
       }
       format.json {render :json => msg}
@@ -33,22 +30,42 @@ class AccountsController < ApplicationController
     puts @account.inspect
     @orders = Order.where(account_id: @account.id).includes(:order_line_items).order(:submitted_at)
     @item_prices = Price.where(appliable: @account).includes(:item)
+    respond_to do |format|
+      format.html
+      msg = {
+              credit_cards: (@account.main_service.credit_cards.map {|cc| ["**** **** **** #{cc.last_4.to_i}", cc.id] }.to_h if @account.main_service),
+              addresses: @account.addresses.map { |b| {name: b.name, address_1: b.address_1, address_2: b.address_2, city: b.city, state: b.state, zip: b.zip, phone: b.phone, id: b.id } }
+            }
+      format.json { render :json => msg }
+    end
   end
   
   def edit
   end
     
   def create
+    authorize! :read, Customer
     params[:account][:is_taxable] = true unless params[:account][:is_taxable] != 1
     params[:account][:sales_rep_name] = current_user.email unless !params[:account][:sales_rep_name].blank?
+    main_address = params[:account][:main_address_attributes]
     @account = Account.new(account_params)
-    @account.save
-    update_index
+    # @account.main_address.build(main: true, name: main_address["name"], address_1: main_address["address_1"], address_2: main_address["address_2"], city: main_address["city"], state: main_address["state"], zip: main_address["zip"], phone: main_address["phone"], fax: main_address["fax"])
+    # puts @account.main_address.inspect
+    if @account.save!
+      update_index
+    end
   end
   
   def update
     params[:account][:is_taxable] = true unless params[:account][:is_taxable] != 1
     @account.update_attributes(account_params)
+    update_index
+  end
+  
+  def destroy
+    if @account.orders.count == 0
+      @account.destroy
+    end
     update_index
   end
   
@@ -99,7 +116,7 @@ class AccountsController < ApplicationController
   end
 
   def account_params
-    params.require(:account).permit(:name, :sales_rep_name, :email, :group_name, :credit_terms, :credit_limit, :quickbooks_id, :is_taxable, 
+    params.require(:account).permit(:name, :sales_rep_name, :email, :group_name, :credit_terms, :credit_limit, :quickbooks_id, :is_taxable, :replace_items,
       :subscription_week_day, :subscription_month_day, :subscription_quarter_day, main_address_attributes: [:id, :name, :address_1, :address_2, :city, :state, :zip, :phone, :fax])
   end
 

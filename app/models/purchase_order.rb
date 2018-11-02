@@ -6,7 +6,7 @@ class PurchaseOrder < ActiveRecord::Base
   has_many :purchase_order_line_items, :inverse_of => :purchase_order, :dependent => :destroy
   has_many :purchase_order_receipts, :dependent => :destroy
   has_one :purchase_order_shipping_method, :dependent => :destroy, :inverse_of => :purchase_order, :autosave => true
-
+  has_one :shipping_method, through: :purchase_order_shipping_method
   accepts_nested_attributes_for :purchase_order_line_items, allow_destroy: true
   
   before_save :make_record_number

@@ -1,0 +1,63 @@
+			<div class="col-xs-12">
+			
+			<%= form_for @address, :url => checkout_fast_create_address_path, :method => :patch, :remote => true do |f| %>
+			<fieldset>
+				<%= f.hidden_field :account_id, value: @address.account_id %>
+				<div id="address" class="col-md-12 shipping">
+					<%= f.label :name, :class => "control-label" %>
+					<%= f.text_field :name, :class => "form-control" %>
+				</div>
+
+				<div id="address" class="col-md-12 shipping">
+					<%= f.label :class => "control-label" do %>Address
+						<% unless @address.errors[:address_1].blank? %>
+							<span class="text text-danger">(<%= "#{@address.errors.full_messages_for(:address_1).first}" %>)</span>
+						<% end %>
+					<% end %>	
+					<%= f.text_field :address_1, :class => "form-control", :value => @address.address_1 %>
+				</div>
+
+				<div id="address_2" class="col-md-12 shipping">
+					<%= f.label :address_2, :class => "control-label" %>
+					<%= f.text_field :address_2, :class => "form-control", :value => @address.address_2 %>
+				</div>
+
+				<div id="city" class="col-md-6 shipping">
+					<%= f.label :class => "control-label" do %>City
+						<% unless @address.errors[:city].blank? %>
+							<span class="text text-danger">(<%= "#{@address.errors.full_messages_for(:city).first}" %>)</span>
+						<% end %>
+					<% end %>	
+					<%= f.text_field :city, :class => "form-control", :value => @address.city %>
+				</div>
+				
+				<div id="state" class="col-md-3 shipping">
+					<%= f.label :state, :class => "control-label" %>
+						<%= f.select :state, options_for_select(us_states),{}, class: 'form-control' %>
+					
+						<% unless @address.errors[:state].blank? %>
+							<span class="text text-danger">(<%= "#{@address.errors.full_messages_for(:state).first}" %>)</span>
+						<% end %>
+				</div>
+				
+				<div id="zip" class="col-md-3 shipping">
+					<%= f.label :class => "control-label" do %>Zip
+						<% unless @address.errors[:zip].blank? %>
+							<span class="text text-danger">(<%= "#{@address.errors.full_messages_for(:zip).first}" %>)</span>
+						<% end %>
+					<% end %>	
+					<%= f.text_field :zip, :class => "form-control", :value => @address.zip %>
+				</div>
+
+				<div id="phone" class="col-xs-12 shipping">
+					<%= f.label :phone, :class => "control-label" %>
+					<%= f.text_field :phone, :class => "form-control", :value => @address.phone %>
+				</div>
+				
+				<%= f.submit "Save Address", :class => "btn btn-primary" %>
+			</fieldset>
+			<% end %>
+			
+			<%= link_to "Cancel", checkout_fast_back_to_address_path, remote: true %>
+			
+		</div>

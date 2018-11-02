@@ -32,14 +32,16 @@
 
 <table class="table table-bordered">
 	<tr>
-		<th width="33%">Order Number</th>
-		<th width="34%">Order Date</th>
-		<th width="33%">PO Number</th>
+		<th width="25%">Order Number</th>
+		<th width="25%">Order Date</th>
+		<th width="25%">PO Number</th>
+		<th width="25%">Order Status</th>
 	</tr>
 	<tr>
-		<td width="33%"><%= @order.number %></td>
-		<td width="34%"><%= @order.submitted_at.strftime("%m/%d/%Y %I:%M %p") unless @order.submitted_at.nil? %></td>
-		<td width="33%"><%= @order.po_number %></td>
+		<td width="25%"><%= @order.number %></td>
+		<td width="25%"><%= @order.submitted_at.strftime("%m/%d/%Y %I:%M %p") unless @order.submitted_at.nil? %></td>
+		<td width="25%"><%= @order.po_number %></td>
+		<td width="25%"><%= @order.state&.capitalize %></td>
 	</tr>
 </table>
 
@@ -118,6 +120,11 @@
 		<th>Tracking Number(s)</th>
 	</tr>
 	
+	<% if @shipments.size == 0 %>
+	<tr>
+		<td colspan="3">Shipping information is not yet available for this order, please check back later.</td>
+	</tr>
+	<% end %>
 	<% @shipments.each do |shipment| %>
 	<tr>
 		<td><%= shipment.ship_date.strftime("%m/%d/%y") unless shipment.ship_date.nil? %></td>

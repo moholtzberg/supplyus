@@ -1,0 +1,10 @@
+<%= @checkout.ship_to_account_name %><br/>
+<%= @checkout.ship_to_address_1 %><br/>
+<%= @checkout.ship_to_address_2 %><% unless @checkout.ship_to_address_2.blank? %><br/><% end %>
+<%= @checkout.ship_to_city %>, <%= @checkout.ship_to_state %> <%= @checkout.ship_to_zip %><br/>
+<br/>
+<% if current_user.account.addresses.size > 1 %>
+	<%= link_to "Choose a Different Address", checkout_fast_choose_address_path, :remote => true %> | 
+<% end %>
+
+<%= link_to "Enter a New Address", checkout_fast_new_address_path(:account_id => current_user.account_id), remote: true %>

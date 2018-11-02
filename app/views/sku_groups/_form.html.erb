@@ -1,0 +1,18 @@
+<fieldset>	
+
+	<div id="name" class="col-md-12">
+		<%= f.label :name, class: "control-label" %>
+		<%= f.text_field :name, class: "form-control" %>
+	</div>
+
+	<div id="attachment" class="col-md-6">
+		<%= f.label :image_attachment, class: "control-label" %>
+		<%= f.file_field :image_attachment, class: "form-control" %>
+	</div>
+
+	<div id="alt" class="col-md-6">
+		<%= f.label :image_alt, class: "control-label" %>
+		<%= f.text_field :image_alt, class: "form-control" %>
+	</div>
+
+</fieldset>

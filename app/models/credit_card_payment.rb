@@ -4,6 +4,7 @@ class CreditCardPayment < Payment
   belongs_to :credit_card
 
   def authorize
+    puts "here"
     if credit_card_id
       response = GATEWAY.authorize(amount * 100, credit_card.service_card_id, {payment_method_token: true})
 
@@ -11,12 +12,12 @@ class CreditCardPayment < Payment
         self.authorization_code = response.authorization
         true
       else
-        errors.add(:base, "The credit card you provided was declined. Please double check your information and try again.") and return
+        errors.add(:base, "1 The credit card you provided was declined. Please double check your information and try again.") and return
         false
       end
       
     else
-      errors.add(:base, "The credit card you provided was declined. Please double check your information and try again.") and return
+      errors.add(:base, "2 The credit card you provided was declined. Please double check your information and try again.") and return
       false
     end
   end

@@ -88,6 +88,10 @@ class PurchaseOrdersController < ApplicationController
     authorize! :update, PurchaseOrder
     @purchase_order.locked = true
     @purchase_order.save
+    respond_to do |format|
+      format.html { redirect_to @purchase_order, notice: 'Purchase order was successfully locked.' }
+      format.json { render :show, status: :ok, location: @purchase_order }
+    end
   end
   
   private

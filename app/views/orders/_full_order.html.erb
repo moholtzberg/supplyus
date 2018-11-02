@@ -46,7 +46,7 @@
     <td><%= order.number %></td>
     <td><%= order.submitted_at.strftime("%m/%d/%Y %I:%M %p") unless order.submitted_at.nil? %></td>
     <td><%= order.state %></td>
-    <td><%= order.locked ? "Yes" : "No" %></td>
+    <td><% if !order.locked %> <%=link_to("Lock", lock_order_path(order.id), :remote => true, :method => "put")%> <% else %>Yes<% end %></td>
     <td><%= order.po_number %></td>
     <td><%= "#{order.sales_rep.first_name} #{order.sales_rep.last_name}" unless order.sales_rep.blank? %></td>
   </tr>
@@ -117,7 +117,7 @@
     <td colspan="3" class="text-center"><strong> <%= number_to_currency(order.order_shipping_method.amount) unless  order.order_shipping_method.nil? %></strong></td>
   </tr>
   <tr class="line_items">
-    <td colspan="7"><%= "#{order.order_tax_rate.name}" unless  order.order_tax_rate.nil? %>Tax</td>
+    <td colspan="7"><%= "#{order.order_tax_rate.name} " unless  order.order_tax_rate.nil? %>Tax</td>
     <td colspan="3" class="text-center"><strong> <%= number_to_currency(order.tax_total)%></strong></td>
   </tr>
   <tr class="line_items">
@@ -182,4 +182,25 @@
     <td><%= order.locked ? "Yes" : "No" %></td>
     <td><%= order.credit_hold ? "Yes" : "No" %></td>
   </tr>
+</table>
+
+<table class="table table-bordered table-condensed">
+	
+  <tr class="email_deliveries">
+    <th width="25%" class="bg-primary">Email Address</th>
+    <th width="20%" class="bg-primary">User / Account</th>
+    <th width="15%" class="bg-primary">Delivered at</th>
+    <th width="15%" class="bg-primary">Failed At</th>
+    <th width="15%" class="bg-primary">Opened At </th>
+  </tr>
+	
+	<% EmailDelivery.where(eventable_id: order.id, eventable_type: "Order").order(:id).each do |email| %>
+	<tr>
+		<td><%= email.to_email %></td>
+		<td><%= link_to("#{email&.addressable&.first_name} #{email&.addressable&.last_name}", polymorphic_url(email.addressable_type.tableize.singularize, :id => email.addressable)) unless email.addressable.blank? %></td>
+		<td><%= email.delivered_at %></td>
+		<td><%= email.failed_at %></td>
+		<td><%= email.opened_at %></td>
+	</tr>
+	<% end %>
 </table>

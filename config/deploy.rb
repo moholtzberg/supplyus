@@ -2,11 +2,11 @@ require 'mina/rails'
 require 'mina/git'
 require 'mina/rvm'    # for rvm support. (https://rvm.io)
 
-set :application_name, 'supply.us'
-set :domain, '162.243.54.198'
+set :application_name, 'twenty_four_seven'
+set :domain, '107.170.18.28'
 
-set :deploy_to, '/home/rails/supplyus'
-set :repository, 'git://github.com/moholtzberg/supplyus.git'
+set :deploy_to, '/home/rails/twenty_four_seven'
+set :repository, 'git://github.com/moholtzberg/recurring.git'
 set :branch, 'master'
 
 # Optional settings:
@@ -18,7 +18,8 @@ set :shared_files, fetch(:shared_files, []).push('config/application.rb', 'confi
 
 task :environment do
   # For those using RVM, use this to load an RVM version@gemset.
-  invoke :'rvm:use', 'ruby-2.3.0@default'
+
+  invoke :'rvm:use', 'ruby-2.3.0@global'
 end
 
 # Put any custom commands you need to run at setup
@@ -47,6 +48,10 @@ task :deploy do
     invoke :'git:clone'
     invoke :'deploy:link_shared_paths'
     in_path(fetch(:current_path)) do
+<<<<<<< HEAD
+=======
+      command %{gem install nokogiri -v '1.6.6.2'}
+>>>>>>> a968437de2cc8123e1f723e34acb99a54b79e0a7
       command %{gem install json -v '1.8.6'}
     end
     invoke :'bundle:install'

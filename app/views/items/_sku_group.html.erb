@@ -1,0 +1,21 @@
+<table class="table table-bordered table-condensed table-striped">
+	
+	<tr>
+		<td colspan="3"></td>
+	</tr>
+	
+	<tr>
+		<th>Number</th>
+		<th>Name</th>
+		<th>Price</th>
+	</tr>
+
+	<% item.sku_group_neighbours.each do |it| %>
+	<tr>
+		<td><%= it.number %></td>
+		<td><%= it.name %></td>
+		<td><%= number_to_currency(it.default_price&.price) %></td>
+	</tr>
+	<% end %>
+
+</table>

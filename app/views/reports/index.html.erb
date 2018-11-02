@@ -12,6 +12,8 @@
 		    	<option value="<%= item_usage_by_group_reports_path %>">Item Usage By Group</option>
 		    	<option value="<%= ar_aging_reports_path %>">A/R Aging Report</option>
           <option value="<%= vendor_prices_reports_path %>">Vendor Prices</option>
+					<option value="<%= unlinked_order_line_items_reports_path %>">Unlinked Order Line Items</option>
+					<option value="<%= ordered_items_reports_path %>">Ordered Items</option>
 		    </select>
 		  </div>
 		  <div class="form-group">
@@ -23,11 +25,11 @@
 		    <input type="text" data-provide='datepicker' class="form-control" id="to_date" name="to_date">
 		  </div>
 		  <div class="form-group">
-		    <label for="group_id">Group</label>
-		    <select class="form-control" id="group_id" name="group_id" style="width: 150px"></select>
+		    <label for="group_name">Group</label>
+		    <select class="form-control" id="group_name" name="group_name" style="width: 150px"></select>
 		  </div>
 			<script>
-				$("#group_id").select2({
+				$("#group_name").select2({
 				  ajax: {
 				    url: "<%= groups_path %>",
 				    dataType: 'json',
@@ -82,12 +84,14 @@
 		  	$(function(){
 		  		var report_type_field_statuses = {
 		  			'': {'from_date': false, 'to_date': false, 'group_id': false, 'account_ids': false},
-		  			"<%= sales_tax_reports_path %>": {'from_date': false, 'to_date': false, 'group_id': false, 'account_ids': false},
+		  			"<%= sales_tax_reports_path %>": {'from_date': true, 'to_date': true, 'group_id': false, 'account_ids': false},
 		  			"<%= item_usage_reports_path %>": {'from_date': true, 'to_date': true, 'group_id': false, 'account_ids': false},
 		  			"<%= item_usage_for_account_ids_reports_path %>": {'from_date': true, 'to_date': true, 'group_id': false, 'account_ids': true},
-		  			"<%= item_usage_by_group_reports_path %>": {'from_date': true, 'to_date': true, 'group_id': true, 'account_ids': false},
+		  			"<%= item_usage_by_group_reports_path %>": {'from_date': true, 'to_date': true, 'group_name': true, 'account_ids': false},
 		  			"<%= ar_aging_reports_path %>": {'from_date': false, 'to_date': false, 'group_id': false, 'account_ids': false},
-            "<%= vendor_prices_reports_path %>": {'from_date': false, 'to_date': false, 'group_id': false, 'account_ids': false}            
+            "<%= vendor_prices_reports_path %>": {'from_date': false, 'to_date': false, 'group_id': false, 'account_ids': false},
+						"<%= unlinked_order_line_items_reports_path %>": {'from_date': false, 'to_date': false, 'group_id': false, 'account_ids': false},
+						"<%= ordered_items_reports_path %>": {'from_date': false, 'to_date': false, 'group_id': false, 'account_ids': false}            
 		  		}
 		  		$('#report_type').change(function() {
 		  			var path = $(this).val();
@@ -96,7 +100,7 @@
               $('#' + key).parent().toggleClass('hidden', !report_type_field_statuses[path][key]);
 		  			})
 		  		}).trigger('change');
-          $('#report_type, #account_ids, #group_id').change(function(){
+          $('#report_type, #account_ids, #group_name').change(function(){
             $(this).parent().removeClass('has-error');
           })
 		  		$('#reports form button').click(function(e) {

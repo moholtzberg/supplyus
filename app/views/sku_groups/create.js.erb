@@ -1,0 +1,8 @@
+<% if @sku_group_form.errors.any? %>
+  $(".modal-content").html("<%= j render :template => 'sku_groups/new.html', :format => 'html' %>")
+<% else %>
+  $('#myModal').modal("hide")
+  $('body').removeClass('modal-open')
+  $('.modal-backdrop').remove()
+  $("#sku_groups").replaceWith("<%= j render :template => 'sku_groups/index.html', :format => 'html' %>")
+<% end %>

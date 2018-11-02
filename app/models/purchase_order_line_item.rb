@@ -8,7 +8,7 @@ class PurchaseOrderLineItem < ActiveRecord::Base
   has_many :purchase_order_line_item_receipts
   
   scope :by_item, -> (item) { where(:item_id => item) }
-  scope :active,  -> () { where(:quantity => 1..Float::INFINITY) }
+  scope :active,  -> () { where("quantity <> 0") }
   
   before_create :make_line_number, on: :create, if: Proc.new { |li| !li.purchase_order_line_number }
   

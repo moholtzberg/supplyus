@@ -1,8 +1,8 @@
 class CustomersController < ApplicationController
   layout "admin"
   respond_to :html, :json
-  before_action :set_customer, only: [:show, :edit, :update, :destroy, :statements]
-  load_and_authorize_resource except: [:statements, :datatables, :autocomplete]
+  # before_action :set_customer, only: [:show, :edit, :update, :destroy, :statements]
+  # load_and_authorize_resource except: [:statements, :datatables, :autocomplete]
   
   def datatables
     authorize! :read, Customer
@@ -40,6 +40,7 @@ class CustomersController < ApplicationController
   end
   
   def create
+    authorize! :create, Customer
     params[:customer][:is_taxable] = true unless params[:customer][:is_taxable] != 1
     params[:customer][:sales_rep_name] = current_user.email unless !params[:customer][:sales_rep_name].blank?
     @customer = Customer.new(account_params)

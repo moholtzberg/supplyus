@@ -1,0 +1,8 @@
+<% unless flash[:error] %>
+	$('#myModal').modal("hide");
+	$('body').removeClass('modal-open');
+	$('.modal-backdrop').remove();
+	$("#account_users").html("<%= j render :partial => 'shop/users.html', :format => 'html' %>");
+<% else %>
+  $("#modal-content").html("<%= j render :template => 'my_account/users/new.html', :format => 'html' %>");
+<% end %>

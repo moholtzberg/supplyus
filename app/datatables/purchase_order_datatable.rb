@@ -10,7 +10,8 @@ class PurchaseOrderDatatable < AjaxDatatablesRails::Base
       notes: { source: "PurchaseOrder.notes", cond: :eq },
       amount_received: { source: "", searchable: false },
       completed_at: { source: "PurchaseOrder.completed_at" },
-      locked: { source: "PurchaseOrder.locked" }
+      locked: { source: "PurchaseOrder.locked" },
+      state: { source: "PurchaseOrder.state" }
     }
   end
 
@@ -24,6 +25,7 @@ class PurchaseOrderDatatable < AjaxDatatablesRails::Base
         amount_received: number_to_currency(record.amount_received),
         completed_at: record.completed_at&.strftime("%m/%d/%y %I:%M %p"),
         locked: record.locked ? 'Yes' : 'No',
+        state: record.state,
         dropdown: dropdown(record.class, record)
       }
     end

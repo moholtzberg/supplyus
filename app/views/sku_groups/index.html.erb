@@ -1,0 +1,53 @@
+<% content_for :app_location do %>Admin / SKU groups / Index<% end %>
+<div id="sku_groups" class="col-md-12">
+	
+	<table class="table table-bordered table-condensed">
+		
+		<tr>
+			<td colspan="12">
+				<form id="searchBox" accept-charset="UTF-8" action="<%= sku_groups_path(search_params.except(:page)) %>" method="get" role="search" data-remote="true">
+					<input type="text" class="form-control" id="term" name="term" placeholder="Enter SKU group name" value="<%= params[:term] %>">
+				</form>
+			</td>
+		</tr>
+		
+		<tr>
+			<th><%= sortable 'ID' %></th>
+			<th><%= sortable 'Name' %></th>
+			<th>&nbsp;</th>
+		</tr>
+
+		<% @sku_groups.each do |a| %>
+			<tr>
+				<td class="hidden-xs"><%= a.id %></td>
+				<td><%= a.name %></td>
+				<td class="text-center">
+					<div class="dropdown">
+						<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+							<li><%= link_to("View", sku_group_path(a.id))  %></li>
+							<li><%= link_to("Edit", edit_sku_group_path(a.id, search_params), :remote => true)  %></li>
+							<li><%= link_to("Destroy", sku_group_path(a.id, search_params), :method => :delete, :remote => true)  %></li>
+						</ul>
+					</div>
+				</td>
+			</tr>
+		<% end %>
+
+	</table>
+		
+	<%= will_paginate @sku_groups, params: search_params.except(:page).merge(action: 'index'), renderer: BootstrapPagination::Rails %>
+	
+	<%= link_to new_sku_group_path(search_params), :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
+	
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div>

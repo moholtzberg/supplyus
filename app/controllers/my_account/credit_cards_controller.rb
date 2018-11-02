@@ -10,7 +10,7 @@ class MyAccount::CreditCardsController < ApplicationController
 
   def new
 
-    authorize! :create, CreditCard
+    # authorize! :create, CreditCard
 
     @credit_card = CreditCard.new(account_payment_service_id: current_user.account.main_service.id)
 
@@ -20,7 +20,7 @@ class MyAccount::CreditCardsController < ApplicationController
 
   def create
 
-    authorize! :create, CreditCard
+    # authorize! :create, CreditCard
 
     @credit_card = CreditCard.new(active_merchant_params.merge(account_payment_service_id: current_user.account.main_service.id))
     @credit_card.store
@@ -68,7 +68,7 @@ class MyAccount::CreditCardsController < ApplicationController
 
   def index
 
-    authorize! :read, CreditCard
+    # authorize! :read, CreditCard
 
     @credit_cards = current_user.account.main_service.credit_cards
 

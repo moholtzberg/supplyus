@@ -95,21 +95,22 @@ class GroupsController < ApplicationController
   end
   
   def items_for_customer
-    @group = Group.find(params[:id])
-    @ids = Account.where(group_id: @group.id).ids
-    @items = OrderLineItem
-    .unscoped
-    .joins("INNER JOIN orders ON orders.id = order_line_items.order_id")
-    .joins("RIGHT OUTER JOIN items ON items.id = order_line_items.item_id")
-    .where("orders.account_id IN (?)", @ids)
-    .where("submitted_at < ?", Date.strptime(params[:to_date], '%m/%d/%y'))
-    .where("quantity_fulfilled >= 0")
-    .group("item_id, items.number")
-    .select("SUM(COALESCE(quantity, 0) - COALESCE(quantity_canceled, 0)) AS qty, item_id AS item_id, items.number AS number")
-    .having("item_id = item_id")
-    .order("qty DESC")
-    .includes(:item => [:item_vendor_prices])
-    puts items.map(&:id)
+    # @group = Group.find(params[:id])
+    # @ids = Account.where(group_id: @group.id).ids
+    # @items = OrderLineItem
+    # .unscoped
+    # .joins("INNER JOIN orders ON orders.id = order_line_items.order_id")
+    # .joins("RIGHT OUTER JOIN items ON items.id = order_line_items.item_id")
+    # .where("orders.account_id IN (?)", @ids)
+    # .where("submitted_at < ?", Date.strptime(params[:to_date], '%m/%d/%y'))
+    # .where("quantity_fulfilled >= 0")
+    # .group("item_id, items.number")
+    # .select("SUM(COALESCE(quantity, 0) - COALESCE(quantity_canceled, 0)) AS qty, item_id AS item_id, items.number AS number")
+    # .having("item_id = item_id")
+    # .order("qty DESC")
+    # .includes(:item => [:item_vendor_prices])
+    # puts items.map(&:id)
+    @items = Item.where(number: ["AVT75450","UNV15520","BICBLP51WASST","UNV20742","BOSEPS4BK","UNV20746","BRTTZE231","UNV20748","END246050","UNV20821","AVE30600","UNV21129","IVR61027","MMM684RDSH","QUA46071","UNV35210","QUA50562","UNV35260","SAN30001","UNV35264","SAN80653","UNV35610","UNV00133","UNV35668","UNV00700","UNV43118","UNV05562","UNV43138","UNV08100","UNV55400","UNV08109","UNV59022","UNV08864","UNV72210","UNV10054","UNV72220","UNV10200","UNV74325","UNV10210","UNV75606","UNV10220","UNV79000","UNV12113","UNV83412","UNV14115","UNV86920","UNV45000","UNV92010","UNV15001","UNV95223","UNV15262"])
   end
   
   def equipment_by_customer

@@ -20,7 +20,6 @@ class ShippingMethod < ActiveRecord::Base
       puts "3-------> #{amount}"
       amount.to_f
     end
-    
   end
   
   def determine_free_shipping(order_amount, shipping_amount)
@@ -32,6 +31,14 @@ class ShippingMethod < ActiveRecord::Base
     else
       shipping_amount.to_f
     end
+  end
+  
+  def shipping_calculator_name
+    shipping_calculator.try(:name)
+  end
+  
+  def shipping_calculator_name=(name)
+    self.shipping_calculator = ShippingCalculator.find_by(:name => name) if name.present?
   end
   
 end

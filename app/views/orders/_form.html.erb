@@ -4,42 +4,67 @@
 		
 		<div class="col-md-12">
 			
-			<div class="col-md-3">
+			<div class="col-md-2">
 				<%= f.label :account_name, :class => "control-label" %>
 				<%= f.text_field :account_name, :class => "form-control", data: {autocomplete_source: accounts_path} %>
 			</div>
 	
 			<script>
-			jQuery(function() {
-				return $('#order_account_name').autocomplete({
-					source: $('#order_account_name').data('autocomplete-source'),
-					focus: function( event, ui ) {
-						$("#order_account_name" ).val( ui.item.value );
-						$(".ui-helper-hidden-accessible").remove()
-						return false;
-					},
-					select: function( event, ui ) {
-						$("input#order_bill_to_account_name").val(ui.item.name)
-						$("input#order_bill_to_address_1").val(ui.item.bill_to_address_1)
-						$("input#order_bill_to_address_2").val(ui.item.bill_to_address_2)
-						$("input#order_bill_to_city").val(ui.item.bill_to_city)
-						$("input#order_bill_to_state").val(ui.item.bill_to_state)
-						$("input#order_bill_to_zip").val(ui.item.bill_to_zip)
-						$("input#order_bill_to_phone").val(ui.item.bill_to_phone)
-						$("input#order_bill_to_email").val(ui.item.bill_to_email)
-
-						$("input#order_ship_to_account_name").val(ui.item.name)
-						$("input#order_ship_to_address_1").val(ui.item.ship_to_address_1)
-						$("input#order_ship_to_address_2").val(ui.item.ship_to_address_2)
-						$("input#order_ship_to_city").val(ui.item.ship_to_city)
-						$("input#order_ship_to_state").val(ui.item.ship_to_state)
-						$("input#order_ship_to_zip").val(ui.item.ship_to_zip)
-						$("input#order_ship_to_phone").val(ui.item.ship_to_phone)
-						$("input#order_email").val(ui.item.ship_to_email)
-						return false;
-					}
-				})
-			});
+				jQuery(function() {
+					var addresses = {};
+					$('#order_account_name').autocomplete({
+						source: $('#order_account_name').data('autocomplete-source'),
+						focus: function( event, ui ) {
+							console.log(ui.item)
+							$("#order_account_name" ).val( ui.item.value );
+							$("#order_bill_to_account_name" ).val( ui.item.value );
+							$("#order_ship_to_account_name" ).val( ui.item.value );
+							$("#order_bill_to_email" ).val( ui.item.bill_to_email );
+							$("#order_email" ).val( ui.item.email );
+							$(".ui-helper-hidden-accessible").remove()
+							return false;
+						},
+						select: function( event, ui ) {
+							$.ajax({
+								url : '/admin/accounts/' + ui.item.id + '.json',
+								success: function(data) {
+									addresses = data.addresses
+									console.log(addresses)
+									var $el = $(".billing_address, .shipping_address");
+									$el.empty();
+									$el.append($("<option value></option>"));
+									$.each(data.addresses, function(index,value) {
+									  $el.append($("<option></option>")
+									     .attr("value", value.id).text(value.name));
+									});
+								}
+							});
+							return false;
+						}
+					})
+	        $('select.billing_address').change(function(){
+	          var $select = $(this);
+	          var current_address = addresses.filter(function(item){return item.id == (parseInt( $select.val() ) || null) })[0];
+	          $(':input#order_bill_to_address_1').val(current_address['address_1']);
+	          $(':input#order_bill_to_address_2').val(current_address['address_2']);
+	          $(':input#order_bill_to_city').val(current_address['city']);
+	          $(':input#order_bill_to_state').val(current_address['state']);
+	          $(':input#order_bill_to_zip').val(current_address['zip']);
+	          $(':input#order_bill_to_phone').val(current_address['phone']);
+	          $(':input#order_bill_to_email').val(current_address['bill_to_email']);
+	        })
+	        $('select.shipping_address').change(function(){
+	          var $select = $(this);
+	          var current_address = addresses.filter(function(item){return item.id == (parseInt( $select.val() ) || null) })[0];
+	          $(':input#order_ship_to_address_1').val(current_address['address_1']);
+	          $(':input#order_ship_to_address_2').val(current_address['address_2']);
+	          $(':input#order_ship_to_city').val(current_address['city']);
+	          $(':input#order_ship_to_state').val(current_address['state']);
+	          $(':input#order_ship_to_zip').val(current_address['zip']);
+	          $(':input#order_ship_to_phone').val(current_address['phone']);
+	          $(':input#order_ship_to_email').val(current_address['ship_to_email']);
+	        })
+				});
 			</script>
 	
 			<div class="col-md-2">
@@ -66,9 +91,14 @@
 				<% end %>
 			</div>
 			
-			<div class="col-md-3">
+			<div class="col-md-2">
 				<%= f.label "Sales Rep" %>
 				<%= f.text_field(:sales_rep_name, :class => "form-control", data: {autocomplete_source: sales_reps_path}) %>
+			</div>
+
+			<div class="col-md-2">
+				<%= f.label "State" %>
+				<%= f.text_field(:state, :class => "form-control") %>
 			</div>
 			
 			<script>
@@ -90,6 +120,10 @@
 	<fieldset>
 		
 		<div class="col-md-6 address">
+      <div id="select_address" class="col-md-12 billing">
+        <label for="order_billing_address">Select Address</label>
+        <%= select_tag("Select Address", options_from_collection_for_select([], "id", "name"), {include_blank: true, class: "billing_address form-control bill_to"}) %>
+      </div>
 			<div class="col-md-12">
 				<%= f.label :bill_to_account_name %>
 				<%= f.text_field(:bill_to_account_name, :class => " form-control col-md-12 input-sm")%>
@@ -126,7 +160,11 @@
 		</div>
 		
 		<div class="col-md-6 address">
-			<div class="col-md-12">
+      <div id="select_address" class="col-md-12 shipping">
+        <label for="order_shipping_address">Select Address</label>
+        <%= select_tag("Select Address", options_from_collection_for_select([], "id", "name"), {include_blank: true, class: "shipping_address form-control ship_to"}) %>
+      </div>
+ 			<div class="col-md-12">
 				<%= f.label :ship_to_account_name %>
 				<%= f.text_field(:ship_to_account_name, :class => " form-control col-md-12 input-sm")%>
 			</div>
@@ -199,7 +237,7 @@
 		<div class="col-md-12">
 			<%= f.fields_for :order_discount_code do |e| %>
 				<%= e.label :discount_code_id %>
-				<%= e.select(:discount_code_id, DiscountCode.joins(:effect).all.collect {|a| [a.name, a.id]}, {:include_blank => "Select Discount Code"}, {:class => "form-control col-md-12 input-sm"}) %>
+				<%= e.select(:discount_code_id, DiscountCode.joins(:discount_code_effect).all.collect {|a| [a.name, a.id]}, {:include_blank => "Select Discount Code"}, {:class => "form-control col-md-12 input-sm"}) %>
 				<%= e.hidden_field(:id) %>
 			<% end %>
 		</div>

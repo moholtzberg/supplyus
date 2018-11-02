@@ -1,0 +1,39 @@
+<% current_user.account.main_service.credit_cards.each do |cc| %>
+	
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<div class="address col-md-6">
+				<%= cc.logo_class %><br/>
+				<%= cc.card_type %><br/>
+				<%= "**** #{cc.last_4} Exp #{cc.expiration}" %><br/>
+			</div>
+			<div class="col-md-6">
+				<%= link_to "Choose", checkout_fast_update_payment_method_path(:payment_method_id => cc.id), remote: true, method: "patch", class: "btn btn-primary pull-right" %>
+			</div>
+		</div>
+	</div>
+	
+<% end %>
+
+<% if current_user.account.has_credit == true %>
+
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<div class="address col-md-6">
+				Net <%= current_user.account.credit_terms %><br/>
+			</div>
+			<div class="col-md-6">
+				<%= link_to "Choose", checkout_fast_update_payment_method_path, remote: true, method: "patch", class: "btn btn-primary pull-right" %>
+			</div>
+		</div>
+	</div>
+	
+<% else %>
+
+	<% if account.credit_hold? %>
+	<p>You're account is on credit hold, please call customer service to the creidt hold removed!</p>
+	<% end %>
+
+<% end %>
+
+<%= link_to "Enter a New Credit Card", checkout_fast_new_cc_path(:account_id => current_user.account_id), remote: true %>

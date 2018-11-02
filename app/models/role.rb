@@ -55,6 +55,7 @@ class Role < ActiveRecord::Base
           :price_import,
           :purchase_order,
           :purchase_order_line_item,
+          :purchase_order_receipt,
           :subscription,
           :equipment,
           :equipment_alert,

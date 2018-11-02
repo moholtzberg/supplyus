@@ -1,0 +1,45 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	<h4 class="modal-title">Quick Order</h4>
+</div>
+<div class="modal-body">
+	
+	<%# form_for @cart, url: add_to_cart_path, :remote => true do |f| %>
+		
+		<div class="col-md-12 quick_search">
+			
+			<%= form_for(:search, url: quick_search_path, :method => :get, :remote => true) do |f| %>
+			<%= f.hidden_field(:item_ids, value: @item_ids)%>
+			<div class="input-group input-group-lg">
+				<%= f.text_field(:item_number,:class => "form-control", :placeholder => "Enter Item Number, i.e. UNV91200 or BRTTN450", :autocomplete => :off) %>
+				
+				<div class="input-group-btn">
+				<%= f.submit "Lookup", :class => "btn btn-default" %>
+				</div>
+			</div>
+			<% end %>
+			
+		</div>
+		
+		<div class="clearfix"></div>
+		
+		<% if @items.present? %>
+		<div class="col-md-12">
+			<% @items.each do |item|%>
+				<%= render :partial => "shop/quick_order_item", :locals => {i: item} %>
+			<% end %>
+		</div>
+		<% else %>
+			<% if flash[:error] %>
+			<div class="col-md-12">
+				<div class="alert alert-danger">
+				  <strong>Oops!</strong> <%= flash[:error] %>
+				</div>
+			</div>
+			<% end %>
+		<% end %>
+		
+		<div class="clearfix"></div>
+	<%# end %>
+	
+</div>

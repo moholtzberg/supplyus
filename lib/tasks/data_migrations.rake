@@ -98,7 +98,7 @@ namespace :data_migrations do
 
   desc 'creates main payment service for each account'
   task main_payment_service_for_accounts: :environment do
-    Account.where.not(id: Account.joins(:account_payment_services).pluck(:id)).each do |account|
+    Customer.where.not(id: Customer.joins(:account_payment_services).pluck(:id)).each do |account|
       account.set_payment_services
       if account.save
         Rails.logger.info "Successfully created payment service for account #{account.id}"
@@ -193,4 +193,38 @@ namespace :data_migrations do
       end
     end
   end
+  
+  desc 'export_bill_and_ship_address'
+  task export_bill_and_ship_address: :environment do
+    require 'csv'
+    header = "account_is,name, address_1,address_2,city, state, zip, phone, main\n"
+    file = "address_export.csv"
+    File.open(file, "w") do |csv|
+      csv << header
+      Account.all.each do |account|
+        Rails.logger.info "Migrating account #{account.id} addresses."
+        csv << "#{account.id}, shipping, #{account.ship_to_address_1}, #{account.ship_to_address_2}, #{account.ship_to_city}, #{account.ship_to_state}, #{account.ship_to_zip}, #{account.ship_to_phone}, #{account.ship_to_fax}, true\n"
+        csv << "#{account.id}, billing, #{account.bill_to_address_1}, #{account.bill_to_address_2}, #{account.bill_to_city}, #{account.bill_to_state}, #{account.bill_to_zip}, #{account.bill_to_phone}, #{account.bill_to_fax}, false\n"
+      end
+    end
+  end
+  
+  desc 'export_item_id_from_assets'
+  task :export_item_id_from_assets, [:limit, :offset] => [:environment] do |t, args|
+    puts args.limit
+    puts args.offset
+    limit = args.limit
+    offset = args.offset
+    require 'csv'
+    header = "id, item_id, type, position, attachment_file_name\n"
+    file = "item_asset_export_#{(offset.to_i + 1)}_to_#{(offset.to_i + limit.to_i)}.csv"
+    File.open(file, "w") do |csv|
+      csv << header
+      Asset.unscoped.limit(limit).offset(offset).each do |asset|
+        Rails.logger.info "Migrating account #{asset.id} addresses."
+        csv << "#{asset.id}, #{asset.item_id}, #{asset.type}, #{asset.position}, #{asset.attachment_file_name}\n"
+      end
+    end
+  end
+  
 end

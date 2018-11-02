@@ -14,48 +14,14 @@
             <%= label_tag :account_id do %>
               <%= f.select :account_id, current_user.user_accounts.map {|ac| [ac.account.name, ac.account_id,
                  {"data-bill-to-account-name" => ac.account.name,
-                 "data-bill-to-address-1" => ac.account.bill_to_address_1,
-                 "data-bill-to-address-2" => ac.account.bill_to_address_2,
-                 "data-bill-to-city" => ac.account.bill_to_city,
-                 "data-bill-to-state" => ac.account.bill_to_state,
-                 "data-bill-to-zip" => ac.account.bill_to_zip,
-                 "data-bill-to-phone" => ac.account.bill_to_phone,
                  "data-bill-to-email" => ac.account.bill_to_email,
                  "data-ship-to-account-name" => ac.account.name,
-                 "data-ship-to-address-1" => ac.account.ship_to_address_1,
-                 "data-ship-to-address-2" => ac.account.ship_to_address_2,
-                 "data-ship-to-city" => ac.account.ship_to_city,
-                 "data-ship-to-state" => ac.account.ship_to_state,
-                 "data-ship-to-zip" => ac.account.ship_to_zip,
-                 "data-ship-to-phone" => ac.account.ship_to_phone,
-                 "data-ship-to-email" => ac.account.email}]}, {},:class => "form-control" %>
+                 "data-ship-to-email" => ac.account.email,
+                 "data-addresses" => ac.account.addresses.to_json}]}, {},:class => "form-control" %>
             <% end %>
           </div>
         </th>
       </tr>
-
-      <script>
-          $("select#checkout_account_id").change(function(event){
-              var account_id = $("select#checkout_account_id").find(':selected');
-              $("#checkout_bill_to_account_name").val(account_id.data("bill-to-account-name"));
-              $("#checkout_bill_to_address_1").val(account_id.data("bill-to-address-1"));
-              $("#checkout_bill_to_address_2").val(account_id.data("bill-to-address-2"));
-              $("#checkout_bill_to_city").val(account_id.data("bill-to-city"));
-              $("#checkout_bill_to_state").val(account_id.data("bill-to-state"));
-              $("#checkout_bill_to_zip").val(account_id.data("bill-to-zip"));
-              $("#checkout_bill_to_phone").val(account_id.data("bill-to-phone"));
-              $("#checkout_bill_to_email").val(account_id.data("bill-to-email"));
-              $("#checkout_ship_to_account_name").val(account_id.data("ship-to-account-name"));
-              $("#checkout_ship_to_address_1").val(account_id.data("ship-to-address-1"));
-              $("#checkout_ship_to_address_2").val(account_id.data("ship-to-address-2"));
-              $("#checkout_ship_to_city").val(account_id.data("ship-to-city"));
-              $("#checkout_ship_to_state").val(account_id.data("ship-to-state"));
-              $("#checkout_ship_to_zip").val(account_id.data("ship-to-zip"));
-              $("#checkout_ship_to_phone").val(account_id.data("ship-to-phone"));
-              $("#checkout_email").val(account_id.data("ship-to-email"));
-
-          });
-      </script>
 
   <% end %>
 
@@ -73,6 +39,22 @@
           <%= select_tag("Select Address", options_from_collection_for_select(current_user.account.addresses, "id", "name"), {include_blank: true, class: "shipping_address form-control selectpicker"}) %>
           <script>
             var addresses = <%= raw current_user.account.addresses.to_a.push(Address.new).to_json %>;
+            $("select#checkout_account_id").change(function(event){
+                var account_id = $("select#checkout_account_id").find(':selected');
+                $("#checkout_bill_to_account_name").val(account_id.data("bill-to-account-name"));
+                $("#checkout_bill_to_email").val(account_id.data("bill-to-email"));
+                $("#checkout_ship_to_account_name").val(account_id.data("ship-to-account-name"));
+                $("#checkout_email").val(account_id.data("ship-to-email"));
+                var $el = $("select.billing_address, select.shipping_address");
+                $el.empty();
+                $el.append($("<option value></option>"));
+                addresses = account_id.data('addresses')
+                $.each(addresses, function(index,value) {
+                  $el.append($("<option></option>")
+                     .attr("value", value.id).text(value.name));
+                });
+                $el.selectpicker('refresh');
+            });
             $('select.shipping_address').change(function(){
               var $select = $(this);
               var current_address = addresses.filter(function(item){return item.id == (parseInt( $select.val() ) || null) })[0];
@@ -82,6 +64,16 @@
               $(':input#checkout_ship_to_state').val(current_address['state']);
               $(':input#checkout_ship_to_zip').val(current_address['zip']);
               $(':input#checkout_ship_to_phone').val(current_address['phone']);
+            })
+            $('select.billing_address').change(function(){
+              var $select = $(this);
+              var current_address = addresses.filter(function(item){return item.id == (parseInt( $select.val() ) || null) })[0];
+              $(':input#checkout_bill_to_address_1').val(current_address['address_1']);
+              $(':input#checkout_bill_to_address_2').val(current_address['address_2']);
+              $(':input#checkout_bill_to_city').val(current_address['city']);
+              $(':input#checkout_bill_to_state').val(current_address['state']);
+              $(':input#checkout_bill_to_zip').val(current_address['zip']);
+              $(':input#checkout_bill_to_phone').val(current_address['phone']);
             })
           </script>
         </div>        
@@ -164,19 +156,6 @@
         <div id="select_address" class="col-md-12 shipping">
           <label for="checkout_{:class=>&quot;control-label&quot;}">Select Address</label>
           <%= select_tag("Select Address", options_from_collection_for_select(current_user.account.addresses, "id", "name"), {include_blank: true, class: "billing_address form-control bill_to selectpicker"}) %>
-          <script>
-            var addresses = <%= raw current_user.account.addresses.to_a.push(Address.new).to_json %>;
-            $('select.billing_address').change(function(){
-              var $select = $(this);
-              var current_address = addresses.filter(function(item){return item.id == (parseInt( $select.val() ) || null) })[0];
-              $(':input#checkout_bill_to_address_1').val(current_address['address_1']);
-              $(':input#checkout_bill_to_address_2').val(current_address['address_2']);
-              $(':input#checkout_bill_to_city').val(current_address['city']);
-              $(':input#checkout_bill_to_state').val(current_address['state']);
-              $(':input#checkout_bill_to_zip').val(current_address['zip']);
-              $(':input#checkout_bill_to_phone').val(current_address['phone']);
-            })
-          </script>
         </div>        
         				
 				<div id="address" class="col-md-12 shipping">

@@ -1,6 +1,6 @@
 class OrderTaxRate < ActiveRecord::Base
   
-  belongs_to :order, :touch => true
+  belongs_to :order, :inverse_of => :order_tax_rate, :touch => true
   belongs_to :tax_rate
   validates :order, :uniqueness => true
     

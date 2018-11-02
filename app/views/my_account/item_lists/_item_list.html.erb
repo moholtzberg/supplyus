@@ -5,5 +5,8 @@
     <%= link_to my_account_item_list_path(item_list), method: :delete, remote: true do %>
       <i class="fa fa-remove"></i>
     <% end %>
+		<%= link_to new_my_account_user_item_list_path(item_list_id: item_list.id), method: :get, remote: true do %>
+			Share List
+		<% end %>
   </td>
 </tr>

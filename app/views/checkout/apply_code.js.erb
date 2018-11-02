@@ -1,7 +1,7 @@
 <% if @order_discount_code.nil? %>
   $('th.apply-code').html("Apply discount code <span class='text text-danger'>Wrong or expired code</span>")
-<% elsif @order_discount_code.errors.any? %>
-  $('th.apply-code').html("Apply discount code <span class='text text-danger'><%= @order_discount_code.errors.messages[:order].join(', ') %></span>")
+<% elsif @order_discount_code&.errors&.any? %>
+  $('th.apply-code').html("Apply discount code <span class='text text-danger'><%= @order_discount_code&.errors&.messages[:order]&.join(', ') %></span>")
 <% else %>
   $('th.apply-code').html("Apply discount code")
   $('form.discount_code').remove();

@@ -10,17 +10,22 @@
 			return $('#subscription_account_name').autocomplete({
 				source: $('#subscription_account_name').data('autocomplete-source'),
 	      select: function( event, ui ) {
-					var $el = $("#subscription_credit_card_id");
-					$el.empty(); // remove old options
-					$.each(ui.item.credit_cards, function(key,value) {
-					  $el.append($("<option></option>")
-					     .attr("value", value).text(key));
-					});
-					var $el = $("#subscription_address_id, #subscription_bill_address_id");
-					$el.empty(); // remove old options
-					$.each(ui.item.addresses, function(key,value) {
-					  $el.append($("<option></option>")
-					     .attr("value", value).text(key));
+					$.ajax({
+						url : '/admin/accounts/' + ui.item.id + '.json',
+						success: function(data) {
+							var $el = $("#subscription_credit_card_id");
+							$el.empty(); // remove old options
+							$.each(data.credit_cards, function(key,value) {
+							  $el.append($("<option></option>")
+							     .attr("value", value).text(key));
+							});							
+							var $el = $("#subscription_address_id, #subscription_bill_address_id");
+							$el.empty(); // remove old options
+							$.each(data.addresses, function(index,value) {
+							  $el.append($("<option></option>")
+							     .attr("value", value.id).text(value.name));
+							});
+						}
 					});
 					$("#subscription_account_name" ).val(ui.item.value);
 	        return false;

@@ -25,7 +25,7 @@
       <li><%= link_to("Resend Order Notification", resend_order_order_path(:id => item.id), :remote => true, :method => "put") %></li>
     <% end %>
     <% if item.credit_hold? %>
-      <li><%= link_to("Remove Credit Hold", credit_hold_remove_order_path(item.id), :remote => true, :method => "put")  %></li>
+      <li><%= link_to("Remove Credit Hold", remove_hold_order_path(item.id), :remote => true, :method => "put")  %></li>
     <% end %>
     <% if item.awaiting_shipment? or item.partially_shipped? %>
       <li><%= link_to("Ship", new_order_shipment_path(item.id))  %></li>
@@ -36,5 +36,9 @@
     <% if item.fulfilled? %>
       <li><%= link_to("Resend Invoice Notification", resend_invoice_order_path(:id => item.id), :remote => true, :method => "put") %></li>
     <% end %>
+		<li class="divider"></li>
+		<%# item.state_paths.events.each do |state| %>
+			<%# link_to(state.to_s, polymorphic_url(item, action: state), :remote => true, :method => "put")%>
+		<%# end %>
   </ul>
 </div>

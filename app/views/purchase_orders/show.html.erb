@@ -2,9 +2,9 @@
 		
 	<table class="table table-bordered table-condensed thead">
 		<tr class="bg-primary">
-			<th width="33.3%">Remit To</th>
-			<th width="33.4%">Shipping Address</th>
-			<th width="33.3%">Billing Address</th>
+			<th width="33.3%">Bill To</th>
+			<th width="33.4%">Ship To</th>
+			<th width="33.3%">Order From</th>
 		</tr>
 		<tr>
 			<td>
@@ -41,7 +41,7 @@
 		<tr>
 			<td><%= @purchase_order.number %></td>
 			<td><%= @purchase_order.completed_at.strftime("%m/%d/%Y %I:%M %p") unless @purchase_order.completed_at.nil? %></td>
-			<td><%= @purchase_order.locked ? "Yes" : "No" %></td>
+			<td><% if !@purchase_order.locked %><%= link_to("Lock", lock_purchase_order_path(@purchase_order.id), :remote => true, :method => "put") %><% else %>Yes<% end %></td>
 		</tr>
 	</table>
 	
@@ -107,6 +107,28 @@
 			<td><%= @purchase_order.updated_at.strftime("%m/%d/%y %I:%M:%S %p") unless @purchase_order.updated_at.nil? %></td>
 			<td><%= @purchase_order.locked ? "Yes" : "No" %></td>
 		</tr>
+	</table>
+	
+	<table class="table table-bordered table-condensed table-striped">
+		
+	  <tr class="email_deliveries">
+	    <th width="25%" class="bg-primary">Email Address</th>
+	    <th width="20%" class="bg-primary">User / Account</th>
+	    <th width="15%" class="bg-primary">Delivered at</th>
+	    <th width="15%" class="bg-primary">Failed At</th>
+	    <th width="15%" class="bg-primary">Opened At </th>
+	  </tr>
+		
+		<% EmailDelivery.where(eventable_id: @purchase_order.id, eventable_type: "PurchaseOrder").order(:id).each do |email| %>
+		<tr>
+			<td><%= email.to_email %></td>
+			<td><%= link_to("#{email&.addressable&.name}", polymorphic_url(email.addressable_type.tableize.singularize, :id => email.addressable)) unless email.addressable.blank? %></td>
+			<td><%= email.delivered_at %></td>
+			<td><%= email.failed_at %></td>
+			<td><%= email.opened_at %></td>
+		</tr>
+		<% end %>
+		
 	</table>
 
 	<table class="table table-bordered table-condensed table-striped">

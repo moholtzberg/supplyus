@@ -1,0 +1,18 @@
+<fieldset>  
+  
+  <div class="col-md-12">
+    <%= f.label "Share With", :class => "control-label" %>
+    <%= f.text_field :user_name, :class => "form-control disabled", data: {autocomplete_source: users_my_account_user_item_lists_path} %>
+  </div>
+	
+	<script>
+		jQuery(function() {
+			return $('#user_item_list_user_name').autocomplete({
+				source: $('#user_item_list_user_name').data('autocomplete-source')
+			})
+		});
+	</script>
+  
+  <%= f.hidden_field :item_list_id, :value => @item_list.id %>
+  
+</fieldset>

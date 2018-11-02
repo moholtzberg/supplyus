@@ -5,17 +5,14 @@ class MyAccount::SubscriptionsController < ApplicationController
   skip_before_filter :check_authorization
 
   def index
-    authorize! :read, Subscription
     @subscriptions =  Subscription.where(account: current_user.account, state: [:active, :paused])
   end
 
   def new
-    authorize! :create, Subscription
     @subscription = Subscription.new(subscription_params)
   end
 
   def details
-    authorize! :create, Subscription
     @subscription = Subscription.find(params[:id])
     @subscription.ship_to_address = Address.new
     @subscription.bill_to_address = Address.new
@@ -24,7 +21,6 @@ class MyAccount::SubscriptionsController < ApplicationController
   end
 
   def update_details
-    authorize! :create, Subscription
     @subscription = Subscription.find(params[:id])
     @subscription.ship_to_address = Address.find_or_create_by(subscription_params[:ship_to_address_attributes].merge(account_id: @subscription.account_id))
     @subscription.bill_to_address = Address.find_or_create_by(subscription_params[:bill_to_address_attributes].merge(account_id: @subscription.account_id))
@@ -65,7 +61,6 @@ class MyAccount::SubscriptionsController < ApplicationController
   end
   
   def create
-    authorize! :create, Subscription
     @subscription = Subscription.create(subscription_params.merge(account_id: current_user.account_id))
     flash[:error] = @subscription.errors.full_messages.join(', ') if @subscription.errors.any?
     respond_to do |format|
@@ -75,7 +70,6 @@ class MyAccount::SubscriptionsController < ApplicationController
   end
   
   def destroy
-    authorize! :destroy, Subscription
     @subscription = Subscription.find_by(:id => params[:id])
     @account = @subscription.account
     @subscription.destroy!
@@ -85,12 +79,10 @@ class MyAccount::SubscriptionsController < ApplicationController
   end
 
   def edit
-    authorize! :update, Subscription
     @subscription = Subscription.find_by(id: params[:id])
   end
 
   def update
-    authorize! :update, Subscription
     @subscription = Subscription.find_by(id: params[:id])
     if @subscription.update_attributes(subscription_params)
       flash[:notice] = "\"#{@subscription.item.name}\" has been updated"

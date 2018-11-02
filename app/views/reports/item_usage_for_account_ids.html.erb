@@ -22,7 +22,7 @@
         <td><%= number_with_delimiter(li.qty) %></td>
         <td><%= li.number %></td>
         <td>
-          <%= number_to_currency([account_item_price, li.item.default_price.to_f.to_d].select(&:positive?).min) %>
+          <%= number_to_currency([account_item_price, li.item.default_price.price.to_f.to_d].select(&:positive?).min) %>
         </td>
       </tr>
     <% end %>

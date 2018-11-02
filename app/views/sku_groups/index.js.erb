@@ -1,0 +1,2 @@
+$('#myModal').modal("hide")
+$("#sku_groups").replaceWith("<%= j render :template => 'sku_groups/index.html', :format => 'html', :locals => {:sku_groups => @sku_groups} %>")

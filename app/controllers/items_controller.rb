@@ -82,13 +82,13 @@ class ItemsController < ApplicationController
   private
 
   def set_item
-    @item = Item.find(params[:id])
+    @item = Item.find_by(number: params[:id])
+    @item ||= Item.find_by(id: params[:id])
   end
 
   def item_params
     params.require(:item).permit(:number, :name, :description, :price, :cost_price, :sale_price, :model_id, 
-      :is_serialized, :weight, :height, :width, :length, :item_type_id, :category_id, :brand_id, :brand_name, 
+      :is_serialized, :weight, :height, :width, :length, :item_type_id, :category_id, :brand_id, :brand_name, :sku_group_id,
       :category_name, :active, :category_tokens, prices_attributes: [:id, :_type, :price, :start_date, :end_date, :min_qty, :max_qty, :appliable_type, :appliable_id, :combinable, :_destroy])
   end
-  
 end

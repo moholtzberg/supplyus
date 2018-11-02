@@ -1,8 +1,9 @@
 class DiscountCodeRule < ActiveRecord::Base
   include ApplicationHelper
+  include ActionView::Helpers
   attr_accessor :requirable_term
 
-  belongs_to :code, class_name: 'DiscountCode', foreign_key: :discount_code_id
+  belongs_to :discount_code
   belongs_to :requirable, polymorphic: true
   belongs_to :user_appliable, polymorphic: true
   validate :amount_or_quantity
@@ -34,13 +35,26 @@ class DiscountCodeRule < ActiveRecord::Base
     !(amount && quantity)
   end
 
-  def error_message
-    msg = 'Code is valid only to specified group of users. ' if user_appliable
+  def error_message(order)
+    msg = ''
+    msg += 'Code is valid only to specified group of users. ' if (user_appliable && !appliable?(order))
     if amount || quantity
-      msg += 'Order should contain at least '
-      msg += amount ? "$#{amount} worth of " : "#{quantity} "
+      msg += 'Order must contain at least '
+      msg += amount ? "#{number_to_currency(amount)} worth of " : "#{quantity} "
       msg += "\'#{requirable&.name}\' " if requirable
       msg += 'items.'
+    end
+    msg
+  end
+  
+  def description
+    msg = ""
+    msg += "Code is valid only for \'#{user_appliable&.name}\' " if user_appliable
+    if amount || quantity
+      msg += "Order must contain at least "
+      msg += amount ? "#{number_to_currency(amount)} worth of " : "#{quantity} "
+      msg += "\'#{requirable&.name}\' " if requirable
+      msg += "items."
     end
     msg
   end

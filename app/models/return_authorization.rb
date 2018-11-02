@@ -62,7 +62,7 @@ class ReturnAuthorization < ActiveRecord::Base
   end
 
   def order_is_complete
-    return true if order.state == 'completed'
+    return true if order.state.in? ['awaiting_fulfillment','fulfilled','completed']
     errors.add(:order_id, 'Order should be completed before returning.')
   end
 
@@ -91,6 +91,6 @@ class ReturnAuthorization < ActiveRecord::Base
   end
 
   def refund_payment
-    order.payments.first.refund(amount)
+    order.payments.first.refund(amount) if order.payments.first.payment_type == "CreditCardPayment" and order.payments.first.success == true else line_item_returns.each {|li| li.touch}
   end
 end

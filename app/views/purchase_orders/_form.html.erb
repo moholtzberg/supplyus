@@ -55,7 +55,7 @@
 		<div class="col-md-12">
 			<select id="order_id" class="form-control">
 				<option>Please Select an Order</option>
-				<% Order.is_submitted.not_linked_to_po.order(:submitted_at).each do |o|%>
+				<% Order.is_submitted.where(state: ["pending", "awaiting_shipment", "awaiting_payment", "partially_shipped"]).not_linked_to_po.order(:submitted_at).each do |o|%>
 				<option id="<%= o.id %>"><%= o.number %></option>
 				<% end %>
 			</select>

@@ -2,11 +2,11 @@ class OrdersController < ApplicationController
   layout 'admin'
   before_action :set_order, only:
     %i[show invoice resend_order resend_invoice edit update destroy
-       lock approve submit cancel credit_hold credit_hold_remove expand]
+       lock approve submit cancel credit_hold remove_hold expand]
 
   def datatables
     authorize! :read, Order
-    render json: OrderDatatable.new(view_context, from: params[:from])
+    render json: OrderDatatable.new(view_context, from: params[:from], filters: params[:filters])
   end
 
   def autocomplete
@@ -106,6 +106,7 @@ class OrdersController < ApplicationController
   
   def create
     authorize! :create, Order
+    params[:order][:terms] = "terms" unless params[:order][:terms].nil? 
   end
 
   def destroy
@@ -116,39 +117,56 @@ class OrdersController < ApplicationController
   def lock
     authorize! :update, Order
     @order.update_attribute(:locked, !@order.locked)
-    render 'update'
+    respond_to do |format|
+      format.html { redirect_to action: 'edit', id: @order.id }
+      format.js { render :update }
+    end
   end
   
   def approve
     authorize! :update, Order
     @order.approve
-    render 'update'
+    respond_to do |format|
+      format.html { redirect_to action: 'edit', id: @order.id }
+      format.js { render :update }
+    end
   end
 
   def submit
     authorize! :update, Order
     @order.submit
-    render 'update'
+    respond_to do |format|
+      format.html { redirect_to action: 'edit', id: @order.id }
+      format.js { render :update }
+    end
   end
 
   def cancel
     authorize! :update, Order
     @order.cancel
-    render 'update'
+    respond_to do |format|
+      format.html { redirect_to action: 'edit', id: @order.id }
+      format.js { render :update }
+    end
   end
   
   def credit_hold
     authorize! :update, Order
     @order.credit_hold = !@order.credit_hold
     @order.save
-    render 'update'
+    respond_to do |format|
+      format.html { redirect_to action: 'edit', id: @order.id }
+      format.js { render :update }
+    end
   end
   
-  def credit_hold_remove
+  def remove_hold
     authorize! :update, Order
-    @order.credit_hold = false
-    @order.save
-    render 'update'
+    @order.remove_hold
+    respond_to do |format|
+      format.html { redirect_to action: 'edit', id: @order.id }
+      format.js { render :update }
+    end
   end
 
   def unpaid
@@ -169,7 +187,7 @@ class OrdersController < ApplicationController
   private
 
   def order_params
-    temp_params = params.require(:order).permit(:account_name, :sales_re_id, :sales_rep_name, :number, :email, :po_number, 
+    temp_params = params.require(:order).permit(:account_name, :state, :terms, :sales_rep_id, :sales_rep_name, :number, :email, :po_number, 
       :submitted_at, :notes, :credit_hold, :shipping_method, :shipping_amount, :tax_rate, :tax_amount, 
       :bill_to_account_name, :bill_to_attention, :bill_to_address_1, :bill_to_address_2, :bill_to_city, 
       :bill_to_state, :bill_to_zip, :bill_to_phone, :bill_to_email, :ship_to_account_name, :ship_to_attention, 
@@ -188,6 +206,7 @@ class OrdersController < ApplicationController
   end
 
   def set_order
-    @order = Order.find(params[:id])
-  end  
+    @order = Order.find_by(number: params[:id])
+    @order ||= Order.find_by(id: params[:id])
+  end
 end

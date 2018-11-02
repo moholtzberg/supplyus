@@ -29,9 +29,14 @@
 		<td colspan="2" class="text-center"><strong><%= number_to_currency(@cart.tax_total) %></strong></td>
 	</tr>
 	<tr>
-		<td colspan="3"><%= @checkout.order_shipping_method.name %> - Shipping</td>
+		<td colspan="3"><%= @checkout&.order_shipping_method&.name %> - Shipping</td>
 		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@checkout.shipping_total) %></strong></td>
 	</tr>
+	
+	<% if @cart.discount_code&.code.present? and (@cart.discount_code&.discount_code_rules&.map { |r| r.check(@cart) })&.pop %>
+		<%= render :partial => "discount_code", locals: {checkout: @cart} %>
+	<% end %>
+	
 	<tr id="order_total">
 		<td colspan="3">Order Total</td>
 		<td colspan="2" class="text-center"><strong> <%= number_to_currency(@checkout.total) %></strong></td>
@@ -76,10 +81,12 @@
 	</tr>
 </table>
 
-<% if @cart.order_discount_code.nil? %>
+<% unless !@cart.discount_code&.code.present? and (@cart.discount_code&.rules&.map { |r| r.check(@cart) })&.pop %>
 	<%= render :partial => "order_discount_code_form" %>
 <% end %>
 
+<%= @checkout.number %>
+<%= @checkout.id %>
 <table class="table table-bordered">
 	<% if @checkout && @checkout.errors.any? %>
 		<div id="checkout_errors" class="alert alert-warning">
@@ -103,17 +110,25 @@
 		</div>
 	<% end %>
 	<tr>
+		<th colspan="2">Choose your payment method</th>
+	</tr>
+	<tr>
 		<%= form_for @checkout, :url => checkout_payment_path, :method => :patch do |f| %>
 		<td>
 			<select id="payment_type" class="selectpicker">
+				
+				<% if @cards.size == 0 %>
+				<option value="" disabled selected>Select Payment Method</option>
+				<% end %>
 				<% @cards.each do |card| %>
 					<option value="<%= card.service_card_id %>" data-content='<span class="<%= card.logo_class %>" style="margin-right: 5px;"></span><span class="text">  **** **** **** <%= card.last_4 %></span>'></option>
 				<% end %>
-				<option value="credit_card">New Credit Card</option>
-				<option value="check">Check</option>
-				<% if current_user.account and current_user.account.has_enough_credit %>
+				<% if current_user.account and !current_user.account.credit_hold %>
 					<option value="terms">Net <%= current_user.account.credit_terms %></option>
 				<% end %>
+				
+				<option value="credit_card">New Credit Card</option>
+				<option value="check">Check</option>
 			</select>
 
 			<script>
@@ -141,9 +156,9 @@
 			<!-- Load Hosted Fields component. -->
 			<script src="https://js.braintreegateway.com/web/3.11.0/js/hosted-fields.min.js"></script>
 			
-			<div id="credit_card" class="panel panel-default bootstrap-basic <%= 'hidden' if @cards.any? %>">
+			<div id="credit_card" class="panel panel-default bootstrap-basic <%= 'hidden' %>">
 				
-				<input type="hidden" id="payment_method" name="payment_method" value="credit_card" />
+				<input type="hidden" id="payment_method" name="payment_method" value="<%#'credit_card' %>" />
 				<input type="hidden" id="credit_card_token" name="credit_card_token" value="<%= @cards.first.try(:service_card_id) %>" />
 				<input type="hidden" id="order_id" name="order_id" value="<%= @checkout.id %>" />
 				

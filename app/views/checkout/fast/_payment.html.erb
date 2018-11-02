@@ -1,0 +1,26 @@
+		<% if current_user.account.has_credit == true %>
+			
+			Net <%= current_user.account.credit_terms %>
+			Payment for this order will be due no later than <%= (Date.today + current_user.account.payment_terms.days).strftime("%m/%d/%Y") %><br/>
+			
+			<% unless current_user.account.has_enough_credit == true %>
+			<div class="alert alert-warning" role="alert">
+				<strong>Warning</strong> You may be over the allowed credit limit
+			</div>
+			<% end %>
+		
+		<% else %>
+		
+			<% if current_user.account.main_service.credit_cards.any? %>
+				<% current_user.account.main_service.credit_cards.last do |cc| %>
+					<%= cc.inspect %>
+				<% end %>
+			<% else %>
+			
+				<%= render :partial => "checkout/fast/braintree_cc_form" %>
+			
+			<% end %>
+			
+		<% end %>
+		
+		<%= link_to "Choose a Different Payment Method", checkout_fast_choose_payment_method_path, remote: true %>

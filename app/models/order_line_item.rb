@@ -14,7 +14,12 @@ class OrderLineItem < ActiveRecord::Base
   
   scope :by_item, -> (item) { where(:item_id => item) }
   scope :by_category, -> (category) { joins(item: :item_categories).where('items.category_id = ? or item_categories.category_id = ?', category, category).distinct }
-  scope :active,  -> () { where("order_line_items.quantity <> 0") }
+  # scope :active,  -> () { having("SUM(COALESCE(quantity, 0) - COALESCE(quantity_canceled, 0)) <> 0") }
+  
+  def self.active
+    having("SUM(COALESCE(quantity, 0) - COALESCE(quantity_canceled, 0)) <> 0")
+    .group("id")
+  end
   
   before_create :make_line_number, :on => :create  
   
@@ -76,7 +81,7 @@ class OrderLineItem < ActiveRecord::Base
   
   def sub_total
     Rails.cache.fetch([self, "#{self.class.to_s.downcase}_sub_total"]) {
-      actual_quantity * price
+     (actual_quantity * price) - (quantity_returned * price)
     }
   end
   
@@ -128,7 +133,7 @@ class OrderLineItem < ActiveRecord::Base
   def calculate_quantity_returned
     if self.line_item_returns
       total = 0
-      lirs = self.line_item_returns.joins(:return_authorization).where.not(return_authorizations: {status: [:unconfirmed, :canceled]})
+      lirs = self.line_item_returns.joins(:return_authorization).where(return_authorizations: {status: [:received, :refunded]})
       lirs.each {|i| total += i.quantity.to_f }
       total
     end
@@ -204,6 +209,6 @@ class OrderLineItem < ActiveRecord::Base
   end
 
   def self.total_price
-    where(nil).sum('(COALESCE(quantity,0) - COALESCE(quantity_canceled,0)) * price')
+    where(nil).sum('(COALESCE(quantity,0) - COALESCE(quantity_canceled,0)) * order_line_items.price')
   end
 end

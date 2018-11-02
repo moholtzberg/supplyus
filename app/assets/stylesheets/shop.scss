@@ -682,3 +682,27 @@ select.add_to_list {
 .margin-top {
 	margin-top: 20px;
 }
+.sku-group-item {
+	padding: 10px 15px;
+	border-bottom: 1px solid #ddd;
+}
+#credit_card {
+	margin-left: 0;
+}
+
+#checkout_address {
+	padding: 20px;
+	margin-bottom: 10px;
+	border-top: 2px solid gray;
+}
+
+#checkout_payment{
+	padding: 20px;
+	margin-bottom: 10px;
+	border-top: 2px solid gray;
+}
+
+.quick_search {
+	margin-bottom: 20px;
+	
+}

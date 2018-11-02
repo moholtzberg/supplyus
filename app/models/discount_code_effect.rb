@@ -16,11 +16,15 @@ class DiscountCodeEffect < ActiveRecord::Base
   end
 
   def calculate(order)
-    return amount if amount
-    return (percent / 100) * order.shipping_total_sum if shipping
-    appliable_items(order)
-      .sum('(COALESCE(quantity,0) - COALESCE(quantity_canceled,0)) * price')
+    if (code&.discount_code_rules&.map {|r| r.check(order)})&.pop
+      return amount if amount
+      return (percent / 100) * order.shipping_total_sum if shipping
+      appliable_items(order)
+      .sum('(COALESCE(quantity,0) - COALESCE(quantity_canceled,0)) * order_line_items.price')
       .to_f * (percent / 100)
+    else
+      return 0
+    end
   end
 
   def appliable_items(order)

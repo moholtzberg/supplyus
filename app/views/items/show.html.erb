@@ -121,6 +121,7 @@
 		<li role="presentation"><a href="#prices" aria-controls="prices" role="tab" data-toggle="tab">Prices</a></li>
 		<li role="presentation"><a href="#item_substitutes" aria-controls="item_substitutes" role="tab" data-toggle="tab">Item Substitutes</a></li>
 		<li role="presentation"><a href="#substituting_items" aria-controls="substituting_items" role="tab" data-toggle="tab"> Substituting Items</a></li>
+		<li role="presentation"><a href="#sku_group" aria-controls="sku_group" role="tab" data-toggle="tab"> Sku Group</a></li>
 	</ul>
 	
 	<div class="tab-content">
@@ -175,6 +176,12 @@
 		<div id="substituting_items" class="tab-pane" role="tabpanel">
 			
 			<%= render :partial => "substituting_items", :locals => {:item => @item} %>
+			
+		</div>
+		
+		<div id="sku_group" class="tab-pane" role="tabpanel">
+			
+			<%= render :partial => "sku_group", :locals => {:item => @item} %>
 			
 		</div>
 		

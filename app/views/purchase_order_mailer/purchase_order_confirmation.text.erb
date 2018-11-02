@@ -1,0 +1,43 @@
+ORDER CONFIRMATION - 24/7 Office Supply
+===============================================
+
+Dear <%= @purchase_order.ship_from_vendor_name %>,
+
+Please process the purchase order below, please do not hesitate to contact us with any questions about this order.
+
+Sincerely,
+
+The 24/7 Office Supply Team.
+2957 NW 27th Steet
+Fort Lauderdale, FL 33311
+888-247-8775
+
+
+ORDER DETAILS:
+================
+PO NUMBER:		<%= @purchase_order.number %>
+DATE:		<%= @purchase_order.completed_at.strftime("%m/%d/%Y %I:%M %p") %>
+NOTES:		<%= @purchase_order.notes %>
+
+VENDOR DETAILS:
+================
+VENDOR NAME:	<%= @purchase_order.vendor.name unless @purchase_order.vendor.nil? %>
+ACCOUNT NUMBER: <%= @purchase_order.vendor.number unless @purchase_order.vendor.nil? %>
+
+SHIP TO ADDRESS:
+================
+<%= @purchase_order.ship_to_account_name %>
+<%= @purchase_order.ship_to_attention %>
+<%= @purchase_order.ship_to_address_1 %>
+<%= @purchase_order.ship_to_address_2 %>
+<%= @purchase_order.ship_to_city %>, <%= @purchase_order.ship_to_state %> <%= @purchase_order.ship_to_zip %>
+<%= @purchase_order.ship_to_phone %>
+
+ORDER LINE ITEMS:
+================
+<% @purchase_order.purchase_order_line_items.order(:purchase_order_line_number).each do |o| %>
+	<% if o.quantity > 0 %>
+<%= o.purchase_order_line_number %>.	<%= o.quantity.to_i %> x <%= "#{o.item.number} / #{o.item.name}" %> @ <%= number_to_currency(o.price) %>/Each. = <%= number_to_currency(o.sub_total) %>
+	<% end %>
+<% end %>
+

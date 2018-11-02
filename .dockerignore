@@ -7,3 +7,7 @@ Dockerfile
 docker-compose.yml
 docker-compose.override.yml
 README.rdoc
+<<<<<<< HEAD
+=======
+public/assets/**
+>>>>>>> a968437de2cc8123e1f723e34acb99a54b79e0a7

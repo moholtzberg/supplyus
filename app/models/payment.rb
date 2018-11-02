@@ -3,13 +3,13 @@ class Payment < ActiveRecord::Base
   self.inheritance_column = :payment_type
   belongs_to :account
   belongs_to :payment_method
-  has_many :order_payment_applications, inverse_of: :payment
+  has_many :order_payment_applications, inverse_of: :payment, dependent: :destroy
   has_many :orders, through: :order_payment_applications
   has_many :transactions
   accepts_nested_attributes_for :order_payment_applications
   before_save :check_payment_method
 
-  validates :amount, :presence => true, :numericality => { greater_then: 0 }
+  validates :amount, :presence => true
   validates :payment_method, :presence => true
   validate :amount_refunded
   validate :not_over_applying
@@ -60,6 +60,10 @@ class Payment < ActiveRecord::Base
   def confirm_order_payment
     orders.each(&:confirm_payment)
   end
+  
+  def refund(sum)
+    puts "reeeeeefunuuuuuund #{sum}"
+  end
 
   def amount_refunded
     return if amount.to_f >= refunded.to_f
@@ -68,7 +72,7 @@ class Payment < ActiveRecord::Base
 
   def not_over_applying
     applied = order_payment_applications.inject(0.0) do |sum, opa|
-      sum + opa.applied_amount
+      sum + opa.applied_amount.to_s.to_d
     end
     return if amount.to_d >= applied.to_d
     errors.add(:amount, "Can't over apply payment, #{applied}"\

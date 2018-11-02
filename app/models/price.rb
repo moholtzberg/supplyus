@@ -24,7 +24,7 @@ class Price < ActiveRecord::Base
   scope :bulk, -> () { where(_type: 'Bulk')}
   scope :singular, -> () { where(_type: ['Default', 'Sale'])}
   scope :default, -> () { where(_type: 'Default') }
-  scope :actual, -> () { where('(end_date >= ? OR end_date IS NULL)', Date.today) }
+  scope :actual, -> () { where('(prices.end_date > ? OR prices.end_date IS NULL)', Date.today) }
 
   def set_blank_to_nil
     self.appliable_type = nil if self.appliable_type == ''

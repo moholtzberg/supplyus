@@ -13,7 +13,7 @@ class ShopController < ApplicationController
   
   def index
     @categories = Category.is_parent.is_active
-    @items = Item.all
+    @items = Item.all.includes(:images, :prices)
   end
   
   def categories
@@ -34,7 +34,7 @@ class ShopController < ApplicationController
     categories.push(@category.id)
     categories.push(@category.children.map(&:id))
     categories = categories.flatten.compact
-    @items = Item.search(include: [:categories, :item_categories, :features, :brand, :images]) do
+    @items = Item.search(include: [:current_user_actual_price, :default_price, :recurring_price, :bulk_prices, :categories, :item_categories, :features, :brand, :images]) do
       fulltext params[:keywords] if params[:keywords].present?
       with(:category_ids, categories)
       stats :actual_price
@@ -76,7 +76,7 @@ class ShopController < ApplicationController
   def search
     # @items = Item.where(nil).active
     @items = []
-    @items = Item.search(include: [:prices, :categories, :item_categories, :features, :brand, :images, :item_lists]) do
+    @items = Item.search(include: [:current_user_actual_price, :default_price, :recurring_price, :bulk_prices, :categories, :item_categories, :features, :brand, :images, :item_lists]) do
       fulltext params[:keywords] if params[:keywords].present?
       stats :actual_price
       with(:actual_price, Range.new(*params[:price_range].split("..").map(&:to_i))) if params[:price_range].present?
@@ -153,6 +153,24 @@ class ShopController < ApplicationController
     end
   end
   
+  def quick_order
+    flash[:error] = nil
+  end
+  
+  def quick_search
+    item_id = Item.find_by(number: params[:search][:item_number])&.id
+    @item_ids = []
+    #@item_ids.push(params[:search][:item_ids].split(" "))
+    @item_ids.push(item_id).flatten
+    @items = Item.where(id: @item_ids)
+    if item_id.nil?
+      flash[:error] = "We were not able to find an item with the number <i><em>\"".html_safe + "#{params[:search][:item_number]}" + "\"</em></i>".html_safe
+      puts "error"
+    else
+      flash[:error] = nil
+    end
+  end
+  
   def cart
     @cart = Cart.find_or_initialize_by(:id => cookies.permanent.signed[:cart_id])
     if current_user && current_user.has_account
@@ -183,7 +201,7 @@ class ShopController < ApplicationController
   def view_account
     @account = Customer.find_by(:id => params[:account_id])
     if current_user.my_account_ids.include?(@account.id)
-      @orders = @account.orders.is_submitted.includes(:order_shipping_method).order(:submitted_at).paginate(:page => params[:page], :per_page => 10)
+      @orders = @account.orders.order(:submitted_at).paginate(:page => params[:page], :per_page => 10)
     else
       redirect_to "/"
     end
@@ -232,7 +250,7 @@ class ShopController < ApplicationController
       @payment.save
       OrderPaymentApplication.create(:order_id => @invoice.id, :payment_id => @payment.id, :applied_amount => @payment.amount)
       flash[:notice] = 'Your payment was authorized successfully.'
-      redirect_to my_account_orders_path
+      redirect_to "/my_account/#{current_user.account_id}"
     else
       render 'view_invoice'
     end
@@ -271,8 +289,6 @@ class ShopController < ApplicationController
       @cart = Cart.find_or_initialize_by(:id => nil)
     end
     cookies.permanent.signed[:cart_id] = @cart.id
-    
-    puts "CCAARRTT -> #{@cart.number}"
   end
   
 end

@@ -22,10 +22,10 @@ class EmailDeliveryDatatable < AjaxDatatablesRails::Base
       {
         id: record.id,
         addressable_type: record.addressable_type,
-        addressable_id: link_to(record.addressable_id, record.addressable),
+        addressable_id: record.addressable.present? ? link_to(record.addressable_id, record.addressable) : nil,
         to_email: record.to_email,
         eventable_type: record.eventable_type,
-        eventable_id: link_to(record.eventable_id, record.eventable),
+        eventable_id: record.eventable.present? ? link_to(record.eventable_id, record.eventable) : nil,
         failed_at: record.failed_at&.strftime("%m/%d/%y %I:%M %p"),
         delivered_at: record.delivered_at&.strftime("%m/%d/%y %I:%M %p"),
         opened_at: record.opened_at&.strftime("%m/%d/%y %I:%M %p"),

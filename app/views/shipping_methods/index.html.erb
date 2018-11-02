@@ -1,0 +1,57 @@
+<% content_for :app_location do %>Admin / Shipping Methods / Index<% end %>
+<div id="brands" class="col-md-12">
+
+	<table class="table table-bordered table-condensed table-responsive">
+		
+		<tr>
+			<th class="hidden-xs">ID</th>
+			<th>Name</th>
+			<th>Shipping Calculator</th>
+			<th>Rate</th>
+			<th>Minimum Amount</th>
+			<th>Free At Amount</th>
+			<th class="hidden-xs">Active</th>
+			<th>&nbsp;</th>
+		</tr>
+		
+		<% @shipping_methods.each do |a| %>
+			<tr>
+				<td class="hidden-xs"><%= a.id %></td>
+				<td><%= a.name %></td>
+				<td><%= a.shipping_calculator_name %></td>
+				<td><%= a.rate %></td>
+				<td><%= a.minimum_amount %></td>
+				<td><%= a.free_at_amount %></td>
+				<td class="hidden-xs"><%= a.active ? "Yes" : "No" %></td>
+				<td class="text-center">
+				
+					<div class="dropdown">
+						<button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
+							<li><%= link_to("View", shipping_method_path(a.id))  %></li>
+							<li><%= link_to("Edit", edit_shipping_method_path(a.id, search_params), :remote => true)  %></li>
+							<li><%= link_to("Delete", shipping_method_path(a.id, search_params), :method => "delete", :remote => true)  %></li>
+						</ul>
+					</div>
+				
+				</td>
+			</tr>
+		<% end %>
+
+	</table>
+	
+	<%= will_paginate @shipping_methods, params: search_params.except(:page).merge(action: 'index'), renderer: BootstrapPagination::Rails %>
+	
+	<%= link_to new_shipping_method_path(search_params), :class => "btn btn-default pull-right", :remote => true do %><span class="glyphicon glyphicon-plus"></span><% end %>
+	
+</div>
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div>

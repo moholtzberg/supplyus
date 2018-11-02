@@ -1,4 +1,5 @@
-<% number_of_months = (@to_date.year * 12 + @to_date.month) - (@from_date.year * 12 + @from_date.month) %>
+<% number_of_months = (@to_date.year * 12 + @to_date.month) - (@from_date.year * 12 - @from_date.month) %>
+<% total = 0%>
 <% (0..number_of_months).to_a.reverse.each do |month_offset| %>
 	
 	<% s = month_offset.months.ago.beginning_of_month %>
@@ -18,14 +19,18 @@
 				<% tax_rate_sum = order_tax_rates.where(tax_rate_id: t.id).map(&:amount).sum %>
 				<% sum += tax_rate_sum %>
 				<tr>
-					<td><%= "#{t.state_code} - #{t.zip_code}(#{t.region_name}) - #{t.rate}" %></td>
+					<td><%= "#{t.state_code} - #{t.zip_code} (#{t.region_name}) - #{t.rate}" %></td>
 					<td><%= number_to_currency(tax_rate_sum) %></td>
 				</tr>
 			<% end %>
-			<tr>
-				<td><%= number_to_currency(order_tax_rates.map(&:amount).sum) %></td>
+			<tr class="info">
+				<td>Total</td>
 				<td><%= number_to_currency(sum)%></td>
 			</tr>
+			<th class="warning">
+				<td colspan="2"><%= number_to_currency(total)%></td>
+			</th>
+			<% total = total + sum %>
 			<% if sum != order_tax_rates.map(&:amount).sum %>
 				<tr>
 					<td colspan="2">
@@ -38,3 +43,8 @@
 		</table>
 	<% end %>
 <% end %>
+	<table class="table table-bordered">
+		<th class="danger">
+			<td colspan="2"><%= number_to_currency(total)%></td>
+		</th>
+	</table>

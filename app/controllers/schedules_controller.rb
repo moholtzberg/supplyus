@@ -47,9 +47,9 @@ class SchedulesController < ApplicationController
   def set_worker_list
     path = File.join(Rails.root, 'app', 'workers', '*')
     @workers_with_params = Dir.glob(path).collect do |file_path|
-      File.basename(file_path, '.rb').camelize.constantize
+      File.basename(file_path, '.rb').camelize.constantize if File.file?(file_path)
     end
-    @workers_with_params = @workers_with_params.map do |w|
+    @workers_with_params = @workers_with_params.compact.map do |w|
       [w, w.instance_method(:perform).parameters.map { |p| p[1].to_s }]
     end.to_h
   end

@@ -1,0 +1,3 @@
+<% unless flash[:error] %>
+	$("div#shipping_address").html("<%= j render :partial => 'checkout/fast/new_address', :format => 'html' %>")
+<% end %>

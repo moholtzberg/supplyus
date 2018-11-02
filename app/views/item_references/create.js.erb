@@ -1,0 +1,3 @@
+alert("Item Reference Created");
+$("#new_item_reference_form").html("<%= j render :partial => 'item_references/form.html', :format => 'html' %>");
+$("div#item_substitutes").html("<%= j render :partial => "items/item_substitutes", :locals => {:item => @item} %>");

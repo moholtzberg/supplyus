@@ -7,11 +7,11 @@
 	<div class="row">
 		<div class="col-md-3">
 			<% @item.images.each do |img| %>
-				<a><%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/#{img.attachment_file_name}", :height => "100", :class => "thumbnail", :id => "#{img.id}"%></a>
+				<a><%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/#{img.path}", :height => "100", :class => "thumbnail", :id => img.id %></a>
 			<% end %>	
 		</div>
 		<div class="col-md-9">
-			<%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/#{@item.default_image_path}", :width => "350", :id => "main_image" %>
+			<%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/#{@item.images&.first&.path}", :width => "350", :id => "main_image" %>
 		</div>
 	</div>
 	
@@ -104,7 +104,7 @@
 		</script>
 		
 		<div class="col-md-4">
-			<button type="submit" class="btn btn-lg btn-brand btn-full-width">Add to Cart</button>
+			<button type="submit" class="btn btn-lg btn-success btn-full-width">Add to Cart</button>
 		</div>
 		<% end %>
 		<div class="col-md-3">
@@ -117,6 +117,36 @@
 	</div><!-- end row -->
 
 	<hr/>
+	
+	<% if @item.sku_group_neighbours.any? %>
+		<div class="row">
+			<div class="col-md-12">
+				<h4>Other Product Options</h4>
+				<div class="dropdown">
+				  <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100%; text-align: left" class="btn btn-default">
+				    <%= @item.name %>
+				    <span class="caret"></span>
+				  </button>
+				  <ul class="dropdown-menu" aria-labelledby="dLabel" style="width: 100%">
+						<% @item.sku_group_neighbours.each do |n| %>
+					  	<li class="sku-group-item">
+					  		<div class="row no-margin-left no-margin-right">
+									<div class="col-sm-10">
+							  	  <%= link_to n.name, shop_item_path(n.default_category, n) %>
+									</div>
+									<div class="col-sm-2">
+										<%= number_to_currency(n.actual_price) %>
+									</div>
+					  		</div>
+					  	</li>
+				  	<% end %>
+				  </ul>
+				</div>
+			</div>
+		</div>
+
+		<hr/>
+	<% end %>
 
 	<!-- Nav tabs -->
 	<ul class="nav nav-tabs" role="tablist">

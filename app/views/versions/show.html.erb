@@ -1,0 +1,68 @@
+<div class="col-md-12">
+	<div class="col-md-12">
+		<div class="panel panel-info">
+			<div class="panel-heading text-center">
+				Version data
+			</div>
+			<div class="panel-body text-center">
+				<table class="table table-bordered ">
+					<tr>
+						<th span="20%">Item Type</th>
+						<th span="20%">Item ID</th>
+						<th span="20%">Event</th>
+						<th span="20%">Whodunnit</th>
+						<th span="20%">Created At</th>
+					</tr>
+					<tr>
+						<td><%= @version.item_type %></td>
+						<td><%= @version.item_id %></td>
+						<td><%= @version.event %></td>
+						<td><%= @version.whodunnit %></td>
+						<td><%= @version.created_at %></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="panel panel-primary">
+			<div class="panel-heading text-center">
+				Current item state
+			</div>
+			<div class="panel-body text-center">
+				<% @version.item.attributes.sort.each do |k,v| %>
+					<p><%= "#{k}: #{v}" %></p>
+				<% end %>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-6">
+		<div class="panel panel-danger">
+			<div class="panel-heading text-center">
+				Version item state
+			</div>
+			<div class="panel-body text-center">
+				<% @version.object.sort.each do |k,v| %>
+					<p><%= "#{k}: #{v}" %></p>
+				<% end %>
+			</div>
+		</div>
+	</div>	
+</div>
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div>
+
+<div id="confirmModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+		
+		</div>
+	</div>
+</div>

@@ -45,12 +45,41 @@
 		<%= f.text_field :length, :class => "form-control" %>
 	</div>
 	
+  <div id="sku_group_id" class="col-md-3">
+    <%= f.label :sku_group_id, :class => "control-label" %>
+    <%= f.select :sku_group_id, [[@item.sku_group_name, @item.sku_group_id]], {include_blank: true}, class: "form-control", style: "width: 100%" %>
+  </div>
 
-	<div id="category_ids" class="col-md-3">
-		<%= f.label :category_tokens, :class => "control-label" %>
-		<%= f.text_field :category_tokens, :class => "form-control", data: {load: @item.categories} %>
-	</div>
-	
+  <script>
+    $("#item_sku_group_id").select2({
+      ajax: {
+        url: "<%= sku_groups_path %>",
+        dataType: 'json',
+        delay: 250,
+        data: function (params) {
+          return {
+            term: params.term
+          };
+        },
+        processResults: function (data, params) {
+          return {
+            results: data
+          };
+        },
+        cache: true
+      },
+      minimumInputLength: 1,
+      placeholder: 'Search SKU group',
+      allowClear: true,
+      theme: "bootstrap"
+    });
+  </script>
+  
+  <div id="category_ids" class="col-md-3">
+    <%= f.label :category_tokens, :class => "control-label" %>
+    <%= f.text_field :category_tokens, :class => "form-control", data: {load: @item.categories} %>
+  </div>
+  
 	<div class="clearfix"></div>
 	
 	<div class="checkbox col-md-12">

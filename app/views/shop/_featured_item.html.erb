@@ -8,25 +8,25 @@
 		<div class="panel-body text-center">
 			
 			<div class="text-center">
-				<%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/#{item.default_image_path}", :class => "media-object", :height => "100", :width => "100" %>
+				<%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/#{item.images&.first&.path}", :class => "media-object", :height => "100", :width => "100" %>
 			</div>
 		
 		
 		
 			<div class="text-center">
-				<% if item.actual_price(current_user.try(:account_id)) < item.default_price %>
-				<h5><span class="text-danger"><strong><del><%= number_to_currency(item.default_price) %></del></strong></span></h5>
-				<h4><span class="text-default"><strong><%= number_to_currency(item.actual_price(current_user.try(:account_id))) %></strong></span><h4>
+				<% if item.current_user_actual_price.price < item.default_price&.price %>
+				<h5><span class="text-danger"><strong><del><%= number_to_currency(item.default_price&.price) %></del></strong></span></h5>
+				<h4><span class="text-default"><strong><%= number_to_currency(item.current_user_actual_price.price) %></strong></span><h4>
 				<% else %>
-				<h4><span class="text-default"><%= number_to_currency(item.default_price) %></span><h4>
+				<h4><span class="text-default"><%= number_to_currency(item.default_price&.price) %></span><h4>
 				<% end %>
-				<% if item.prices.actual.recurring.any? %>
-					<input type="submit" name="commit" value="Subscribe (<%= number_to_currency(item.prices.actual.recurring.first.price) %>)" class="btn btn-primary btn-sm btn-block margin-bottom">
+				<% if item.recurring_price %>
+					<input type="submit" name="commit" value="Subscribe (<%= number_to_currency(item.recurring_price.price) %>)" class="btn btn-primary btn-sm btn-block margin-bottom">
 				<% end %>
-				<% if item.prices.actual.bulk.any? %>
+				<% if item.bulk_prices.any? %>
 					<div class="well well-sm">
 						<p class="border-bottom">Bulk prices:</p>
-						<% item.prices.actual.bulk.order('min_qty asc').each do |price| %>
+						<% item.bulk_prices.each do |price| %>
 							<p>
 								<%= "#{price.min_qty}-#{price.max_qty} pcs.: #{number_to_currency(price.price)}" %>
 							</p>

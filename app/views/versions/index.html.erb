@@ -1,0 +1,27 @@
+<% content_for :app_location do %>Admin / Versions / Index<% end %>
+<div id="customers" class="col-md-12">
+	
+	<table class="table table-bordered table-condensed" id="versions-table" data-source="<%= datatables_versions_path(format: :json) %>">
+  	<thead>
+			<tr>
+				<th>Item Type</th>
+				<th>Item ID</th>
+				<th>Event</th>
+				<th>Whodunnit</th>
+				<th>Created At</th>
+				<th>&nbsp;</th>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
+
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			
+		</div>
+	</div>
+</div>

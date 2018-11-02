@@ -4,18 +4,7 @@
 	<table class="table table-bordered table-condensed" id="orders-table" data-source="<%= datatables_orders_path(format: :json, from: params[:action]) %>">
   	<thead>
       <tr class="filters">
-        <th><input class="form-control"/></th>
-        <th><input class="form-control"/></th>
-        <th></th>
-        <th><input class="form-control"/></th>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th><input class="form-control"/></th>
-        <th>
-          <%= collection_select(:order, :state, Order.state_machine.states, :name, :name, {include_blank: true}, {class: 'form-control'}) %>
-        </th>
-        <th></th>
+        <th colspan="10"><%= button_tag 'Filter Columns', type: "button", class: "btn btn-primary pull-right", data: { toggle: "modal", target: "#filterModal" } %></th>
       </tr>
 			<tr>
 				<th>Number</th>
@@ -44,4 +33,25 @@
 			
 		</div>
 	</div>
+</div>
+
+<div id="filterModal" class="modal fade" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Filter Columns</h4>
+      </div>
+
+      <div class="modal-body" id="modal-body">
+      </div>
+
+      <div class="modal-footer">
+        <div class="btn-group" role="group">
+          <button type="button" id="update_filters" class="btn btn-primary">Update Filters</button>
+          <button type="button" id="cancel_filters" class="btn btn-default">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

@@ -5,6 +5,8 @@
     <th>Item Id</th>
     <th>QTY Ordered</th>
     <th>Item Number</th>
+		<th>Default Price</th>
+		<th>Cost Price</th>
     <th>Image</th>
   </tr>
 
@@ -14,9 +16,11 @@
       <td><%= li.item_id %></td>
       <td><%= number_with_delimiter(li.qty) %></td>
       <td><%= li.number %></td>
+			<td><%= number_to_currency(li.default_price) %></td>
+			<td><%= number_to_currency(li.vendor_item_prices&.where(vendor_id: 106)&.last&.price) %></td>
       <td>
         <% if li.item.images.size > 0 %>
-          <%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/#{li.item.default_image_path}", :class => "media-object", :height => "64", :width => "64" %>
+          <%= image_tag li.item.default_image_path, :class => "media-object", :height => "64", :width => "64" %>
         <% else %>
           <%= image_tag "https://s3.amazonaws.com/247officesuppy/400/400/NOA.JPG", :class => "media-object", :height => "64", :width => "64" %>
         <% end %>
