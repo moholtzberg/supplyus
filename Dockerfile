@@ -12,18 +12,19 @@ RUN apt-get update && apt-get install -y \
 # Configure the main working directory. This is the base 
 # directory used in any further RUN, COPY, and ENTRYPOINT 
 # commands.
-RUN mkdir -p /recurring
-WORKDIR /recurring
+RUN mkdir -p /supplyus
+WORKDIR /supplyus
 
 # Copy the Gemfile as well as the Gemfile.lock and install 
 # the RubyGems. This is a separate step so the dependencies 
 # will be cached unless changes to one of those two files 
 # are made.
-COPY Gemfile Gemfile.lock ./ 
+COPY Gemfile Gemfile.lock ./
+COPY supplyus_secrets.yml ./
 RUN gem install bundler
-RUN gem install json -v '1.8.3'
+RUN gem install json -v '1.8.6'
 RUN gem install rdoc -v '4.2.0'
-RUN bundle install --retry 5 --full-index
+RUN bundle install --full-index
 
 # Copy the main application.
 COPY . ./
