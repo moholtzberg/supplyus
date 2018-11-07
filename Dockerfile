@@ -6,8 +6,8 @@ FROM ruby:2.3
 RUN apt-get update && apt-get install -y \ 
   build-essential \ 
   nodejs \
-  openjdk-7-jre \
-  openjdk-7-jdk
+  openjdk-8-jre \
+  openjdk-8-jdk
 
 # Configure the main working directory. This is the base 
 # directory used in any further RUN, COPY, and ENTRYPOINT 
@@ -24,10 +24,12 @@ COPY supplyus_secrets.yml ./
 RUN gem install bundler
 RUN gem install json -v '1.8.6'
 RUN gem install rdoc -v '4.2.0'
-RUN bundle install --full-index
+RUN gem install sidekiq -v '4.2.7'
+RUN bundle install --retry 5 --full-index
 
 # Copy the main application.
 COPY . ./
+RUN rake assets:precompile RAILS_ENV=production
 
 # The main command to run when the container starts. Also 
 # tell the Rails dev server to bind to all interfaces by 
